@@ -1,0 +1,148 @@
+---
+title: "Using R"
+author: "Shiro Kuriwaki"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+
+output:
+  html_document:
+    number_sections: true
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Code and Console
+
+```
+```
+
+
+# Calculators
+```{r}
+1 + 1
+43/10
+```
+
+
+
+# Assignment
+Use the left arrow to assign stuff to other stuff:
+```{r}
+myname <- "shiro"
+```
+
+How do you create a vector, i.e. a list of strings? Wrap it around `c(` and `)`
+```{r}
+myvec <- c(1, 2, 3, 4)
+```
+
+
+# Functions
+Functions are things that take in something, manipulate them, and then output it.  It is structured like this
+
+```{r}
+print_name <- function(name) {
+  
+  print(paste("Hello", name))
+  
+}
+```
+
+
+```{r}
+compute_average <- function(x) {
+  n <- length(x)
+  summed <- sum(myvec)
+  mean <- summed / n
+  return(mean)
+}
+```
+
+
+
+# Packages
+Packages are basically a set of functions that other people have written for you. They're useful because you don't have to write important functions from scratch!
+
+Let's install Kosuke's package. You can see what it looks like on this webpage <https://github.com/kosukeimai/qss>
+
+It tells you to first install a different package called `devtools`. Follow his command and enter this command.
+```{r, eval = F}
+install.packages("devtools")
+```
+
+Notice that `install.packages` is also a function
+
+Now it tells you to run this:
+```{r, eval = FALSE}
+devtools::install_github("kosukeimai/qss-package", build_vignettes = TRUE)
+```
+
+
+
+
+
+
+# Interlude: File Structure
+
+* A __directory__ = folder
+* Your __working directory__ : the folder that you are in.
+* A __parent directory__ is the folder that your current directory is in. 
+
+
+
+Commands to move around directories (i.e., move around folders using code)
+
+* `ls` stands for __list__ . it will show you all the files in
+* `cd` stands for __change directory__. Tell your computer to go to. a certain directory.  In R, this is `setwd`
+* `getwd()` in R will tell you which directory you are in.
+* `~/` is an abbreviation for your Computer's default directory.
+* If you want to go without abbreviation, you can type all this: `/Users/shirokuriwaki/`
+* `.` is an abbreviation for current directory
+* `..` is an abbreviation for the __parent directory__
+
+
+Directories, as you know, are nested. Go deeper into the tree with the slash `/`
+```{r eval = F}
+getwd()
+```
+
+
+I am now going to set my working directory.
+
+```{r, eval = FALSE}
+setwd("~/Dropbox/cces_cumulative")
+```
+
+
+# Reading Data
+You almost never hand-enter raw data on your own. So, you need to read in files into R: `.csv`, `.dta`, `.txt` .... There are functions for each of these. People have made all kinds of functions for 
+
+
+`Rds` or `Rdata` is R-specific, but it's fast and error-less. 
+```{r, eval = FALSE}
+cces <- readRDS("data/source/person.Rds")
+```
+
+
+Here are some other functions 
+```{r, eval = F}
+read_csv
+read_dta()
+read_spss()
+read_table()
+read_excel()
+
+```
+
+# Visualization
+
+
+
+
+
