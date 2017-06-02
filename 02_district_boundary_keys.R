@@ -1,3 +1,8 @@
+
+# if you don't have these installed beforehand, it won't work.
+# For example, install dplyr by writing the command
+# install.packages("dplyr")
+
 library(dplyr)
 library(haven)
 library(readr)
@@ -70,7 +75,20 @@ ZYCdupes <-  zy_key %>%
 
 # SAve -------
 saveRDS(zy.wide, "data/output/CD_by_zip_year.Rds")
-saveRDS(zy.wide, "data/output/CD_zip_year_long.Rds")
+saveRDS(zy_key, "data/output/CD_zip_year_long.Rds")
 
 write_dta(zy.wide, "data/output/CD_by_zip_year.dta")
 write_dta(zy_key, "data/output/CD_zip_year_long.dta")
+
+
+
+# get to keys -----
+zc_key <- person %>%
+  filter(zipcode != "." & zipcode != "") %>%
+  distinct(year, cong, StateAbbr, countyFIPS, CD) %>%
+  arrange(StateAbbr, countyFIPS, year) %>%
+  select(year, cong, StateAbbr, everything())
+
+
+zc_key %>% 
+  distinct(year, countyFIPS)
