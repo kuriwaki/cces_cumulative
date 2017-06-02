@@ -13,7 +13,7 @@ person
 
 
 
-# get to keys
+# get to keys -----
 zy_key <- person %>%
   filter(zipcode != "." & zipcode != "") %>%
   distinct(year, cong, zipcode, StateAbbr, CD) %>%
@@ -22,7 +22,15 @@ zy_key <- person %>%
   select(zipcode, year, cong, StateAbbr, CDnum, CD, everything())
 
 
-# long to wide
+# duplicates -----
+# do these two have the same row count 
+zy_key
+
+zy_key %>%
+  distinct(zipcode, year) 
+
+
+# long to wide----------
 
 # thi is long
 zy_key
@@ -30,14 +38,6 @@ zy_key
 
 # use this command to see how dcast works
 ?dcast
-
-
-
-# do these two have the same row count
-zy_key
-
-zy_key %>%
-  distinct(zipcode, year) 
 
 
 
@@ -55,6 +55,10 @@ zy.wide <- dcast(data = as.data.table(zy_key),
 # easier to see
 zy.wide <- tbl_df(zy.wide)
 
+# change col names
+col.ind.year <- which(!is.na(as.numeric(colnames(zy.wide))))
+colnames(zy.wide)[col.ind.year] <- paste0("CD_in_", colnames(zy.wide)[col.ind.year])
+
 
 # checking duplicates. How many CDs are in a zipcode-year? Preferably one. 
 ZYCdupes <-  zy_key %>%
@@ -64,3 +68,9 @@ ZYCdupes <-  zy_key %>%
   ungroup()
 
 
+# SAve -------
+saveRDS(zy.wide, "data/output/CD_by_zip_year.Rds")
+saveRDS(zy.wide, "data/output/CD_zip_year_long.Rds")
+
+write_dta(zy.wide, "data/output/CD_by_zip_year.dta")
+write_dta(zy_key, "data/output/CD_zip_year_long.dta")
