@@ -3,7 +3,7 @@ rm(list = ls())
 
 library(ggplot2)
 library(dplyr)
-
+library(foreach)
 
 
 
@@ -15,29 +15,79 @@ setwd(wd)
 
 library(crunch)
 login()
+
+
+# connect to data
 ds <- loadDataset("CCES 2016 Common")
 
 
+
+# metadata
+vars <- variables(ds)
+meta <- variableMetadata(ds)
+
+length(vars)
+length(meta)
+
+vars[[1]]
+
+# one at a time
+str(meta[[30]])
+
+
+qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
+  
+  vm <- meta[[i]]
+  
+  wording <- vm@body$description
+  
+  id <- vm@body$id
+  
+  alias <- vm@body$alias
+  
+  name <- vm@body$name
+  
+  nChoices <- length(vm@body$categories)
+  
+  nSubQuestions <- length(vm@body$subreferences)
+  
+  
+  tibble(id = id,
+         alias = alias, 
+         name = name, 
+         nChoices = nChoices,
+         nSubQuestions = nSubQuestions,
+         wording = wording)
+}
+
+
+
+qwording %>% View()
+names(meta)
+
+saveRDS(meta,  "data/output/meta/raw_metadata_cc16.Rds")
+saveRDS(qwording, "data/output/meta/fmt_metadata_cc16.Rds")
+write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
+
+
+# cross tabs and getting data sets
 crtabs(~ pid3 + presvote, ds)
-
-variables(ds)
-
-
 pp <- ds[ds$inputstate == "Kentucky", c("pid3", "presvote")]
 variables(pp)
 
+
+# downloading
 pp.df <- as.data.frame(pp, force = T)
-
 str(pp.df)
-
-
 ?as.data.frame.CrunchDataFrame
 
 
+# viewing
 ds$presvote
 
+
+# applying models
 ols1 <- lm(I(presvote == "Donald Trump (Republican)") ~ pid3 + gender + age,
            data = ds)
 summary(ols1)
-
 
