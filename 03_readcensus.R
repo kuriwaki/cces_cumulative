@@ -18,6 +18,13 @@ AZ109 <-  read_delim("data/source/census/109/zcta_c9_04.txt",
                      delim = " ",
                      skip = 3)
 
+national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
+           delim = "," ,
+           skip = 2)
+
+national109
+
+
 
 # automate the reading in 
 filenames <- list.files("data/source/census/109",
