@@ -34,21 +34,27 @@ for (file.i in 1:length(filenames)) {
                                       skip = 3)
 }
 
-names(AK109) <- names(AL109)
-names(AZ109) <- names(AL109)
-
-   ALAKAZ <-rbind(AL109, AK109, AZ109)
-
-ALAKAZ
-
 states.list
 
+library(plyr)
+
+moststates <- rbind.fill.matrix(states.list)
 
 
-# AL113  <- read_delim("data/source/census/113/zc_cd_01_fmt.txt" ,
-#                      delim = "\t",
-#                      col_names = FALSE)
-# AL113
+moststates
+
+#there only seems to be 43 states on the census page for the 109th congress
+#check moststates cells 21262-21264 and cells 30473-30489
+
+
+
+
+AL113  <- read.delim("data/source/census/113/zc_cd_01.txt" ,
+                     sep = "",
+                     skip = 3,
+                     header = FALSE)
+AL113
+
 
 
 
