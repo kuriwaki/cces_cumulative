@@ -1,40 +1,45 @@
 rm(list = ls())
 # Test crunch.io
 
+# devtools::install_github("Crunch-io/rcrunch", build_vignettes=TRUE)
+library(crunch)
 library(ggplot2)
 library(dplyr)
 library(foreach)
+library(readr)
+library(xtable)
 
-
-
+# Directory ------
 wd <- "~/Dropbox/cces_cumulative/"
 setwd(wd)
 
-# devtools::install_github("Crunch-io/rcrunch", build_vignettes=TRUE)
 
 
-library(crunch)
-login()
+# Start up crunch -------
+login() # you need a login and password to complete this command
 
 
-# connect to data
+# connect to data---------
 ds <- loadDataset("CCES 2016 Common")
 
 
 
-# metadata
+# metadata --------
 vars <- variables(ds)
 meta <- variableMetadata(ds)
 
 length(vars)
 length(meta)
 
+
+# take a peek
 vars[[1]]
 
 # one at a time
 str(meta[[30]])
 
 
+# get q wording -------
 qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
   
   vm <- meta[[i]]
@@ -61,16 +66,43 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
 }
 
 
-
-qwording %>% View()
-names(meta)
-
 saveRDS(meta,  "data/output/meta/raw_metadata_cc16.Rds")
 saveRDS(qwording, "data/output/meta/fmt_metadata_cc16.Rds")
 write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
 
 
-# cross tabs and getting data sets
+# Tabulations -----
+
+choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$nSubQuestions == 1)
+
+for (i in choiceqs.rownum) {
+  alias <- qwording$alias[i]
+  name <- qwording$name[i]
+
+  var.tab <- crtabs(paste0("~ ", alias), ds)
+  var.arr <- var.tab@arrays
+  
+  cat.obj <- meta[[name]]@body$categories
+  names.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
+  no.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
+  
+  print(var.arr)
+  
+  simp.tab <- tibble(uw.count = var.arr$.unweighted_counts,
+                     w.count = round(var.arr$count),
+                     choice.num = no.vec,
+                     choice.name = names.vec)
+  
+  simp.xtab <- xtable(simp.tab)
+  
+  print(simp.xtab, 
+        file.path(wd, "data/output/meta/tabs/", paste0(alias, ".tex")))
+}
+
+
+
+
+# cross tabs and getting data sets--------
 crtabs(~ pid3 + presvote, ds)
 pp <- ds[ds$inputstate == "Kentucky", c("pid3", "presvote")]
 variables(pp)
