@@ -73,7 +73,7 @@ write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
 
 # Tabulations -----
 
-choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$nSubQuestions == 1)
+choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$nSubQuestions == 0)
 
 for (i in choiceqs.rownum) {
   alias <- qwording$alias[i]
@@ -86,17 +86,26 @@ for (i in choiceqs.rownum) {
   names.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
   no.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
   
-  print(var.arr)
   
-  simp.tab <- tibble(uw.count = var.arr$.unweighted_counts,
-                     w.count = round(var.arr$count),
-                     choice.num = no.vec,
-                     choice.name = names.vec)
+  simp.tab <- tibble(`Unweighted N` = var.arr$.unweighted_counts,
+                     `Weighted N` = round(var.arr$count),
+                     `num` = no.vec,
+                     `Choice Text` = names.vec)
+
   
-  simp.xtab <- xtable(simp.tab)
+  addtorow <- list()
+  addtorow$pos <- list(-1)
+  addtorow$command <- c(paste0(paste0('\\multicolumn{4}{l}{', alias, '}'), "\\\\"))
+  
+  simp.xtab <- xtable(simp.tab, display = c("d", "d", "d", "d", "s"))
+  
+  
+  filename <- paste0(formatC(i, width = 3, format = "d", flag = "0"), "_",  alias, ".tex")
   
   print(simp.xtab, 
-        file.path(wd, "data/output/meta/tabs/", paste0(alias, ".tex")))
+        include.rownames = FALSE,
+        add.to.row =  addtorow,
+        file = file.path(wd, "data/output/meta/tabs/", filename))
 }
 
 
