@@ -25,6 +25,36 @@ national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
 national109
 
 
+national110 <-read_delim("data/source/census/109/zcta_cd110_natl.txt" , 
+          delim = "," ,
+          skip = 2)
+
+national110
+
+
+national113 <-read_delim("data/source/census/109/zcta_cd113_natl.txt" , 
+            delim = "," ,
+            skip = 2)
+
+national113
+
+national115 <-read_delim("data/source/census/109/zcta_cd115_natl.txt" , 
+           delim = "," ,
+           skip = 2)
+
+national115
+
+
+
+
+
+
+
+
+
+
+
+
 
 # automate the reading in 
 filenames <- list.files("data/source/census/109",
