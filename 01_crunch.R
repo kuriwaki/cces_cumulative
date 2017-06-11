@@ -52,6 +52,8 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
   
   name <- vm@body$name
   
+  type <- vm@body$type
+  
   nChoices <- length(vm@body$categories)
   
   nSubQuestions <- length(vm@body$subreferences)
@@ -60,6 +62,7 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
   tibble(id = id,
          alias = alias, 
          name = name, 
+         type = type,
          nChoices = nChoices,
          nSubQuestions = nSubQuestions,
          wording = wording)
@@ -73,42 +76,81 @@ write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
 
 # Tabulations -----
 
-choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$nSubQuestions == 0)
+choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$type != "multiple_response")
+tabs.list <- list()
+
+# get xtable, then print
+
+writeToFile <- TRUE
 
 for (i in choiceqs.rownum) {
+  
+  # if a grid question more than zero. 1 means only one question
+  nQs <- ifelse(qwording$nSubQuestions[i] == 0, 1, qwording$nSubQuestions[i])
+  
+  # alias and name
   alias <- qwording$alias[i]
   name <- qwording$name[i]
 
-  var.tab <- crtabs(paste0("~ ", alias), ds)
-  var.arr <- var.tab@arrays
+  # counts
+  var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
+  var.arr <- var.tab@arrays$.unweighted_counts
+  if (class(var.arr) == "array") var.arr <- matrix(var.arr, nrow = 1)
   
+  # choices
   cat.obj <- meta[[name]]@body$categories
-  names.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
-  no.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
+  choicenames.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
+  choiceno.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
   
   
-  simp.tab <- tibble(`Unweighted N` = var.arr$.unweighted_counts,
-                     `Weighted N` = round(var.arr$count),
-                     `num` = no.vec,
-                     `Choice Text` = names.vec)
-
-  
-  addtorow <- list()
-  addtorow$pos <- list(-1)
-  addtorow$command <- c(paste0(paste0('\\multicolumn{4}{l}{', alias, '}'), "\\\\"))
-  
-  simp.xtab <- xtable(simp.tab, display = c("d", "d", "d", "d", "s"))
+  # if a grid, get alias for each question
+  if (nQs > 1) {
+    subcat.obj <- meta[[name]]@body$subreferences
+    q.aliases <- sapply(subcat.obj, "[", "alias") %>% unlist() %>% as.character()
+    q.names <- sapply(subcat.obj, "[", "name") %>% unlist() %>% as.character()
+  } else {
+    q.aliases <- alias
+    q.names <- name
+  }
   
   
-  filename <- paste0(formatC(i, width = 3, format = "d", flag = "0"), "_",  alias, ".tex")
   
-  print(simp.xtab, 
-        include.rownames = FALSE,
-        add.to.row =  addtorow,
-        file = file.path(wd, "data/output/meta/tabs/", filename))
+  # for each question
+  for (j in 1:nQs) {
+    cat(paste("Question i = ", i, "; SubQ j = ", j, "\n"))
+    
+    # the tabs
+    simp.tab <- tibble(`Unweighted N` = var.arr[j, ],
+                       `num` = choiceno.vec,
+                       `Choice Text` = choicenames.vec)
+    
+    # the quesiton
+    addtorow <- list()
+    addtorow$pos <- list(-1, -1)
+    
+    qcodetext <- paste0('\\multicolumn{3}{l}{', gsub("\\_", "\\\\_", q.aliases[j]), '}')
+    qwordtext <- paste0('\\multicolumn{3}{l}{', qwording$wording[i], " ", q.names[j], '}')
+    
+    addtorow$command <- c(paste0(qcodetext, "\\\\"),
+                          paste0(qwordtext, "\\\\"))
+    
+    
+    # format
+    simp.xtab <- xtable(simp.tab, display = c("d", "d", "d", "s"))
+    filename <- paste0(formatC(i, width = 3, format = "d", flag = "0"), "_",  q.aliases[j], ".tex")
+    tabs.list[[filename]] <- simp.xtab
+    
+    
+    # write
+    if (writeToFile) {
+      print(simp.xtab, 
+            include.rownames = FALSE,
+            add.to.row =  addtorow,
+            timestamp = NULL,
+            file = file.path(wd, "data/output/meta/tabs/", filename))
+    }    
+  }
 }
-
-
 
 
 # cross tabs and getting data sets--------
