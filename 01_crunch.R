@@ -128,10 +128,10 @@ for (i in choiceqs.rownum) {
     addtorow <- list()
     addtorow$pos <- list(-1, -1)
     
-    qcodetext <- paste0('\\multicolumn{3}{l}{', gsub("\\_", "\\\\_", q.aliases[j]), '}')
-    qwordtext <- paste0('\\multicolumn{3}{l}{', qwording$wording[i], " ", q.names[j], '}')
+    qcodename <- paste0('\\textbf{', gsub("\\_", "\\\\_", q.aliases[j]), '} & & \\hfill ', gsub("\\_", "\\\\_", q.names[j]))
+    qwordtext <- paste0('\\multicolumn{3}{l}{', qwording$wording[i], '}')
     
-    addtorow$command <- c(paste0(qcodetext, "\\\\"),
+    addtorow$command <- c(paste0(qcodename, "\\\\"),
                           paste0(qwordtext, "\\\\"))
     
     
@@ -145,6 +145,7 @@ for (i in choiceqs.rownum) {
     if (writeToFile) {
       print(simp.xtab, 
             include.rownames = FALSE,
+            include.colnames = FALSE,
             add.to.row =  addtorow,
             timestamp = NULL,
             file = file.path(wd, "data/output/meta/tabs/", filename))
