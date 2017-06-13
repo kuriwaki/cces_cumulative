@@ -20,30 +20,31 @@ AZ109 <-  read_delim("data/source/census/109/zcta_c9_04.txt",
 
 national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
            delim = "," ,
-           skip = 2)
+           skip = 2, col_names = FALSE)
 
 national109
 
 
-national110 <-read_delim("data/source/census/109/zcta_cd110_natl.txt" , 
+national110 <-read_delim("data/source/census/110/zcta_cd110_natl.txt" , 
           delim = "," ,
-          skip = 2)
+          skip = 2, col_names = FALSE)
 
 national110
 
 
-national113 <-read_delim("data/source/census/109/zcta_cd113_natl.txt" , 
+national113 <-read_delim("data/source/census/113/zcta_cd113_natl.txt" , 
             delim = "," ,
-            skip = 2)
+            skip = 2, col_names = FALSE)
 
 national113
 
-national115 <-read_delim("data/source/census/109/zcta_cd115_natl.txt" , 
+national115 <-read_delim("data/source/census/115/zcta_cd115_natl.txt" , 
            delim = "," ,
-           skip = 2)
+           skip = 2, col_names = FALSE)
 
 national115
 
+help(read_delim)
 
 
 
