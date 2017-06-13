@@ -9,10 +9,6 @@ library(foreach)
 library(readr)
 library(xtable)
 
-# Directory ------
-wd <- "~/Dropbox/cces_cumulative/"
-setwd(wd)
-
 
 
 # Start up crunch -------
@@ -72,6 +68,11 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
 saveRDS(meta,  "data/output/meta/raw_metadata_cc16.Rds")
 saveRDS(qwording, "data/output/meta/fmt_metadata_cc16.Rds")
 write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
+write_csv(qwording, "~/Dropbox/CCES_SDA/2016/Guide/fmt_metadata_cc16.csv")
+
+
+
+
 
 
 # Tabulations -----
@@ -82,6 +83,8 @@ tabs.list <- list()
 # get xtable, then print
 
 writeToFile <- TRUE
+dir_to_print <- file.path(here(), "data/output/meta/tabs/")
+dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
 
 for (i in choiceqs.rownum) {
   
@@ -148,30 +151,9 @@ for (i in choiceqs.rownum) {
             include.colnames = FALSE,
             add.to.row =  addtorow,
             timestamp = NULL,
-            file = file.path(wd, "data/output/meta/tabs/", filename))
+            floating = FALSE,
+            file = file.path(dir_to_print, filename))
     }    
   }
 }
-
-
-# cross tabs and getting data sets--------
-crtabs(~ pid3 + presvote, ds)
-pp <- ds[ds$inputstate == "Kentucky", c("pid3", "presvote")]
-variables(pp)
-
-
-# downloading
-pp.df <- as.data.frame(pp, force = T)
-str(pp.df)
-?as.data.frame.CrunchDataFrame
-
-
-# viewing
-ds$presvote
-
-
-# applying models
-ols1 <- lm(I(presvote == "Donald Trump (Republican)") ~ pid3 + gender + age,
-           data = ds)
-summary(ols1)
 
