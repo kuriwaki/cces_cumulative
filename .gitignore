@@ -6,6 +6,7 @@ ompiled source #
 *.exe
 *.o
 *.so
+*.html
 
 # PDF
 ####################
