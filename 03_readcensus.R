@@ -1,33 +1,22 @@
-
+rm(list = ls())
 # load necessary package 
 library(readr)
 library(dplyr)
 library(haven)
-
-# test right
-AL109 <-  read_delim("data/source/census/109/zcta_c9_01.txt",
-           delim = " ",
-           skip = 3)
-
-AK109 <-  read_delim("data/source/census/109/zcta_c9_05.txt",
-                     delim = " ",
-                     skip = 3)
+library(data.table)
 
 
-AZ109 <-  read_delim("data/source/census/109/zcta_c9_04.txt",
-                     delim = " ",
-                     skip = 3)
-
+# REad in data -----------------
 national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
            delim = "," ,
-           skip = 2, col_names = FALSE)
+           skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national109
 
 
 national110 <-read_delim("data/source/census/110/zcta_cd110_natl.txt" , 
           delim = "," ,
-          skip = 2, col_names = FALSE)
+          skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national110
 
@@ -44,12 +33,70 @@ national115 <-read_delim("data/source/census/115/zcta_cd115_natl.txt" ,
 
 national115
 
-help(read_delim)
+
+
+# sometimes zipcodes straddle districts! This will be a pain to account for by just merging, let's somehow manipulate the dataset so that each row is a unique zipcode.
+
+# group the dataset into state-zipcodes. Then, let's just list up the distnums that are _within each group_
+n109_byzip <- national109 %>%  
+  group_by(state, zipcode) %>%  # these arrows combined with a percent sign (%>%) are "pipes". It says, take the output on the left and pass it down to the next function (in this case, the thing in the next row)
+  summarize(distnums = paste0(distnum, collapse = ",")) # let's summarize each group. How? We're going to collapse the 1 or more distnums into one character. That's the function paste().
+
+
+# run these examples to get a more concrete sense of what we are doing
+dist <- c("01", "02", "03", "04")
+paste0(dist)
+paste0(dist, collapse = ",")
+
+national109 %>% group_by(zipcode)
+national109 %>% group_by(state, zipcode)
+
+
+
+##### trying to figure out how to remove NA cells from the data set (top)
+
+x <- na.omit(n109.wide)
+x
+
+x<- n109.wide[complete.cases(n109.wide), ]
+x <- na.omit(n109.wide)
+
+                   
+complete.cases(n109.wide)
+
+
+
+new_dataframe = as.data.frame(lapply(n109.wide, na.omit))
+
+
+func<-function(i){
+  x<-as.numeric(as.character(n109.wide[,i][!is.na(n109.wide[,i])]))
+  xna<-as.numeric(as.character(n109.wide[,i][is.na(n109.wide[,i])]))
+  newx<-c(x,xna)
+}
+
+do.call(cbind,lapply(1:length(df[1,]),func))
+
+                 
+##### trying to figure out how to remove NA cells from the data set (bottom)
+                   
+                  
 
 
 
 
 
+
+c109110<-left_join(national109, national110, by = c("zipcode", "state"))
+
+c109110
+
+help ("left_join")
+
+
+View(datasetcombined)
+
+left_join(national109, national110, national113, national115, by = c("zip"))
 
 
 
@@ -109,3 +156,30 @@ AL113
 # write_dta(states109, "data/output/states109.dta")
 # write_csv(state109, "data/output/states109.csv")
 # saveRDS(states109, "data/output/states110.Rds")
+
+
+
+# temporary example -- a toy example with fake data, but essentially the same thing
+dataset1 <- tibble(key = c("A", "B", "C", "D"),
+                   code1 = c(1, 2, 3, 4))
+
+dataset2 <- tibble(key = c("C", "B", "A"),
+                   code2 = c(103, 102, 101))
+
+# what does dataset1 look like?
+dataset1
+
+# what does dataset2 look like?
+dataset2
+
+# NOW, how do we combine these two things so that we can summarize our info into one table?
+datasetcombined <- left_join(dataset1, dataset2, by = c("key"))
+
+# what does datasetcombined look like?
+datasetcombined
+
+
+
+
+
+
