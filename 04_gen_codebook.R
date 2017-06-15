@@ -2,16 +2,22 @@ library(stargazer)
 library(dplyr)
 library(haven)
 library(readr)
+library(readxl)
 library(data.table)
 
 
-# Read data ----
-person <- readRDS("data/source/person.Rds") # from SK's compilation in different project
+# Read metadata ----
+cq <- readRDS("data/output/meta/fmt_metadata_cc16.Rds") %>%
+  mutate(aliasAbbrv = gsub("grid", "", alias))
+
+sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>% 
+  select(Name, Label) %>%
+  mutate(sOrder = 1:n())
 
 
 
-person
+# Join 
+cs <- left_join(cq, sq, by = c("alias" = "Name"))
 
 
-
-stargazer(as.data.frame(person))
+saveRDS(cs, "data/output/meta/fmt_metadata_cc16_stata.Rds")

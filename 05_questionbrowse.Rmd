@@ -17,10 +17,14 @@ library(readr)
 
 
 # read in question wordings
-q16 <- readRDS("data/output/meta/fmt_metadata_cc16.Rds")
+q16 <- readRDS("data/output/meta/fmt_metadata_cc16_stata.Rds")
 
 # for DT app
-q16.show <- q16 %>% select(alias, name, wording)
+q16.show <- q16 %>% 
+  select(alias, name, Label, wording) %>% 
+  rename(`crunch name` = name,
+         `Stata label` = Label,
+         `Question wording` = wording)
 
 ```
 
