@@ -21,3 +21,4 @@ cs <- left_join(cq, sq, by = c("alias" = "Name"))
 
 
 saveRDS(cs, "data/output/meta/fmt_metadata_cc16_stata.Rds")
+write_csv(cs, "data/output/meta/fmt_metadata_cc16_withstata.csv",na = "")

@@ -31,6 +31,9 @@ q16.show <- q16 %>%
 This Table is an informal list of the questions that were asked in the Cooperative Congressional Election Study, Common Content 2016 ([Survey Data on Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0)). 
 
 ```{r showDT, echo = FALSE}
-datatable(q16.show)
+datatable(q16.show,
+          filter = list(position = 'top', clear = FALSE),
+          options = list(searchCols = list(NULL, NULL, NULL, NULL))
+)
 ```
 
