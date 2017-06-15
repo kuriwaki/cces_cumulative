@@ -2,6 +2,8 @@ rm(list = ls())
 
 library(haven)
 library(dplyr)
+library(readr)
+library(foreach)
 
 
 # rudimentary standardization for data that comes out of dataverse
@@ -37,6 +39,8 @@ findStack <- function(dflist = list(), var) {
   num_var_name <- paste0(quo_name(var), "_num")
   
   foreach(y = 1:length(dflist), .combine = "bind_rows") %do% {
+    cat(paste0("df ", y, ", "))
+    
     dplyr::select(dflist[[y]], year, caseID, !!var) %>%
       mutate(!!chr_var_name := as.character(as_factor(!!var)),
              !!num_var_name := as.numeric(!!var)) %>% 
@@ -66,9 +70,30 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 
 # Start extracting variables -----
 # in list form
-ccs <- list(ccc12, cc13, cc14, cc15, cc16)
+ccs <- list(ccp, cc13, cc14, cc15, cc16)
 
 
 # first same name vars -----
 pid3 <- findStack(ccs, pid3)
+pid7 <- findStack(ccs, pid7)
+gend <- findStack(ccs, gender)
+educ <- findStack(ccs, educ)
+race <- findStack(ccs, race)
+bryr <- findStack(ccs, birthyr)
 
+
+
+# bind together ----
+ccc <- left_join(pid3, pid7) %>% 
+  left_join(gend) %>%
+  left_join(bryr) %>%
+  left_join(race) %>%
+  left_join(educ)
+  
+
+
+
+# Write dta 
+write_dta(ccc, "data/output/cumulative_2006_2012.dta")
+write_csv(ccc, "data/output/cumulative_2006_2012.csv")
+saveRDS(ccc, "data/output/cumulative_2006_2012.Rds")
