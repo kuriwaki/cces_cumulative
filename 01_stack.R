@@ -6,6 +6,7 @@ library(readr)
 library(foreach)
 
 
+
 # rudimentary standardization for data that comes out of dataverse
 std_dv <- function(path, guess_year = TRUE) {
   
@@ -49,7 +50,69 @@ findStack <- function(dflist = list(), var) {
 }
 
 
+# more name standardization
+stdName <- function(tbl){
+  
+    cces_year <- as.integer(unique(tbl$year))
 
+    
+    if (identical(cces_year, 2006:2012)) {
+      tbl <- tbl %>% 
+        rename(wgt = weight,
+               state = state_pre,
+               cdid = congdist_pre,
+               zipcode = zip_pre,
+               countyFIPS = county_fips_pre,
+               reg_true = reg_validation,
+               reg_self = registered_pre)
+      
+    }
+    
+    
+    if (identical(cces_year, 2013L)) {
+      tbl <- tbl %>% mutate(fips = floor(as.numeric(countyfips)/1000),
+                            cdid = as.numeric(cdid113)) %>% 
+        rename(approval_rep = CC13_313a) %>% 
+        left_join(statecode, by = "fips")
+    }
+    
+    if (identical(cces_year, 2014L)) {
+      tbl <- rename(tbl, approval_rep = CC14_315a)
+    }
+    
+    if (identical(cces_year, 2015L)) {
+      tbl <- rename(tbl, CC350 = CC15_350) %>% 
+        rename(approval_rep = CC15_313a)
+    }
+    
+    if (identical(cces_year, 2016L)) {
+      tbl <- tbl %>% 
+        rename(weight = commonweight,
+               CC350 = CC16_360,
+               cdid = cdid113,
+               approval_rep = CC16_320f)
+      
+    }
+    
+
+    # more standardization for post 2012
+    if (cces_year[1] %in% 2013:2016) {
+      tbl <- tbl %>% 
+        rename(state = inputstate, 
+               reg_self = votereg,
+               family_income = faminc,
+               marriage_status = marstat,
+               wgt = weight,
+               zipcode = lookupzip,
+               countyFIPS = countyfips,
+               partyreg = CC350) %>% 
+        mutate(age = year - birthyr,
+               countyFIPS = as.numeric(countyFIPS),
+               cdid = as.numeric(cdid))
+    }
+   
+    return(tbl)
+}
 
 # READ ------
 
@@ -66,11 +129,18 @@ cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 
 
+# helper data
+statecode <- read_csv("~/Dropbox/cces_rollcall/data/source/statecode.csv")
+
 
 
 # Start extracting variables -----
 # in list form
-ccs <- list(ccp, cc13, cc14, cc15, cc16)
+ccs <- list(stdName(ccp), 
+            stdName(cc13), 
+            stdName(cc14), 
+            stdName(cc15), 
+            stdName(cc16))
 
 
 # first same name vars -----
@@ -80,6 +150,9 @@ gend <- findStack(ccs, gender)
 educ <- findStack(ccs, educ)
 race <- findStack(ccs, race)
 bryr <- findStack(ccs, birthyr)
+state <- findStack(ccs, state)
+
+
 
 
 
