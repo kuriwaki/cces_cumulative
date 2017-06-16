@@ -86,17 +86,26 @@ all_CDs <- bind_rows(national109, national110,
 all_CDs
 
 
+# build container (empty),
+container <- tibble(CD = all_CDs,
+                    zips109 = NA,
+                    zips110 = NA,
+                    zips113 = NA,
+                    zips115 = NA)
+
+
+
 ## Loop through and store zipcodes for a given district ----
 
-
+# pseudocode. studd in capital letters is not real code and should be coded up into proper functions
 for (d in all_CDs) {
   for (c in 109:115) {
    
     zips_in_d_at_c <- n109_115_byzip %>% 
-      filter(state == state(d) &  distnumC %in% distnum(d)) %>%
+      filter(state == STATEOF(d) &  distnumC %in% NUMBERIN(d)) %>%
       pull(zipcode)
      
-    store zips_ind_at_c INTO container[row d, column c] 
+    STORE zips_ind_at_c INTO container[ROW d, COLUMN c] 
   }
 }
 
