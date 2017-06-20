@@ -5,8 +5,10 @@ library(dplyr)
 library(haven)
 library(data.table)
 
+setwd("~/Dropbox/cces_cumulative") # set your directory to Dropbox/cces_cumulative
+
 ## code that associates FIPS codes with state names
-statecode <- read.csv("~/Dropbox/cces_rollcall/data/source/statecode.csv", as.is = T)
+statecode <- read.csv("data/source/statecode.csv", as.is = T)
 
 
 # REad in data -----------------
@@ -62,13 +64,18 @@ n109110_byzip <- left_join(n109_byzip, n110_byzip, by = c("zipcode", "state"))
 
 n113115_byzip <- left_join(n113_byzip, n115_byzip, by = c("zipcode", "state"))
 
-n109_115_byzip <- left_join(n109110_byzip, n113115_byzip, by = c("zipcode", "state"))
+n109_115_byzip <- left_join(n109110_byzip, n113115_byzip, by = c("zipcode", "state")) %>%
+  ungroup()
  
 colnames(n109_115_byzip) <- c("state", "zipcode", "distnum109", "distnum110", "distnum113", "distnum115")
 
 n109_115_byzip
 
-
+# add state name
+n109_115_byzip <- left_join(mutate(n109_115_byzip, state = as.integer(state)),
+                            dplyr::select(statecode, StateAbbr, fips),
+                            by = c("state" = "fips")) %>%
+  dplyr::select(StateAbbr, zipcode, contains("distnum"))
 
 
 ## Make a key of districts ------------
@@ -97,14 +104,38 @@ container <- tibble(CD = all_CDs,
 
 ## Loop through and store zipcodes for a given district ----
 
-# pseudocode. studd in capital letters is not real code and should be coded up into proper functions
+
+# pseudocode. stuff in capital letters is not real code and should be coded up into proper functions
+
+d <- "CA-24"
+state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)
+
+d <- "AL-04"
+state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)
+
+d <- 04
+distnum_of_d <- gsub(pattern = "-[A-Z]+", replacement = "",  x = d)
+
+d <- 24
+distnum_of_d <- gsub(pattern = "-[A-Z]+", replacement = "",  x = d)
+
+
+
 for (d in all_CDs) {
   for (c in 109:115) {
    
+    # what is the state of district d? extract from d
+    state_of_d  <- AL
+    
+    # what is the distnum of district d? extract from d?
+    distnum_of_d <- 01
+    
+    # pull out all the zipcodes associated with district d in congress c
     zips_in_d_at_c <- n109_115_byzip %>% 
-      filter(state == STATEOF(d) &  distnumC %in% NUMBERIN(d)) %>%
+      filter(StateAbbr == state_of_d &  109distnumC %in% distnum_of_d01) %>%
       pull(zipcode)
      
+    # store those districts -- put them in a container
     STORE zips_ind_at_c INTO container[ROW d, COLUMN c] 
   }
 }
