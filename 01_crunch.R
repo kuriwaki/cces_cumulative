@@ -55,6 +55,10 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
   nSubQuestions <- length(vm@body$subreferences)
   
   
+  # break up the grid here
+  
+  
+  # make this comprehensive
   tibble(id = id,
          alias = alias, 
          name = name, 
@@ -77,10 +81,10 @@ write_csv(qwording, "~/Dropbox/CCES_SDA/2016/Guide/fmt_metadata_cc16.csv")
 
 # Tabulations -----
 
+# move to separate script
 choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$type != "multiple_response")
 tabs.list <- list()
 
-# get xtable, then print
 
 writeToFile <- TRUE
 dir_to_print <- file.path(here(), "data/output/meta/tabs/")
@@ -116,6 +120,12 @@ for (i in choiceqs.rownum) {
     q.names <- name
   }
   
+  list(alias = q.aliases,
+       name = q.names,
+       wording = qwording$wording[i],
+    counts = var.arr,
+       level = choiceno.vec,
+       labels = choicenames.vec)
   
   
   # for each question

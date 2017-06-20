@@ -12,25 +12,27 @@ cq <- readRDS("data/output/meta/fmt_metadata_cc16.Rds") %>%
 
 sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>% 
   select(Name, Label) %>%
+  rename(stataName = Name) %>%
   mutate(sOrder = 1:n())
 
 # nathan and liz
 nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
 
 
-# Join  crunch and stata
-cs <- left_join(cq, sq, by = c("alias" = "Name"))
+# inner join from stata to nl to get order
+sq_ordered <- inner_join(sq, nl, by = c("Name" = "code16")) %>% 
+  arrange(rowID)
+
+sq_ordered
 
 
+# what are the stuff in sq that are not in crunch?
 
-# compare with 2014  ------
-nl_key <- select(nl, rowID, code14, code16)
+anti_join(sq_ordered, cq, by = c("Name" = "alias")) %>%
+   select(section14, Name, Label, sOrder, rowID, everything()) %>% 
+  filter(!grepl("Contextual", section14))
 
 
-# how much of code16 acutally matches to crunch?
-anti_join(nl_key, sq, by = c("code16" = "Name"))
-
-# anti_join(cq, nl_key, by = c("alias"  = "code16"))
 
 
 
