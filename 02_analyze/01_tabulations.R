@@ -1,81 +1,24 @@
-rm(list = ls())
-# Test crunch.io
-
-# devtools::install_github("Crunch-io/rcrunch", build_vignettes=TRUE)
-library(crunch)
-library(ggplot2)
-library(dplyr)
-library(foreach)
-library(readr)
-library(xtable)
 
 
 
-# Start up crunch -------
-login() # you need a login and password to complete this command
+# Read metadata ----
+cq <- readRDS("data/output/meta/fmt_metadata_cc16.Rds") %>%
+  mutate(aliasAbbrv = gsub("grid", "", alias))
+
+sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>% 
+  select(Name, Label) %>%
+  rename(stataName = Name) %>%
+  mutate(sOrder = 1:n())
+
+# nathan and liz
+nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
 
 
-# connect to data---------
-ds <- loadDataset("CCES 2016 Common")
+# inner join from stata to nl to get order
+sq_ordered <- inner_join(sq, nl, by = c("Name" = "code16")) %>% 
+  arrange(rowID)
 
-
-
-# metadata --------
-vars <- variables(ds)
-meta <- variableMetadata(ds)
-
-length(vars)
-length(meta)
-
-
-# take a peek
-vars[[1]]
-
-# one at a time
-str(meta[[30]])
-
-
-# get q wording -------
-qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
-  
-  vm <- meta[[i]]
-  
-  wording <- vm@body$description
-  
-  id <- vm@body$id
-  
-  alias <- vm@body$alias
-  
-  name <- vm@body$name
-  
-  type <- vm@body$type
-  
-  nChoices <- length(vm@body$categories)
-  
-  nSubQuestions <- length(vm@body$subreferences)
-  
-  
-  # break up the grid here
-  
-  
-  # make this comprehensive
-  tibble(id = id,
-         alias = alias, 
-         name = name, 
-         type = type,
-         nChoices = nChoices,
-         nSubQuestions = nSubQuestions,
-         wording = wording)
-}
-
-
-saveRDS(meta,  "data/output/meta/raw_metadata_cc16.Rds")
-saveRDS(qwording, "data/output/meta/fmt_metadata_cc16.Rds")
-write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
-write_csv(qwording, "~/Dropbox/CCES_SDA/2016/Guide/fmt_metadata_cc16.csv")
-
-
-
+sq_ordered
 
 
 
@@ -98,7 +41,7 @@ for (i in choiceqs.rownum) {
   # alias and name
   alias <- qwording$alias[i]
   name <- qwording$name[i]
-
+  
   # counts
   var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
   var.arr <- var.tab@arrays$.unweighted_counts
@@ -123,7 +66,7 @@ for (i in choiceqs.rownum) {
   list(alias = q.aliases,
        name = q.names,
        wording = qwording$wording[i],
-    counts = var.arr,
+       counts = var.arr,
        level = choiceno.vec,
        labels = choicenames.vec)
   
@@ -166,4 +109,3 @@ for (i in choiceqs.rownum) {
     }    
   }
 }
-
