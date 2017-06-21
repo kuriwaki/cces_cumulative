@@ -116,27 +116,78 @@ state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)
 d <- 04
 distnum_of_d <- gsub(pattern = "-[A-Z]+", replacement = "",  x = d)
 
-d <- 24
-distnum_of_d <- gsub(pattern = "-[A-Z]+", replacement = "",  x = d)
+d <- "CA-24"
+distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "",  x = d)
+
+d <- "AL-04"
+distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "", x = d)
 
 
+# in the target table, what is the column we care about? it depends on c
+column_to_search <- paste0("distnum", 109)
+
+
+zips_in_d_at_c <- n109_115_byzip %>% 
+  filter(StateAbbr == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
+  pull(zipcode)
+
+
+
+
+
+c <- 109
+col_name_in_container <- paste(c("zips", c) , collapse = "")
+
+d <- "AL-04"
+row_number_in_container <- which(d == container$CD)
+
+
+
+
+container[row_number_in_container,col_name_in_container] <- paste(zips_in_d_at_c, collapse = ",")
+
+
+##loop##
 
 for (d in all_CDs) {
   for (c in 109:115) {
+    
+    state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)  
+
+    distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "", x = d)
+    
+    zips_in_d_at_c <- n109_115_byzip %>% 
+      filter(StateAbbr == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
+      pull(zipcode)
+    
+    
+    
+    
+    
+   
+    col_name_in_container <- paste(c("zips", c) , collapse = "")
+    
+   
+    row_number_in_container <- which(d == container$CD)
+    
+    
+    
+    
+    container[row_number_in_container,col_name_in_container] <- paste(zips_in_d_at_c, collapse = ",")
    
     # what is the state of district d? extract from d
-    state_of_d  <- AL
+
     
     # what is the distnum of district d? extract from d?
-    distnum_of_d <- 01
+ 
+    
+
     
     # pull out all the zipcodes associated with district d in congress c
-    zips_in_d_at_c <- n109_115_byzip %>% 
-      filter(StateAbbr == state_of_d &  109distnumC %in% distnum_of_d01) %>%
-      pull(zipcode)
+  
      
     # store those districts -- put them in a container
-    STORE zips_ind_at_c INTO container[ROW d, COLUMN c] 
+ 
   }
 }
 
