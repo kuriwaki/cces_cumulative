@@ -28,17 +28,20 @@ length(vars)
 length(meta)
 
 
-# take a peek
-vars[[1]]
-
-# one at a time
-str(meta[[30]])
-
-
 # get q wording -------
-qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
+meta_objs <- list()
+
+for (i in 1:length(vars)) {
+  name <- vars[[i]]$name
+  vm <- meta[[name]]
+  meta_objs[[i]] <- vm
+}
+
+
+# collect meta data -------
+metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   
-  vm <- meta[[i]]
+  vm <- meta_objs[[i]]
   
   wording <- vm@body$description
   
@@ -48,34 +51,55 @@ qwording <- foreach(i = 1:length(meta), .combine = "bind_rows") %do% {
   
   name <- vm@body$name
   
+  
   type <- vm@body$type
+  
   
   nChoices <- length(vm@body$categories)
   
   nSubQuestions <- length(vm@body$subreferences)
   
+  # if a grid question more than zero. 1 means only one question
+  nQs <- ifelse(nSubQuestions == 0, 1, nSubQuestions)
   
-  # break up the grid here
+  # counts
+  var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
+  var.arr <- var.tab@arrays$.unweighted_counts
+  if (class(var.arr) == "array") var.arr <- matrix(var.arr, nrow = 1)
+
+  # choices
+  cat.obj <- vm@body$categories
+  choicenames.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
+  choiceno.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
+
+
+  # if a grid, get alias for each question
+  if (nQs > 1) {
+    subcat.obj <- vm@body$subreferences
+    q.aliases <- sapply(subcat.obj, "[", "alias") %>% unlist() %>% as.character()
+    q.names <- sapply(subcat.obj, "[", "name") %>% unlist() %>% as.character()
+  } else {
+    q.aliases <- alias
+    q.names <- name
+  }
   
   
-  # make this comprehensive
+  
+  if(i %% 50 == 0) cat(paste0(i, " out of ", length(meta_objs), " done ...\n"))
+  
+  # duplicate id for each grid row. store counts and choice labels as c
   tibble(id = id,
-         alias = alias, 
-         name = name, 
+         alias = q.aliases,
+         wording = wording,
+         name = q.names,
+         count = as.list(data.frame(t(var.arr))), # https://stackoverflow.com/a/6819883/5525412
+         level = rep(list(choiceno.vec), nrow(var.arr)),
+         labels = rep(list(choicenames.vec), nrow(var.arr)),
          type = type,
          nChoices = nChoices,
-         nSubQuestions = nSubQuestions,
-         wording = wording)
+         nSubQuestions = nSubQuestions)
 }
+metadata
 
 
-saveRDS(meta,  "data/output/meta/raw_metadata_cc16.Rds")
-saveRDS(qwording, "data/output/meta/fmt_metadata_cc16.Rds")
-write_csv(qwording, "data/output/meta/fmt_metadata_cc16.csv")
-write_csv(qwording, "~/Dropbox/CCES_SDA/2016/Guide/fmt_metadata_cc16.csv")
-
-
-
-
-
-
+saveRDS(metadata, "data/output/meta/fmt_metadata_cc16.Rds")

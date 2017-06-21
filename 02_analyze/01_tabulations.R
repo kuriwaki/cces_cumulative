@@ -35,41 +35,6 @@ dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
 
 for (i in choiceqs.rownum) {
   
-  # if a grid question more than zero. 1 means only one question
-  nQs <- ifelse(qwording$nSubQuestions[i] == 0, 1, qwording$nSubQuestions[i])
-  
-  # alias and name
-  alias <- qwording$alias[i]
-  name <- qwording$name[i]
-  
-  # counts
-  var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
-  var.arr <- var.tab@arrays$.unweighted_counts
-  if (class(var.arr) == "array") var.arr <- matrix(var.arr, nrow = 1)
-  
-  # choices
-  cat.obj <- meta[[name]]@body$categories
-  choicenames.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
-  choiceno.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
-  
-  
-  # if a grid, get alias for each question
-  if (nQs > 1) {
-    subcat.obj <- meta[[name]]@body$subreferences
-    q.aliases <- sapply(subcat.obj, "[", "alias") %>% unlist() %>% as.character()
-    q.names <- sapply(subcat.obj, "[", "name") %>% unlist() %>% as.character()
-  } else {
-    q.aliases <- alias
-    q.names <- name
-  }
-  
-  list(alias = q.aliases,
-       name = q.names,
-       wording = qwording$wording[i],
-       counts = var.arr,
-       level = choiceno.vec,
-       labels = choicenames.vec)
-  
   
   # for each question
   for (j in 1:nQs) {
