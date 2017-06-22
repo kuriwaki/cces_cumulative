@@ -14,17 +14,29 @@ rm(list = ls())
 library(DT)
 library(dplyr)
 library(readr)
+library(here)
+library(readxl)
 
 
 # read in question wordings
-q16 <- readRDS("data/output/meta/fmt_metadata_cc16_stata.Rds")
+cq_raw <- readRDS(here("data/output/fmt_metadata_ordered_cc16.Rds"))
+
+sq <- read_excel(here("data/output/meta/Labels_2016.xlsx")) %>% 
+  select(Name, Label) %>%
+  rename(stataName = Name,
+         stataLabel = Label) %>%
+  mutate(sOrder = 1:n())
+
+
 
 # for DT app
-q16.show <- q16 %>% 
-  select(alias, name, Label, wording) %>% 
+q16.show <- cq_raw %>% 
+  arrange(rowID) %>%
+  select(alias, name,  wording,labels) %>% 
   rename(`crunch name` = name,
-         `Stata label` = Label,
-         `Question wording` = wording)
+         `choices` = labels,
+         `Question wording` = wording) %>%
+  mutate(choices = choices)
 
 ```
 

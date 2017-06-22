@@ -29,9 +29,6 @@ cq <- inner_join(cq_raw, sq_ordered, by = c("alias" = "stataName"))
 
 
 
-
-
-
 writeToFile <- TRUE
 dir_to_print <- file.path(here(), "data/output/meta/tabs/")
 # dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
@@ -125,3 +122,7 @@ for (i in 1:length(texfiles)) {
 
 cat("\\end{document}")
 sink()
+
+
+# save for other scripts
+saveRDS(cq, "data/output/fmt_metadata_ordered_cc16.Rds")
