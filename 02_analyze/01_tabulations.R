@@ -1,9 +1,10 @@
-
+library(dplyr)
+library(haven)
+library(readxl)
 
 
 # Read metadata ----
-cq <- readRDS("data/output/meta/fmt_metadata_cc16.Rds") %>%
-  mutate(aliasAbbrv = gsub("grid", "", alias))
+cq_raw <- readRDS("data/output/meta/fmt_metadata_cc16.Rds")
 
 sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>% 
   select(Name, Label) %>%
@@ -15,62 +16,112 @@ nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
 
 
 # inner join from stata to nl to get order
-sq_ordered <- inner_join(sq, nl, by = c("Name" = "code16")) %>% 
+sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
+  select(stataName, rowID) %>%
   arrange(rowID)
-
 sq_ordered
 
 
+# Get order ----------
+# pick rows in crunch for which there exists a stataName -- exact match
+cq <- inner_join(cq_raw, sq_ordered, by = c("alias" = "stataName"))
 
-# Tabulations -----
 
-# move to separate script
-choiceqs.rownum <- which(qwording$nChoices != 0 & qwording$type != "multiple_response")
-tabs.list <- list()
+
+
+
 
 
 writeToFile <- TRUE
 dir_to_print <- file.path(here(), "data/output/meta/tabs/")
-dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
+# dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
 
-for (i in choiceqs.rownum) {
-  
-  
-  # for each question
-  for (j in 1:nQs) {
-    cat(paste("Question i = ", i, "; SubQ j = ", j, "\n"))
-    
+existing_files <- list.files(dir_to_print, full.names = TRUE)
+if (length(existing_files) > 0) {file.remove(existing_files)}
+
+
+# Tabulations -----
+
+rows_to_tab <- which(cq$type != "numeric" & cq$type != "text" & cq$type != "datetime")
+
+xtlist <- foreach(i = rows_to_tab) %do% {
+
     # the tabs
-    simp.tab <- tibble(`Unweighted N` = var.arr[j, ],
-                       `num` = choiceno.vec,
-                       `Choice Text` = choicenames.vec)
+    simp.tab <- tibble(`Unweighted N` = as.integer(unlist(cq$count[i])),
+                       `num` = unlist(cq$level[i]),
+                       `Choice Text` = unlist(cq$labels[i]))
     
     # the quesiton
     addtorow <- list()
-    addtorow$pos <- list(-1, -1)
+    addtorow$pos <- list(-1, 0)
     
-    qcodename <- paste0('\\textbf{', gsub("\\_", "\\\\_", q.aliases[j]), '} & & \\hfill ', gsub("\\_", "\\\\_", q.names[j]))
-    qwordtext <- paste0('\\multicolumn{3}{l}{', qwording$wording[i], '}')
+    qcodename <- paste0('\\textbf{', 
+                        gsub("\\_", "\\\\_", cq$alias[i]), 
+                        '} & & \\hfill ', 
+                        gsub("\\_", "\\\\_", cq$name[i]))
+      
+    qwordtext <- paste0('\\begin{minipage}{\\columnwidth}%\n',
+                        cq$wording[i], '%\n',
+                        '\\end{minipage}\\tabularnewline\n')
     
-    addtorow$command <- c(paste0(qcodename, "\\\\"),
+    addtorow$command <- c(paste0(qcodename, "\\\\\n"),
                           paste0(qwordtext, "\\\\"))
     
     
-    # format
-    simp.xtab <- xtable(simp.tab, display = c("d", "d", "d", "s"))
-    filename <- paste0(formatC(i, width = 3, format = "d", flag = "0"), "_",  q.aliases[j], ".tex")
-    tabs.list[[filename]] <- simp.xtab
+    filename <- paste0(formatC(cq$rowID[i], width = 3, format = "d", flag = "0"), 
+                       "_",  
+                       cq$alias[i], 
+                       ".tex")
     
-    
-    # write
-    if (writeToFile) {
-      print(simp.xtab, 
-            include.rownames = FALSE,
-            include.colnames = FALSE,
-            add.to.row =  addtorow,
-            timestamp = NULL,
-            floating = FALSE,
-            file = file.path(dir_to_print, filename))
-    }    
-  }
+    if(i %% 50 == 0) cat(paste0(i, " out of ", length(rows_to_tab), " done ...\n"))
+    list(filename = filename,
+         addtorow = addtorow,
+         xtab = xtable(simp.tab, 
+                       align = "lR{.125\\textwidth}p{.125\\textwidth}p{.7\\textwidth}",
+                       display = c("d", "d", "d", "s")))
 }
+
+stopifnot(writeToFile) 
+
+
+for (i in 1:length(xtlist)) {
+  print(xtlist[[i]]$xtab, 
+        include.rownames = FALSE,
+        include.colnames = FALSE,
+        add.to.row =  xtlist[[i]]$addtorow,
+        timestamp = NULL,
+        floating = FALSE,
+        file = file.path(dir_to_print, xtlist[[i]]$filename))
+  if(i %% 50 == 0) cat(paste0(i, " out of ", length(xtlist), " done ...\n"))
+}
+
+
+
+
+# gen latex ----
+# LaTeX code to have these input at once (but in order)?
+
+texfiles <- list.files(dir_to_print) # sorted
+
+sink("test_codebook/testcodebook.tex")
+cat(
+"\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
+\\usepackage{array}
+\\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
+\\usepackage[margin=1in]{geometry}
+\\begin{document}
+
+"
+)
+
+for (i in 1:length(texfiles)) {
+  cat(paste0("\\input{../data/output/meta/tabs/", texfiles[i], "}"))
+  cat(
+    "
+    \\vspace{1cm}
+
+    ")
+}
+
+cat("\\end{document}")
+sink()

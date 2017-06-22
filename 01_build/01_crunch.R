@@ -44,16 +44,19 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   vm <- meta_objs[[i]]
   
   wording <- vm@body$description
+  wording <- gsub("^\\$", "", wording) # sometimes wording starts with weird dollarsign
+  wording <- gsub("\\$", "\\\\$", wording) # for real $, escape
+  
   
   id <- vm@body$id
   
   alias <- vm@body$alias
   
   name <- vm@body$name
-  
+  name <- gsub("^\\$","", name) # same as wording
+  name <- gsub("\\$", "\\\\$", name) # for real $, escape
   
   type <- vm@body$type
-  
   
   nChoices <- length(vm@body$categories)
   
@@ -72,12 +75,41 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   choicenames.vec <- sapply(cat.obj, "[", "name") %>% unlist() %>% as.character()
   choiceno.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
 
+  
+  # "check all that apply" questions are not in grid-form, but count total yeses.
+  # so make that in some grid form again...
+  if (type == "multiple_response") {
+    missing <- var.arr[var.tab@dims[[1]]$missing]
+    totalnonmissing <- var.tab@.Data[[3]]$n - missing # apparently slot 3...
+    
+    # get the yeses
+    checks.ind <- !(var.tab@dims[[1]]$any.or.none | var.tab@dims[[1]]$missing)
+    checks <- var.arr[checks.ind]
+    
+    # get the nos
+    notchecked <- totalnonmissing - checks
+    
+    # how many more columns (extra questions) do we have to add?
+    # sub 2 for check and no check. then 1 for missing
+    extracols <- length(choiceno.vec) - 2 - 1 
+    zeros_mat <- matrix(0, nrow = length(checks), ncol = extracols)
+    
+    counts <- cbind(checks, notchecked, missing, zeros_mat)
+    
+    
+    var.arr <- counts
+  }
+  
 
   # if a grid, get alias for each question
   if (nQs > 1) {
-    subcat.obj <- vm@body$subreferences
+    subcat.obj <- var.tab@.Data[[3]]$dimensions[[1]]$references$subreferences
     q.aliases <- sapply(subcat.obj, "[", "alias") %>% unlist() %>% as.character()
     q.names <- sapply(subcat.obj, "[", "name") %>% unlist() %>% as.character()
+    q.names <- gsub("^\\$","", q.names) # same as wording
+    q.names <- gsub("\\$", "\\\\$", q.names) # for real $, escape
+    
+    
   } else {
     q.aliases <- alias
     q.names <- name
@@ -101,5 +133,6 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
 }
 metadata
 
+logout()
 
 saveRDS(metadata, "data/output/meta/fmt_metadata_cc16.Rds")
