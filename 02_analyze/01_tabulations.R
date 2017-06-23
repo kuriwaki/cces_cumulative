@@ -1,7 +1,8 @@
+rm(list = ls())
 library(dplyr)
 library(haven)
 library(readxl)
-
+library(here)
 
 # Read metadata ----
 cq_raw <- readRDS("data/output/meta/fmt_metadata_cc16.Rds")
@@ -17,7 +18,7 @@ nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
 
 # inner join from stata to nl to get order
 sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
-  select(stataName, rowID) %>%
+  select(stataName, rowID, section14) %>%
   arrange(rowID)
 sq_ordered
 
@@ -62,9 +63,9 @@ xtlist <- foreach(i = rows_to_tab) %do% {
                         '\\end{minipage}\\tabularnewline\n')
     
     addtorow$command <- c(paste0(qcodename, "\\\\\n"),
-                          paste0(qwordtext, "\\\\"))
+                          paste0(qwordtext, "\\\\\n"))
     
-    
+    # for the .tex file, number with the rowID
     filename <- paste0(formatC(cq$rowID[i], width = 3, format = "d", flag = "0"), 
                        "_",  
                        cq$alias[i], 
@@ -73,24 +74,32 @@ xtlist <- foreach(i = rows_to_tab) %do% {
     if(i %% 50 == 0) cat(paste0(i, " out of ", length(rows_to_tab), " done ...\n"))
     list(filename = filename,
          addtorow = addtorow,
+         section = cq$section14[i],
          xtab = xtable(simp.tab, 
                        align = "lR{.125\\textwidth}p{.125\\textwidth}p{.7\\textwidth}",
                        display = c("d", "d", "d", "s")))
 }
 
-stopifnot(writeToFile) 
 
+# print these xtables to file
+stopifnot(writeToFile) 
 
 for (i in 1:length(xtlist)) {
   print(xtlist[[i]]$xtab, 
         include.rownames = FALSE,
         include.colnames = FALSE,
         add.to.row =  xtlist[[i]]$addtorow,
+        hline.after = c(-1, nrow(xtlist[i]$xtable)),
         timestamp = NULL,
         floating = FALSE,
         file = file.path(dir_to_print, xtlist[[i]]$filename))
   if(i %% 50 == 0) cat(paste0(i, " out of ", length(xtlist), " done ...\n"))
 }
+
+
+# latex helpers
+tableToSection <- distinct(cq, rowID, section14) %>% 
+  arrange(rowID)
 
 
 
@@ -100,29 +109,46 @@ for (i in 1:length(xtlist)) {
 
 texfiles <- list.files(dir_to_print) # sorted
 
-sink("test_codebook/testcodebook.tex")
-cat(
-"\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
-\\usepackage{array}
-\\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
-\\usepackage[margin=1in]{geometry}
-\\begin{document}
 
-"
-)
-
+# list of tables
+sink("test_codebook/testcodebook_contents.tex")
 for (i in 1:length(texfiles)) {
+  
+  # figure out the section
+  rID <- as.numeric(gsub("^([0-9]+)_.*", "\\1", texfiles[[i]]))
+  section_i <- tableToSection %>% filter(rowID == rID) %>% pull(section14)
+  
+  
+  # add section divider if new section
+  if (i == 1) section_pre <- ""
+  if (!is.na(section_i) & !is.na(section_pre)) {
+    if (section_i != section_pre) {
+    cat(paste0("\\newpage\n\\section{", section_i, "}\n"))
+    }
+  }
+  
+  
+  # print your table
   cat(paste0("\\input{../data/output/meta/tabs/", texfiles[i], "}"))
-  cat(
-    "
-    \\vspace{1cm}
-
-    ")
+  cat("\n\\vspace{0.8cm}\n") # vertical space
+  section_pre <- section_i # store
 }
 
-cat("\\end{document}")
+
 sink()
 
 
+sink("test_codebook/testcodebook_wrapper.tex")
+cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
+\\usepackage{array}
+\\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
+\\usepackage[margin=1in]{geometry}
+\\begin{document}\n")
+cat("\\input{testcodebook_contents.tex}")
+cat("\\end{document}")
+sink()
+
 # save for other scripts
 saveRDS(cq, "data/output/fmt_metadata_ordered_cc16.Rds")
+
+
