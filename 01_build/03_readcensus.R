@@ -87,6 +87,7 @@ all_CDs <- bind_rows(national109, national110,
   left_join(statecode, by = c("state" = "fips")) %>%
   mutate(CD = paste0(StateAbbr, "-", distnum)) %>% 
   distinct(CD) %>%
+  arrange(CD) %>%
   pull(CD)
 
 
@@ -150,46 +151,114 @@ container[row_number_in_container,col_name_in_container] <- paste(zips_in_d_at_c
 ##loop##
 
 for (d in all_CDs) {
-  for (c in 109:115) {
+  for (c in c(109, 110, 113, 115)) {
     
     state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)  
 
     distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "", x = d)
     
+    # pull out the zips
     zips_in_d_at_c <- n109_115_byzip %>% 
       filter(StateAbbr == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
       pull(zipcode)
-    
-    
-    
-    
-    
+
    
+    # figure out which column to place our zip codes in
     col_name_in_container <- paste(c("zips", c) , collapse = "")
     
-   
+   # figure out which row corresponds to district d
     row_number_in_container <- which(d == container$CD)
     
-    
-    
-    
+  
     container[row_number_in_container,col_name_in_container] <- paste(zips_in_d_at_c, collapse = ",")
    
-    # what is the state of district d? extract from d
 
-    
-    # what is the distnum of district d? extract from d?
- 
-    
-
-    
-    # pull out all the zipcodes associated with district d in congress c
-  
-     
-    # store those districts -- put them in a container
- 
   }
+  
+  cat(paste0(d, "\n"))
 }
+
+library(dplyr)
+
+row_number_in_container <- which(d == container$CD)
+
+zips_of_d_109 <- as.character(container[row_number_in_container, "zips109"])
+zips_of_d_110 <- as.character(container[row_number_in_container, "zips110"])
+
+zips_of_d_109split <- str_split(zips_of_d_109, ",")[[1]]
+
+
+zips_of_d_110split <- str_split(zips_of_d_110, ",")[[1]]
+
+inzips_of_d_109_but_not_zips_of_d_110 <- setdiff(x = zips_of_d_109split, y = zips_of_d_110split)
+inzips_of_d_110_but_not_zips_of_d_109 <- setdiff(x = zips_of_d_110split, y = zips_of_d_109split)
+
+inAL06_109_and_inAL06_110 <- intersect(AL06_109split, AL06_110split)
+
+
+count_ofAL06_109 <- length(AL06_109split)
+count_ofAL06_110 <- length(AL06_110split)
+count_inAL06_109_but_not_AL06_110 <- length(inAL06_109_but_not_AL06_110)
+
+
+count_inAL06_110_but_not_AL06_109 <- length(inAL06_110_but_not_AL06_109)
+
+
+count_ofboth <- length(inAL06_109_and_inAL06_110)
+
+count_ofboth / count_ofAL06_109
+(count_inAL06_109_but_not_AL06_110 + count_inAL06_110_but_not_AL06_109) / count_ofAL06_109
+
+
+
+
+
+
+
+
+
+
+
+###example
+
+library(stringr)
+
+
+# we start with this
+zA <- "02138, 02139, 02140"
+zB <- "02138, 02139, 02141, 02142"
+
+# split up into a vector where each item is a zipcode -- opposite of paste(..., collapse = ",")
+zAsplit <- str_split(zA, ",")[[1]]
+zBsplit <- str_split(zB, ",")[[1]]
+
+
+# compare the two -- find that zips that are different
+inA_but_notB <- setdiff(x = zAsplit, y = zBsplit)
+inB_but_notA <- setdiff(x = zBsplit, y = zAsplit)
+
+# what about zips that are the same?
+inA_and_inB <- intersect(zAsplit, zBsplit)
+
+
+# count the number of zips that satisfy a certain condition
+count_ofA <- length(zAsplit)
+count_ofB <- length(zBsplit)
+count_inA_but_notB <- length(inA_but_notB)
+count_inB_but_notA <- length(inB_but_notA)
+count_ofboth <- length(inA_and_inB)
+
+
+# what are some ratios that would be useful?
+count_ofboth / count_ofA
+(count_inA_but_notB + count_inB_but_notA) / count_ofA
+
+###example
+
+container %>% pull(zips109)
+
+
+
 
 
 
