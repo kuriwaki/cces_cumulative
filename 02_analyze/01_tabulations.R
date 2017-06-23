@@ -138,13 +138,22 @@ for (i in 1:length(texfiles)) {
 sink()
 
 
+# the document
 sink("test_codebook/testcodebook_wrapper.tex")
 cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\usepackage{array}
 \\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
 \\usepackage[margin=1in]{geometry}
-\\begin{document}\n")
-cat("\\input{testcodebook_contents.tex}")
+\\begin{document}
+\\begin{center}
+\\Huge \\textsc{Guide to the 2016 Cooperative Congressional Election Survey}
+\\vskip1cm
+\\vfill
+\\end{center}
+\\normalsize
+\\newpage
+\\tableofcontents\n\n\n")
+cat("\\input{testcodebook_contents.tex}\n\n\n")
 cat("\\end{document}")
 sink()
 
