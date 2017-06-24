@@ -58,6 +58,11 @@ Thumbs.db
 # data
 ####################
 data/*
+pettigrew_code/*
+figures/*
+old_code/*
+
+
 
 # Other links
 ####################
