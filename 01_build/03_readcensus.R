@@ -3,6 +3,7 @@ rm(list = ls())
 library(readr)
 library(dplyr)
 library(haven)
+library(stringr)
 library(data.table)
 
 setwd("~/Dropbox/cces_cumulative") # set your directory to Dropbox/cces_cumulative
@@ -37,7 +38,6 @@ national115 <-read_delim("data/source/census/115/zcta_cd115_natl.txt" ,
            skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national115
-
 
 
 # sometimes zipcodes straddle districts! This will be a pain to account for by just merging, let's somehow manipulate the dataset so that each row is a unique zipcode.
@@ -175,38 +175,151 @@ for (d in all_CDs) {
 
   }
   
-  cat(paste0(d, "\n"))
+  #cat(paste0(d, "\n"))
 }
+
+#build new container
+containerz <- tibble(CD = all_CDs,
+                    zips_calculation109110 = NA,
+                    zips_calculation110111 = NA,
+                    zips_calculation111113 = NA,
+                    zips_calculation113115 = NA)
+
+
+
+
 
 library(dplyr)
 
-row_number_in_container <- which(d == container$CD)
 
-zips_of_d_109 <- as.character(container[row_number_in_container, "zips109"])
+for (d in all_CDs) {
+  for (c in c(109110, 110111, 111113, 113115)) {
+
+  row_number_in_container <- which(d == container$CD)
+  
+
+  #### notes
+  c_start <- grep("^.{1-3}n", v)
+  c_end <- grep("^.{4-6}n" , v = TRUE)
+  
+  paste(c(row_number_in_containerz, c_start))
+  paste(c(row_number_in_containerz, c_end))
+  
+  #### notes
+  
+  
+  
+  
+
+  zips_of_d_109 <- as.character(container[row_number_in_container, "zips109"])
+  zips_of_d_110 <- as.character(container[row_number_in_container, "zips110"])
+
+  zips_of_d_109split <- str_split(zips_of_d_109, ",")[[1]]
+
+
+  zips_of_d_110split <- str_split(zips_of_d_110, ",")[[1]]
+
+  inzips_of_d_109_but_not_zips_of_d_110 <- setdiff(x = zips_of_d_109split, y = zips_of_d_110split)
+
+  inzips_of_d_110_but_not_zips_of_d_109 <- setdiff(x = zips_of_d_110split, y = zips_of_d_109split)
+
+  inzips_of_d_109_and_inzips_of_d_110 <- intersect(zips_of_d_109split, zips_of_d_110split)
+
+
+  count_of_zips_of_d_109 <- length(zips_of_d_109split)
+  count_of_zips_of_d_110 <- length(zips_of_d_110split)
+  count_in_zips_of_d_109_but_not_zips_of_d_110 <- length(inzips_of_d_109_but_not_zips_of_d_110)
+
+
+  count_in_zips_of_d_110_but_not_zips_of_d_109 <- length(inzips_of_d_110_but_not_zips_of_d_109)
+
+
+  count_ofboth109110 <- length(inzips_of_d_109_and_inzips_of_d_110)
+
+  count_ofboth109110 / count_of_zips_of_d_109
+  col_name_in_containerz <- paste(c("zips_calculation", c) , collapse = "")
+  
+  # figure out which row corresponds to district d
+  row_number_in_containerz <- which(d == container$CD)
+  
+  containerz[row_number_in_containerz,col_name_in_containerz] <- paste(count_ofboth109110 / count_of_zips_of_d_109, collapse = ",")
+  
+  }
+}
+
+##test for 110113 to see is 100% changes after redistrcting in 2010
+library(dplyr)
+
+
+for (d in all_CDs) {
+  for (c in c(109, 110, 113, 115)) {
+    
+    row_number_in_container <- which(d == container$CD)
+
+
+
 zips_of_d_110 <- as.character(container[row_number_in_container, "zips110"])
-
-zips_of_d_109split <- str_split(zips_of_d_109, ",")[[1]]
-
+zips_of_d_113 <- as.character(container[row_number_in_container, "zips113"])
 
 zips_of_d_110split <- str_split(zips_of_d_110, ",")[[1]]
 
-inzips_of_d_109_but_not_zips_of_d_110 <- setdiff(x = zips_of_d_109split, y = zips_of_d_110split)
-inzips_of_d_110_but_not_zips_of_d_109 <- setdiff(x = zips_of_d_110split, y = zips_of_d_109split)
 
-inAL06_109_and_inAL06_110 <- intersect(AL06_109split, AL06_110split)
+zips_of_d_113split <- str_split(zips_of_d_113, ",")[[1]]
 
+inzips_of_d_110_but_not_zips_of_d_113 <- setdiff(x = zips_of_d_110split, y = zips_of_d_113split)
 
-count_ofAL06_109 <- length(AL06_109split)
-count_ofAL06_110 <- length(AL06_110split)
-count_inAL06_109_but_not_AL06_110 <- length(inAL06_109_but_not_AL06_110)
+inzips_of_d_113_but_not_zips_of_d_110 <- setdiff(x = zips_of_d_113split, y = zips_of_d_110split)
 
-
-count_inAL06_110_but_not_AL06_109 <- length(inAL06_110_but_not_AL06_109)
+inzips_of_d_110_and_inzips_of_d_113 <- intersect(zips_of_d_110split, zips_of_d_113split)
 
 
-count_ofboth <- length(inAL06_109_and_inAL06_110)
+count_of_zips_of_d_110 <- length(zips_of_d_110split)
+count_of_zips_of_d_113 <- length(zips_of_d_113split)
+count_in_zips_of_d_110_but_not_zips_of_d_113 <- length(inzips_of_d_110_but_not_zips_of_d_113)
 
-count_ofboth / count_ofAL06_109
+
+count_in_zips_of_d_113_but_not_zips_of_d_110 <- length(inzips_of_d_113_but_not_zips_of_d_110)
+
+
+count_ofboth110113 <- length(inzips_of_d_110_and_inzips_of_d_113)
+
+count_ofboth110113 / count_of_zips_of_d_110
+col_name_in_containerz <- paste(c("zips_calculation_110_113", c) , collapse = "")
+
+# figure out which row corresponds to district d
+row_number_in_containerz <- which(d == container$CD)
+
+containerz[row_number_in_containerz,col_name_in_containerz] <- paste(count_ofboth110113 / count_of_zips_of_d_110, collapse = ",")
+
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (count_inAL06_109_but_not_AL06_110 + count_inAL06_110_but_not_AL06_109) / count_ofAL06_109
 
 
