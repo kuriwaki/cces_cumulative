@@ -1,4 +1,4 @@
-# CCES cumulative
+# CCES cumulatives
 
 ------
 
@@ -13,8 +13,8 @@ Structure of the directory
 ------
 
 ## code
-- `01_build` stores code that is used to wrangle data and build datasets
-- `02_analyze` stores code to visualize and analyze data.
+- `build` stores code that is used to wrangle data and build datasets
+- `analyze` stores code to visualize and analyze data.
 - `old_code` for code that is out of use
 
 ## data

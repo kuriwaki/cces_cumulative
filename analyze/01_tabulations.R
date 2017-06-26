@@ -3,6 +3,14 @@ library(dplyr)
 library(haven)
 library(readxl)
 library(here)
+library(foreach)
+library(xtable)
+
+
+# Specify target directories ---
+dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
+dir_for_codebook <- file.path("~/Dropbox/CCES_SDA/2016/Guide/")
+writeToFile <- TRUE
 
 # Read metadata ----
 cq_raw <- readRDS("data/output/meta/fmt_metadata_cc16.Rds")
@@ -20,7 +28,6 @@ nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
 sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
   select(stataName, rowID, section14) %>%
   arrange(rowID)
-sq_ordered
 
 
 # Get order ----------
@@ -29,17 +36,12 @@ cq <- inner_join(cq_raw, sq_ordered, by = c("alias" = "stataName"))
 
 
 
-
-writeToFile <- TRUE
-dir_to_print <- file.path(here(), "data/output/meta/tabs/")
-# dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
-
+# delete exisitng ------
 existing_files <- list.files(dir_to_print, full.names = TRUE)
 if (length(existing_files) > 0) {file.remove(existing_files)}
 
 
-# Tabulations -----
-
+# Tabulations as xtab objects -----
 rows_to_tab <- which(cq$type != "numeric" & cq$type != "text" & cq$type != "datetime")
 
 xtlist <- foreach(i = rows_to_tab) %do% {
@@ -81,7 +83,7 @@ xtlist <- foreach(i = rows_to_tab) %do% {
 }
 
 
-# print these xtables to file
+# print these xtables to file -------
 stopifnot(writeToFile) 
 
 for (i in 1:length(xtlist)) {
@@ -111,7 +113,7 @@ texfiles <- list.files(dir_to_print) # sorted
 
 
 # list of tables
-sink("test_codebook/testcodebook_contents.tex")
+sink(file.path(dir_for_codebook, "2016codebook_contents.tex"))
 for (i in 1:length(texfiles)) {
   
   # figure out the section
@@ -129,7 +131,7 @@ for (i in 1:length(texfiles)) {
   
   
   # print your table
-  cat(paste0("\\input{../data/output/meta/tabs/", texfiles[i], "}"))
+  cat(paste0("\\input{Tabulations/", texfiles[i], "}"))
   cat("\n\\vspace{0.8cm}\n") # vertical space
   section_pre <- section_i # store
 }
@@ -138,8 +140,8 @@ for (i in 1:length(texfiles)) {
 sink()
 
 
-# the document
-sink("test_codebook/testcodebook_wrapper.tex")
+# the document ------
+sink(file.path(dir_for_codebook, "2016codebook_wrapper.tex"))
 cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\usepackage{array}
 \\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
@@ -153,11 +155,12 @@ cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\normalsize
 \\newpage
 \\tableofcontents\n\n\n")
-cat("\\input{testcodebook_contents.tex}\n\n\n")
+cat("\\input{2016codebook_contents.tex}\n\n\n")
 cat("\\end{document}")
 sink()
 
-# save for other scripts
+
+# save for other scripts ----
 saveRDS(cq, "data/output/fmt_metadata_ordered_cc16.Rds")
 
 
