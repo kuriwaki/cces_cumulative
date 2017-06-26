@@ -57,7 +57,9 @@ Thumbs.db
 
 # data
 ####################
-data/*
+data/source/cces/*
+data/source/dime/*
+data/output/*
 pettigrew_code/*
 figures/*
 old_code/*

@@ -1,0 +1,52 @@
+State,fips,StateAbbr,icpsr
+Alabama,1,AL,41
+Alaska,2,AK,81
+Arizona,4,AZ,61
+Arkansas,5,AR,42
+California,6,CA,71
+Colorado,8,CO,62
+Connecticut,9,CT,1
+Delaware,10,DE,11
+District of Columbia,11,DC,55
+Florida,12,FL,43
+Georgia,13,GA,44
+Hawaii,15,HI,82
+Idaho,16,ID,63
+Illinois,17,IL,21
+Indiana,18,IN,22
+Iowa,19,IA,31
+Kansas,20,KS,32
+Kentucky,21,KY,51
+Louisiana,22,LA,45
+Maine,23,ME,2
+Maryland,24,MD,52
+Massachusetts,25,MA,3
+Michigan,26,MI,23
+Minnesota,27,MN,33
+Mississippi,28,MS,46
+Missouri,29,MO,34
+Montana,30,MT,64
+Nebraska,31,NE,35
+Nevada,32,NV,65
+New Hampshire,33,NH,4
+New Jersey,34,NJ,12
+New Mexico,35,NM,66
+New York,36,NY,13
+North Carolina,37,NC,47
+North Dakota,38,ND,36
+Ohio,39,OH,24
+Oklahoma,40,OK,53
+Oregon,41,OR,72
+Pennsylvania,42,PA,14
+Rhode Island,44,RI,5
+South Carolina,45,SC,48
+South Dakota,46,SD,37
+Tennessee,47,TN,54
+Texas,48,TX,49
+Utah,49,UT,67
+Vermont,50,VT,6
+Virginia,51,VA,40
+Washington,53,WA,73
+West Virginia,54,WV,56
+Wisconsin,55,WI,25
+Wyoming,56,WY,68
