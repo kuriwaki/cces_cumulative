@@ -5,6 +5,7 @@ library(readxl)
 library(here)
 library(foreach)
 library(xtable)
+library(data.table)
 
 
 # Specify target directories ---
