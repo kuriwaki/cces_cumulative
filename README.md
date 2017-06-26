@@ -1,6 +1,6 @@
-# CCES cumulatives
+# CCES cumulative
 
-------
+
 
 Directory for building a CCES cumulative file collaboratively. Project page [here](https://github.com/kuriwaki/cces_cumulative/projects/1).
 
