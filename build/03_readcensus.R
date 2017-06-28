@@ -12,7 +12,7 @@ setwd("~/Dropbox/cces_cumulative") # set your directory to Dropbox/cces_cumulati
 statecode <- read.csv("data/source/statecode.csv", as.is = T)
 
 
-# REad in data -----------------
+# Read in data -----------------
 national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
            delim = "," ,
            skip = 2, col_names = c("state", "zipcode", "distnum"))
@@ -106,52 +106,16 @@ container <- tibble(CD = all_CDs,
 ## Loop through and store zipcodes for a given district ----
 
 
-# pseudocode. stuff in capital letters is not real code and should be coded up into proper functions
-
-d <- "CA-24"
-state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)
-
-d <- "AL-04"
-state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)
-
-d <- 04
-distnum_of_d <- gsub(pattern = "-[A-Z]+", replacement = "",  x = d)
-
-d <- "CA-24"
-distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "",  x = d)
-
-d <- "AL-04"
-distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "", x = d)
-
-
-# in the target table, what is the column we care about? it depends on c
-column_to_search <- paste0("distnum", 109)
-
-
-zips_in_d_at_c <- n109_115_byzip %>% 
-  filter(StateAbbr == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
-  pull(zipcode)
-
-
-
-
-
-c <- 109
-col_name_in_container <- paste(c("zips", c) , collapse = "")
-
-d <- "AL-04"
-row_number_in_container <- which(d == container$CD)
-
-
-
-
-container[row_number_in_container,col_name_in_container] <- paste(zips_in_d_at_c, collapse = ",")
 
 
 ##loop##
 
 for (d in all_CDs) {
   for (c in c(109, 110, 113, 115)) {
+    
+
+  
+    column_to_search <- paste(c("zips", some form of distnum that can dynamically pick c) , collapse = "")
     
     state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)  
 
@@ -235,7 +199,7 @@ for (d in all_CDs) {
 
   count_ofbothprepost <- length(inzips_of_d_pre_and_inzips_of_d_post)
 
-  count_ofbothprepost / count_of_zips_of_d_pre
+  (count_ofbothprepost / count_of_zips_of_d_pre) %>% cat(paste0(.,"\n"))
   col_name_in_containerz <- paste(c("zips_calculation", c) , collapse = "")
   
   # figure out which row corresponds to district d
