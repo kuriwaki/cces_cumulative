@@ -4,6 +4,8 @@ library(readr)
 library(dplyr)
 library(haven)
 library(stringr)
+library(ggplot2)
+library(scales)
 
 
 setwd("~/Dropbox/cces_cumulative") # set your directory to Dropbox/cces_cumulative
@@ -13,27 +15,27 @@ statecode <- read.csv("data/source/statecode.csv", as.is = T)
 
 
 # Read in data -----------------
-national109 <-read_delim("data/source/census/109/zcta_cd109_natl.txt" ,
+national109 <-read_delim("data/source/census_CDbyCongress/109/zcta_cd109_natl.txt" ,
            delim = "," ,
            skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national109
 
 
-national110 <-read_delim("data/source/census/110/zcta_cd110_natl.txt" , 
+national110 <-read_delim("data/source/census_CDbyCongress/110/zcta_cd110_natl.txt" , 
           delim = "," ,
           skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national110
 
 
-national113 <-read_delim("data/source/census/113/zcta_cd113_natl.txt" , 
+national113 <-read_delim("data/source/census_CDbyCongress/113/zcta_cd113_natl.txt" , 
             delim = "," ,
             skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national113
 
-national115 <-read_delim("data/source/census/115/zcta_cd115_natl.txt" , 
+national115 <-read_delim("data/source/census_CDbyCongress/115/zcta_cd115_natl.txt" , 
            delim = "," ,
            skip = 2, col_names = c("state", "zipcode", "distnum"))
 
@@ -113,9 +115,8 @@ container <- tibble(CD = all_CDs,
 for (d in all_CDs) {
   for (c in c(109, 110, 113, 115)) {
     
-
   
-    column_to_search <- paste(c("zips", some form of distnum that can dynamically pick c) , collapse = "")
+    column_to_search <- paste(c("distnum", c) , collapse = "")
     
     state_of_d <- gsub(pattern = "-[0-9]+", replacement = "",  x = d)  
 
@@ -199,7 +200,7 @@ for (d in all_CDs) {
 
   count_ofbothprepost <- length(inzips_of_d_pre_and_inzips_of_d_post)
 
-  (count_ofbothprepost / count_of_zips_of_d_pre) %>% cat(paste0(.,"\n"))
+  (count_ofbothprepost / count_of_zips_of_d_pre)
   col_name_in_containerz <- paste(c("zips_calculation", c) , collapse = "")
   
   # figure out which row corresponds to district d
@@ -214,81 +215,24 @@ for (d in all_CDs) {
 
 
 
+df_toplot <- containerz %>% 
+  melt(id.vars = "CD",
+       variable.name = "window",
+       value.name = "prop_zips_stay") %>%
+  mutate(state = gsub("-[0-9]+", "", CD),
+         prop_zips_stay = as.numeric(prop_zips_stay)) %>%
+  filter(!state %in% c("AK", "MT", "WY", "DE", "ND", "SD", "VT", "DC", "ME-null")) %>%
+  tbl_df()
+  
 
+temp_lineplot <-  ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = CD)) +
+  facet_wrap(~  state, ncol = 8) +
+  geom_line(alpha = 0.5) +
+  scale_x_discrete(labels = c("109 to 110", "110 to 113", "113 to 115")) +
+  scale_y_continuous(label = percent) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(y = "Proportion of Zips in Previous Congress \n that Stayed the Same in Subsequent Congress",
+       x = "Time Window (in Congresses)")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(count_inAL06_109_but_not_AL06_110 + count_inAL06_110_but_not_AL06_109) / count_ofAL06_109
-
-
-
-
-
-
-
-
-
-
-
-###example
-
-library(stringr)
-
-
-# we start with this
-zA <- "02138, 02139, 02140"
-zB <- "02138, 02139, 02141, 02142"
-
-# split up into a vector where each item is a zipcode -- opposite of paste(..., collapse = ",")
-zAsplit <- str_split(zA, ",")[[1]]
-zBsplit <- str_split(zB, ",")[[1]]
-
-
-# compare the two -- find that zips that are different
-inA_but_notB <- setdiff(x = zAsplit, y = zBsplit)
-inB_but_notA <- setdiff(x = zBsplit, y = zAsplit)
-
-# what about zips that are the same?
-inA_and_inB <- intersect(zAsplit, zBsplit)
-
-
-# count the number of zips that satisfy a certain condition
-count_ofA <- length(zAsplit)
-count_ofB <- length(zBsplit)
-count_inA_but_notB <- length(inA_but_notB)
-count_inB_but_notA <- length(inB_but_notA)
-count_ofboth <- length(inA_and_inB)
-
-
-# what are some ratios that would be useful?
-count_ofboth / count_ofA
-(count_inA_but_notB + count_inB_but_notA) / count_ofA
-
-###example
-
-container %>% pull(zips109)
-
-
-
-
-
-
-
+ggsave("figures/temp_lineplot.pdf", temp_lineplot, w = 12, h = 6)
