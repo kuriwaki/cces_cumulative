@@ -22,7 +22,7 @@ sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>%
   mutate(sOrder = 1:n())
 
 # nathan and liz
-nl <- read_csv("data/source/2016_guidebook_variables_orderedby2014.csv")
+nl <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv")
 
 
 # inner join from stata to nl to get order
@@ -79,7 +79,7 @@ xtlist <- foreach(i = rows_to_tab) %do% {
          addtorow = addtorow,
          section = cq$section14[i],
          xtab = xtable(simp.tab, 
-                       align = "lR{.125\\textwidth}p{.125\\textwidth}p{.7\\textwidth}",
+                       align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
                        display = c("d", "d", "d", "s")))
 }
 
@@ -91,6 +91,9 @@ for (i in 1:length(xtlist)) {
   print(xtlist[[i]]$xtab, 
         include.rownames = FALSE,
         include.colnames = FALSE,
+        tabular.environment = ifelse(xtlist[[i]]$filename == "004_inputstate.tex",
+                                     "longtable",
+                                     "tabular"),
         add.to.row =  xtlist[[i]]$addtorow,
         hline.after = c(-1, nrow(xtlist[i]$xtable)),
         timestamp = NULL,
@@ -147,6 +150,7 @@ cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\usepackage{array}
 \\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
 \\usepackage[margin=1in]{geometry}
+\\usepackage{longtable}
 \\begin{document}
 \\begin{center}
 \\Huge \\textsc{Guide to the 2016 Cooperative Congressional Election Survey}
@@ -163,5 +167,4 @@ sink()
 
 # save for other scripts ----
 saveRDS(cq, "data/output/fmt_metadata_ordered_cc16.Rds")
-
 
