@@ -39,13 +39,20 @@ findStack <- function(dflist = list(), var) {
   chr_var_name <- paste0(quo_name(var), "_char")
   num_var_name <- paste0(quo_name(var), "_num")
   
-  foreach(y = 1:length(dflist), .combine = "bind_rows") %do% {
-    cat(paste0("df ", y, ", "))
+  foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+    cat(paste0("df ", yr, ", "))
     
-    dplyr::select(dflist[[y]], year, caseID, !!var) %>%
-      mutate(!!chr_var_name := as.character(as_factor(!!var)),
-             !!num_var_name := as.numeric(!!var)) %>% 
-      dplyr::select(-!!var)
+    if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+      dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
+        mutate(!!chr_var_name := as.character(as_factor(!!var)),
+               !!num_var_name := as.numeric(!!var)) %>% 
+        dplyr::select(-!!var)  
+    } else {
+      dplyr::select(dflist[[yr]], year, caseID) %>%
+        mutate(!!chr_var_name := NA,
+               !!num_var_name := NA)
+    }
+    
   }
 }
 
@@ -64,7 +71,8 @@ stdName <- function(tbl){
                zipcode = zip_pre,
                countyFIPS = county_fips_pre,
                reg_true = reg_validation,
-               reg_self = registered_pre)
+               reg_self = registered_pre) %>%
+        mutate(prsvote = paste0(vote_pres_08, vote_pres_12))
       
     }
     
@@ -90,7 +98,8 @@ stdName <- function(tbl){
         rename(weight = commonweight,
                CC350 = CC16_360,
                cdid = cdid113,
-               approval_rep = CC16_320f)
+               approval_rep = CC16_320f,
+               prsvote = CC16_410a)
       
     }
     
@@ -152,9 +161,20 @@ race <- findStack(ccs, race)
 bryr <- findStack(ccs, birthyr)
 state <- findStack(ccs, state)
 
+prsvote <- findStack(ccs, prsvote)
+# houvote <-
+# senvote <-
+# govvote <- 
+# 
+#   
+# presapv
+# houapv <-
+# senapv <-
+# govapv <-
 
 
-
+  
+grep("vote", cc14)
 
 # bind together ----
 ccc <- left_join(pid3, pid7) %>% 
