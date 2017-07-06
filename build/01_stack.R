@@ -1,4 +1,4 @@
-rm(list = ls())
+# rm(list = ls())
 
 library(haven)
 library(dplyr)
@@ -33,27 +33,62 @@ std_dv <- function(path, guess_year = TRUE) {
 }
 
 # takes all datasets available, and given a var, pulls it out of each and stacks
-findStack <- function(dflist = list(), var) {
+findStack <- function(dflist = list(), var, type = "factor") {
   var <- enquo(var)
   
+  var_name <- quo_name(var)
   chr_var_name <- paste0(quo_name(var), "_char")
   num_var_name <- paste0(quo_name(var), "_num")
   
-  foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-    cat(paste0("df ", yr, ", "))
-    
-    if (quo_name(var) %in% colnames(dflist[[yr]]))  {
-      dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
-        mutate(!!chr_var_name := as.character(as_factor(!!var)),
-               !!num_var_name := as.numeric(!!var)) %>% 
-        dplyr::select(-!!var)  
-    } else {
-      dplyr::select(dflist[[yr]], year, caseID) %>%
-        mutate(!!chr_var_name := NA,
-               !!num_var_name := NA)
-    }
-    
+  if (type == "factor") {
+    list_yr <- 
+      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
+            mutate(!!chr_var_name := as.character(as_factor(!!var)),
+                   !!num_var_name := as.numeric(!!var)) %>% 
+            dplyr::select(-!!var)  
+        } else {
+          dplyr::select(dflist[[yr]], year, caseID) %>%
+            mutate(!!chr_var_name := NA,
+                   !!num_var_name := NA)
+        }
+      }
   }
+  
+  
+  
+  if (type == "character") {
+    list_yr <- 
+      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+        
+        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
+            mutate(!!var_name := as.character(as_factor(!!var)))
+        } else {
+          dplyr::select(dflist[[yr]], year, caseID) %>%
+            mutate(!!var_name := NA)
+        }
+      }
+  }
+  
+  if (type == "numeric") {
+    print(var_name)
+    list_yr <- 
+      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+        
+        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
+            mutate(!!var_name := as.integer(!!var))
+        } else {
+          dplyr::select(dflist[[yr]], year, caseID) %>%
+            mutate(!!var_name := NA)
+        }
+      }
+  }
+  
+  
+  return(list_yr)
 }
 
 
@@ -71,26 +106,30 @@ stdName <- function(tbl){
                zipcode = zip_pre,
                countyFIPS = county_fips_pre,
                reg_true = reg_validation,
-               reg_self = registered_pre) %>%
-        mutate(prsvote = paste0(vote_pres_08, vote_pres_12))
-      
+               reg_self = registered_pre)
     }
     
     
     if (identical(cces_year, 2013L)) {
       tbl <- tbl %>% mutate(fips = floor(as.numeric(countyfips)/1000),
                             cdid = as.numeric(cdid113)) %>% 
-        rename(approval_rep = CC13_313a) %>% 
+        rename(approval_rep = CC13_313a,
+               approval_sen1 = CC13_313b,
+               approval_sen2 = CC13_313c,
+               vote_pres_12 = CC13_315) %>% 
         left_join(statecode, by = "fips")
     }
     
     if (identical(cces_year, 2014L)) {
-      tbl <- rename(tbl, approval_rep = CC14_315a)
+      tbl <- rename(tbl, 
+                    approval_rep = CC14_315a,
+                    vote_pres_12 = CC14_317)
     }
     
     if (identical(cces_year, 2015L)) {
       tbl <- rename(tbl, CC350 = CC15_350) %>% 
-        rename(approval_rep = CC15_313a)
+        rename(approval_rep = CC15_313a,
+               vote_pres_12 = CC15_315)
     }
     
     if (identical(cces_year, 2016L)) {
@@ -98,8 +137,14 @@ stdName <- function(tbl){
         rename(weight = commonweight,
                CC350 = CC16_360,
                cdid = cdid113,
+               approval_pres = CC16_320a,
                approval_rep = CC16_320f,
-               prsvote = CC16_410a)
+               approval_sen1 = CC16_320g,
+               approval_sen2 = CC16_320h,
+               approval_gov = CC16_320d,
+               vote_pres_12 = CC16_326,
+               vote_pres_16 = CC16_410a,
+               vote_rep = CC16_367)
       
     }
     
@@ -158,35 +203,51 @@ pid7 <- findStack(ccs, pid7)
 gend <- findStack(ccs, gender)
 educ <- findStack(ccs, educ)
 race <- findStack(ccs, race)
-bryr <- findStack(ccs, birthyr)
-state <- findStack(ccs, state)
+bryr <- findStack(ccs, birthyr, "numeric")
+state <- findStack(ccs, state, "character")
+cdid <- findStack(ccs, cdid, "numeric")
 
-prsvote <- findStack(ccs, prsvote)
+pres08 <- findStack(ccs, vote_pres_08)
+pres12 <- findStack(ccs, vote_pres_12)
+pres16 <- findStack(ccs, vote_pres_16)
 # houvote <-
 # senvote <-
 # govvote <- 
 # 
 #   
 # presapv
-# houapv <-
+houapv <- findStack(ccs, approval_rep)
 # senapv <-
 # govapv <-
 
+# format state and CD ----
+stcd <- left_join(state, cdid) %>% 
+  left_join(select(statecode, State, StateAbbr), by = c("state" = "State")) %>% 
+  rename(st = StateAbbr) %>% 
+  mutate(CD = paste0(st, "-", cdid)) %>% 
+  select(year, caseID, state, st, cdid, CD)
 
-  
-grep("vote", cc14)
 
 # bind together ----
-ccc <- left_join(pid3, pid7) %>% 
+ccc <- stcd %>%
+  left_join(pid3) %>%
+  left_join(pid7) %>% 
   left_join(gend) %>%
   left_join(bryr) %>%
   left_join(race) %>%
-  left_join(educ)
-  
+  left_join(educ) %>% 
+  left_join(houapv) %>% 
+  left_join(pres08) %>%
+  left_join(pres12) %>%
+  left_join(pres16)
 
 
 
-# Write dta 
-write_dta(ccc, "data/output/cumulative_2006_2012.dta")
-write_csv(ccc, "data/output/cumulative_2006_2012.csv")
-saveRDS(ccc, "data/output/cumulative_2006_2012.Rds")
+stopifnot(nrow(ccc) == nrow(pid3))
+
+
+# Write dta -----
+
+write_dta(ccc, "data/output/cumulative_2006_2016.dta")
+write_csv(ccc, "data/output/cumulative_2006_2016.csv")
+saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
