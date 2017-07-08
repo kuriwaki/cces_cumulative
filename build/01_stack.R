@@ -1,33 +1,10 @@
-# rm(list = ls())
+rm(list = ls())
 
 library(haven)
 library(dplyr)
 library(readr)
 library(foreach)
-
-
-# READ ------
-
-# 2012 and before (compiled by Stephen Pettigrew and others)
-ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", 
-              guess_year = FALSE)
-
-
-pid10_raw <- read_dta("data/source/cces/cc10_pid.dta") 
-pid10 <- pid10_raw %>% 
-  mutate(pid3 = CC421a,
-         caseID = V100) %>%
-  mutate(year = 2010,
-         pid3_char = as.character(as_factor(pid3)),
-         pid3_num = as.numeric(pid3)) %>% 
-  select(year, caseID, pid3_char, pid3_num)
-
-
-# take the needed columns for 2013- 2016
-cc13 <- std_dv("data/source/cces/2013_cc.dta")
-cc14 <- std_dv("data/source/cces/2014_cc.dta")
-cc15 <- std_dv("data/source/cces/2015_cc.dta")
-cc16 <- std_dv("data/source/cces/2016_cc.dta")
+library(data.table)
 
 
 # helper data -- 
@@ -119,6 +96,8 @@ findStack <- function(dflist = list(), var, type = "factor") {
 }
 
 
+  
+
 # more name standardization
 stdName <- function(tbl){
   
@@ -139,7 +118,6 @@ stdName <- function(tbl){
              voted_rep = vote_house, 
              voted_sen = vote_sen,
              voted_gov = vote_gov,
-             # intent_trn = vote_intent_general,
              intent_pres_08 = vote_intent_pres_08,
              intent_pres_12 = vote_intent_pres_12,
              intent_rep = vote_intent_house,
@@ -195,7 +173,6 @@ stdName <- function(tbl){
              approval_sen1 = CC16_320g,
              approval_sen2 = CC16_320h,
              approval_gov = CC16_320d,
-             voted_pres_12 = CC16_326,
              intent_trn = CC16_364,
              intent_pres_16 = CC16_364c,
              intent_pres_16x = CC16_364b,
@@ -204,11 +181,13 @@ stdName <- function(tbl){
              intent_sen = CC16_365,
              intent_senx = CC16_365x,
              intent_gov = CC16_366,
-             intent_govx = CC16_366x
-             # voted_rep = ,
-             # voted_sen = ,
-             # voted_gov = ,
-             # voted_pres_16 = ,
+             intent_govx = CC16_366x,
+             voted_trn = CC16_401,
+             voted_pres_12 = CC16_326,
+             voted_pres_16 = CC16_410a,
+             voted_rep = CC16_412,
+             voted_sen = CC16_410b,
+             voted_gov = CC16_411,
       ) 
     
   }
@@ -233,6 +212,62 @@ stdName <- function(tbl){
   return(tbl)
 }
 
+
+
+
+# READ ------
+
+# 2012 and before (compiled by Stephen Pettigrew and others)
+ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", 
+              guess_year = FALSE)
+
+
+pid10_raw <- read_dta("data/source/cces/cc10_pid.dta") 
+pid10 <- pid10_raw %>% 
+  mutate(pid3 = CC421a,
+         caseID = V100) %>%
+  mutate(year = 2010,
+         pid3_char = as.character(as_factor(pid3)),
+         pid3_num = as.numeric(pid3)) %>% 
+  select(year, caseID, pid3_char, pid3_num)
+
+
+# take the needed columns for 2013- 2016
+cc13 <- std_dv("data/source/cces/2013_cc.dta")
+cc14 <- std_dv("data/source/cces/2014_cc.dta")
+cc15 <- std_dv("data/source/cces/2015_cc.dta")
+cc16 <- std_dv("data/source/cces/2016_cc.dta")
+
+
+
+# mutations to data -----
+cc16 %>% 
+  select(year, matches("turnout_[0-9]")) %>% 
+  mutate(turnout_08 = case_when(!(year %in% 2008:2009) ~ NaN,
+                                TRUE ~ turnout_08)) %>%
+  sample_n(10) %>% arrange(year)
+
+
+
+# key to label
+
+measure_regex <- paste0("^HouseCand[0-9+]", c("Name$", "Party$"))
+
+cand_key <- melt(as.data.table(cc16), 
+               id.vars = "caseID",
+               measure.vars = patterns(measure_regex),
+               variable.name = "number",
+               value.name = c("cand", "party"),
+               variable.factor = FALSE) %>%
+  subset(cand != "") %>%
+  tbl_df()
+  
+# do this for each year and of the three offices 
+
+# extract the choice number from the responses
+# then left join to vote variable to get the name and party
+
+
 # Start extracting variables -----
 # in list form
 ccs <- list(stdName(ccp), 
@@ -242,7 +277,8 @@ ccs <- list(stdName(ccp),
             stdName(cc16))
 
 
-# first same name vars -----
+
+# extract variable by variable -----
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
   bind_rows(pid10)
@@ -313,9 +349,8 @@ ccc <- stcd %>%
 
 stopifnot(nrow(ccc) == nrow(pid3))
 
+View(sample_n(ccc, 30) %>% arrange(year))
 
 # Write dta -----
 
-write_dta(ccc, "data/output/cumulative_2006_2016.dta")
-write_csv(ccc, "data/output/cumulative_2006_2016.csv")
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
