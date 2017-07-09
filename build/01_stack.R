@@ -48,7 +48,7 @@ findStack <- function(dflist = list(), var, type = "factor") {
   if (type == "factor") {
     list_yr <- 
       foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+        if (var_name %in% colnames(dflist[[yr]]))  {
           dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
             mutate(!!chr_var_name := as.character(as_factor(!!var)),
                    !!num_var_name := as.numeric(!!var)) %>% 
@@ -67,7 +67,7 @@ findStack <- function(dflist = list(), var, type = "factor") {
     list_yr <- 
       foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
         
-        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+        if (var_name %in% colnames(dflist[[yr]]))  {
           dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
             mutate(!!var_name := as.character(as_factor(!!var)))
         } else {
@@ -81,7 +81,7 @@ findStack <- function(dflist = list(), var, type = "factor") {
     list_yr <- 
       foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
         
-        if (quo_name(var) %in% colnames(dflist[[yr]]))  {
+        if (var_name %in% colnames(dflist[[yr]]))  {
           dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
             mutate(!!var_name := as.integer(!!var))
         } else {
@@ -187,7 +187,7 @@ stdName <- function(tbl){
              voted_pres_16 = CC16_410a,
              voted_rep = CC16_412,
              voted_sen = CC16_410b,
-             voted_gov = CC16_411,
+             voted_gov = CC16_411
       ) 
     
   }
@@ -212,7 +212,28 @@ stdName <- function(tbl){
   return(tbl)
 }
 
+# replicate the filler value each respondent chose 
+showCand  <- function(stacked, var) {
+  var <- enquo(var)
+  var_name <- quo_name(var)
+  
+  if (grepl("rep", var_name)) race <- "House"
+  if (grepl("sen", var_name)) race <- "Sen"
+  if (grepl("gov", var_name)) race <- "Gov"
+  
+  stacked %>% 
+    mutate(number = gsub(".*Cand([0-9]+)Name.*", "\\1", !!var)) %>% 
+    left_join(cand_key[[race]]) %>% 
+    mutate(!!var_name := paste0(cand, " (", party, ")")) %>%
+    select(-number, -cand, -party)
+}
 
+# separate out those that need `showCand`, then bidn
+sep_bind <- function(tbl, var) {
+  var <- enquo(var)
+  filter(tbl, !grepl("Cand", !!var)) %>% 
+    bind_rows(showCand(filter(tbl, grepl("Cand", !!var)), var))
+}
 
 
 # READ ------
@@ -241,26 +262,45 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 
 
 # mutations to data -----
-cc16 %>% 
-  select(year, matches("turnout_[0-9]")) %>% 
-  mutate(turnout_08 = case_when(!(year %in% 2008:2009) ~ NaN,
-                                TRUE ~ turnout_08)) %>%
-  sample_n(10) %>% arrange(year)
 
 
 
-# key to label
 
-measure_regex <- paste0("^HouseCand[0-9+]", c("Name$", "Party$"))
 
-cand_key <- melt(as.data.table(cc16), 
-               id.vars = "caseID",
-               measure.vars = patterns(measure_regex),
-               variable.name = "number",
-               value.name = c("cand", "party"),
-               variable.factor = FALSE) %>%
-  subset(cand != "") %>%
-  tbl_df()
+# key to label ----
+# cand info for 2013 - 2016
+
+cand_regex <- c(paste0(paste0("^", races, "Cand[0-9+]"), "Name$"),
+                paste0(paste0("^", races, "Cand[0-9+]"), "Party$"))
+
+# function to melt assigned options
+melt_year_reg <- function(tbl, measure_regex) {
+  melt(as.data.table(tbl), 
+       id.vars = c("year", "caseID"),
+       measure.vars = patterns(measure_regex),
+       variable.name = "number",
+       value.name = c("cand", "party"),
+       variable.factor = FALSE) %>%
+    subset(cand != "") %>%
+    tbl_df() 
+}
+
+# employ melt_year_reg to 14 and 16
+cand_key <- foreach(r = races, .combine = "c") %do% {
+  measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
+  print(measure_regex)
+  key <- list()
+  
+  year_2014 <- melt_year_reg(cc14, measure_regex)
+  year_2016 <- melt_year_reg(cc16, measure_regex)
+  
+
+  key[[r]] <- bind_rows(year_2014, year_2016)
+  key
+} 
+
+
+
   
 # do this for each year and of the three offices 
 
@@ -278,7 +318,7 @@ ccs <- list(stdName(ccp),
 
 
 
-# extract variable by variable -----
+# extract variable by variable iniitial version -----
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
   bind_rows(pid10)
@@ -293,6 +333,8 @@ cdid <- findStack(ccs, cdid, "numeric")
 i_pres08 <- findStack(ccs, intent_pres_08)
 i_pres12 <- findStack(ccs, intent_pres_12)
 i_pres16 <- findStack(ccs, intent_pres_16)
+
+
 i_rep <- findStack(ccs, intent_rep)
 i_sen <- findStack(ccs, intent_sen)
 i_gov <- findStack(ccs, intent_gov)
@@ -303,13 +345,23 @@ v_pres16 <- findStack(ccs, voted_pres_16)
 v_rep <- findStack(ccs, voted_rep)
 v_sen <- findStack(ccs, voted_sen)
 v_gov <- findStack(ccs, voted_gov)
-# 
-#   
-# presapv
+
+
 apvrep <- findStack(ccs, approval_rep)
 apvsen1 <- findStack(ccs, approval_sen1)
 apvsen2 <- findStack(ccs, approval_sen2)
 apvgov <- findStack(ccs, approval_gov)
+
+
+# mutate vote variables that are HouseCand fillers
+foo <- sep_bind(i_rep, intent_rep_char)
+
+i_sen <- filter(i_rep, !grepl("Cand", intent_rep_char)) %>% 
+  bind_rows(showCand(filter(i_rep, grepl("Cand", intent_rep_char)), intent_rep_char))
+i_gov <- filter(i_gov, !grepl("Cand", intent_rep_char)) %>% 
+  bind_rows(showCand(filter(i_rep, grepl("Cand", intent_rep_char)), intent_rep_char))
+
+
 
 # format state and CD ----
 stcd <- left_join(state, cdid) %>% 
