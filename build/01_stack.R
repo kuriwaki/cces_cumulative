@@ -231,9 +231,14 @@ showCand  <- function(stacked, var) {
 # separate out those that need `showCand`, then bidn
 sep_bind <- function(tbl, var) {
   var <- enquo(var)
-  filter(tbl, !grepl("Cand", !!var)) %>% 
-    bind_rows(showCand(filter(tbl, grepl("Cand", !!var)), var))
+  
+  changed <- showCand(filter(tbl, grepl("Cand", !!var)), !!var)
+  unchanged <- filter(tbl, !grepl("Cand", !!var))
+  
+  bind_rows(changed, unchanged) %>%
+    arrange(year, caseID)
 }
+
 
 
 # READ ------
@@ -270,6 +275,7 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 # key to label ----
 # cand info for 2013 - 2016
 
+races <- c("House", "Sen", "Gov")
 cand_regex <- c(paste0(paste0("^", races, "Cand[0-9+]"), "Name$"),
                 paste0(paste0("^", races, "Cand[0-9+]"), "Party$"))
 
@@ -342,6 +348,7 @@ i_gov <- findStack(ccs, intent_gov)
 v_pres08 <- findStack(ccs, voted_pres_08)
 v_pres12 <- findStack(ccs, voted_pres_12)
 v_pres16 <- findStack(ccs, voted_pres_16)
+
 v_rep <- findStack(ccs, voted_rep)
 v_sen <- findStack(ccs, voted_sen)
 v_gov <- findStack(ccs, voted_gov)
@@ -354,12 +361,13 @@ apvgov <- findStack(ccs, approval_gov)
 
 
 # mutate vote variables that are HouseCand fillers
-foo <- sep_bind(i_rep, intent_rep_char)
+i_rep <- sep_bind(i_rep, intent_rep_char)
+i_sen <- sep_bind(i_sen, intent_sen_char)
+i_gov <- sep_bind(i_gov, intent_gov_char)
 
-i_sen <- filter(i_rep, !grepl("Cand", intent_rep_char)) %>% 
-  bind_rows(showCand(filter(i_rep, grepl("Cand", intent_rep_char)), intent_rep_char))
-i_gov <- filter(i_gov, !grepl("Cand", intent_rep_char)) %>% 
-  bind_rows(showCand(filter(i_rep, grepl("Cand", intent_rep_char)), intent_rep_char))
+v_rep <- sep_bind(v_rep, voted_rep_char)
+v_sen <- sep_bind(v_sen, voted_sen_char)
+v_gov <- sep_bind(v_gov, voted_gov_char)
 
 
 
@@ -395,8 +403,6 @@ ccc <- stcd %>%
   left_join(v_rep) %>% 
   left_join(v_sen) %>% 
   left_join(v_gov)
-
-
 
 
 stopifnot(nrow(ccc) == nrow(pid3))
