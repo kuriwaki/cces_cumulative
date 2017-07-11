@@ -212,9 +212,11 @@ for (d in all_CDs) {
 }
 
 
+# write to table
+write_excel_csv(containerz, "data/output/changes_in_CD_composition.csv", na = "")
 
 
-
+# visualize
 df_toplot <- containerz %>% 
   melt(id.vars = "CD",
        variable.name = "window",
@@ -236,3 +238,6 @@ temp_lineplot <-  ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = 
        x = "Time Window (in Congresses)")
 
 ggsave("figures/temp_lineplot.pdf", temp_lineplot, w = 12, h = 6)
+
+
+
