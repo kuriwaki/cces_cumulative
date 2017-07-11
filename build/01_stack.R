@@ -24,6 +24,7 @@ std_dv <- function(path, guess_year = TRUE) {
   ## guess ID
   if ("caseid" %in% colnames(tbl)) orig_key <- "caseid"
   if ("V101" %in% colnames(tbl)) orig_key <- "V101"
+  if ("V100" %in% colnames(tbl)) orig_key <- "V100"
   
   
   # add year
@@ -115,7 +116,7 @@ stdName <- function(tbl){
   cces_year <- as.integer(unique(tbl$year))
   
   
-  if (identical(cces_year, 2006:2012)) {
+  if (identical(cces_year, 2006:2011)) {
     tbl <- tbl %>% 
       rename(state = state_pre,
              cdid = congdist_pre,
@@ -135,7 +136,24 @@ stdName <- function(tbl){
              intent_gov = vote_intent_gov)
   }
   
-  
+  if (identical(cces_year, 2012L)) {
+    tbl <- rename(tbl, 
+                  weight = V103,
+                  approval_rep = CC315a,
+                  approval_sen1 = CC315b,
+                  approval_sen2 = CC315c,
+                  approval_gov = CC308d,
+                  vote_rep = CC412,
+                  voted_pres_12 = CC410a,
+                  voted_sen = CC410b,
+                  intent_sen = CC355b,
+                  intent_senx = CC355,
+                  intent_gov = CC356b,
+                  intent_govx = CC356,
+                  intent_rep = CC390b,
+                  intent_repx = CC390)
+  }
+
   if (identical(cces_year, 2013L)) {
     tbl <- tbl %>% mutate(fips = floor(as.numeric(countyfips)/1000),
                           cdid = as.numeric(cdid113)) %>% 
@@ -154,8 +172,9 @@ stdName <- function(tbl){
                   approval_sen1 = CC14_315b,
                   # approval_sen2 = CC14_315c,
                   approval_gov = CC14_308d,
-                  vote_rep = CC412,
+                  voted_rep = CC412,
                   voted_pres_12 = CC14_317,
+                  voted_sen = CC410b,
                   intent_sen = CC355,
                   intent_senx = CC355x,
                   intent_gov = CC356,
@@ -204,7 +223,7 @@ stdName <- function(tbl){
   
   
   # more standardization for post 2012
-  if (cces_year[1] %in% 2013:2016) {
+  if (cces_year[1] %in% 2012:2016) {
     tbl <- tbl %>% 
       rename(state = inputstate, 
              reg_self = votereg,
@@ -276,6 +295,11 @@ cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 
 
+# old versions from 2008, 2010, and 2012 (for vote variables)?
+cc08 <- std_dv("data/source/cces/2008_cc.dta")
+cc10 <- std_dv("data/source/cces/2010_cc.dta")
+cc12 <- std_dv("data/source/cces/2012_cc.dta")
+
 
 # mutations to data -----
 
@@ -307,11 +331,12 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
   measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
   key <- list()
   
+  year_2012 <- melt_year_reg(cc12, measure_regex)
   year_2014 <- melt_year_reg(cc14, measure_regex)
   year_2016 <- melt_year_reg(cc16, measure_regex)
   
 
-  key[[r]] <- bind_rows(year_2014, year_2016)
+  key[[r]] <- bind_rows(year_2012, year_2014, year_2016)
   key
 } 
 
@@ -326,7 +351,8 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
 
 # Start extracting variables -----
 # in list form
-ccs <- list(stdName(ccp), 
+ccs <- list(stdName(filter(ccp, year != 2012)), 
+            stdName(cc12), 
             stdName(cc13), 
             stdName(cc14), 
             stdName(cc15), 
