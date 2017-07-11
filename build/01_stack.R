@@ -323,8 +323,6 @@ cc12 <- std_dv("data/source/cces/2012_cc.dta")
 
 
 
-
-
 # key to label ----
 # cand info for 2013 - 2016
 
@@ -474,10 +472,38 @@ stopifnot(nrow(ccc) == nrow(pid3))
 
 View(sample_n(ccc, 30) %>% arrange(year))
 
-# Write dta -----
+
+# Common manipulations
+size_year <- ccc %>% 
+  group_by(year) %>% 
+  summarize(size = n()) %>% 
+  mutate(size_factor = size / median(size)) # manageable constant -- divide by median
+
+ccc <-  ccc  %>%
+  left_join(select(size_year, year, size_factor)) %>% 
+  mutate(weight_cumulative = weight / size_factor) %>% 
+  select(-size_factor) %>%
+  select(year, caseID, weight, weight_cumulative, everything())
+
+
+
+
+# Format for output 
+# make char variables a factor so crunch knows it's a categorical?
+ccc_factor <- ccc %>% 
+  mutate_at(vars(matches("_char")), as_factor) %>%
+  mutate_at(vars(matches("^CD$")), as_factor) %>%
+  mutate_at(vars(matches("(state|st)")), as_factor)
+
+
+
+
+
+
+# Write -----
 
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
-write_sav(ccc, "data/output/cumulative_2006_2016.sav")
+write_sav(ccc_factor, "data/output/cumulative_2006_2016.sav")
 
 set.seed(02138)
-write_sav(sample_frac(ccc, 0.3), "data/output/cumulative_2006_2016_small.sav")
+write_sav(sample_frac(ccc_factor, 0.70), "data/output/cumulative_2006_2016_small.sav")
