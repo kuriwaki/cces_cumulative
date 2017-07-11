@@ -8,7 +8,8 @@ library(data.table)
 
 
 # helper data -- 
-statecode <- read_csv("~/Dropbox/cces_rollcall/data/source/statecode.csv")
+statecode <- read_csv("~/Dropbox/cces_rollcall/data/source/statecode.csv",
+                      col_types = cols())
 
 
 # functions ----- 
@@ -65,7 +66,7 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name,
 
 
 # takes all datasets available, and given a var, pulls it out of each and stacks
-findStack <- function(dflist = list(), var, type = "factor") {
+findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE) {
   
   var <- enquo(var)
   var_name <- quo_name(var)
@@ -97,12 +98,27 @@ findStack <- function(dflist = list(), var, type = "factor") {
     if (type == "character") {
       list_yr <- mutate(list_yr, !!var_name := as.character(as_factor(!!var)))
     }
-    
     list_yr <-  list_yr %>% 
       mutate(!!var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
   
-
+  # coerce to labelled?
+  if (type == "factor" & makeLabelled) {
+    
+    # change consistent vars in to a labelled factor
+    # make numbered vector
+    key_arr <- select(list_yr, -year, -caseID) %>% distinct() %>% 
+      filter(!is.na(.data[[num_var_name]]))
+    
+    nvec <- key_arr %>% select(matches("num")) %>%  pull()
+    names(nvec) <- key_arr %>% select(matches("char")) %>% pull()
+    
+    print(nvec)
+    
+    list_yr <- list_yr %>% 
+      mutate(!!var_name := labelled_spss(.data[[num_var_name]], nvec)) %>%
+      select(year, caseID, !!var_name)
+  }
   
   list_yr
 }
@@ -144,6 +160,8 @@ stdName <- function(tbl){
                   approval_sen2 = CC315c,
                   approval_gov = CC308d,
                   vote_rep = CC412,
+                  voted_pres_08 = CC317,
+                  intent_pres_12 = CC354c,
                   voted_pres_12 = CC410a,
                   voted_sen = CC410b,
                   intent_sen = CC355b,
@@ -364,11 +382,19 @@ ccs <- list(stdName(filter(ccp, year != 2012)),
 wgt <- findStack(ccs, weight, "numeric")
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
-  bind_rows(pid3_cc10)
-pid7 <- findStack(ccs, pid7)
-gend <- findStack(ccs, gender)
-educ <- findStack(ccs, educ)
-race <- findStack(ccs, race)
+  bind_rows(pid3_cc10) %>%
+  mutate(pid3 = labelled(pid3_num, c("Democrat" = 1,
+                                     "Republican" = 2,
+                                     "Independent" = 3,
+                                     "Other" = 4,
+                                     "Not sure" = 5,
+                                     "Skipped" = 8))) %>% 
+  select(year, caseID, pid3) # manually do only this one
+  
+pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
+gend <- findStack(ccs, gender, makeLabelled = TRUE)
+educ <- findStack(ccs, educ, makeLabelled = TRUE)
+race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "numeric")
 state <- findStack(ccs, state)
 cdid <- findStack(ccs, cdid, "numeric")
@@ -391,10 +417,10 @@ v_sen <- findStack(ccs, voted_sen)
 v_gov <- findStack(ccs, voted_gov)
 
 
-apvrep <- findStack(ccs, approval_rep)
-apvsen1 <- findStack(ccs, approval_sen1)
-apvsen2 <- findStack(ccs, approval_sen2)
-apvgov <- findStack(ccs, approval_gov)
+apvrep <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels
+apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
+apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
+apvgov <- findStack(ccs, approval_gov, makeLabelled = FALSE) 
 
 
 # mutate vote variables that are HouseCand fillers
@@ -405,6 +431,7 @@ i_gov <- sep_bind(i_gov, intent_gov_char)
 v_rep <- sep_bind(v_rep, voted_rep_char)
 v_sen <- sep_bind(v_sen, voted_sen_char)
 v_gov <- sep_bind(v_gov, voted_gov_char)
+
 
 
 
@@ -443,7 +470,6 @@ ccc <- stcd %>%
   left_join(v_sen) %>% 
   left_join(v_gov)
 
-
 stopifnot(nrow(ccc) == nrow(pid3))
 
 View(sample_n(ccc, 30) %>% arrange(year))
@@ -451,3 +477,7 @@ View(sample_n(ccc, 30) %>% arrange(year))
 # Write dta -----
 
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
+write_sav(ccc, "data/output/cumulative_2006_2016.sav")
+
+set.seed(02138)
+write_sav(sample_frac(ccc, 0.3), "data/output/cumulative_2006_2016_small.sav")
