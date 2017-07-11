@@ -4,6 +4,7 @@ library(haven)
 library(dplyr)
 library(readr)
 library(foreach)
+library(stringr)
 library(data.table)
 
 
@@ -81,7 +82,8 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     ## format to change NaN to NA
     list_yr <- list_yr %>%
       mutate(!!chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
-             !!num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA))
+             !!num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)) %>%
+      mutate(!!chr_var_name := str_to_title(.data[[chr_var_name]]))
   }
   
   
@@ -268,7 +270,7 @@ showCand  <- function(stacked, var) {
   if (grepl("gov", var_name)) race <- "Gov"
   
   stacked %>% 
-    mutate(number = gsub(".*Cand([0-9]+)Name.*", "\\1", !!var)) %>% 
+    mutate(number = gsub(".*cand([0-9]+)name.*", "\\1", !!var)) %>% 
     left_join(cand_key[[race]], by = c("year", "caseID", "number")) %>% 
     mutate(!!var_name := paste0(cand, " (", party, ")")) %>%
     select(-number, -cand, -party)
@@ -278,8 +280,8 @@ showCand  <- function(stacked, var) {
 sep_bind <- function(tbl, var) {
   var <- enquo(var)
   
-  changed <- showCand(filter(tbl, grepl("Cand", !!var)), !!var)
-  unchanged <- filter(tbl, !grepl("Cand", !!var))
+  changed <- showCand(filter(tbl, grepl("cand", !!var)), !!var)
+  unchanged <- filter(tbl, !grepl("cand", !!var))
   
   bind_rows(changed, unchanged) %>%
     arrange(year, caseID)
@@ -327,8 +329,8 @@ cc12 <- std_dv("data/source/cces/2012_cc.dta")
 # cand info for 2013 - 2016
 
 races <- c("House", "Sen", "Gov")
-cand_regex <- c(paste0(paste0("^", races, "Cand[0-9+]"), "Name$"),
-                paste0(paste0("^", races, "Cand[0-9+]"), "Party$"))
+cand_regex <- c(paste0(paste0("^", races, "cand[0-9+]"), "name$"),
+                paste0(paste0("^", races, "cand[0-9+]"), "party$"))
 
 # function to melt assigned options
 melt_year_reg <- function(tbl, measure_regex) {
@@ -354,7 +356,7 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
 
   key[[r]] <- bind_rows(year_2012, year_2014, year_2016)
   key
-} 
+}
 
 
 
@@ -473,7 +475,8 @@ stopifnot(nrow(ccc) == nrow(pid3))
 View(sample_n(ccc, 30) %>% arrange(year))
 
 
-# Common manipulations
+# Common manipulations ----
+# Weight --
 size_year <- ccc %>% 
   group_by(year) %>% 
   summarize(size = n()) %>% 
@@ -488,15 +491,12 @@ ccc <-  ccc  %>%
 
 
 
-# Format for output 
+# Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
 ccc_factor <- ccc %>% 
   mutate_at(vars(matches("_char")), as_factor) %>%
   mutate_at(vars(matches("^CD$")), as_factor) %>%
   mutate_at(vars(matches("(state|st)")), as_factor)
-
-
-
 
 
 
@@ -506,4 +506,7 @@ saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/output/cumulative_2006_2016.sav")
 
 set.seed(02138)
-write_sav(sample_frac(ccc_factor, 0.70), "data/output/cumulative_2006_2016_small.sav")
+sample_frac(ccc_factor, 0.75) %>% 
+  select(-st, -cdid) %>%
+  select(year, pid3, state, race, everything()) %>%
+  write_sav("data/output/cumulative_2006_2016_alpha.sav")
