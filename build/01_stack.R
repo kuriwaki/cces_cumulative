@@ -37,62 +37,73 @@ std_dv <- function(path, guess_year = TRUE) {
   
 }
 
+# inner extraction function for findStack
+extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, 
+                       is_factor = TRUE) {
+  if (is_factor) {
+    if (var_name %in% colnames(tbl))  {
+      select(tbl, year, caseID, !!var) %>%
+        mutate(!!chr_var_name := as.character(as_factor(.data[[var_name]])),
+               !!num_var_name := as.numeric(.data[[var_name]])) %>% 
+        select(-!!var)  
+    } else {
+      select(tbl, year, caseID) %>%
+        mutate(!!chr_var_name := NA,
+               !!num_var_name := NA)
+    }
+  } else {
+    if (var_name %in% colnames(tbl))  {
+      select(tbl, year, caseID, !!var) %>%
+        mutate(!!var_name := zap_labels(!!var))
+    } else {
+      select(tbl, year, caseID) %>%
+        mutate(!!var_name := NA)
+    }
+  }
+}
+
+
 # takes all datasets available, and given a var, pulls it out of each and stacks
 findStack <- function(dflist = list(), var, type = "factor") {
-  var <- enquo(var)
   
+  var <- enquo(var)
   var_name <- quo_name(var)
-  chr_var_name <- paste0(quo_name(var), "_char")
-  num_var_name <- paste0(quo_name(var), "_num")
+  chr_var_name <- paste0(var_name, "_char")
+  num_var_name <- paste0(var_name, "_num")
   
   if (type == "factor") {
-    list_yr <- 
-      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-        if (var_name %in% colnames(dflist[[yr]]))  {
-          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
-            mutate(!!chr_var_name := as.character(as_factor(!!var)),
-                   !!num_var_name := as.numeric(!!var)) %>% 
-            dplyr::select(-!!var)  
-        } else {
-          dplyr::select(dflist[[yr]], year, caseID) %>%
-            mutate(!!chr_var_name := NA,
-                   !!num_var_name := NA)
-        }
+    list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+        extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
       }
+    
+    ## format to change NaN to NA
+    list_yr <- list_yr %>%
+      mutate(!!chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
+             !!num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA))
   }
   
   
-  
-  if (type == "character") {
-    list_yr <- 
-      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-        
-        if (var_name %in% colnames(dflist[[yr]]))  {
-          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
-            mutate(!!var_name := as.character(as_factor(!!var)))
-        } else {
-          dplyr::select(dflist[[yr]], year, caseID) %>%
-            mutate(!!var_name := NA)
-        }
-      }
+  if (type != "factor") {
+    list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
+      extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name, FALSE)
+    }
+    
+    # change to specified type
+    if (type == "numeric") {
+      list_yr <- mutate(list_yr, !!var_name := as.numeric(.data[[var_name]]))
+    }
+    
+    if (type == "character") {
+      list_yr <- mutate(list_yr, !!var_name := as.character(as_factor(!!var)))
+    }
+    
+    list_yr <-  list_yr %>% 
+      mutate(!!var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
   
-  if (type == "numeric") {
-    list_yr <- 
-      foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-        
-        if (var_name %in% colnames(dflist[[yr]]))  {
-          dplyr::select(dflist[[yr]], year, caseID, !!var) %>%
-            mutate(!!var_name := as.integer(!!var))
-        } else {
-          dplyr::select(dflist[[yr]], year, caseID) %>%
-            mutate(!!var_name := NA)
-        }
-      }
-  }
+
   
-  
-  return(list_yr)
+  list_yr
 }
 
 
@@ -106,8 +117,7 @@ stdName <- function(tbl){
   
   if (identical(cces_year, 2006:2012)) {
     tbl <- tbl %>% 
-      rename(wgt = weight,
-             state = state_pre,
+      rename(state = state_pre,
              cdid = congdist_pre,
              zipcode = zip_pre,
              countyFIPS = county_fips_pre,
@@ -200,7 +210,6 @@ stdName <- function(tbl){
              reg_self = votereg,
              family_income = faminc,
              marriage_status = marstat,
-             wgt = weight,
              zipcode = lookupzip,
              countyFIPS = countyfips,
              partyreg = CC350) %>% 
@@ -223,7 +232,7 @@ showCand  <- function(stacked, var) {
   
   stacked %>% 
     mutate(number = gsub(".*Cand([0-9]+)Name.*", "\\1", !!var)) %>% 
-    left_join(cand_key[[race]]) %>% 
+    left_join(cand_key[[race]], by = c("year", "caseID", "number")) %>% 
     mutate(!!var_name := paste0(cand, " (", party, ")")) %>%
     select(-number, -cand, -party)
 }
@@ -249,12 +258,14 @@ ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta",
 
 
 pid10_raw <- read_dta("data/source/cces/cc10_pid.dta") 
-pid10 <- pid10_raw %>% 
+pid3_cc10 <- pid10_raw %>% 
   mutate(pid3 = CC421a,
          caseID = V100) %>%
   mutate(year = 2010,
          pid3_char = as.character(as_factor(pid3)),
          pid3_num = as.numeric(pid3)) %>% 
+  mutate(pid3_char = replace(pid3_char, pid3_char == "NaN", NA),
+         pid3_num = replace(pid3_num, is.nan(pid3_num), NA)) %>%
   select(year, caseID, pid3_char, pid3_num)
 
 
@@ -294,7 +305,6 @@ melt_year_reg <- function(tbl, measure_regex) {
 # employ melt_year_reg to 14 and 16
 cand_key <- foreach(r = races, .combine = "c") %do% {
   measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
-  print(measure_regex)
   key <- list()
   
   year_2014 <- melt_year_reg(cc14, measure_regex)
@@ -325,15 +335,16 @@ ccs <- list(stdName(ccp),
 
 
 # extract variable by variable iniitial version -----
+wgt <- findStack(ccs, weight, "numeric")
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
-  bind_rows(pid10)
+  bind_rows(pid3_cc10)
 pid7 <- findStack(ccs, pid7)
 gend <- findStack(ccs, gender)
 educ <- findStack(ccs, educ)
 race <- findStack(ccs, race)
 bryr <- findStack(ccs, birthyr, "numeric")
-state <- findStack(ccs, state, "character")
+state <- findStack(ccs, state)
 cdid <- findStack(ccs, cdid, "numeric")
 
 i_pres08 <- findStack(ccs, intent_pres_08)
@@ -373,6 +384,7 @@ v_gov <- sep_bind(v_gov, voted_gov_char)
 
 # format state and CD ----
 stcd <- left_join(state, cdid) %>% 
+  mutate(state = state_char) %>%
   left_join(select(statecode, State, StateAbbr), by = c("state" = "State")) %>% 
   rename(st = StateAbbr) %>% 
   mutate(CD = paste0(st, "-", cdid)) %>% 
@@ -381,6 +393,7 @@ stcd <- left_join(state, cdid) %>%
 
 # bind together ----
 ccc <- stcd %>%
+  left_join(wgt) %>% 
   left_join(pid3) %>%
   left_join(pid7) %>% 
   left_join(gend) %>%
