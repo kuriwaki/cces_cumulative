@@ -83,7 +83,10 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     list_yr <- list_yr %>%
       mutate(!!chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
              !!num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)) %>%
-      mutate(!!chr_var_name := str_to_title(.data[[chr_var_name]]))
+      mutate(!!chr_var_name := str_to_title(.data[[chr_var_name]]),
+             !!chr_var_name := replace(.data[[chr_var_name]],
+                                       .data[[chr_var_name]] == "Never Heard",
+                                       "Never Heard Of This Person"))
   }
   
   
@@ -157,6 +160,7 @@ stdName <- function(tbl){
   if (identical(cces_year, 2012L)) {
     tbl <- rename(tbl, 
                   weight = V103,
+                  approval_pres = CC308a,
                   approval_rep = CC315a,
                   approval_sen1 = CC315b,
                   approval_sen2 = CC315c,
@@ -417,10 +421,11 @@ v_sen <- findStack(ccs, voted_sen)
 v_gov <- findStack(ccs, voted_gov)
 
 
-apvrep <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels
+apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE) 
+apvrep <- findStack(ccs, approval_rep, makeLabelled = FALSE)  # slightly different labels ax years
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
 apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
-apvgov <- findStack(ccs, approval_gov, makeLabelled = FALSE) 
+apvgov <- findStack(ccs, approval_gov, makeLabelled = TRUE) 
 
 
 # mutate vote variables that are HouseCand fillers
@@ -453,10 +458,11 @@ ccc <- stcd %>%
   left_join(bryr) %>%
   left_join(race) %>%
   left_join(educ) %>% 
+  left_join(apvpres) %>% 
+  left_join(apvgov) %>% 
   left_join(apvrep) %>% 
   left_join(apvsen1) %>% 
   left_join(apvsen2) %>% 
-  left_join(apvgov) %>% 
   left_join(i_pres08) %>%
   left_join(i_pres12) %>%
   left_join(i_pres16) %>% 
@@ -472,7 +478,19 @@ ccc <- stcd %>%
 
 stopifnot(nrow(ccc) == nrow(pid3))
 
+# Order 
+ccc <- ccc %>%
+  select(year:approval_gov,
+         matches("_char$"),
+         matches("_num$"))
+
+  
+
+
+
 View(sample_n(ccc, 30) %>% arrange(year))
+
+
 
 
 # Common manipulations ----

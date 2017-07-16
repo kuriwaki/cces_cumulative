@@ -18,6 +18,8 @@ login() # you need a login and password to complete this command
 # connect to data---------
 ds <- loadDataset("CCES 2016 Common")
 
+# don't need weights ?
+weight(ds) <- NULL
 
 
 # metadata --------
