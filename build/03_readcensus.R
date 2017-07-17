@@ -29,19 +29,26 @@ national110 <-read_delim("data/source/census_CDbyCongress/110/zcta_cd110_natl.tx
 national110
 
 
-national113 <-read_delim("data/source/census_CDbyCongress/113/zcta_cd113_natl.txt" , 
+national113 <- read_delim("data/source/census_CDbyCongress/113/zcta_cd113_natl.txt" , 
             delim = "," ,
             skip = 2, col_names = c("state", "zipcode", "distnum"))
 
 national113
 
-national115 <-read_delim("data/source/census_CDbyCongress/115/zcta_cd115_natl.txt" , 
+national115 <- read_delim("data/source/census_CDbyCongress/115/zcta_cd115_natl.txt" , 
            delim = "," ,
            skip = 2, col_names = c("state", "zipcode", "distnum"))
-
 national115
 
 
+# Recode at large ------
+# 113 and 115 don't use at-large districts; so drop these
+
+national109 <- filter(national109, distnum != "00")
+national110 <- filter(national110, distnum != "00")
+
+
+# Group -------
 # sometimes zipcodes straddle districts! This will be a pain to account for by just merging, let's somehow manipulate the dataset so that each row is a unique zipcode.
 
 # group the dataset into state-zipcodes. Then, let's just list up the distnums that are _within each group_
@@ -63,9 +70,7 @@ n115_byzip <- national115 %>%
   summarize(distnums = paste0(distnum, collapse = ","))
 
 n109110_byzip <- left_join(n109_byzip, n110_byzip, by = c("zipcode", "state"))
-
 n113115_byzip <- left_join(n113_byzip, n115_byzip, by = c("zipcode", "state"))
-
 n109_115_byzip <- left_join(n109110_byzip, n113115_byzip, by = c("zipcode", "state")) %>%
   ungroup()
  
@@ -75,9 +80,9 @@ n109_115_byzip
 
 # add state name
 n109_115_byzip <- left_join(mutate(n109_115_byzip, state = as.integer(state)),
-                            dplyr::select(statecode, st, fips),
+                            dplyr::select(statecode, StateAbbr, fips),
                             by = c("state" = "fips")) %>%
-  dplyr::select(st, zipcode, contains("distnum"))
+  dplyr::select(StateAbbr, zipcode, matches("distnum"))
 
 
 ## Make a key of districts ------------
@@ -110,7 +115,6 @@ container <- tibble(CD = all_CDs,
 
 
 
-##loop##
 
 for (d in all_CDs) {
   for (c in c(109, 110, 113, 115)) {
@@ -143,17 +147,14 @@ for (d in all_CDs) {
   #cat(paste0(d, "\n"))
 }
 
+
+# Loop through districts to get a easure of change ---------
 #build new container
 containerz <- tibble(CD = all_CDs,
                     zips_calculation109110 = NA,
                     zips_calculation110113 = NA,
                     zips_calculation113115 = NA)
 
-
-
-
-
-library(dplyr)
 
 
 for (d in all_CDs) {
