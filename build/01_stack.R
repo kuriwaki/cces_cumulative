@@ -484,10 +484,6 @@ ccc <- ccc %>%
          matches("_char$"),
          matches("_num$"))
 
-  
-
-
-
 View(sample_n(ccc, 30) %>% arrange(year))
 
 

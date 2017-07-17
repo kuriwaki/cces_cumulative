@@ -75,9 +75,9 @@ n109_115_byzip
 
 # add state name
 n109_115_byzip <- left_join(mutate(n109_115_byzip, state = as.integer(state)),
-                            dplyr::select(statecode, StateAbbr, fips),
+                            dplyr::select(statecode, st, fips),
                             by = c("state" = "fips")) %>%
-  dplyr::select(StateAbbr, zipcode, contains("distnum"))
+  dplyr::select(st, zipcode, contains("distnum"))
 
 
 ## Make a key of districts ------------

@@ -47,5 +47,5 @@ file_names = list.files(getwd())
 files = lapply(file_names,read_csv)
 colnames = c("congress", "chamber","icpsr","state_icpsr","district_code","state_abbrev","party_code","occupancy","last_means", "bioname","bioguide_id","born","died","dim1","dim2","log_likelihood","geo_mean_probability","number_of_votes","number_of_errors","conditional")
 files <- lapply(files,setNames, colnames)
-df <- ldply(files, data.frame)
-df <- df[(!df$chamber=="President"),]
+voteviewlist <- ldply(files, data.frame)
+voteviewlist <- voteviewlist[(!voteviewlist$chamber=="President"),]

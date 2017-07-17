@@ -25,12 +25,12 @@ cen_10 <- read_dta(path2)
 
 # table of variable and their labels
 
-# function to extract
+# function to take a dta from read_dta and return a variable - description key
 makeVlist <- function(dta) {
   labels <- sapply(dta, function(x) attr(x, "label"))
   
-  tibble(colname = names(labels),
-         description = labels)
+  tibble(name = names(labels),
+         label = labels)
 }
 
 
@@ -42,3 +42,4 @@ v_cen_10 <- makeVlist(cen_10)
 
 # see for example 
 View(v_cen_10)
+View(v_acs_06)
