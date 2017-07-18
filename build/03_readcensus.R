@@ -219,17 +219,16 @@ write_excel_csv(containerz, "data/output/changes_in_CD_composition.csv", na = ""
 
 # visualize
 df_toplot <- containerz %>% 
-  melt(id.vars = "CD",
+  reshape2::melt(id.vars = "CD",
        variable.name = "window",
        value.name = "prop_zips_stay") %>%
   mutate(state = gsub("-[0-9]+", "", CD),
          prop_zips_stay = as.numeric(prop_zips_stay)) %>%
-  filter(!state %in% c("AK", "MT", "WY", "DE", "ND", "SD", "VT", "DC", "ME-null")) %>%
   tbl_df()
   
 
 temp_lineplot <-  ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = CD)) +
-  facet_wrap(~  state, ncol = 8) +
+  facet_wrap(~  state, ncol = 6) +
   geom_line(alpha = 0.5) +
   scale_x_discrete(labels = c("109 to 110", "110 to 113", "113 to 115")) +
   scale_y_continuous(label = percent) +
@@ -238,7 +237,7 @@ temp_lineplot <-  ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = 
   labs(y = "Proportion of Zips in Previous Congress \n that Stayed the Same in Subsequent Congress",
        x = "Time Window (in Congresses)")
 
-ggsave("figures/temp_lineplot.pdf", temp_lineplot, w = 12, h = 6)
+ggsave("figures/district_change_lineplot.pdf", temp_lineplot, w = 12, h = 10)
 
 
 
