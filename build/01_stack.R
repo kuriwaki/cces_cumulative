@@ -118,7 +118,6 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     nvec <- key_arr %>% select(matches("num")) %>%  pull()
     names(nvec) <- key_arr %>% select(matches("char")) %>% pull()
     
-    print(nvec)
     
     list_yr <- list_yr %>% 
       mutate(!!var_name := labelled_spss(.data[[num_var_name]], nvec)) %>%
@@ -146,6 +145,7 @@ stdName <- function(tbl){
              reg_true = reg_validation,
              reg_self = registered_pre,
              validt_trn = gen_validated,
+             economy_retro = economy_retrospective,
              voted_pres_08 = vote_pres_08,
              voted_rep = vote_house, 
              voted_sen = vote_sen,
@@ -164,18 +164,25 @@ stdName <- function(tbl){
                   approval_rep = CC315a,
                   approval_sen1 = CC315b,
                   approval_sen2 = CC315c,
+                  economy_retro = CC302,
                   approval_gov = CC308d,
-                  vote_rep = CC412,
-                  voted_pres_08 = CC317,
                   intent_pres_12 = CC354c,
+                  intent_pres_12x = CC354b,
                   voted_pres_12 = CC410a,
+                  voted_pres_08 = CC317,
+                  voted_rep = CC412,
                   voted_sen = CC410b,
+                  voted_gov = CC411,
                   intent_sen = CC355b,
                   intent_senx = CC355,
                   intent_gov = CC356b,
                   intent_govx = CC356,
                   intent_rep = CC390b,
-                  intent_repx = CC390)
+                  intent_repx = CC390) %>% 
+      mutate(voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
+             voted_rep = coalesce(voted_rep, intent_repx),
+             voted_sen = coalesce(voted_sen, intent_senx),
+             voted_gov = coalesce(voted_gov, intent_govx))
   }
 
   if (identical(cces_year, 2013L)) {
@@ -186,6 +193,7 @@ stdName <- function(tbl){
              approval_sen1 = CC13_313b,
              approval_sen2 = CC13_313c,
              approval_gov = CC312d,
+             economy_retro = CC13_302,
              voted_pres_12 = CC13_315) %>% 
       left_join(statecode, by = "fips")
   }
@@ -196,15 +204,21 @@ stdName <- function(tbl){
                   approval_sen1 = CC14_315b,
                   # approval_sen2 = CC14_315c,
                   approval_gov = CC14_308d,
+                  economy_retro = CC14_302,
                   voted_rep = CC412,
                   voted_pres_12 = CC14_317,
                   voted_sen = CC410b,
+                  voted_gov = CC411,
                   intent_sen = CC355,
                   intent_senx = CC355x,
                   intent_gov = CC356,
+                  intent_govx = CC356x,
                   intent_rep = CC360,
-                  intent_repx = CC360x)
-  }
+                  intent_repx = CC360x) %>% 
+      mutate(voted_rep = coalesce(voted_rep, intent_repx),
+             voted_sen = coalesce(voted_sen, intent_senx),
+             voted_gov = coalesce(voted_gov, intent_govx))
+  } 
   
   if (identical(cces_year, 2015L)) {
     tbl <- rename(tbl, CC350 = CC15_350) %>% 
@@ -213,6 +227,7 @@ stdName <- function(tbl){
              approval_sen1 = CC15_313b,
              approval_sen2 = CC15_313c,
              approval_gov = CC15_312f,
+             economy_retro = CC15_302,
              voted_pres_12 = CC15_315)
   }
   
@@ -226,6 +241,7 @@ stdName <- function(tbl){
              approval_sen1 = CC16_320g,
              approval_sen2 = CC16_320h,
              approval_gov = CC16_320d,
+             economy_retro = CC16_302,
              intent_trn = CC16_364,
              intent_pres_16 = CC16_364c,
              intent_pres_16x = CC16_364b,
@@ -241,7 +257,11 @@ stdName <- function(tbl){
              voted_rep = CC16_412,
              voted_sen = CC16_410b,
              voted_gov = CC16_411
-      ) 
+      ) %>% # combine early vote
+      mutate(voted_pres_16 = coalesce(voted_pres_16, intent_pres_16x),
+             voted_rep = coalesce(voted_rep, intent_repx),
+             voted_sen = coalesce(voted_sen, intent_senx),
+             voted_gov = coalesce(voted_gov, intent_gov))
     
   }
   
@@ -428,6 +448,9 @@ apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
 apvgov <- findStack(ccs, approval_gov, makeLabelled = TRUE) 
 
 
+econ <- findStack(ccs, economy_retro, makeLabelled = TRUE)
+
+
 # mutate vote variables that are HouseCand fillers
 i_rep <- sep_bind(i_rep, intent_rep_char)
 i_sen <- sep_bind(i_sen, intent_sen_char)
@@ -458,6 +481,7 @@ ccc <- stcd %>%
   left_join(bryr) %>%
   left_join(race) %>%
   left_join(educ) %>% 
+  left_join(econ) %>% 
   left_join(apvpres) %>% 
   left_join(apvgov) %>% 
   left_join(apvrep) %>% 
@@ -508,9 +532,9 @@ ccc <-  ccc  %>%
 # Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
 ccc_factor <- ccc %>% 
-  mutate_at(vars(matches("_char")), as_factor) %>%
-  mutate_at(vars(matches("^CD$")), as_factor) %>%
-  mutate_at(vars(matches("(state|st)")), as_factor)
+  mutate_at(vars(matches("_char")), as.factor) %>%
+  mutate_at(vars(matches("^CD$")), as.factor) %>%
+  mutate_at(vars(matches("(state|st)")), as.factor)
 
 
 
