@@ -10,6 +10,11 @@ library(readr)
 library(xtable)
 
 
+# variable list ----
+# to make a good guess about which is pre/post
+vars_edited <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv") %>%
+  select(section14, code16)
+
 
 # Start up crunch -------
 login() # you need a login and password to complete this command
@@ -63,13 +68,27 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   nChoices <- length(vm@body$categories)
   
   nSubQuestions <- length(vm@body$subreferences)
+
   
   # if a grid question more than zero. 1 means only one question
   nQs <- ifelse(nSubQuestions == 0, 1, nSubQuestions)
   
+  
+  # guess pre or post (will affect subset)
+  section_guess <- (vars_edited %>% filter(code16 == alias) %>% pull(section14)) 
+  is_post <- grepl("Post-Election", section_guess)
+  if (length(section_guess) != 1) is_post <- FALSE
+  if (grepl("_4", alias)) is_post <- TRUE
+  if (grepl("post", alias, ignore.case = TRUE)) is_post <- TRUE
+  
   # counts
-  var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
-  var.arr <- var.tab@arrays$.unweighted_counts
+  if (!is_post)
+    var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
+  if (is_post)
+    var.tab <- crtabs(paste0("~ ", alias), ds[ds$tookpost == "Took post"])
+  
+  # get counts
+  var.arr <- var.tab@arrays$count
   if (class(var.arr) == "array") var.arr <- matrix(var.arr, nrow = 1)
 
   # choices
