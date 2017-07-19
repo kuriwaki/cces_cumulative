@@ -57,12 +57,17 @@ Thumbs.db
 
 # data
 ####################
+data/source/*Rds
+data/source/cq/*
 data/source/cces/*
 data/source/dime/*
 data/output/*
 pettigrew_code/*
 figures/*
 old_code/*
+guides/*
+test_codebook/*
+documents_CQ/*
 
 
 
