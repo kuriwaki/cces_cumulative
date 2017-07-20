@@ -5,7 +5,8 @@ library(foreach)
 library(readr)
 library(xtable)
 
-ccc <- read_sav("data/output/cumulative_2006_2016.sav")
+
+ccc <- haven::read_sav("data/output/cumulative_2006_2016.sav")
 
 # Start up crunch -------
 login() # you need a login and password to complete this command
@@ -44,5 +45,46 @@ description(ds$intent_pres_16_char) <- "Which candidate did you prefer for Presi
 
 description(ds$voted_pres_12_char) <- "2012 wording: For whom did you vote for President of the United States? 2016 wording: Which candidate did you prefer for President of the United States? (see appendix for wording in all years)"
 description(ds$intent_pres_12_char) <- "In the race for President of the United States, who do you prefer?"
+
+description(ds$intent_rep_char) <- "In the general election for U.S. House of Representatives in your area, who do you prefer?"
+description(ds$voted_rep_char) <- "For whom did you vote for U.S. House?"
+
+description(ds$intent_sen_char) <- "In the race for U.S. Senator in your state, who do you prefer?"
+description(ds$voted_sen_char) <- "For whom did you vote for U.S. Senator?"
+
+description(ds$intent_gov_char) <- "In the race for Governor in your state, who do you prefer?"
+description(ds$voted_gov_char) <- "For whom did you vote for Governor?"
+
+
+# Variable Groups and ordering ------
+vn <- names(ds)
+
+ind_ids <- grep("year|caseID", vn)
+ind_geo <- grep("CD|state", vn)
+ind_wgt <- grep("weight", vn)
+ind_dem <- grep("gender|birthyr|race|educ|pid", vn)
+
+ind_app <- grep("approval_.*char", vn)
+ind_pres <- setdiff(grep("pres.*char", vn), ind_app)
+
+ind_int <- setdiff(grep("intent.*char", vn), ind_pres)
+ind_vtd <- setdiff(grep("voted.*char", vn), ind_pres)
+
+ind_other <- setdiff(1:length(vn),
+                     c(ind_ids, ind_geo, ind_wgt, ind_dem, ind_app, ind_pres, ind_int, ind_vtd))
+
+ordering(ds) <- VariableOrder(
+  VariableGroup("Identifiers", ds[ind_ids]),
+  VariableGroup("Geography", ds[ind_geo]),
+  VariableGroup("Demographics", ds[ind_dem]),
+  VariableGroup("Approval", ds[ind_app]),
+  VariableGroup("Presidential Intent and Vote", ds[ind_pres]),
+  VariableGroup("Vote Intent (Other Offices)", ds[ind_int]),
+  VariableGroup("Voted (Other Offices)", ds[ind_vtd]),
+  VariableGroup("Weights", ds[ind_wgt]),
+  VariableGroup("Other", ds[ind_other])
+)
+
+
 
 logout()
