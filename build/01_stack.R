@@ -532,6 +532,7 @@ ccc <-  ccc  %>%
 # Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
 ccc_factor <- ccc %>% 
+  mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state|st)")), as.factor)
