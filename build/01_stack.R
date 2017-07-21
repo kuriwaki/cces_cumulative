@@ -86,7 +86,10 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
       mutate(!!chr_var_name := str_to_title(.data[[chr_var_name]]),
              !!chr_var_name := replace(.data[[chr_var_name]],
                                        .data[[chr_var_name]] == "Never Heard",
-                                       "Never Heard Of This Person"))
+                                       "Never Heard Of This Person"),
+             !!chr_var_name := replace(.data[[chr_var_name]],
+                                       .data[[chr_var_name]] == "No Hs",
+                                       "No HS")) 
   }
   
   

@@ -18,7 +18,10 @@ proj <- projects()[["CCES Common Content"]]
 ds <- loadDataset(datasets(proj)[[1]])
 
 
-# add question wording?
+# description for dataset
+description(ds) <- "This is an alpha version -- formatting incomplete and may contain errors\na subset of full data to meet upload size cap."
+
+# add question wording? ---------
 
 description(ds$year) <- "[Year of CCES Common Content]"
 description(ds$caseID) <- "[Case (Respondent) Idenfitier. Unique within year]"
