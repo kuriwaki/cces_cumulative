@@ -25,6 +25,14 @@ sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>%
 # nathan and liz
 nl <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv")
 
+# whichch ones are we missing?
+nl %>% 
+  filter(section14 != "Profile") %>%
+  filter(!grepl("_post", code16)) %>% 
+  filter(!grepl("(CC|_)3[0-9][0-9]", code16)) %>%
+  filter(!grepl("(CC|_)4[0-9][0-9]", code16)) %>%
+  filter(!is.na(code16))
+
 
 # inner join from stata to nl to get order
 sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
@@ -44,14 +52,22 @@ if (length(existing_files) > 0) {file.remove(existing_files)}
 
 
 # Tabulations as xtab objects -----
-rows_to_tab <- which(cq$type != "numeric" & cq$type != "text" & cq$type != "datetime")
+rows_to_tab <- which(cq$type != "text" & cq$type != "datetime")
 
 xtlist <- foreach(i = rows_to_tab) %do% {
-
-    # the tabs
+  
+  if (cq$type[i] != "numeric") {
     simp.tab <- tibble(`Unweighted N` = as.integer(unlist(cq$count[i])),
                        `num` = unlist(cq$level[i]),
                        `Choice Text` = unlist(cq$labels[i]))
+    # make into xtable
+    xtab <- xtable(simp.tab, 
+                   align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
+                   display = c("d", "d", "d", "s"))
+  }
+  
+  if (cq$type[i] == "numeric") xtab <- xtable(summary(data.frame(x = unlist(cq$count[i]))))
+    
     
     # the quesiton
     addtorow <- list()
@@ -75,13 +91,12 @@ xtlist <- foreach(i = rows_to_tab) %do% {
                        cq$alias[i], 
                        ".tex")
     
+    
     if(i %% 50 == 0) cat(paste0(i, " out of ", length(rows_to_tab), " done ...\n"))
     list(filename = filename,
          addtorow = addtorow,
          section = cq$section14[i],
-         xtab = xtable(simp.tab, 
-                       align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
-                       display = c("d", "d", "d", "s")))
+         xtab = xtab)
 }
 
 
@@ -146,8 +161,10 @@ sink()
 
 
 # the document ------
-sink(file.path(dir_for_codebook, "2016codebook_wrapper.tex"))
-cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
+genWrapper <- FALSE
+if (genWrapper) {
+  sink(file.path(dir_for_codebook, "2016codebook_wrapper.tex"))
+  cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\usepackage{array}
 \\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
 \\usepackage[margin=1in]{geometry}
@@ -161,9 +178,10 @@ cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
 \\normalsize
 \\newpage
 \\tableofcontents\n\n\n")
-cat("\\input{2016codebook_contents.tex}\n\n\n")
-cat("\\end{document}")
-sink()
+  cat("\\input{2016codebook_contents.tex}\n\n\n")
+  cat("\\end{document}")
+  sink()
+}
 
 
 # save for other scripts ----

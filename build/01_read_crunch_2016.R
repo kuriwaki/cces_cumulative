@@ -31,9 +31,6 @@ weight(ds) <- NULL
 vars <- variables(ds)
 meta <- variableMetadata(ds)
 
-length(vars)
-length(meta)
-
 
 # get q wording -------
 meta_objs <- list()
@@ -78,8 +75,9 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   section_guess <- (vars_edited %>% filter(code16 == alias) %>% pull(section14)) 
   is_post <- grepl("Post-Election", section_guess)
   if (length(section_guess) != 1) is_post <- FALSE
-  if (grepl("_4", alias)) is_post <- TRUE
+  if (grepl("(CC|_)4[0-9][0-9]", alias)) is_post <- TRUE
   if (grepl("post", alias, ignore.case = TRUE)) is_post <- TRUE
+  if (grepl("edloan", alias, ignore.case = TRUE)) is_post <- TRUE
   
   # counts
   if (!is_post)
@@ -136,9 +134,16 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
     q.names <- name
   }
   
-  
+  # get length
+  nr <- nrow(var.arr)
   
   if(i %% 50 == 0) cat(paste0(i, " out of ", length(meta_objs), " done ...\n"))
+  
+  # finally, if numeric, ignore everything and get the whole vector
+  if (type == "numeric") {
+    var.arr <- t(as.vector(ds[[alias]]))
+    nr <- 1
+  }
   
   # duplicate id for each grid row. store counts and choice labels as c
   tibble(id = id,
@@ -146,13 +151,12 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
          wording = wording,
          name = q.names,
          count = as.list(data.frame(t(var.arr))), # https://stackoverflow.com/a/6819883/5525412
-         level = rep(list(choiceno.vec), nrow(var.arr)),
-         labels = rep(list(choicenames.vec), nrow(var.arr)),
+         level = rep(list(choiceno.vec), nr),
+         labels = rep(list(choicenames.vec), nr),
          type = type,
          nChoices = nChoices,
          nSubQuestions = nSubQuestions)
 }
-metadata
 
 logout()
 
