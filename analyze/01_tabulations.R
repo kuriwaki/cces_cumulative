@@ -25,13 +25,10 @@ sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>%
 # nathan and liz
 nl <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv")
 
-# whichch ones are we missing?
-nl %>% 
-  filter(section14 != "Profile") %>%
-  filter(!grepl("_post", code16)) %>% 
-  filter(!grepl("(CC|_)3[0-9][0-9]", code16)) %>%
-  filter(!grepl("(CC|_)4[0-9][0-9]", code16)) %>%
-  filter(!is.na(code16))
+# manual input
+man <- read_csv(file.path(dir_for_codebook, "identifiers_2016_source.csv")) %>% 
+  mutate(wording = "    ")
+
 
 
 # inner join from stata to nl to get order
@@ -44,6 +41,10 @@ sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>%
 # pick rows in crunch for which there exists a stataName -- exact match
 cq <- inner_join(cq_raw, sq_ordered, by = c("alias" = "stataName"))
 
+# rows for stuff not in crunch and for which we will produce a blank table
+notable <- inner_join(man, sq_ordered, by = c("alias" = "stataName"))
+
+cq <- bind_rows(cq, notable)
 
 
 # delete exisitng ------
@@ -56,7 +57,7 @@ rows_to_tab <- which(cq$type != "text" & cq$type != "datetime")
 
 xtlist <- foreach(i = rows_to_tab) %do% {
   
-  if (cq$type[i] != "numeric") {
+  if (cq$type[i] != "numeric" & cq$type[i] != "none") {
     simp.tab <- tibble(`Unweighted N` = as.integer(unlist(cq$count[i])),
                        `num` = unlist(cq$level[i]),
                        `Choice Text` = unlist(cq$labels[i]))
@@ -67,7 +68,12 @@ xtlist <- foreach(i = rows_to_tab) %do% {
   }
   
   if (cq$type[i] == "numeric") xtab <- xtable(summary(data.frame(x = unlist(cq$count[i]))))
-    
+  
+  if (cq$type[i] == "none") {
+    xtab <- xtable(tibble(`X1` = "", `X2` = "", `X3` = ""),
+                   align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
+                   display = c("d", "d", "d", "s"))
+  }    
     
     # the quesiton
     addtorow <- list()
