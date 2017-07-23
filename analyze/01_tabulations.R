@@ -47,13 +47,13 @@ notable <- inner_join(man, sq_ordered, by = c("alias" = "stataName"))
 cq <- bind_rows(cq, notable)
 
 
-# delete exisitng ------
-existing_files <- list.files(dir_to_print, full.names = TRUE)
-if (length(existing_files) > 0) {file.remove(existing_files)}
 
 
 # Tabulations as xtab objects -----
 rows_to_tab <- which(cq$type != "text" & cq$type != "datetime")
+
+# column formats
+alignCols <- "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}"
 
 xtlist <- foreach(i = rows_to_tab) %do% {
   
@@ -63,15 +63,23 @@ xtlist <- foreach(i = rows_to_tab) %do% {
                        `Choice Text` = unlist(cq$labels[i]))
     # make into xtable
     xtab <- xtable(simp.tab, 
-                   align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
+                   align = alignCols,
                    display = c("d", "d", "d", "s"))
   }
   
-  if (cq$type[i] == "numeric") xtab <- xtable(summary(data.frame(x = unlist(cq$count[i]))))
+  if (cq$type[i] == "numeric") {
+    sum.i <- summary(unlist(cq$count[i]))
+    xtab <- xtable(tibble(`X1` = names(sum.i),
+                          `X2` = as.numeric(sum.i),
+                          `X3` = ""),
+                   align = alignCols,
+                   display = c("d", "s", "f", "s"))
+    
+  }
   
   if (cq$type[i] == "none") {
     xtab <- xtable(tibble(`X1` = "", `X2` = "", `X3` = ""),
-                   align = "lR{.23\\textwidth}p{.05\\textwidth}p{.7\\textwidth}",
+                   align = alignCols,
                    display = c("d", "d", "d", "s"))
   }    
     
@@ -104,6 +112,13 @@ xtlist <- foreach(i = rows_to_tab) %do% {
          section = cq$section14[i],
          xtab = xtab)
 }
+
+
+
+# delete exisitng ------
+existing_files <- list.files(dir_to_print, full.names = TRUE)
+if (length(existing_files) > 0) {file.remove(existing_files)}
+
 
 
 # print these xtables to file -------
@@ -151,7 +166,7 @@ for (i in 1:length(texfiles)) {
   if (i == 1) section_pre <- ""
   if (!is.na(section_i) & !is.na(section_pre)) {
     if (section_i != section_pre) {
-    cat(paste0("\\newpage\n\\section{", section_i, "}\n"))
+    cat(paste0("\\newpage\n\\subsection{", section_i, "}\n"))
     }
   }
   
