@@ -31,6 +31,7 @@ man <- read_csv(file.path(dir_for_codebook, "identifiers_2016_source.csv")) %>%
 
 
 
+
 # inner join from stata to nl to get order
 sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
   select(stataName, rowID, section14) %>%
@@ -163,10 +164,13 @@ for (i in 1:length(texfiles)) {
   
   
   # add section divider if new section
-  if (i == 1) section_pre <- ""
+  if (i == 1) section_pre <- "Sample Identifiers"
   if (!is.na(section_i) & !is.na(section_pre)) {
     if (section_i != section_pre) {
-    cat(paste0("\\newpage\n\\subsection{", section_i, "}\n"))
+      cat(paste0("\\newpage\n\\subsection{", section_i, "}\n")) # other section
+    }
+    if (i == 1) {
+      cat(paste0("\\subsection{", section_pre, "}\n")) # first section
     }
   }
   
@@ -177,11 +181,14 @@ for (i in 1:length(texfiles)) {
   section_pre <- section_i # store
 }
 
+# incumbent tables and references at the end
+cat("\\input{CrossReferenceVariables_KB_SK}")
+
 
 sink()
 
 
-# the document ------
+# the wrapper document (if  you want a standalone) ------
 genWrapper <- FALSE
 if (genWrapper) {
   sink(file.path(dir_for_codebook, "2016codebook_wrapper.tex"))
@@ -207,4 +214,3 @@ if (genWrapper) {
 
 # save for other scripts ----
 saveRDS(cq, "data/output/fmt_metadata_ordered_cc16.Rds")
-
