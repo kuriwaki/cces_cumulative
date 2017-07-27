@@ -7,6 +7,7 @@ library(ggplot2)
 library(dplyr)
 library(foreach)
 library(readr)
+library(readxl)
 library(xtable)
 
 
@@ -160,4 +161,48 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
 
 logout()
 
+
+
+
+# auxilary tabulations from flat file --- these were not in crunch
+
+vars <- read_excel("data/source/cces/Pre_Post_Contextual_Variables.xlsx",
+                   col_names = c("section16", "alias", "label"))
+cc16 <- read_dta("data/source/cces/2016_cc.dta")
+
+
+vars_in_cc16 <- intersect(vars$alias, colnames(cc16))
+
+cx <- foreach(nam = vars_in_cc16, .combine = "bind_rows") %do% {
+  
+  lab <- filter(vars, alias == nam) %>% pull(label)
+  
+  table_nam <- table(cc16[[nam]])
+  var.arr <- matrix(as.numeric(table_nam), nrow = 1)
+  choicenames.vec <- names(table_nam)
+  
+  choiceno.vec <- names(table(zap_labels(cc16[[nam]])))
+  # but if it's text, don't bother..
+  if(identical(choiceno.vec, choicenames.vec)) choiceno.vec <- rep(NA, length(choiceno.vec))
+  
+  nChoices <- length(choicenames.vec)
+  
+  nr <- nrow(var.arr)
+  
+  
+  tibble(alias = nam,
+         wording = "",
+         name = lab,
+         count = as.list(data.frame(t(var.arr))), 
+         level = rep(list(choiceno.vec), nr),
+         labels = rep(list(choicenames.vec), nr),
+         type = "categorical", # looks like
+         nChoices = nChoices,
+         nSubQuestions = 1)
+}
+
+
+metadata <- bind_rows(metadata, cx)
+
 saveRDS(metadata, "data/output/meta/fmt_metadata_cc16.Rds")
+
