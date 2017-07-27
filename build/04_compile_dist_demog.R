@@ -58,11 +58,6 @@ combined_dataset <- bind_rows(v_acs_06, v_acs_11, v_cen_10)
 help("write_dta")
 
 # write ------
-write_dta(combined_dataset,"data/output/CD_dem/CD_dem.dta")
-write_csv(combined_dataset, "data/output/CD_dem/CD_dem.csv")
-
-datatable(combined_dataset,
-          filter = list(position = 'top', clear = FALSE),
-          options = list(searchCols = list(NULL, NULL, NULL))
-)
+write_dta(combined_dataset,"data/output/03_contextual/CD_dem.dta")
+write_csv(combined_dataset, "data/output/03_contextual/CD_dem.csv")
 

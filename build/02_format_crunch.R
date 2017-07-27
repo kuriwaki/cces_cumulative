@@ -6,7 +6,6 @@ library(readr)
 library(xtable)
 
 
-ccc <- haven::read_sav("data/output/cumulative_2006_2016.sav")
 
 # Start up crunch -------
 login() # you need a login and password to complete this command
