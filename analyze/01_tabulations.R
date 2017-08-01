@@ -165,12 +165,24 @@ for (i in 1:length(texfiles)) {
   
   # add section divider if new section
   if (i == 1) section_pre <- "Sample Identifiers"
-  if (!is.na(section_i) & !is.na(section_pre)) {
-    if (section_i != section_pre) {
-      cat(paste0("\\newpage\n\\subsection{", section_i, "}\n")) # other section
-    }
+  
+  if (!is.na(section_i) & !is.na(section_pre)) { # non-pathological cases
+    
     if (i == 1) {
       cat(paste0("\\subsection{", section_pre, "}\n")) # first section
+    }
+    if (section_i != section_pre & (section_i != "Pre-Election Survey Contextual Variables")) {
+      cat(paste0("\\newpage\n\\subsection{", section_i, "}\n")) # other section
+    }
+    if (section_i != section_pre & section_i == "Pre-Election Survey Contextual Variables") {
+      cat("\\input{ValidatedVote_KB_SK}") # first squeeze in VV
+      cat("\\newpage\n")
+      cat("\\part{Part IV}\n")
+      
+      cat("\\section{Contextual Variables}\n")
+      cat("Contextual variables consist of the names and parties of the candidates for U. S. House, U. S. Senate, and Governor. For all offices, Candidate 1 is the Democrat and Candidate 2 is the Republican, except when no Democrat is running. When no Democrat is running, the Republican is listed as Candidate 1. When only one candidate is running, Candidate 2 is listed as ``NA''.\n")
+      
+      cat(paste0("\\subsection{", section_i, "}\n")) 
     }
   }
   
@@ -181,35 +193,14 @@ for (i in 1:length(texfiles)) {
   section_pre <- section_i # store
 }
 
-# incumbent tables and references at the end
+# incumbent table dump at the end
+cat("\\input{ContextualVariables_KB_SK}\n")
+
+# cross references as a new part
+cat("\\part{Part V}\n")
 cat("\\input{CrossReferenceVariables_KB_SK}")
 
-
 sink()
-
-
-# the wrapper document (if  you want a standalone) ------
-genWrapper <- FALSE
-if (genWrapper) {
-  sink(file.path(dir_for_codebook, "2016codebook_wrapper.tex"))
-  cat("\\documentclass[12pt,letterpaper,oneside,titlepage]{article}
-\\usepackage{array}
-\\newcolumntype{R}[1]{>{\\raggedleft\\let\\newline\\\\\\arraybackslash\\hspace{0pt}}m{#1}}
-\\usepackage[margin=1in]{geometry}
-\\usepackage{longtable}
-\\begin{document}
-\\begin{center}
-\\Huge \\textsc{Guide to the 2016 Cooperative Congressional Election Survey}
-\\vskip1cm
-\\vfill
-\\end{center}
-\\normalsize
-\\newpage
-\\tableofcontents\n\n\n")
-  cat("\\input{2016codebook_contents.tex}\n\n\n")
-  cat("\\end{document}")
-  sink()
-}
 
 
 # save for other scripts ----
