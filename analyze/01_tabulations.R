@@ -30,7 +30,8 @@ man <- read_csv(file.path(dir_for_codebook, "identifiers_2016_source.csv")) %>%
   mutate(wording = "    ")
 
 
-
+# some special q's to mark with a warning sign
+warning_regex <- c("(CC16_301.|CC16_312_.*|CC16_331_4|CC16_331_5|CC16_331_6|CC16_331_8|CC16_340f|CC16_350|CC16_351A|CC16_351C|CC16_351D)")
 
 # inner join from stata to nl to get order
 sq_ordered <- inner_join(sq, nl, by = c("stataName" = "code16")) %>% 
@@ -88,10 +89,15 @@ xtlist <- foreach(i = rows_to_tab) %do% {
     addtorow <- list()
     addtorow$pos <- list(-1, 0)
     
+    tex_alias <- cq$alias[i]
+    if (grepl(warning_regex, tex_alias)) tex_alias <- paste0(tex_alias, "{~\\danger}")
+    tex_alias <- gsub("\\_", "\\\\_", tex_alias)
+    tex_label <-  gsub("\\_", "\\\\_", cq$name[i])
+    
     qcodename <- paste0('\\textbf{', 
-                        gsub("\\_", "\\\\_", cq$alias[i]), 
+                        tex_alias, 
                         '} & & \\hfill ', 
-                        gsub("\\_", "\\\\_", cq$name[i]))
+                       tex_label)
       
     qwordtext <- paste0('\\begin{minipage}{\\columnwidth}%\n',
                         cq$wording[i], '%\n',
@@ -134,7 +140,6 @@ for (i in 1:length(xtlist)) {
                                      "tabular"),
         add.to.row =  xtlist[[i]]$addtorow,
         hline.after = c(-1, nrow(xtlist[i]$xtable)),
-        timestamp = NULL,
         floating = FALSE,
         file = file.path(dir_to_print, xtlist[[i]]$filename))
   if(i %% 50 == 0) cat(paste0(i, " out of ", length(xtlist), " done ...\n"))
