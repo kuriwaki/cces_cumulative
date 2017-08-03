@@ -13,7 +13,7 @@ library(xtable)
 
 # variable list ----
 # to make a good guess about which is pre/post
-vars_edited <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv") %>%
+vars_edited <- read_csv("data/source/cces_meta/2016_guidebook_variables_orderedby2014.csv") %>%
   select(section14, code16)
 
 
@@ -84,7 +84,7 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   if (!is_post)
     var.tab <- crtabs(paste0("~ ", alias), ds, useNA = "ifany")
   if (is_post)
-    var.tab <- crtabs(paste0("~ ", alias), ds[ds$tookpost == "Took post"])
+    var.tab <- crtabs(paste0("~ ", alias), ds[ds$tookpost == "Took post"], useNA = "ifany")
   
   # get counts
   var.arr <- var.tab@arrays$count
@@ -96,28 +96,27 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   choiceno.vec <- sapply(cat.obj, "[", "id") %>% unlist() %>% as.integer()
 
   
-  # "check all that apply" questions are not in grid-form, but count total yeses.
-  # so make that in some grid form again...
+  # "check all that apply" questions are not in grid-form, but need to be divided into subvariables
+  # the choice names will be the same, and they will be in columns.
+  # just need to populate one row of var.arr to be one subvariable, syntax alias[[1]]
   if (type == "multiple_response") {
-    missing <- var.arr[var.tab@dims[[1]]$missing]
-    totalnonmissing <- var.tab@.Data[[3]]$n - missing # apparently slot 3...
+    rm(var.arr)
     
-    # get the yeses
-    checks.ind <- !(var.tab@dims[[1]]$any.or.none | var.tab@dims[[1]]$missing)
-    checks <- var.arr[checks.ind]
+    # we don't have a good way to distinguish between missings (not asked vs. skipped, etc..)
+    # so, combine these "by hand"
+    subvar.tab <- foreach(j = 1:nQs) %do% {
+      # repeat what we had above, replacing values
+      if (!is_post)
+        subvar.tab <- crtabs(paste0("~", alias, "[[", j, "]]"), ds, useNA = "ifany")
+      if (is_post) 
+        subvar.tab <- crtabs(paste0("~", alias, "[[", j, "]]"), ds[ds$tookpost == "Took post"], useNA = "ifany")
+      
+      subvar.tab
+    }
     
-    # get the nos
-    notchecked <- totalnonmissing - checks
+    # flatten out to get the numbers
+    var.arr <- t(sapply(subvar.tab, function(x) matrix(x@arrays$count, nrow = 1)))
     
-    # how many more columns (extra questions) do we have to add?
-    # sub 2 for check and no check. then 1 for missing
-    extracols <- length(choiceno.vec) - 2 - 1 
-    zeros_mat <- matrix(0, nrow = length(checks), ncol = extracols)
-    
-    counts <- cbind(checks, notchecked, missing, zeros_mat)
-    
-    
-    var.arr <- counts
   }
   
 
@@ -149,15 +148,21 @@ metadata <- foreach(i = 1:length(meta_objs), .combine = "bind_rows") %do% {
   # duplicate id for each grid row. store counts and choice labels as c
   tibble(id = id,
          alias = q.aliases,
+         meta_obj_id = i,
          wording = wording,
          name = q.names,
          count = as.list(data.frame(t(var.arr))), # https://stackoverflow.com/a/6819883/5525412
          level = rep(list(choiceno.vec), nr),
          labels = rep(list(choicenames.vec), nr),
          type = type,
+         is_post_gues = is_post,
          nChoices = nChoices,
          nSubQuestions = nSubQuestions)
 }
+
+# duh???
+# crtabs(~CC16_312[[1]], ds, useNA = "ifany")
+
 
 logout()
 
@@ -166,7 +171,7 @@ logout()
 
 # auxilary tabulations from flat file --- these were not in crunch
 
-vars <- read_excel("data/source/cces/Pre_Post_Contextual_Variables.xlsx",
+vars <- read_excel("data/source/cces_meta/Pre_Post_Contextual_Variables.xlsx",
                    col_names = c("section16", "alias", "label"))
 cc16 <- read_dta("data/source/cces/2016_cc.dta")
 
@@ -205,4 +210,3 @@ cx <- foreach(nam = vars_in_cc16, .combine = "bind_rows") %do% {
 metadata <- bind_rows(metadata, cx)
 
 saveRDS(metadata, "data/output/meta/fmt_metadata_cc16.Rds")
-

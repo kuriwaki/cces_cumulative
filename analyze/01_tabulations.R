@@ -23,7 +23,7 @@ sq <- read_excel("data/output/meta/Labels_2016.xlsx") %>%
   mutate(sOrder = 1:n())
 
 # nathan and liz
-nl <- read_csv("data/source/cces/2016_guidebook_variables_orderedby2014.csv")
+nl <- read_csv("data/source/cces_meta/2016_guidebook_variables_orderedby2014.csv")
 
 # manual input
 man <- read_csv(file.path(dir_for_codebook, "identifiers_2016_source.csv")) %>% 
