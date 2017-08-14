@@ -178,7 +178,7 @@ for (d in all_CDs) {
 
   zips_of_d_pre <- as.character(container[row_number_in_container, column_name_container_pre])
   zips_of_d_post <- as.character(container[row_number_in_container, column_name_container_post])
-
+  
   zips_of_d_presplit <- str_split(zips_of_d_pre, ",")[[1]]
 
 
@@ -200,6 +200,8 @@ for (d in all_CDs) {
 
 
   count_ofbothprepost <- length(inzips_of_d_pre_and_inzips_of_d_post)
+  if (zips_of_d_post == "") 
+  count_ofbothprepost <- NA
 
   (count_ofbothprepost / count_of_zips_of_d_pre)
   col_name_in_containerz <- paste(c("zips_calculation", c) , collapse = "")
@@ -207,11 +209,12 @@ for (d in all_CDs) {
   # figure out which row corresponds to district d
   row_number_in_containerz <- which(d == container$CD)
   
-  containerz[row_number_in_containerz,col_name_in_containerz] <- paste(count_ofbothprepost / count_of_zips_of_d_pre, collapse = ",")
+  containerz[row_number_in_containerz,col_name_in_containerz] <- (count_ofbothprepost / count_of_zips_of_d_pre)
   
   }
 }
 
+View(containerz)
 
 # write to table
 write_excel_csv(containerz, "data/output/changes_in_CD_composition.csv", na = "")
