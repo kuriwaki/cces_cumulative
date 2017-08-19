@@ -1,3 +1,5 @@
+library(readr)
+library(dplyr)
 library(readxl)
 
 # the working directory (i.e. the project directory)

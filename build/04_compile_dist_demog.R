@@ -55,9 +55,15 @@ v_cen_10[, Variable10] <- "CEN10"
 
 combined_dataset <- bind_rows(v_acs_06, v_acs_11, v_cen_10)
 
+test <-combined_dataset[c(3149), ]
+
+
+help("select")
+
 help("write_dta")
 
 # write ------
 write_dta(combined_dataset,"data/output/03_contextual/CD_dem.dta")
 write_csv(combined_dataset, "data/output/03_contextual/CD_dem.csv")
+
 
