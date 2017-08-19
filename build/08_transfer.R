@@ -13,7 +13,9 @@ filenames <- list.files(datadir, full.names = TRUE, recursive = TRUE)
 fnames_spss <- grep("\\.sav", filenames, value = TRUE)
 
 # loop through and read, write, write.
-for (f in fnames_spss) { # REMOVE the [1:5] (which limits to first five folders) once you've verified this works
+sink("transfer_spss_files_log.txt")
+for (f in fnames_spss) {
+  cat(paste0(f, "\n"))
   
   # read 
   sav_f <- read_sav(f)
@@ -23,6 +25,10 @@ for (f in fnames_spss) { # REMOVE the [1:5] (which limits to first five folders)
   
   # write to Rds and dta and spss in other folder
   saveRDS(sav_f, file.path(gsub("\\.sav", ".Rds", f)))
-  write_dta(sav_f, file.path(gsub("\\.sav", ".dta", f)))
-  # write_sav(sav_f, file.path(datadir, "out_spss", gsub("\\.sav", ".sav", f)))
+  
+  tryCatch({
+    write_dta(sav_f, file.path(gsub("\\.sav", ".dta", f)), version = 13)
+  }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+  
 }
+sink()

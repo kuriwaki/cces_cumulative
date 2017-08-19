@@ -150,10 +150,15 @@ for (d in all_CDs) {
 
 # Loop through districts to get a easure of change ---------
 #build new container
-containerz <- tibble(CD = all_CDs,
+dataset1 <- tibble(CD = all_CDs,
                     zips_calculation109110 = NA,
                     zips_calculation110113 = NA,
                     zips_calculation113115 = NA)
+
+dataset2 <- tibble(CD = all_CDs,
+                     zips_calculation109110 = NA,
+                     zips_calculation110113 = NA,
+                     zips_calculation113115 = NA)
 
 
 
@@ -204,24 +209,30 @@ for (d in all_CDs) {
   count_ofbothprepost <- NA
 
   (count_ofbothprepost / count_of_zips_of_d_pre)
-  col_name_in_containerz <- paste(c("zips_calculation", c) , collapse = "")
+  col_name_in_dataset1 <- paste(c("zips_calculation", c) , collapse = "")
   
   # figure out which row corresponds to district d
-  row_number_in_containerz <- which(d == container$CD)
+  row_number_in_dataset1 <- which(d == container$CD)
   
-  containerz[row_number_in_containerz,col_name_in_containerz] <- (count_ofbothprepost / count_of_zips_of_d_pre)
+  dataset1[row_number_in_dataset1,col_name_in_dataset1] <- (count_ofbothprepost / count_of_zips_of_d_pre)
+  
+  col_name_in_dataset2 <- paste(c("zips_calculation", c) , collapse = "")
+  
+  row_number_in_dataset2 <- which(d == container$CD)
+  
+  dataset2[row_number_in_dataset2,col_name_in_dataset2] <- (count_ofbothprepost / count_of_zips_of_d_post)
   
   }
 }
 
-View(containerz)
-
 # write to table
-write_excel_csv(containerz, "data/output/changes_in_CD_composition.csv", na = "")
+write_excel_csv(dataset1, "data/output/changes_in_CD_composition_dataset1.csv", na = "")
+
+write_excel_csv(dataset2, "data/output/changes_in_CD_composition_dataset2.csv", na = "")
 
 
 # visualize
-df_toplot <- containerz %>% 
+df_toplot <- dataset1 %>% 
   reshape2::melt(id.vars = "CD",
        variable.name = "window",
        value.name = "prop_zips_stay") %>%
