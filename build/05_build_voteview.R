@@ -1,10 +1,19 @@
-#read everything in
-voteviewlist109 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS109_members.csv")
-voteviewlist110 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS110_members.csv")
-voteviewlist111<- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS111_members.csv")
-voteviewlist112 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS112_members.csv")
-voteviewlist113 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS113_members.csv")
-voteviewlist114 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS114_members.csv")
-voteviewlist115 <- read.csv("~/Dropbox/cces_cumulative/data/source/voteview/HS115_members-2.csv")
-voteviewlisttotal <- rbind(voteviewlist109,voteviewlist110,voteviewlist111,voteviewlist112,voteviewlist113,voteviewlist114,voteviewlist115)
-voteviewlisttotal<-mutate(voteviewlisttotal,lastname=gsub("^([A-Z]+),.*","\\1",bioname))
+library(dplyr)
+library(readr)
+library(foreach)
+
+
+path <- list.files("data/source/voteview", full.names = TRUE)
+paths_read <- grep("/HS.*members.csv$", path, value = TRUE)
+
+vv <- foreach(p = paths_read, .combine = "bind_rows") %do% {
+  read_csv(p)
+}
+
+
+# pick last name
+vv <- mutate(vv,lastname = gsub("^([A-Z]+),.*", "\\1", bioname)) %>%
+  select(congress, chamber, icpsr, lastname, everything())
+
+
+saveRDS(vv, "data/output/03_contextual/voteview_mcs.Rds")
