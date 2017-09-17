@@ -348,7 +348,6 @@ cc10 <- std_dv("data/source/cces/2010_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
 
 
-# mutations to data -----
 
 
 
@@ -403,6 +402,11 @@ ccs <- list(stdName(filter(ccp, year != 2012)),
             stdName(cc15), 
             stdName(cc16))
 
+# mutations to data -----
+
+# fix county misalignment
+ccs[[1]] <- ccs[[1]] %>% 
+  mutate(countyFIPS = (countyFIPS < 1000)*as.numeric(state)*1000 + countyFIPS)
 
 
 # extract variable by variable iniitial version -----
@@ -424,6 +428,8 @@ educ <- findStack(ccs, educ, makeLabelled = TRUE)
 race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "numeric")
 state <- findStack(ccs, state)
+zipcode <- findStack(ccs, zipcode, "character")
+countyFIPS <- findStack(ccs, countyFIPS, "numeric")
 cdid <- findStack(ccs, cdid, "numeric")
 
 i_pres08 <- findStack(ccs, intent_pres_08)
@@ -466,7 +472,7 @@ v_gov <- sep_bind(v_gov, voted_gov_char)
 
 
 
-# format state and CD ----
+# format state and CD, then zipcode and county ----
 stcd <- left_join(state, cdid) %>% 
   mutate(state = state_char) %>%
   left_join(select(statecode, State, StateAbbr), by = c("state" = "State")) %>% 
@@ -474,9 +480,13 @@ stcd <- left_join(state, cdid) %>%
   mutate(CD = paste0(st, "-", cdid)) %>% 
   select(year, caseID, state, st, cdid, CD)
 
+geo <- stcd %>% 
+  left_join(zipcode) %>% 
+  left_join(countyFIPS)
+
 
 # bind together ----
-ccc <- stcd %>%
+ccc <- geo %>%
   left_join(wgt) %>% 
   left_join(pid3) %>%
   left_join(pid7) %>% 
@@ -536,6 +546,8 @@ ccc <-  ccc  %>%
 # make char variables a factor so crunch knows it's a categorical?
 ccc_factor <- ccc %>% 
   mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
+  mutate(zipcode = as.character(zipcode)) %>% 
+  mutate(countyFIPS = as.character(countyFIPS)) %>%
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state|st)")), as.factor)
