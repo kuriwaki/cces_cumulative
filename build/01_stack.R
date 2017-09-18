@@ -157,7 +157,10 @@ stdName <- function(tbl){
              intent_pres_12 = vote_intent_pres_12,
              intent_rep = vote_intent_house,
              intent_sen = vote_intent_senate,
-             intent_gov = vote_intent_gov)
+             intent_gov = vote_intent_gov,
+             vv_regstatus = reg_validation,
+             vv_turnout_gvm = gen_validated,
+             vv_turnout_pvm = prim_validated)
   }
   
   if (identical(cces_year, 2012L)) {
@@ -181,7 +184,14 @@ stdName <- function(tbl){
                   intent_gov = CC356b,
                   intent_govx = CC356,
                   intent_rep = CC390b,
-                  intent_repx = CC390) %>% 
+                  intent_repx = CC390,
+                  vv_turnout_gvm = e2012g,
+                  vv_turnout_pvm = e2012congp,
+                  vv_turnout_ppvm = e2012presp,
+                  vv_regstatus = voter_status,
+                  vv_party_gen = PartyRegist,
+                  vv_party_prm = congprim_pty,
+                  vv_party_pprm = presprim_pty) %>% 
       mutate(voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
              voted_rep = coalesce(voted_rep, intent_repx),
              voted_sen = coalesce(voted_sen, intent_senx),
@@ -217,7 +227,13 @@ stdName <- function(tbl){
                   intent_gov = CC356,
                   intent_govx = CC356x,
                   intent_rep = CC360,
-                  intent_repx = CC360x) %>% 
+                  intent_repx = CC360x,
+                  vv_turnout_gvm = e2014gvm,
+                  vv_turnout_pvm = e2014pvm,
+                  vv_regstatus = voterstatus,
+                  vv_party_gen = partyaffiliation,
+                  vv_party_prm = e2014pep,
+                  vv_st = state_cl) %>% 
       mutate(voted_rep = coalesce(voted_rep, intent_repx),
              voted_sen = coalesce(voted_sen, intent_senx),
              voted_gov = coalesce(voted_gov, intent_govx))
@@ -259,7 +275,15 @@ stdName <- function(tbl){
              voted_pres_16 = CC16_410a,
              voted_rep = CC16_412,
              voted_sen = CC16_410b,
-             voted_gov = CC16_411
+             voted_gov = CC16_411,
+             vv_turnout_gvm = CL_E2016GVM,
+             vv_turnout_pvm = CL_E2016PVM,
+             vv_turnout_ppvm = CL_E2016PPVM,
+             vv_regstatus = CL_voterstatus,
+             vv_party_gen = CL_partyaffiliation,
+             vv_party_prm = CL_E2016PEP,
+             vv_party_pprm = CL_E2016PPEP,
+             vv_st = CL_state
       ) %>% # combine early vote
       mutate(voted_pres_16 = coalesce(voted_pres_16, intent_pres_16x),
              voted_rep = coalesce(voted_rep, intent_repx),
@@ -339,7 +363,7 @@ pid3_cc10 <- pid10_raw %>%
 cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
-cc16 <- std_dv("data/source/cces/2016_cc.dta")
+cc16 <- std_dv("data/source/cces/2016_cc_vv.dta")
 
 
 # old versions from 2008, 2010, and 2012 (for vote variables)?
@@ -458,6 +482,13 @@ apvgov <- findStack(ccs, approval_gov, makeLabelled = TRUE)
 
 
 econ <- findStack(ccs, economy_retro, makeLabelled = TRUE)
+
+
+vv_regstatus <- findStack(ccs, vv_regstatus)
+vv_party_gen <- findStack(ccs, vv_party_gen)
+vv_party_prm <- findStack(ccs, vv_party_prm)
+vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm)
+vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm)
 
 
 # mutate vote variables that are HouseCand fillers
