@@ -1,6 +1,14 @@
 library(dplyr)
 library(readr)
 library(foreach)
+library(Rvoteview)
+
+
+# how to use voteview
+# res <- voteview_search(startdate = 2006, enddate = 2017, keyvote = "CQ")
+# rcobject <- voteview_download(res$id[1:207], perrequest = 15, keeplong = T)
+# rclongdataframe <- melt_rollcall(rcobject, votecols = c("chamber", "congress"))
+
 
 
 path <- list.files("data/source/voteview", full.names = TRUE)
