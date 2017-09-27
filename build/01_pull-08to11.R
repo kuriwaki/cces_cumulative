@@ -54,4 +54,10 @@ vv06 <- cc06 %>%
   select(caseID, year, matches("^vv_"))
 
 
-bind_rows(vv06, vv08, vv10)
+vv06_10 <- bind_rows(vv06, vv08, vv10)
+
+
+saveRDS(vv06_10, "data/output/ccc_pre12_vv.Rds")
+
+
+

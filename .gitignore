@@ -78,3 +78,7 @@ documents_CQ/*
 .Rhistory
 .Rapp.history
 *.Rproj
+Icon?
+.httr-oauth
+.here
+
