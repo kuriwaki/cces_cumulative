@@ -4,6 +4,7 @@ library("dplyr")
 
 cc16_full <- read_dta("~/Dropbox/cces_cumulative/data/source/cces/2016_cc_vv.dta")
 
+# deprecated for poll_error 
 
 # select columns
 cc16 <- cc16_full %>%
@@ -20,6 +21,7 @@ cc16 <- cc16_full %>%
          combined_pres_pre = coalesce(zap_labels(intent_pres_16), zap_labels(ev_pres_16)),
          vote_hrc_pre = as.numeric(combined_pres_pre == 2),
          vote_djt_pre = as.numeric(combined_pres_pre == 1),
+         vote_und_pre = as.numeric(combined_pres_pre == 7),
          vote_hrc_post = as.numeric(voted_pres_16 == 2),
          vote_djt_post = as.numeric(voted_pres_16 == 1),
          turnout_wgt = case_when(intent_turnout == 3 ~ 1.0,
@@ -29,7 +31,7 @@ cc16 <- cc16_full %>%
                                  intent_turnout %in% c(4,8,9, NA) ~ 0),
          post_turnout =  as.numeric(post_turnout == 5),
          vv_turnout = as.numeric(vv_16 != "")) %>%
-  select(caseID, commonweight, commonweight_post, tookpost, state,
+  select(caseID, commonweight, commonweight_post, tookpost, state, pid3,
          matches("vote_"), combined_pres_pre, voted_pres_16,
          intent_turnout, post_turnout, turnout_wgt, vv_turnout)
 
