@@ -589,6 +589,7 @@ ccc_factor <- ccc %>%
 
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/output/cumulative_2006_2016.sav")
+write_dta(ccc_factor, "data/output/cumulative_2006_2016.dta")
 
 set.seed(02138)
 sample_frac(ccc_factor, 0.75) %>% 
