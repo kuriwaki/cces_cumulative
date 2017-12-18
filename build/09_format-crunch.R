@@ -5,20 +5,38 @@ library(foreach)
 library(readr)
 library(xtable)
 
+# ccc <- readRDS("data/output/cumulative_2006_2016.Rds") # on disk
+upload_again <- FALSE
+
+if (upload_again) {
+  newDataset("data/output/cumulative_2006_2016.sav.zip",
+             name = "CCES Common Content/cumulative_beta")
+}
 
 
 # Start up crunch -------
 login() # you need a login and password to complete this command
 
 
-# connect to data---------
-proj <- projects()[["CCES Common Content"]]
 
-ds <- loadDataset(datasets(proj)[[1]])
+
+
+# connect to data---------
+ds <- loadDataset("cumulative_2006_2016_dropbox.sav", project = "CCES Common Content")
 
 
 # description for dataset
-description(ds) <- "This is an alpha version -- formatting incomplete and may contain errors\na subset of full data to meet upload size cap."
+description(ds) <- "This is an alpha version -- formatting incomplete and may contain errors."
+
+
+# variable type -----
+
+type(ds$year) <- "categorical"
+names(categories(ds$year)) <- as.character(2006:2016)
+
+type(ds$pid7) <- "categorical"
+
+
 
 # add question wording? ---------
 
@@ -58,10 +76,16 @@ description(ds$intent_gov_char) <- "In the race for Governor in your state, who 
 description(ds$voted_gov_char) <- "For whom did you vote for Governor?"
 
 
+# ordering of categories ----
+st_order <- order(table(ds$state), decreasing = TRUE)
+categories(ds$state) <- categories(ds$state)[st_order]
+
+
+
 # Variable Groups and ordering ------
 vn <- names(ds)
 
-ind_ids <- grep("year|caseID", vn)
+ind_adm <- grep("year", vn)
 ind_geo <- grep("CD|state", vn)
 ind_wgt <- grep("weight", vn)
 ind_dem <- grep("gender|birthyr|race|educ|pid", vn)
@@ -73,10 +97,10 @@ ind_int <- setdiff(grep("intent.*char", vn), ind_pres)
 ind_vtd <- setdiff(grep("voted.*char", vn), ind_pres)
 
 ind_other <- setdiff(1:length(vn),
-                     c(ind_ids, ind_geo, ind_wgt, ind_dem, ind_app, ind_pres, ind_int, ind_vtd))
+                     c(ind_adm, ind_geo, ind_wgt, ind_dem, ind_app, ind_pres, ind_int, ind_vtd))
 
 ordering(ds) <- VariableOrder(
-  VariableGroup("Identifiers", ds[ind_ids]),
+  VariableGroup("Administration", ds[ind_adm]),
   VariableGroup("Geography", ds[ind_geo]),
   VariableGroup("Demographics", ds[ind_dem]),
   VariableGroup("Approval", ds[ind_app]),
