@@ -16,13 +16,12 @@ cc11 <- read_dta("data/source/cces/2011_cc.dta")
 samp <- sample(cc06$starttime, 50)
 
 fmt_date <- function(vec) {
-  as.POSIXct(vec, format = "%a %b %e %T %Y") %>% lubridate::as_datetime()
+  as.POSIXct(vec, format = "%a %b %e %T %Y") 
 }
 
-cc06$starttime <- fmt_date(cc06$starttime)
 
 cc06_time <- cc06 %>% 
-  mutate(year = 2006, caseID = v1001) %>% 
+  mutate(year = 2006, caseID = v1000, starttime = fmt_date(starttime)) %>% 
   select(year, caseID, starttime)
 saveRDS(cc06_time, "data/source/cc06_datettime.Rds")
 

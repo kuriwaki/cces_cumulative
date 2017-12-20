@@ -1,10 +1,9 @@
-rm(list = ls())
 
+library(tidyverse)
 library(haven)
-library(dplyr)
-library(readr)
 library(foreach)
 library(stringr)
+library(lubridate)
 library(data.table)
 
 
@@ -106,6 +105,11 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     if (type == "character") {
       list_yr <- mutate(list_yr, !!var_name := as.character(as_factor(!!var)))
     }
+    
+    if (type == "datetime") {
+      list_yr <- mutate(list_yr, !!var_name := as.POSIXct(.data[[var_name]]))
+    }
+    
     list_yr <-  list_yr %>% 
       mutate(!!var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
@@ -145,6 +149,7 @@ stdName <- function(tbl){
              cdid = congdist_pre,
              zipcode = zip_pre,
              countyFIPS = county_fips_pre,
+             starttime = start_pre,
              reg_true = reg_validation,
              reg_self = registered_pre,
              validt_trn = gen_validated,
@@ -255,6 +260,7 @@ stdName <- function(tbl){
       rename(weight = commonweight,
              CC350 = CC16_360,
              cdid = cdid113,
+             starttime = starttime_pre,
              approval_pres = CC16_320a,
              approval_rep = CC16_320f,
              approval_sen1 = CC16_320g,
@@ -434,7 +440,16 @@ ccs[[1]] <- ccs[[1]] %>%
 
 
 # extract variable by variable iniitial version -----
+
+# admin
 wgt <- findStack(ccs, weight, "numeric")
+
+time <- findStack(ccs, starttime, type = "datetime", makeLabelled = FALSE) %>% 
+  filter(year != 2006) %>% 
+  bind_rows(readRDS("data/source/cc06_datettime.Rds"))
+
+
+# demos
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
   bind_rows(pid3_cc10) %>%
@@ -452,6 +467,8 @@ gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
 race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "numeric")
+
+# geography
 state <- findStack(ccs, state)
 zipcode <- findStack(ccs, zipcode, "character")
 countyFIPS <- findStack(ccs, countyFIPS, "numeric")
@@ -520,6 +537,7 @@ geo <- stcd %>%
 # bind together ----
 ccc <- geo %>%
   left_join(wgt) %>% 
+  left_join(time) %>% 
   left_join(pid3) %>%
   left_join(pid7) %>% 
   left_join(gend) %>%
@@ -583,7 +601,7 @@ ccc_factor <- ccc %>%
   mutate(countyFIPS = as.character(countyFIPS)) %>%
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
-  mutate_at(vars(matches("(state|st)")), as.factor)
+  mutate_at(vars(matches("(state$|st$)")), as.factor)
 
 
 
