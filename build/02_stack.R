@@ -123,7 +123,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     
     
     list_yr <- list_yr %>% 
-      mutate(!!var_name := labelled_spss(.data[[num_var_name]], nvec)) %>%
+      mutate(!!var_name := labelled(as.integer(.data[[num_var_name]]), sort(nvec))) %>%
       select(year, caseID, !!var_name)
   }
   
@@ -438,12 +438,13 @@ wgt <- findStack(ccs, weight, "numeric")
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>%  # fix the missing 2010
   bind_rows(pid3_cc10) %>%
-  mutate(pid3 = labelled(pid3_num, c("Democrat" = 1,
-                                     "Republican" = 2,
-                                     "Independent" = 3,
-                                     "Other" = 4,
-                                     "Not sure" = 5,
-                                     "Skipped" = 8))) %>% 
+  mutate(pid3 = labelled(as.integer(pid3_num), 
+                         c("Democrat" = 1,
+                           "Republican" = 2,
+                           "Independent" = 3,
+                           "Other" = 4,
+                           "Not sure" = 5,
+                           "Skipped" = 8))) %>% 
   select(year, caseID, pid3) # manually do only this one
   
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
@@ -552,7 +553,7 @@ ccc <- ccc %>%
          matches("_char$"),
          matches("_num$"))
 
-View(sample_n(ccc, 30) %>% arrange(year))
+# View(sample_n(ccc, 30) %>% arrange(year))
 
 
 
@@ -578,6 +579,7 @@ ccc <-  ccc  %>%
 ccc_factor <- ccc %>% 
   mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate(zipcode = as.character(zipcode)) %>% 
+  mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
   mutate(countyFIPS = as.character(countyFIPS)) %>%
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
@@ -585,14 +587,12 @@ ccc_factor <- ccc %>%
 
 
 
+
 # Write -----
-
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
-write_sav(ccc_factor, "data/output/cumulative_2006_2016.sav")
-write_dta(ccc_factor, "data/output/cumulative_2006_2016.dta")
+write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
+write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
 
-set.seed(02138)
-sample_frac(ccc_factor, 0.75) %>% 
-  select(-st, -cdid) %>%
-  select(year, pid3, state, race, everything()) %>%
-  write_sav("data/output/cumulative_2006_2016_alpha.sav")
+
+
+
