@@ -62,6 +62,7 @@ data/source/cq/*
 data/source/cces/*
 data/source/dime/*
 data/output/*
+data/release/*
 pettigrew_code/*
 figures/*
 old_code/*
