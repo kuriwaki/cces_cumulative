@@ -13,7 +13,6 @@ cc10 <- read_dta("data/source/cces/2010_cc.dta")
 cc11 <- read_dta("data/source/cces/2011_cc.dta")
 
 # date time in 2006
-samp <- sample(cc06$starttime, 50)
 
 fmt_date <- function(vec) {
   as.POSIXct(vec, format = "%a %b %e %T %Y") 
@@ -23,9 +22,12 @@ fmt_date <- function(vec) {
 cc06_time <- cc06 %>% 
   mutate(year = 2006, caseID = v1000, starttime = fmt_date(starttime)) %>% 
   select(year, caseID, starttime)
-saveRDS(cc06_time, "data/source/cc06_datettime.Rds")
+saveRDS(cc06_time, "data/source/cces/cc06_datetime.Rds")
 
-
+cc09 %>% 
+  mutate(year = 2006, caseID = v100, starttime = as.POSIXct(v401)) %>% 
+  select(year, caseID, starttime) %>%
+  saveRDS("data/source/cces/cc09_datetime.Rds")
 
 # variable list ----
 varList <- function(df) {

@@ -423,7 +423,7 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
 # then left join to vote variable to get the name and party
 
 
-# Start extracting variables -----
+# execute name standardization -----
 # in list form
 ccs <- list(stdName(filter(ccp, year != 2012)), 
             stdName(cc12), 
@@ -439,14 +439,15 @@ ccs[[1]] <- ccs[[1]] %>%
   mutate(countyFIPS = (countyFIPS < 1000)*as.numeric(state)*1000 + countyFIPS)
 
 
-# extract variable by variable iniitial version -----
+# Extract variable by variable iniitial version -----
 
 # admin
 wgt <- findStack(ccs, weight, "numeric")
 
 time <- findStack(ccs, starttime, type = "datetime", makeLabelled = FALSE) %>% 
-  filter(year != 2006) %>% 
-  bind_rows(readRDS("data/source/cc06_datettime.Rds"))
+  filter(year != 2006, year != 2009) %>% 
+  bind_rows(readRDS("data/source/cces/cc06_datetime.Rds")) %>%
+  bind_rows(readRDS("data/source/cces/cc09_datetime.Rds"))
 
 
 # demos
