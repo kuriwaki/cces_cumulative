@@ -12,6 +12,22 @@ cc09 <- read_dta("data/source/cces/2009_cc.dta")
 cc10 <- read_dta("data/source/cces/2010_cc.dta")
 cc11 <- read_dta("data/source/cces/2011_cc.dta")
 
+# date time in 2006
+samp <- sample(cc06$starttime, 50)
+
+fmt_date <- function(vec) {
+  as.POSIXct(vec, format = "%a %b %e %T %Y") %>% lubridate::as_datetime()
+}
+
+cc06$starttime <- fmt_date(cc06$starttime)
+
+cc06_time <- cc06 %>% 
+  mutate(year = 2006, caseID = v1001) %>% 
+  select(year, caseID, starttime)
+saveRDS(cc06_time, "data/source/cc06_datettime.Rds")
+
+
+
 # variable list ----
 varList <- function(df) {
   tibble(label = as.character(sapply(df, function(x) attr(x, "label"))),
