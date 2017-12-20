@@ -1,9 +1,13 @@
 CCES cumulative
 ================
 
-Directory for building a CCES cumulative file collaboratively. Project page [here](https://github.com/kuriwaki/cces_cumulative/projects/1).
+Directory for building a CCES cumulative file (2006 - 2016) collaboratively. Follow the development of dataset building at [this Github page](https://github.com/kuriwaki/cces_cumulative). Project page of tasks [here](https://github.com/kuriwaki/cces_cumulative/projects/1).
 
-Please feel free to file any questions or requests about the cumulative file as Github issues.
+A 2006-2012 cumulative file, as well as datasets from individual years, can be found at the CCES homepage: <https://cces.gov.harvard.edu/>
+
+Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues).
+
+Data is currently not tracked, but releases will be made as flat files and a [Crunch dataset](crunch.io). For an intermediate dataset, please [email](mailto:kuriwaki@g.harvard.edu).
 
 Structure of the directory
 --------------------------
