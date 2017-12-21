@@ -9,8 +9,10 @@ library(xtable)
 upload_again <- FALSE
 
 if (upload_again) {
-  newDataset("data/output/cumulative_2006_2016.sav.zip",
-             name = "CCES Common Content/cumulative_beta")
+  newDataset(
+    "data/output/cumulative_2006_2016.sav.zip",
+    name = "CCES Common Content/cumulative_beta"
+  )
 }
 
 
@@ -97,8 +99,10 @@ ind_pres <- setdiff(grep("pres.*char", vn), ind_app)
 ind_int <- setdiff(grep("intent.*char", vn), ind_pres)
 ind_vtd <- setdiff(grep("voted.*char", vn), ind_pres)
 
-ind_other <- setdiff(1:length(vn),
-                     c(ind_adm, ind_geo, ind_wgt, ind_dem, ind_app, ind_pres, ind_int, ind_vtd))
+ind_other <- setdiff(
+  1:length(vn),
+  c(ind_adm, ind_geo, ind_wgt, ind_dem, ind_app, ind_pres, ind_int, ind_vtd)
+)
 
 ordering(ds) <- VariableOrder(
   VariableGroup("Administration", ds[ind_adm]),
@@ -113,3 +117,13 @@ ordering(ds) <- VariableOrder(
 )
 
 
+
+foo <- ccc_factor %>% select(economy_retro) %>% mutate(economy_retro = as_factor(economy_retro))
+bar <- prepareDataForCrunch(foo)
+newDataset(, "test_R-upload")
+
+addVariables(ds, VarDef(
+  as_factor(foo$economy_retro),
+  name = "Economy Retrospective",
+  description = "Would you say that OVER THE PAST YEAR the nation's economy has... ?"
+))

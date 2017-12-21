@@ -15,24 +15,26 @@ cc11 <- read_dta("data/source/cces/2011_cc.dta")
 # date time in 2006
 
 fmt_date <- function(vec) {
-  as.POSIXct(vec, format = "%a %b %e %T %Y") 
+  as.POSIXct(vec, format = "%a %b %e %T %Y")
 }
 
 
-cc06_time <- cc06 %>% 
-  mutate(year = 2006, caseID = v1000, starttime = fmt_date(starttime)) %>% 
+cc06_time <- cc06 %>%
+  mutate(year = 2006, caseID = v1000, starttime = fmt_date(starttime)) %>%
   select(year, caseID, starttime)
 saveRDS(cc06_time, "data/source/cces/cc06_datetime.Rds")
 
-cc09 %>% 
-  mutate(year = 2006, caseID = v100, starttime = as.POSIXct(v401)) %>% 
+cc09 %>%
+  mutate(year = 2006, caseID = v100, starttime = as.POSIXct(v401)) %>%
   select(year, caseID, starttime) %>%
   saveRDS("data/source/cces/cc09_datetime.Rds")
 
 # variable list ----
 varList <- function(df) {
-  tibble(label = as.character(sapply(df, function(x) attr(x, "label"))),
-         var = colnames(df))
+  tibble(
+    label = as.character(sapply(df, function(x) attr(x, "label"))),
+    var = colnames(df)
+  )
 }
 v06 <- varList(cc06)
 v08 <- varList(cc08)
@@ -44,29 +46,35 @@ v10 <- varList(cc10)
 
 arrange(v10, desc(var))
 
-vv10 <- cc10 %>% 
-  rename(vv_regstatus = voter_status,
-         vv_pmv = vote_pri10,
-         vv_gmv = vote_gen10,
-         caseID = V100) %>%
+vv10 <- cc10 %>%
+  rename(
+    vv_regstatus = voter_status,
+    vv_pmv = vote_pri10,
+    vv_gmv = vote_gen10,
+    caseID = V100
+  ) %>%
   mutate(year = 2010) %>%
   select(caseID, year, matches("^vv"))
 
-vv08 <- cc08 %>% 
-  rename(vv_gmv = vote_gen08,
-         vv_pmv = vote_pri08,
-         vv_regstatus = voter_status,
-         caseID = V100) %>%
-  mutate(year = 2008) %>% 
+vv08 <- cc08 %>%
+  rename(
+    vv_gmv = vote_gen08,
+    vv_pmv = vote_pri08,
+    vv_regstatus = voter_status,
+    caseID = V100
+  ) %>%
+  mutate(year = 2008) %>%
   select(caseID, year, matches("^vv_"))
 
 
-vv06 <- cc06 %>% 
-  rename(vv_gmv = vote_gen06,
-         vv_st = matchState,
-         vv_regstatus = matched,
-         caseID = v1000) %>%
-  mutate(year = 2006) %>% 
+vv06 <- cc06 %>%
+  rename(
+    vv_gmv = vote_gen06,
+    vv_st = matchState,
+    vv_regstatus = matched,
+    caseID = v1000
+  ) %>%
+  mutate(year = 2006) %>%
   mutate(vv_regstatus = as.character(as_factor(vv_regstatus))) %>%
   select(caseID, year, matches("^vv_"))
 
@@ -75,6 +83,3 @@ vv06_10 <- bind_rows(vv06, vv08, vv10)
 
 
 saveRDS(vv06_10, "data/output/ccc_pre12_vv.Rds")
-
-
-
