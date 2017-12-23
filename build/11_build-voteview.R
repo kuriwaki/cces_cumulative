@@ -15,13 +15,42 @@ path <- list.files("data/source/voteview", full.names = TRUE)
 paths_read <- grep("/HS.*members.csv$", path, value = TRUE)
 
 vv <- foreach(p = paths_read, .combine = "bind_rows") %do% {
-  read_csv(p)
+  read_csv(p, col_types = cols())
 }
 
 
 # pick last name
-vv <- mutate(vv,lastname = gsub("^([A-Z]+),.*", "\\1", bioname)) %>%
-  select(congress, chamber, icpsr, lastname, everything())
+vv <- vv %>%
+  mutate(lastname = gsub("^([A-Z]+),.*", "\\1", bioname)) %>%
+  select(congress, chamber, icpsr, lastname, everything()) %>%
+  rename(
+    st = state_abbrev,
+    dist = district_code
+  )
 
 
+## H and S
+vvH <- vv %>%
+  filter(chamber == "House") %>%
+  mutate(chamber = "H")
+
+vvS <- vv %>%
+  filter(chamber == "Senate") %>%
+  mutate(chamber = "S") %>%
+  arrange(icpsr) %>%
+  select(-dist)
+  
+
+
+## sort for now ---
+vvH_min <- vvH %>%
+  select(congress, chamber, icpsr, st, dist, lastname) %>% 
+  mutate(CD = paste0(st, "-", dist))
+
+vvS_min <- vvS %>%
+  select(congress, chamber, icpsr, st, lastname)
+
+## save ---
 saveRDS(vv, "data/output/03_contextual/voteview_mcs.Rds")
+saveRDS(vvH_min, "data/output/03_contextual/voteview_H_matched.Rds")
+saveRDS(vvS_min, "data/output/03_contextual/voteview_S_matched.Rds")
