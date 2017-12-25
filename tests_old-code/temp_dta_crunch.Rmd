@@ -1,0 +1,111 @@
+---
+title: "CCES Common 2016 Stata - Crunch discrepancy"
+author: "Shiro Kuriwaki (kuriwaki@g.harvard.edu)"
+date: \today
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(haven)
+library(readr)
+library(dplyr)
+library(png)
+library(grid)
+library(knitr)
+summarize <- dplyr::summarize
+```
+
+
+The CCES 2016 Common database on crunch (Initial import 2017-03-22, Final updated 2017-04-06) should be the same dataset as the .dta version, which we release on dataverse (Created 2017-03-01).
+
+However, there are some misalignments in the counts. In a pseudo-random sample of 32 variables (questions), 10 had different tabulation counts. Here we document one, the `edloans` variable (Quesstion wording: "Are you currently responsible for paying off a student loan? (Please indicate yes even if your student loan is currently in deferment.)").
+
+
+```{r}
+library(crunch)
+login()
+
+ds <- loadDataset("CCES 2016 Common")
+```
+
+
+# Change in tabulation
+The (unweighted) crosstabs are:
+```{r}
+# crunch
+crtabs(~ edloan, ds, weight = NULL)
+```
+
+which matches the version on browser:
+```{r,  out.width = "400px"}
+include_graphics("edloancrunch.png")
+```
+
+
+In Stata, however, the counts are different
+```{r}
+# Stata
+cc16_dta <- read_dta("../data/source/cces/2016_cc.dta")
+table(as_factor(cc16_dta$edloan))
+```
+
+
+```{r}
+cr <- crtabs(~edloan, ds, weight = NULL, useNA = "ifany")
+st <- table(as_factor(cc16_dta$edloan), useNA = "ifany")
+```
+
+stacked together for comparison:
+```{r}
+cr; st
+```
+
+
+
+# Checking total counts
+
+The total counts are the same
+```{r}
+sum(cr@arrays$count)
+sum(st)
+```
+
+
+The observations also seem to be the same. Here is for example a test of whether the full distribution of observed weights are equal (they are):
+
+```{r}
+wgt_cr <-as.vector(ds$commonweight)
+wgt_st <-as.vector(cc16_dta$commonweight)
+```
+
+```{r}
+ks.test(wgt_cr, wgt_st)
+```
+
+What about the post weights? (Answer: they are different things)
+
+```{r}
+postwgt_cr <-as.vector(ds$commonweight_post)
+postwgt_st <-as.vector(cc16_dta$commonweight_post)
+```
+
+```{r}
+ks.test(postwgt_cr, postwgt_st)
+```
+
+
+# Reweighting by post weights
+I get roughly (about 1 ~ 6 counts off) the same counts if  I weight both by `commonweight_post`
+```{r}
+crtabs(~edloan, ds, weight = ds$commonweight_post)
+crtabs(~edloan, ds[ds$tookpost == "Took post"], weight = NULL)
+crtabs(~, ds[ds$tookpost == "Took post"], weight = NULL)
+```
+
+```{r}
+cc16_dta %>% group_by(edloan) %>% summarize(wgtN = sum(commonweight_post))
+```
+
+
+

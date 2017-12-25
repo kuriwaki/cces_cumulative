@@ -61,13 +61,15 @@ data/source/*Rds
 data/source/cq/*
 data/source/cces/*
 data/source/dime/*
+data/source/anes/*
+data/source/census_demog
 data/output/*
 data/release/*
 pettigrew_code/*
 figures/*
-old_code/*
+history/*
+tests_old-code/*
 guides/*
-test_codebook/*
 documents_CQ/*
 
 
@@ -75,6 +77,7 @@ documents_CQ/*
 # Other links
 ####################
 .Rproj.user
+.RData
 .dropbox
 .Rhistory
 .Rapp.history
