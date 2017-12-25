@@ -1,30 +1,30 @@
-library(plyr)
 library(dplyr)
 
-#join Voteview and FEC list 
-VVwithFEC <- left_join(voteviewlisttotal, minigoodchartfinal, by= c("icpsr"="ICPSR"))
 
-#adjust cq data to make for a clean join with VVwithFEC
-df109to115 <- mutate(df109to115, Last = toupper(Last))
-df109to115 <- mutate(df109to115,Position=replace(Position,Position=="U.S. Representative","House"))
-df109to115 <- mutate(df109to115, Position=replace(Position,Position=="U.S. Senator", "Senate"))
+#  read datasets ---
+vv_all <- readRDS("data/output/03_contextual/voteview_mcs.Rds")
+vvH <- readRDS("data/output/03_contextual/voteview_H_key.Rds")
+vvS <- readRDS("data/output/03_contextual/voteview_S_key.Rds")
 
-#final join
-VVwithFECandCQMETA <- left_join(df109to115,VVwithFEC,by=c("Last"="lastname","Position"="chamber","State" = "state_abbrev","Congress"="congress"))
+cq <- readRDS("data/output/03_contextual/cq_profiles.Rds")
 
+dime <- readRDS("data/output/03_contextual/dime_fmt.Rds")
 
 
-# Reference from sK
-# library(readxl)
-# library(dplyr)
-# 
-# vv <- read_excel("C:/Users/Emma/Desktop/All the Things/Harvard/CCES/Member ID.xlsx")
-# cq <- read_excel("C:/Users/Emma/Desktop/All the Things/Harvard/CCES/Members of Congress.xlsx")
-# 
-# cq_house <- filter(cq, Position == "U.S. Representative")
-# vv_house <- filter(vv, chamber == "House")
-# 
-# cq_house <- mutate(cq_house, District = replace(District, District == "AL", 0))
-# cq_house<- mutate(cq_house, District = as.numeric(District))
-# 
-# cq_vv_house <- inner_join(cq_house, vv_house, by = c("State" = "state_abbrev", "District" = "district_code"))
+# join Voteview and FEC list (with appropriate offices) ----
+vv_fec_H <- left_join(vvH, 
+                      filter(dime, seat == "federal:house"),
+                      by = "icpsr")
+
+vv_fec_S <- left_join(vvS, 
+                      filter(dime, seat == "federal:senate"),
+                      by = "icpsr")
+# join CQ ---
+df_H <- left_join(vv_fec_H, cq, by = c("namelast", "chamber", "st", "dist", "congress"))
+df_S <- left_join(vv_fec_S, cq, by = c("namelast", "chamber", "st", "congress"))
+
+
+
+# save ----- 
+saveRDS(df_H, "data/output/03_contextual/incumbents_H.Rds")
+saveRDS(df_S, "data/output/03_contextual/incumbents_S.Rds")
