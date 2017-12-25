@@ -26,7 +26,8 @@ df <- dime_full %>%
 # strip away letters from icpsr
 df <-  df %>%
   mutate(ICPSR  = gsub("[A-z]+", "", ICPSR)) %>%
-  mutate(ICPSR = as.integer(ICPSR))
+  mutate(ICPSR = as.integer(ICPSR)) %>% 
+  rename(icpsr = ICPSR)
 
 
 # save
