@@ -1,8 +1,10 @@
 library(dplyr)
 library(readxl)
+library(lubridate)
+library(glue)
 
 # Reading everything in----
-file_names109 <- list.files("data/source/cq/mc_metadata/congress 109 metadata", full.names = TRUE)
+file_names109 <- list.files("data/source/cq/109", full.names = TRUE)
 files109 <- lapply(file_names109, read_xlsx)
 
 file_names110 <- list.files("data/source/cq/110", full.names = TRUE)
@@ -24,7 +26,7 @@ files114 <- lapply(file_names114, read_xlsx)
 df115 <- read_xlsx("data/source/cq/115/cq 115 metadata.xlsx")
 
 
- # Create and clean dataframes before binding----
+# Create and clean dataframes before binding----
 colnames <- c("Last", "First", "Middle", "Suffix", "Nickname", "Born", "Death", "Sex", "Position", "Party", "State", "District", "Start", "End", "Religion", "Race", "JobType1", "JobType2", "JobType3", "JobType4", "JobType5", "Mil1", "Mil2", "Mil3")
 files109 <- lapply(files109, setNames, colnames)
 df109 <- plyr::ldply(files109, data.frame)
@@ -32,7 +34,7 @@ df109 <- df109[!(df109$Last == "Last"), ]
 df109 <- df109[!is.na(df109$First), ]
 df109$Congress <- NA
 
-# put in column identifying the session of congress (repeated for all future dataframes)
+# put in column identifying the session of congress (repeated for all future dataframes) 
 df109$Congress <- "109"
 
 files110 <- lapply(files110, setNames, colnames)
@@ -81,12 +83,44 @@ df115 <- cbind(df115a, df115b, df115c, df115d, df115e)
 df115$Congress <- "115"
 
 # Bind dataframes----
-df109to115 <- bind_rows(df109, df110, df111, df112, df113, df114, df115) 
- 
-df109to115 <- df109to115 %>% 
-  rename(congress = Congress) %>%
-  mutate(congress = as.integer(congress)) %>%
+bind109to115 <- bind_rows(df109, df110, df111, df112, df113, df114, df115)
+n_pre <- nrow(bind109to115)
+
+
+# format ---------
+df <- bind109to115 %>%
+  rename(
+    congress = Congress,
+    chamber = Position,
+    namelast = Last,
+    namefirst = First,
+    namemiddle = Middle,
+    namesuffix = Suffix,
+    st = State,
+    dist = District
+  ) %>%
+  rename_all(tolower) %>%
+  mutate(
+    congress = as.integer(congress),
+    namelast = toupper(namelast),
+    chamber = replace(chamber, chamber == "U.S. Representative", "H"),
+    chamber = replace(chamber, chamber == "U.S Representative", "H"),
+    chamber = replace(chamber, chamber == "U.S. Senator", "S"),
+    party = replace(party, party == "Republican", "R"),
+    party = replace(party, party == "Democrat", "D"),
+    party = replace(party, party == "Independent", "I"),
+    start = as_datetime(as.Date(start, "%m/%d/%Y")),
+    end = as_datetime(as.Date(end, "%m/%d/%Y")),
+    born = as_datetime(as.Date(born, "%m/%d/%Y")),
+    death = as_datetime(as.Date(death, "%m/%d/%Y"))
+  ) %>%
+  filter(chamber %in% c("H", "S")) %>% # DROP if not H and S
+  select(congress, chamber, st, dist, everything()) %>%
+  arrange(congress, chamber, st, dist) %>%
   tbl_df()
 
+cat(glue("Dropped {n_pre - nrow(df)} rows when filtering to H and S only"))
 
-saveRDS(df109to115, "data/output/03_contextual/cq_profiles.Rds")
+
+# save ---- 
+saveRDS(df, "data/output/03_contextual/cq_profiles.Rds")
