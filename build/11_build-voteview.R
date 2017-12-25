@@ -4,39 +4,40 @@ library(foreach)
 library(Rvoteview)
 
 
-# how to use voteview
-# res <- voteview_search(startdate = 2006, enddate = 2017, keyvote = "CQ")
-# rcobject <- voteview_download(res$id[1:207], perrequest = 15, keeplong = T)
-# rclongdataframe <- melt_rollcall(rcobject, votecols = c("chamber", "congress"))
-
-
-
 path <- list.files("data/source/voteview", full.names = TRUE)
 paths_read <- grep("/HS.*members.csv$", path, value = TRUE)
 
-vv <- foreach(p = paths_read, .combine = "bind_rows") %do% {
+# read and bind -- 
+vv_raw <- foreach(p = paths_read, .combine = "bind_rows") %do% {
   read_csv(p, col_types = cols())
 }
 
 
-# pick last name
-vv <- vv %>%
-  mutate(lastname = gsub("^([A-Z]+),.*", "\\1", bioname)) %>%
-  select(congress, chamber, icpsr, lastname, everything()) %>%
+# pick last name --
+vv_namelast <- vv_raw %>%
+  mutate(namelast = toupper(gsub("^([A-z-]+),.*", "\\1", bioname)))
+
+
+# formats --- 
+vv <- vv_namelast %>%
+  select(congress, chamber, icpsr, namelast, everything()) %>%
   rename(
     st = state_abbrev,
     dist = district_code
+  ) %>%
+  mutate(
+    chamber = replace(chamber, chamber == "House", "H"),
+    chamber = replace(chamber, chamber == "Senate", "S")
   )
 
 
 ## H and S
 vvH <- vv %>%
-  filter(chamber == "House") %>%
+  filter(chamber == "H") %>%
   mutate(chamber = "H")
 
 vvS <- vv %>%
-  filter(chamber == "Senate") %>%
-  mutate(chamber = "S") %>%
+  filter(chamber == "S") %>%
   arrange(icpsr) %>%
   select(-dist)
   
@@ -44,11 +45,11 @@ vvS <- vv %>%
 
 ## sort for now ---
 vvH_min <- vvH %>%
-  select(congress, chamber, icpsr, st, dist, lastname) %>% 
+  select(congress, chamber, icpsr, st, dist, namelast) %>% 
   mutate(CD = paste0(st, "-", dist))
 
 vvS_min <- vvS %>%
-  select(congress, chamber, icpsr, st, lastname)
+  select(congress, chamber, icpsr, st, namelast)
 
 ## save ---
 saveRDS(vv, "data/output/03_contextual/voteview_mcs.Rds")
