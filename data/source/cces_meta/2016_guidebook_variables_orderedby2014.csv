@@ -1,0 +1,583 @@
+section14,rowID,code14,code16,label16
+Sample Identifiers,1,,V101,Case ID
+Sample Identifiers,2,V103,commonweight,Common content weights
+Sample Identifiers,3,,commonweight_post,Common content weights (post survey)
+Sample Identifiers,4,,lookupzip,Pre Election Survey Respondent Zip Code
+Sample Identifiers,5,,inputstate,Pre Election State Name
+Sample Identifiers,6,,cdid113,CD 113th/114th Congress- post
+Sample Identifiers,7,,cdid115,CD 115th Congress - post
+Sample Identifiers,8,,countyfips,County FIPS code
+Sample Identifiers,9,,countyname,County Name
+Sample Identifiers,10,,inputstate_post,Post Election State Name
+Sample Identifiers,11,,cdid113_post,CD 113th/114th Congress
+Sample Identifiers,12,,cdid115_post,CD 115th Congress
+Sample Identifiers,13,,countyfips_post,County FIPS code- post
+Sample Identifiers,14,,countyname_post,County Name- post
+Profile,15,birthyr,birthyr,Birth Year
+Profile,16,gender,gender,Gender
+Profile,17,,sexuality,Sexual Orientation
+Profile,18,,trans,Transgender
+Profile,19,educ,educ,Education
+Profile,20,,edloan,Student debtor
+Profile,21,,votereg,Voter Registration Status
+Profile,22,,regzip,Zip code where registered
+Profile,23,,votereg_f,Registered to vote
+Profile,24,race,race,Race
+Profile,25,,race_other,"Race, other"
+Profile,26,,multrace_1,Multi-racial - White
+Profile,27,,multrace_2,Multi-racial - Black
+Profile,28,,multrace_3,Multi-racial - Hispanic
+Profile,29,,multrace_4,Multi-racial - Asian
+Profile,30,,multrace_5,Multi-racial - Native American
+Profile,31,,multrace_8,Multi-racial - Middle Eastern
+Profile,32,,multrace_97,Multi-racial - Other
+Profile,33,,multrace_98,Multi-racial - Don't know
+Profile,34,,multrace_99,Multi-racial - None of these
+Profile,35,hispanic,hispanic,"Spanish, Latino or Hispanic origin or descent"
+Profile,36,,Hispanic_origin_1,Hispanic_origin - No country in Particular
+Profile,37,,Hispanic_origin_2,Hispanic_origin - United States
+Profile,38,,Hispanic_origin_3,Hispanic_origin - Mexico
+Profile,39,,Hispanic_origin_4,Hispanic_origin - Puerto Rico
+Profile,40,,Hispanic_origin_5,Hispanic_origin - Cuba
+Profile,41,,Hispanic_origin_6,Hispanic_origin - Dominican Republic
+Profile,42,,Hispanic_origin_7,Hispanic_origin - South America
+Profile,43,,Hispanic_origin_8,Hispanic_origin - Central America
+Profile,44,,Hispanic_origin_9,Hispanic_origin - Caribbean
+Profile,45,,Hispanic_origin_10,Hispanic_origin - Spain
+Profile,46,,Hispanic_origin_11,Hispanic_origin - Other
+Profile,47,,Hispanic_origin_12,"Hispanic_origin - I am not of Latino, Hispanic or Spanish Heritage"
+Profile,48,,Hispanic_origin_t,Hispanic_origin - None
+Profile,49,,Asian_origin_1,Asian_origin - No Country in Particular
+Profile,50,,Asian_origin_2,Asian_origin - United States
+Profile,51,,Asian_origin_3,Asian_origin - China
+Profile,52,,Asian_origin_4,Asian_origin - Japan
+Profile,53,,Asian_origin_5,Asian_origin - India
+Profile,54,,Asian_origin_6,Asian_origin - Philippines
+Profile,55,,Asian_origin_7,Asian_origin - Taiwan
+Profile,56,,Asian_origin_8,Asian_origin - Korea
+Profile,57,,Asian_origin_9,Asian_origin - Vietnam
+Profile,58,,Asian_origin_10,Asian_origin - Pakistan
+Profile,59,,Asian_origin_11,Asian_origin - Hmong
+Profile,60,,Asian_origin_12,Asian_origin - Cambodia
+Profile,61,,Asian_origin_13,Asian_origin - Thailand
+Profile,62,,Asian_origin_14,Asian_origin - Other
+Profile,63,,Asian_origin_15,Asian_origin - I am not of Asian Heritage
+Profile,64,,Asian_origin_t,Asian_origin - None
+Profile,65,empoy,employ,Employment Status
+Profile,66,,employ_t,Employment Status - open
+Profile,67,hadjob,hadjob,Had a Job
+Profile,68,,whatkindofwork,$whatkindofworktext
+Profile,69,,jobactivities,$jobactivitiestext
+Profile,70,industryclass,industryclass,Industry classification
+Profile,71,phone,phone,Phone Service
+Profile,72,internethome,internethome,Internet Access at Home
+Profile,73,internetwork,internetwork,Internet Access at Work
+Profile,74,marstat,marstat,Marital Status
+Profile,75,pid7,pid7,7 point party ID
+Profile,76,pid3,pid3,3 point Party ID
+Profile,77,,pid3_t,3 point party ID - other
+Profile,78,ideo5,ideo5,Ideology
+Profile,79,pew_bornagain,pew_bornagain,Born Again (Pew version)
+Profile,80,pew_religimp,pew_religimp,Importance of Religion (Pew Version)
+Profile,81,pew_churatd,pew_churatd,Church attendance (Pew Version)
+Profile,82,pew_prayer,pew_prayer,Frequency of Prayer (Pew Version)
+Profile,83,religpew,religpew,Pew religion
+Profile,84,,religpew_t,Pew religion - open
+Profile,85,religpew_protestant,religpew_protestant,Protestant Church
+Profile,86,,religpew_protestant_t,Protestant Church - open
+Profile,87,religpew_baptist,religpew_baptist,Baptist Church - open
+Profile,88,,religpew_baptist_t,Baptist Church - open
+Profile,89,religpew_methodist,religpew_methodist,Methodist Church
+Profile,90,,religpew_methodist_t,Methodist Church - open
+Profile,91,religpew_nondenom,religpew_nondenom,Nondenominational or Independent Church
+Profile,92,,religpew_nondenom_t,Nondenominational or Independent Church - open
+Profile,93,religpew_lutheran,religpew_lutheran,Lutheran Church
+Profile,94,,religpew_lutheran_t,Lutheran Church - open
+Profile,95,religpew_presby,religpew_presby,Presyterian Church
+Profile,96,,religpew_presby_t,Presyterian Church - open
+Profile,97,religpew_pentecost,religpew_pentecost,Pentecostal Church
+Profile,98,,religpew_pentecost_t,Pentecostal Church - open
+Profile,99,religpew_episcop,religpew_episcop,Episcopal Church
+Profile,100,,religpew_episcop_t,Episcopal Church - open
+Profile,101,relgipew_christian,relgipew_christian,Christian Church
+Profile,102,,relgipew_christian_t,Christian Church - open
+Profile,103,religpew_congreg,religpew_congreg,Congregational Church
+Profile,104,,religpew_congreg_t,Congregational Church - open
+Profile,105,religpew_holiness,religpew_holiness,Holiness Church
+Profile,106,,religpew_holiness_t,Holiness Church - open
+Profile,107,religpew_reformed,religpew_reformed,Reformed Church
+Profile,108,,religpew_reformed_t,Reformed Church - open
+Profile,109,relgipew_advent,relgipew_advent,Adventist Church
+Profile,110,,relgipew_advent_t,Adventist Church - open
+Profile,111,religpew_catholic,religpew_catholic,Catholic Church
+Profile,112,,religpew_catholic_t,Catholic Church - open
+Profile,113,religpew_morman,religpew_mormon,Mormon Church
+Profile,114,,religpew_mormon_t,Mormon Church - open
+Profile,115,religpew_orthodox,religpew_orthodox,Orthodox Church
+Profile,116,,religpew_orthodox_t,Orthodox Church - open
+Profile,117,religpew_jewish,religpew_jewish,Jewish Group
+Profile,118,,religpew_jewish_t,Jewish Group - open
+Profile,119,religpew_muslim,religpew_muslim,Muslim Group
+Profile,120,,religpew_muslim_t,Muslim Group - open
+Profile,121,religpew_buddhist,religpew_buddhist,Budhist Group
+Profile,122,,religpew_buddhist_t,Budhist Group - open
+Profile,123,religpew_hindu,religpew_hindu,Hindu Group
+Profile,124,,religpew_hindu_t,Hindu Group - open
+Profile,125,child18,child18,Child under 18 years
+Profile,126,child18num,child18num,Number of children under 18
+Profile,127,newsint,newsint,Political Interest
+Profile,128,faminc,faminc,Family Income
+Profile,129,ownhome,ownhome,Home ownership
+Profile,130,,ownhome_t,Home ownership - open
+Profile,131,,citylength_1,Current city residence length - Years
+Profile,132,,citylength_2,Current city residence length - Months
+Profile,133,milstat_1,milstat_1,Military Household - I am
+Profile,134,milstat_2,milstat_2,Military Household - Family
+Profile,135,milstat_3,milstat_3,Military Household - I served previously
+Profile,136,milstat_4,milstat_4,Military Household - Family served previously
+Profile,137,milstat_5,milstat_5,Military Household - None
+Profile,138,immstat,immstat,Citizen
+Profile,139,union,union,Labor union member
+Profile,140,unionhh,unionhh,Family labor union member
+Profile,141,investor,investor,Stock Ownership
+Profile,142,heathins2,heathins2,Purchase health insurance thru exchange
+Profile,143,healthins_1,healthins_1,"Health Insurance - Yes, through my job or a family"
+Profile,144,healthins_2,healthins_2,"Health Insurance - Yes, through a government"
+Profile,145,healthins_3,healthins_3,"Health Insurance - Yes, through my school"
+Profile,146,healthins_4,healthins_4,"Health Insurance - Yes, I purchase my own"
+Profile,147,healthins_5,healthins_5,Health Insurance - Not Sure
+Profile,148,healthins_6,healthins_6,Health Insurance - No
+Pre-election,149,CC14_301_1,CC16_300_1,Media Use - Blog
+Pre-election,150,CC14_301_2,CC16_300_2,Media Use - TV
+Pre-election,151,CC14_301_3,CC16_300_3,Media Use - Newspaper
+Pre-election,152,CC14_301_4,CC16_300_4,Media Use - Radio
+Pre-election,153,CC14_301_5,CC16_300_5,Media Use - Social Media
+Pre-election,154,CC14_301_6,CC16_300_6,Media Use - None
+Pre-election,155,,CC16_300b,"Watch local news, national news or both"
+Pre-election,156,,CC16_300c,"Read print news, online news or both"
+Pre-election,157,,CC16_300d_1,"Social Media - Posted a story, photo, video or link about politics"
+Pre-election,158,,CC16_300d_2,Social Media - Posted a comment about politics
+Pre-election,159,,CC16_300d_3,Social Media - Read a story or watched a video about politics
+Pre-election,160,,CC16_300d_4,Social Media - Followed a political event
+Pre-election,161,,CC16_300d_5,"Social Media - Forwarded a story, photo, video or link about politics to friends"
+Pre-election,162,,CC16_301a,Most Important Problem - Gun control
+Pre-election,163,,CC16_301b,Most Important Problem - Abortion
+Pre-election,164,,CC16_301c,Most Important Problem - Taxes
+Pre-election,165,,CC16_301d,Most Important Problem - Immigration
+Pre-election,166,,CC16_301e,Most Important Problem - Budget deficit
+Pre-election,167,,CC16_301f,Most Important Problem - Defense spending
+Pre-election,168,,CC16_301g,Most Important Problem - Social security
+Pre-election,169,,CC16_301h,Most Important Problem - Environment
+Pre-election,170,,CC16_301i,Most Important Problem - Jobs
+Pre-election,171,,CC16_301j,Most Important Problem - Crime
+Pre-election,172,,CC16_301k,Most Important Problem - National security
+Pre-election,173,,CC16_301l,Most Important Problem - Race relations
+Pre-election,174,,CC16_301m,Most Important Problem - Health care
+Pre-election,175,,CC16_301n,Most Important Problem - Gay marriage
+Pre-election,176,,CC16_301o,Most Important Problem - Government Corruption
+Pre-election,177,CC14_302,CC16_302,National Economy
+Pre-election,178,CC14_304,CC16_303,Past year - household income
+Pre-election,179,,CC16_304,Next year - household income
+Pre-election,180,CC14_305,,
+Pre-election,181,CC14_306,,
+Pre-election,182,,CC16_305_1,Past four years - Married
+Pre-election,183,,CC16_305_2,Past four years - Lost a job
+Pre-election,184,,CC16_305_3,Past four years - Finished school
+Pre-election,185,,CC16_305_4,Past four years - Retired
+Pre-election,186,,CC16_305_5,Past four years - Divorced
+Pre-election,187,,CC16_305_6,Past four years - Had a child
+Pre-election,188,,CC16_305_7,Past four years - Taken a new job
+Pre-election,189,,CC16_305_8,Past four years - Been issued a traffic ticket
+Pre-election,190,,CC16_305_9,Past four years - Been a victim of a crime
+Pre-election,191,,CC16_305_10,Past four years - Visited an emergency room
+Pre-election,192,,CC16_305_11,Past four years - Received a raise at work
+Pre-election,193,,CC16_307,Police make R feel safe
+,194,,CC16_312_1,Do not get involved
+,195,,CC16_312_2,"Send food, medicine and other aid to countries affected"
+,196,,CC16_312_3,Provide arms to those opposing ISIS
+,197,,CC16_312_4,Enforce a no-fly zone
+,198,,CC16_312_5,Use drones and aircraft to bomb ISIS troops
+,199,,CC16_312_6,Send military support staff (non-combat)
+,200,,CC16_312_7,Send significant force to fight ISIS
+Pre-election,201,CC14_308a,CC16_320a,Approve of Job - Obama
+Pre-election,202,CC14_308b,CC16_320b,Approve of Job - Congress
+Pre-election,203,CC14_308c,CC16_320c,Approve of Job - Supreme Court
+Pre-election,204,CC14_308d,CC16_320d,Approve of Job - Governor
+Pre-election,205,CC14_308e,CC16_320e,Approve of Job - Legislature
+Pre-election,206,CC14_309a,CC16_321a,Party of Government Knowledge - Reps
+Pre-election,207,CC14_309b,CC16_321b,Party of Government Knowledge - Senate
+Pre-election,208,CC14_309c,CC16_321c,Party of Government Knowledge - State Senate
+Pre-election,209,CC14_309d,CC16_321d,Party of Government Knowledge - Lower Chamber
+Pre-election,210,CC14_310a,CC16_322a,Party Recall + Name Recognition - Governor
+Pre-election,211,CC14_310b,CC16_322b,Party Recall + Name Recognition - Senator 1
+Pre-election,212,CC14_310c,CC16_322c,Party Recall + Name Recognition - Senator 2
+Pre-election,213,CC14_310d,CC16_322d,Party Recall + Name Recognition - Rep
+Pre-election,214,CC14_315a,CC16_320f,Approve of Job - Rep
+Pre-election,215,CC14_315b,CC16_320g,Approve of Job - Senator 1
+Pre-election,216,CC14_315c,CC16_320h,Approve of Job - Senator 2
+Pre-election,217,CC14_365,,
+Pre-election,218,CC14_316,CC16_316,Vote 2012
+Pre-election,219,CC14_317,CC16_326,President 2012
+Pre-election,220,,CC16_326_t,President 2012 - open
+Pre-election,221,,CC16_327,Vote primary 2016
+Pre-election,222,,CC16_328,Vote primary 2016 candidate
+Pre-election,223,CC14_320a,CC16_330a,"Gun Control - Background checks for all sales, including at gun shows and over the Internet"
+Pre-election,224,CC14_320b,CC16_330b,Gun Control - Prohibit state and local governments from publishing the names and addresses of all gun owners
+Pre-election,225,CC14_320c,,
+Pre-election,226,CC14_320d,CC16_330d,Gun Control - Ban assault rifles
+Pre-election,227,CC14_320e,CC16_330e,Gun Control - Make it easier for people to obtain concealed-carry permit
+Pre-election,228,CC14_322_1,CC16_331_1,"Immigration - Grant legal status to all illegal immigrants who have held jobs and paid taxes for at least 3 years, and not been convicted of any felony crimes"
+Pre-election,229,CC14_322_2,CC16_331_2,Immigration - Increase the number of border patrols on the U.S.-Mexican border
+Pre-election,230,CC14_322_3,CC16_331_3,"Immigration - Grant legal status to people who were brought to the US illegally as children, but who have graduate from a U.S. high school"
+Pre-election,231,CC14_322_4,CC16_331_4,Immigration - Fine U.S. businesses that hire illegal immigrants
+Pre-election,232,,CC16_331_5,Immigration - Admit no refugees from Syria
+,233,,CC16_331_6,Immigration - Increase the number of visas for overseas workers to work in the U.S.
+Pre-election,234,CC14_322_5,CC16_331_7,Immigration - Identify and deport illegal immigrants
+,235,,CC16_331_8,Immigration - Ban Muslims from immigrating to the U.S.
+Pre-election,236,CC14_322_6,CC16_331_9,Immigration - None of these
+Pre-election,237,CC14_323_1,CC16_332a,Abortion Policies - Always allow a woman to obtain an abortion as a matter of choice
+Pre-election,238,CC14_323_2,CC16_332b,"Abortion Policies - Permit abortion only in case of rape, incest or when the woman's life is in danger"
+Pre-election,239,CC14_323_3,CC16_332c,Abortion Policies - Prohibit all abortions after the 20th week of pregnancy
+Pre-election,240,CC14_323_4,CC16_332d,Abortion Policies - Allow employers to decline coverage of abortions in insurance plans
+Pre-election,241,CC14_323_5,CC16_332e,Abortion Policies - Prohibit the expenditure of funds authorized or appropriated by federal law for any abortion
+Pre-election,242,CC14_323_4,,
+Pre-election,243,,CC16_332f,Abortion Policies - Make abortions illegal in all circumstances
+Pre-election,244,CC14_324,,
+Pre-election,245,CC14_324_1,,
+Pre-election,246,CC14_324_2,,
+Pre-election,247,CC14_324_3,,
+Pre-election,248,CC14_325_1,,
+Pre-election,249,CC14_325_2,,
+Pre-election,250,CC14_325_3,,
+Pre-election,251,CC14_325_4,,
+Pre-election,252,CC14_325_5,,
+Pre-election,253,CC14_326_1,CC16_333a,Environment Policies - Give Environmental Protection Agency power to regulate Carbon Dioxide emissions
+Pre-election,254,CC14_326_2,CC16_333b,Environment Policies - Raise required fuel efficiency for the average automobile from 25 mpg to 35 mpg
+Pre-election,255,CC14_326_3,CC16_333c,"Environment Policies - Require a minimum amount of renewable fuels (wind, solar, and hydroelectric) in the generation of electricity even if electricity prices increase somewhat"
+Pre-election,256,CC14_326_4,CC16_333d,Environment Policies - Strengthen enforcement of the Clean Air Act and Clean Water even if it costs US jobs
+Pre-election,257,,CC16_334a,Crime Policies - Eliminate mandatory minimum sentences for non-violent drug offenders
+Pre-election,258,,CC16_334b,Crime Policies - Require police officers to wear body cameras that record all of their activities while on duty
+Pre-election,259,,CC16_334c,"Crime Policies - Increase the number of police on the street by 10 percent, even if it means fewer funds for other public services"
+Pre-election,260,,CC16_334d,Crime Policies - Increase prison sentences for felons who have already committed two or more serious or violent crimes
+Pre-election,261,CC14_327,CC16_335,Gay Marriage
+Pre-election,262,,CC16_337_1,Budget Priorities - Cut Defense Spending
+Pre-election,263,,CC16_337_2,Budget Priorities - Cut Domestic Spending
+Pre-election,264,,CC16_337_3,Budget Priorities - Raise Taxes
+Pre-election,265,CC14_328,,
+Pre-election,266,CC14_329a,,
+Pre-election,267,CC14_329b,,
+Pre-election,268,CC14_331_1,,
+Pre-election,269,CC14_331_2,,
+Pre-election,270,CC14_331_3,,
+Pre-election,271,CC14_331_4,,
+Pre-election,272,CC14_331_4,,
+Pre-election,273,CC334A,CC16_340a,Ideology - Yourself
+Pre-election,274,CC334B,CC16_340b,Ideology - Governor
+Pre-election,275,CC334C,CC16_340c,Ideology - Obama
+Pre-election,276,CC334D,CC16_340d,Ideology - Hillary Clinton
+Pre-election,277,CC334E,,
+Pre-election,278,,CC16_340e,Ideology - Donald Trump
+Pre-election,279,CC334F,CC16_340f,Ideology- Merrick Garland
+Pre-election,280,CC334G,,
+Pre-election,281,CC334K,CC16_340g,Ideology - The Democratic Party
+Pre-election,282,CC334L,CC16_340h,Ideology - The Republican Party
+Pre-election,283,CC334M,CC16_340i,Ideology - The United States Supreme Court
+Pre-election,284,CC334W,,
+Pre-election,285,CC334N,CC16_340j,Ideology - $CurrentSen1Name
+Pre-election,286,CC334O,CC16_340k,Ideology - $CurrentSen2Name
+Pre-election,287,CC334P,CC16_340l,Ideology - $SenCand1Name
+Pre-election,288,CC334Q,CC16_340m,Ideology - $SenCand2Name
+Pre-election,289,CC334R,,
+Pre-election,290,CC334S,,
+Pre-election,291,CC334T,CC16_340n,Ideology - $HouseCand1Name
+Pre-election,292,CC334U,CC16_340o,Ideoogy - $HouseCand2Namde
+Pre-election,293,CC334V,CC16_340p,Ideology - House member
+Pre-election,294,,CC16_350,SC_Appointments
+Pre-election,295,,CC16_351A,For or Against - Congress - Approve Garland Nominations
+Pre-election,296,,CC16_351B,For or Against - Congress - Trans-Pacific Partnership Act
+Pre-election,297,,CC16_351C,For or Against - Congress - USA Freedom Act
+Pre-election,298,,CC16_351D,For or Against - Congress - Trade Adjustment Assistence Act
+Pre-election,299,,CC16_351E,For or Against - Congress- Education Reform
+Pre-election,300,,CC16_351F,For or Against - Congress - Highway and Transportation Funding Act
+Pre-election,301,,CC16_351G,For or Against - Congress - Iran Sanctions Act
+Pre-election,302,,CC16_351H,For or Against - Congress - Medicare Accountability and Cost Reform Act
+Pre-election,303,,CC16_351I,For or Against - Congress - Repeal Affordable Care Act
+Pre-election,304,,CC16_351K,For or Against - Congress - Minimum wage
+Pre-election,305,CC350,CC16_360,Party Registration
+Pre-election,306,CC354,CC16_361,Residence
+Pre-election,307,,CC16_364,Does R Intend to Vote in 2016
+Pre-election,308,,CC16_364b,Pres vote
+Pre-election,309,,CC16_364b_t,Pres vote - open
+Pre-election,310,,CC16_364c,Pres pref
+Pre-election,311,,CC16_364c_t,Pres pref - open
+Pre-election,312,CC355,CC16_365,Senator pref
+Pre-election,313,,CC16_365_t,Senator pref - open
+Pre-election,314,,CC16_365a,Senator pref 2nd choice
+,315,,CC16_365a_t,Senator pref 2nd choice- open
+Pre-election,316,CC355x,CC16_365x,Senate vote
+,317,,CC16_365x_t,Senate vote- open
+Pre-election,318,CC356,CC16_366,Governor pref
+Pre-election,319,,CC16_366_t,Governor pref - open
+Pre-election,320,CC366x,CC16_366x,Governor vote
+,321,CC366x,CC16_366x_t,Governor vote- open
+Pre-election,322,CC356x,CC16_366a,Governor pref 2nd choice
+Pre-election,323,,CC16_366a_t,Governor pref 2nd choice - open
+Pre-election,324,CC360,CC16_367,House pref
+Pre-election,325,,CC16_367_t,House pref - open
+Pre-election,326,,CC16_367a,House pref 2nd choice
+Pre-election,327,,CC16_367a_t,House pref 2nd choice - open
+Pre-election,328,CC360x,CC16_367x,House vote
+Pre-election,329,,CC16_367x_t,House vote - open
+Post-election,330,votereg_post,votereg_post,Voter Registration Status
+Post-election,331,CC401,CC16_401,Voted 2016
+Post-election,332,CC402a,CC16_402a,Main reason didn't vote
+Post-election,333,,CC16_402a_t,Main reason didn't vote - open
+Post-election,334,CC402b,CC16_402b,Second reason didn't vote
+Post-election,335,,CC16_402b_t,Second reason didn't vote - open
+Post-election,336,CC403,CC16_403,Vote in person or by mail
+Post-election,337,CC403b,CC16_403b,Vote at precinct polling place or vote center
+Post-election,338,CC404,CC16_404,Voting length wait time
+Post-election,339,,CC16_404_t,Voting length wait time - open
+Post-election,340,CC405,CC16_405,Registered to vote on Election Day
+Post-election,341,CC406a,CC16_406a,Problem with voter registration or ID when trying to vote
+Post-election,342,CC406b_1,CC16_406b_1,Problem with voting - ID
+Post-election,343,CC406b_2,CC16_406b_2,Problem with voting - Registration
+Post-election,344,CC406b_3,CC16_406b_3,Problem with voting - Wrong Place
+Post-election,345,,CC16_406b_4,Problem with voting - Other
+Post-election,346,,CC16_406b_t,Problem with voting - open
+Post-election,347,CC406c,CC16_406c,Allowed to vote
+Post-election,348,,CC16_407a,Feel intimidated voting
+Post-election,349,,CC16_407b,Why intimidated voting
+Post-election,350,,CC16_410a,President vote
+Post-election,351,,CC16_410a_t,President vote
+Post-election,352,CC410b,CC16_410b,Senator vote
+Post-election,353,,CC16_410b_t,Senator vote - open
+Post-election,354,CC411,CC16_411,Governor vote
+Post-election,355,,CC16_411_t,governor vote - open
+Post-election,356,CC412,CC16_412,House vote
+Post-election,357,,CC16_412_t,House vote - open
+Post-election,358,,CC16_410a_nv,President prefer
+Post-election,359,,CC16_410a_nv_t,President prefer - open
+Post-election,360,CC410b_nv,CC16_410b_nv,Senator prefer
+Post-election,361,,CC16_410b_nv_t,Senator prefer - open
+Post-election,362,CC411_nv,CC16_411_nv,Governor prefer
+Post-election,363,,CC16_411_nv_t,Governor prefer
+Post-election,364,CC412_nv,CC16_412_nv,House vote
+Post-election,365,,CC16_412_nv_t,House vote - open
+Post-election,366,CC412a,,House Hypothetical 1
+Post-election,367,CC412b,,House Hypothetical 2
+Post-election,368,CC413a,CC16_413a,Vote in state elections - Attorney General
+Post-election,369,CC413b,CC16_413b,Vote in state elections - Secretary of State
+Post-election,370,CC413c,CC16_413c,Vote in state elections - $inputstate State Senator
+Post-election,371,CC413d,CC16_413d,Vote in state elections - $LowerChamberName
+Post-election,372,CC414_1,CC16_414_1,Approve use of US military - ensure the supply of oil
+Post-election,373,CC414_2,CC16_414_2,Approve use of US military - destroy a terrorist camp
+Post-election,374,CC414_3,CC16_414_3,Approve use of US military - Intervene in a region
+Post-election,375,CC414_4,CC16_414_4,Approve use of US military - assist the spread of democracy
+Post-election,376,CC414_5,CC16_414_5,Approve use of US military - Protect allies from foreign attack
+Post-election,377,CC414_6,CC16_414_6,Approve use of US military - Help the UN uphold international law
+Post-election,378,CC414_7,CC16_414_7,Approve use of US military - None of the above
+Post-election,379,CC415r,CC16_415r,Budget deficit - spending cuts vs tax increases
+Post-election,380,CC416r,CC16_416r,Raise taxes - income tax vs sales tax
+Post-election,381,CC417a_1,CC16_417a_1,Past Year - Attend local political meetings
+Post-election,382,CC417a_2,CC16_417a_2,Past Year - Put up a politcal sign
+Post-election,383,CC417a_3,CC16_417a_3,Past Year - Work for a candidate or campaign
+Post-election,384,CC417a_4,CC16_417a_4,"Past Year - Donate money to a candidate, campaign or political organization"
+Post-election,385,CC417a_5,CC16_417a_5,Past Year - Donate blood
+Post-election,386,CC417a_6,CC16_417a_6,Past Year - None of these
+Post-election,387,,CC16_417bx_1,Donated Money to - Candidate for President
+Post-election,388,CC417bx_1,CC16_417bx_2,Donated Money to - Candidate for U.S. Senate in my state
+Post-election,389,CC417bx_2,CC16_417bx_3,Donated Money to - Candidate for U.S. Senate in another state
+Post-election,390,CC417bx_3,CC16_417bx_4,Donated Money to - Candidate for U.S. House in my state
+Post-election,391,CC417bx_4,CC16_417bx_5,Donated Money to - Candidate for U.S. House in another state
+Post-election,392,CC417bx_5,CC16_417bx_6,Donated Money to - Candidate for state office
+Post-election,393,CC417bx_6,CC16_417bx_7,Donated Money to - Political party committee (such as the DNC or RNC)
+Post-election,394,CC417bx_7,CC16_417bx_8,Donated Money to - Political action committee at work
+Post-election,395,CC417bx_8,CC16_417bx_9,Donated Money to - Political group (not at your work)
+Post-election,396,CC417bx_9,CC16_417bx_10,Donated Money to - Other [CC417bx_t]
+Post-election,397,,CC16_417bx_t1,Donate money - Political group not at work - open
+Post-election,398,,CC16_417bx_t2,Donate money - other - open
+Post-election,399,CC417c,CC16_417c,Amount contribute to all candidates/committees
+Post-election,400,,CC16_417d_1,How many of the above statements are true for you?
+Post-election,401,,CC16_417d_2,How many of the above statements are true for you?
+Post-election,402,,CC16_417e_1,Campaign contributions are an effective way to influence public policy
+Post-election,403,,CC16_417e_2,Campaign contributions are an effective way to help my business/industry
+Post-election,404,,CC16_417e_3,Campaign contributions allow me to be part of a network with other contributors
+Post-election,405,,CC16_417e_4,I prefer to give directly to candidates rather than contribute money to a politi
+Post-election,406,,CC16_417e_5,"For anyone who can afford to contribute, it is a civic duty to contribute financ"
+Post-election,407,CC425a,CC16_425a,Contacted by candidate/political org
+Post-election,408,CC425b_1,CC416_25b_1,Candidate/campaign contact - in person
+Post-election,409,CC425b_2,CC416_25b_2,Candidate/campaign contact - Phone call
+Post-election,410,CC425b_3,CC416_25b_3,Candidate/campaign contact - Email or text message
+Post-election,411,CC425b_4,CC416_25b_4,Candidate/campaign contact - Letter or post card
+Post-election,412,CC418a,CC16_418a,Ever run for elective office
+Post-election,413,CC418bx_1,CC16_418bx_1,Run for Office - School Board
+Post-election,414,CC418bx_2,CC16_418bx_2,Run for Office - Other local board or commission (e.g. zoning commission)
+Post-election,415,CC418bx_3,CC16_418bx_3,Run for Office - City Council
+Post-election,416,CC418bx_4,CC16_418bx_4,Run for Office - Mayor
+Post-election,417,CC418bx_5,CC16_418bx_5,Run for Office - City or District Attorney
+Post-election,418,CC418bx_6,CC16_418bx_6,Run for Office - Countywide office (e.g. supervisor)
+Post-election,419,CC418bx_7,CC16_418bx_7,Run for Office - State legislature
+Post-election,420,CC418bx_8,CC16_418bx_8,Run for Office - Statewide office
+Post-election,421,CC418bx_9,CC16_418bx_9,Run for Office - Federal legislature (U.S. House or Senate)
+Post-election,422,CC418bx_10,CC16_418bx_10,Run for Office - Judge
+Post-election,423,CC418bx_11,CC16_418bx_11,Run for Office - Other
+Post-election,424,,CC16_418b_t,Run for office - open
+Post-election,425,CC421a,CC16_421a,3 pt party ID
+Post-election,426,,CC16_421_t,3 pt party ID- open
+Post-election,427,CC421_dem,CC16_421_dem,Party ID Dem Strength
+Post-election,428,CC421_rep,CC16_421_rep,Party ID Rep Strength
+Post-election,429,CC421b,CC16_421b,Party ID lean
+Post-election,430,CC422a,,Racial Resentment A
+Post-election,431,CC422b,,Racial Resentment B
+Post-election,432,,CC16_422c,Racism - angry racist exists
+Post-election,433,,CC16_422d,Racism - white people have advantages
+Post-election,434,,CC16_422e,Racism - fearful of people of other races
+Post-election,435,,CC16_422f,"Racism - racial problems are rare, isoluated situations"
+Post-election,436,CC423a,CC16_423a,Race/ethnicity politicians - $HouseCand1Name
+Post-election,437,CC423b,CC16_423b,Race/ethnicity politicians - $HouseCand2Name
+Post-election,438,CC423c,CC16_423c,Race/ethnicity politicans - $CurrentHouseName
+Post-election,439,,CC16_423a_other,Race/ethnicity politicians - $HouseCand1Name - open
+Post-election,440,,CC16_423b_other,Race/ethnicity politicians - $HouseCand2Name - open
+Post-election,441,,CC16_423c_other,Race/ethnicity politicans - $CurrentHouseName - open
+Post-election,442,,CC16_426_1,State spending - Welfare
+Post-election,443,,CC16_426_2,State spending - health care
+Post-election,444,,CC16_426_3,State spending - education
+Post-election,445,,CC16_426_4,State spending - law enforcement
+Post-election,446,,CC16_426_5,State spending - transportation/infrastructure
+Post-election,447,,CC16_427_a,Grade local community - the schools
+Post-election,448,,CC16_427_b,Grade local community - the police
+Post-election,449,,CC16_427_c,Grade local community - the roads
+Post-election,450,,CC16_427_d,Grade local community - zoning and development
+Post-election,451,,CC16_427_e,Grade local community - the mayor or town/city manager
+Post-election,452,,CC16_427_f,Grade local community - the town/city council
+Post-election,453,CC424,,Tea Party Opinion
+Pre-Election Survey Contextual Variables,454,,CurrentGovName,Current Governor Name
+Pre-Election Survey Contextual Variables,455,CurrentGovParty,CurrentGovParty,Current Governor Party
+Pre-Election Survey Contextual Variables,456,CurrentHouseGender,CurrentHouseGender,Current House Gender
+Pre-Election Survey Contextual Variables,457,,CurrentHouseName,Current House Name
+Pre-Election Survey Contextual Variables,458,CurrentHouseParty,CurrentHouseParty,Current House Party
+Pre-Election Survey Contextual Variables,459,,CurrentSen1Gender,Current Senate 1 Gender
+Pre-Election Survey Contextual Variables,460,,CurrentSen1Name,Current Senate 1 Name
+Pre-Election Survey Contextual Variables,461,CurrentSen1Party,CurrentSen1Party,Current Senate 1 Party
+Pre-Election Survey Contextual Variables,462,,CurrentSen2Gender,Current Senate 2 Gender
+Pre-Election Survey Contextual Variables,463,,CurrentSen2Name,Current Senate 2 Name
+Pre-Election Survey Contextual Variables,464,CurrentSen2Party,CurrentSen2Party,Current Senate 2 Party
+Pre-Election Survey Contextual Variables,465,GovCand1Incumbent,GovCand1Incumbent,Governor Candidate 1 Incumbent
+Pre-Election Survey Contextual Variables,466,,GovCand1Name,Governor Candidate 1 Name
+Pre-Election Survey Contextual Variables,467,GovCand1Party,GovCand1Party,Governor Candidate 1 Party
+Pre-Election Survey Contextual Variables,468,GovCand2Incumbent,,Governor Candidate 2 Incumbent
+Pre-Election Survey Contextual Variables,469,,GovCand2Name,Governor Candidate 2 Name
+Pre-Election Survey Contextual Variables,470,GovCand2Party,GovCand2Party,Governor Candidate 2 Party
+Pre-Election Survey Contextual Variables,471,,GovCand3Name,Governor Candidate 3 Name
+Pre-Election Survey Contextual Variables,472,,GovCand3Party,Governor Candidate 3 Party
+Pre-Election Survey Contextual Variables,473,HouseCand1Gender,,House Candidate 1 Gender
+Pre-Election Survey Contextual Variables,474,HouseCand1IncumbentNum,HouseCand1Incumbent,House Candidate 1 Incumbent
+Pre-Election Survey Contextual Variables,475,,HouseCand1Name,House Candidate 1 Name
+Pre-Election Survey Contextual Variables,476,HouseCand1Party,HouseCand1Party,House Candidate 1 Party
+Pre-Election Survey Contextual Variables,477,HouseCand2Gender,,House Candidate 2 Gender
+Pre-Election Survey Contextual Variables,478,HouseCand2IncumbentNum,HouseCand2Incumbent,House Candidate 2 Incumbent
+Pre-Election Survey Contextual Variables,479,,HouseCand2Name,House Candidate 2 Name
+Pre-Election Survey Contextual Variables,480,HouseCand2Party,HouseCand2Party,House Candidate 2 Party
+Pre-Election Survey Contextual Variables,481,HouseCandidate3Gender,,House Candidate 3 Gender
+Pre-Election Survey Contextual Variables,482,HouseCandidate3Incumbent,,House Candidate 3 Incumbent
+Pre-Election Survey Contextual Variables,483,,HouseCand3Name,House Candidate 3 Name
+Pre-Election Survey Contextual Variables,484,HouseCand3Party,HouseCand3Party,House Candidate 3 Party
+Pre-Election Survey Contextual Variables,485,,HouseCand4Name,House Candidate 4 Name
+Pre-Election Survey Contextual Variables,486,,HouseCand4Party,House Candidate 4 Party
+Pre-Election Survey Contextual Variables,487,,HouseCand5Name,House Candidate 5 Name
+Pre-Election Survey Contextual Variables,488,,HouseCand5Party,House Candidate 5 Party
+Pre-Election Survey Contextual Variables,489,,HouseCand6Name,House Candidate 6 Name
+Pre-Election Survey Contextual Variables,490,,HouseCand6Party,House Candidate 6 Party
+Pre-Election Survey Contextual Variables,491,,HouseCand7Name,House Candidate 7 Name
+Pre-Election Survey Contextual Variables,492,,HouseCand7Party,House Candidate 7 Party
+Pre-Election Survey Contextual Variables,493,,HouseCand8Name,House Candidate 8 Name
+Pre-Election Survey Contextual Variables,494,,HouseCand8Party,House Candidate 8 Party
+Pre-Election Survey Contextual Variables,495,,HouseCand9Name,House Candidate 9 Name
+Pre-Election Survey Contextual Variables,496,,HouseCand9Party,House Candidate 9 Party
+Pre-Election Survey Contextual Variables,497,,HouseCand10Name,House Candidate 10 Name
+Pre-Election Survey Contextual Variables,498,,HouseCand10Party,House Candidate 10 Party
+Pre-Election Survey Contextual Variables,499,,HouseCand11Name,House Candidate 11 Name
+Pre-Election Survey Contextual Variables,500,,HouseCand11Party,House Candidate 11 Party
+Pre-Election Survey Contextual Variables,501,,LegName,Legislature name
+Pre-Election Survey Contextual Variables,502,,LowerChamberName,Lower chamber name
+Pre-Election Survey Contextual Variables,503,SenCand1Gender,,Senate Candidate 1 Gender
+Pre-Election Survey Contextual Variables,504,SenCand1Incumbent,SenCand1Incumbent,Senate Candidate 1 Incumbent
+Pre-Election Survey Contextual Variables,505,,SenCand1Name,Senate Candidate 1 Name
+Pre-Election Survey Contextual Variables,506,SenCand1Party,SenCand1Party,Senate Candidate 1 Party
+Pre-Election Survey Contextual Variables,507,SenateCand2Gender,,Senate Candidate 2 Gender
+Pre-Election Survey Contextual Variables,508,SenCand2Incumbent,SenCand2Incumbent,Senate Candidate 2 Incumbent
+Pre-Election Survey Contextual Variables,509,,SenCand2Name,Senate Candidate 2 Name
+Pre-Election Survey Contextual Variables,510,SenCand2Party,SenCand2Party,Senate Candidate 2 Party
+Pre-Election Survey Contextual Variables,511,SenCand3Gender,,Senate Candidate 3 Gender
+Pre-Election Survey Contextual Variables,512,,SenCand3Name,Senate Candidate 3 Name
+Pre-Election Survey Contextual Variables,513,SenCand3Party,SenCand3Party,Senate Candidate 3 Party
+Pre-Election Survey Contextual Variables,514,,SenCand4Name,Senate Candidate 4 Name
+Pre-Election Survey Contextual Variables,515,,SenCand4Party,Senate Candidate 4 Party
+Post-Election Survey Contextual Variables,516,CurrentGovParty_post,CurrentGovParty_post,Current Governor Party - post
+Post-Election Survey Contextual Variables,517,CurrentHouseFreshman_post,,Current House Freshman
+Post-Election Survey Contextual Variables,518,CurrentHouseGender_post,CurrentHouseGender_post,Current House Gender - post
+Post-Election Survey Contextual Variables,519,,CurrentHouseName_post,Current House Name - post
+Post-Election Survey Contextual Variables,520,CurrentHouseParty_post,CurrentHouseParty_post,Current House Party - post
+Post-Election Survey Contextual Variables,521,CurrentHouseRetiring_post,,Current House Retiring
+Post-Election Survey Contextual Variables,522,,CurrentSen1Gender_post,Current Senate 1 Gender - post
+Post-Election Survey Contextual Variables,523,,CurrentSen1Name_post,Current Senate 1 Name - post
+Post-Election Survey Contextual Variables,524,CurrentSen1Party_post,CurrentSen1Party_post,Current Senate 1 Party - post
+Post-Election Survey Contextual Variables,525,,CurrentSen2Gender_post,Current Senate 2 Gender - post
+Post-Election Survey Contextual Variables,526,,CurrentSen2Name_post,Current Senate 2 Name - post
+Post-Election Survey Contextual Variables,527,CurrenSen2Party_post,CurrentSen2Party_post,Current Senate 2 Party - post
+Post-Election Survey Contextual Variables,528,GovCand1Incumbent_post,GovCand1Incumbent_post,Governor Candidate 1 Incumbent - post
+Post-Election Survey Contextual Variables,529,,GovCand1Name_post,Governor Candidate 1 Name - post
+Post-Election Survey Contextual Variables,530,GovCand1Party_post,GovCand1Party_post,Governor Candidate 1 Party - post
+Post-Election Survey Contextual Variables,531,GovCand2Incumbent_post,GovCand2Incumbent_post,Governor Candidate 2 Incumbent - post
+Post-Election Survey Contextual Variables,532,,GovCand2Name_post,Governor Candidate 2 Name - post
+Post-Election Survey Contextual Variables,533,GovCand2Party_post,GovCand2Party_post,Governor Candidate 2 Party - post
+Post-Election Survey Contextual Variables,534,,GovCand3Name_post,Governor Candidate 3 Name - post
+Post-Election Survey Contextual Variables,535,,GovCand3Party_post,Governor Candidate 3 Party - post
+Post-Election Survey Contextual Variables,536,HouseCand1Gender_post,,House Candidate 1 Gender
+Post-Election Survey Contextual Variables,537,HouseCand1Incumbent_post,HouseCand1Incumbent_post,House Candidate 1 Incumbent - post
+Post-Election Survey Contextual Variables,538,,HouseCand1Name_post,House Candidate 1 Name - post
+Post-Election Survey Contextual Variables,539,HouseCand1Party_post,HouseCand1Party_post,House Candidate 1 Party - post
+Post-Election Survey Contextual Variables,540,HouseCand2Gender_post,,House Candidate 2 Gender
+Post-Election Survey Contextual Variables,541,HouseCand2Incumbent_post,HouseCand2Incumbent_post,House Candidate 2 Incumbent - post
+Post-Election Survey Contextual Variables,542,,HouseCand2Name_post,House Candidate 2 Name - post
+Post-Election Survey Contextual Variables,543,HouseCand2Party_post,HouseCand2Party_post,House Candidate 2 Party - post
+Post-Election Survey Contextual Variables,544,HouseCand3Gender_post,,House Candidate 3 Gender
+Post-Election Survey Contextual Variables,545,,HouseCand3Name_post,House Candidate 3 Name - post
+Post-Election Survey Contextual Variables,546,HouseCand3Party_post,HouseCand3Party_post,House Candidate 3 Party - post
+Post-Election Survey Contextual Variables,547,,HouseCand4Name_post,House Candidate 4 Name - post
+Post-Election Survey Contextual Variables,548,,HouseCand4Party_post,House Candidate 4 Party - post
+Post-Election Survey Contextual Variables,549,,HouseCand5Name_post,House Candidate 5 Name - post
+Post-Election Survey Contextual Variables,550,,HouseCand5Party_post,House Candidate 5 Party - post
+Post-Election Survey Contextual Variables,551,,HouseCand6Name_post,House Candidate 6 Name - post
+Post-Election Survey Contextual Variables,552,,HouseCand6Party_post,House Candidate 6 Party - post
+Post-Election Survey Contextual Variables,553,,HouseCand7Name_post,House Candidate 7 Name - post
+Post-Election Survey Contextual Variables,554,,HouseCand7Party_post,House Candidate 7 Party - post
+Post-Election Survey Contextual Variables,555,,HouseCand8Name_post,House Candidate 8 Name - post
+Post-Election Survey Contextual Variables,556,,HouseCand8Party_post,House Candidate 8 Party - post
+Post-Election Survey Contextual Variables,557,,HouseCand8Name_post,House Candidate 9 Name - post
+Post-Election Survey Contextual Variables,558,,HouseCand9Party_post,House Candidate 9 Party - post
+Post-Election Survey Contextual Variables,559,,HouseCand9Name_post,House Candidate 10 Name - post
+Post-Election Survey Contextual Variables,560,,HouseCand10Party_post,House Candidate 10 Party - post
+Post-Election Survey Contextual Variables,561,,HouseCand10Name_post,House Candidate 11 Name - post
+Post-Election Survey Contextual Variables,562,,HouseCand11Party_post,House Candidate 11 Party - post
+Post-Election Survey Contextual Variables,563,,HouseCand11Name_post,House Candidate 4 Name - post
+Post-Election Survey Contextual Variables,564,,LegName_post,Legislature name - post
+Post-Election Survey Contextual Variables,565,,LowerChamberName_post,Lower chamber name - post
+Post-Election Survey Contextual Variables,566,SenCand1Gender_post,,Senate Candidate 1 Gender
+Post-Election Survey Contextual Variables,567,SenCand1Incumbent_post,SenCand1Incumbent_post,Senate Candidate 1 Incumbent - post
+Post-Election Survey Contextual Variables,568,,SenCand1Name_post,Senate Candidate 1 Name - post
+Post-Election Survey Contextual Variables,569,SenCand1Party_post,SenCand1Party_post,Senate Candidate 1 Party - post
+Post-Election Survey Contextual Variables,570,SenCand2Gender_post,,Senate Candidate 2 Gender
+Post-Election Survey Contextual Variables,571,SenCand2Incumbent_post,SenCand2Incumbent_post,Senate Candidate 2 Incumbent - post
+Post-Election Survey Contextual Variables,572,,SenCand2Name_post,Senate Candidate 2 Name - post
+Post-Election Survey Contextual Variables,573,SenCand2Party_post,SenCand2Party_post,Senate Candidate 2 Party - post
+Post-Election Survey Contextual Variables,574,SenCand3Gender_post,,Senate Candidate 3 Gender
+Post-Election Survey Contextual Variables,575,,SenCand3Name_post,Senate Candidate 3 Name - post
+Post-Election Survey Contextual Variables,576,SenCand3Party_post,SenCand3Party_post,Senate Candidate 3 Party - post
+Post-Election Survey Contextual Variables,577,,SenCand4Name_post,Senate Candidate 4 Name - post
+Post-Election Survey Contextual Variables,578,,SenCand4Party_post,Senate Candidate 4 Party - post
+,579,,starttime_post,Interview Start Time- post
+,580,,endttime_post,Interview End Time- post
+,581,,starttime_pre,Interview Start Time
+,582,,endtime_pre,Interview End Time
