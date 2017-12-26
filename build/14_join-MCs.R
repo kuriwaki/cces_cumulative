@@ -12,19 +12,23 @@ dime <- readRDS("data/output/03_contextual/dime_fmt.Rds")
 
 
 # join Voteview and FEC list (with appropriate offices) ----
-vv_fec_H <- left_join(vvH, 
-                      filter(dime, seat == "federal:house"),
-                      by = "icpsr")
+vv_fec_H <- left_join(
+  vvH,
+  filter(dime, seat == "federal:house"),
+  by = "icpsr"
+)
 
-vv_fec_S <- left_join(vvS, 
-                      filter(dime, seat == "federal:senate"),
-                      by = "icpsr")
+vv_fec_S <- left_join(
+  vvS,
+  filter(dime, seat == "federal:senate"),
+  by = "icpsr"
+)
 # join CQ ---
 df_H <- left_join(vv_fec_H, cq, by = c("namelast", "chamber", "st", "dist", "congress"))
 df_S <- left_join(vv_fec_S, cq, by = c("namelast", "chamber", "st", "congress"))
 
 
 
-# save ----- 
+# save -----
 saveRDS(df_H, "data/output/03_contextual/incumbents_H.Rds")
 saveRDS(df_S, "data/output/03_contextual/incumbents_S.Rds")

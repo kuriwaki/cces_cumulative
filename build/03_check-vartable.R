@@ -10,6 +10,6 @@ cc <- gs_read(gs_main, ws = "CCES_2008_variables")
 
 
 # duplicates ---
-cc %>% 
-  group_by(name) %>% 
+cc %>%
+  group_by(name) %>%
   tally(sort = TRUE)

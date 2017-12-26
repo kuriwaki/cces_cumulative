@@ -17,7 +17,7 @@ read_zcta <- function(cong) {
     glue("data/source/census_zcta/{cong}/zcta_cd{cong}_natl.txt"),
     delim = ",",
     col_types = cols(),
-    skip = 2, 
+    skip = 2,
     col_names = c("fips", "zipcode", "distnum")
   ) %>%
     mutate(fips = as.integer(fips)) %>%
@@ -47,9 +47,9 @@ national110 <- filter(national110, distnum != "00")
 # that are _within each group_
 
 by_zip <- function(tbl) {
-  tbl %>% 
-  group_by(fips, zipcode) %>%
-  summarize(distnums = paste0(distnum, collapse = ","))
+  tbl %>%
+    group_by(fips, zipcode) %>%
+    summarize(distnums = paste0(distnum, collapse = ","))
 }
 
 n109_byzip <- by_zip(national109)
@@ -57,10 +57,10 @@ n110_byzip <- by_zip(national110)
 n113_byzip <- by_zip(national113)
 n115_byzip <- by_zip(national115)
 
-mkey <- c("fips","zipcode")
-n109_115_byzip <- left_join(n109_byzip, n110_byzip, by = mkey) %>% 
+mkey <- c("fips", "zipcode")
+n109_115_byzip <- left_join(n109_byzip, n110_byzip, by = mkey) %>%
   left_join(n113_byzip, mkey) %>%
-  left_join(n115_byzip, mkey) %>% 
+  left_join(n115_byzip, mkey) %>%
   ungroup()
 
 colnames(n109_115_byzip) <- c("fips", "zipcode", "distnum109", "distnum110", "distnum113", "distnum115")
@@ -72,9 +72,9 @@ n109_115_byzip <- left_join(n109_115_byzip, select(statecode, st, fips), by = "f
 ## Make a key of districts ------------
 
 all_CDs <- bind_rows(
-  national109, 
+  national109,
   national110,
-  national113, 
+  national113,
   national115
 ) %>%
   left_join(statecode, by = "fips") %>%
@@ -100,7 +100,7 @@ container <- tibble(
 for (d in all_CDs) {
   state_of_d <- gsub("-[0-9]+", "", d)
   distnum_of_d <- gsub("[-A-Z]+", "", d)
-  
+
   for (cong in c(109, 110, 113, 115)) {
     column_to_search <- glue("distnum{cong}")
 
@@ -126,15 +126,14 @@ over_post <- over_pre <- tibble(
 
 for (d in all_CDs) {
   row_number <- which(d == container$CD)
-  
-  for (cong in c(109110, 110113, 113115)) {
 
+  for (cong in c(109110, 110113, 113115)) {
     c_start <- substr(cong, start = 1, stop = 3)
     c_end <- substr(cong, start = 4, stop = 6)
     column_name_pre <- glue("zips{c_start}")
     column_name_post <- glue("zips{c_end}")
 
-    
+
     zd_pre_char <- as.character(container[row_number, column_name_pre])
     zd_post_char <- as.character(container[row_number, column_name_post])
 
@@ -146,7 +145,7 @@ for (d in all_CDs) {
     zd_pre_post <- intersect(zd_pre_vec, zd_post_vec)
 
 
-    # sizes     
+    # sizes
     n_zd_pre <- length(zd_pre_vec)
     n_zd_post <- length(zd_post_vec)
     n_zd_pre_notpost <- length(zd_pre_notpost)
@@ -159,12 +158,12 @@ for (d in all_CDs) {
     }
 
     # figure out which row corresponds to district d
-    over_pre[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <- 
+    over_pre[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <-
       (n_zd_pre_post / n_zd_pre)
-    
-    over_post[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <- 
+
+    over_post[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <-
       (n_zd_pre_post / n_zd_post)
-    
+
     rm(n_zd_pre, n_zd_post, n_zd_pre_post, zd_pre_char, zd_post_char)
   }
 }

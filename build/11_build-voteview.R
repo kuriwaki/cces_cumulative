@@ -7,7 +7,7 @@ library(Rvoteview)
 path <- list.files("data/source/voteview", full.names = TRUE)
 paths_read <- grep("/HS.*members.csv$", path, value = TRUE)
 
-# read and bind -- 
+# read and bind --
 vv_raw <- foreach(p = paths_read, .combine = "bind_rows") %do% {
   read_csv(p, col_types = cols())
 }
@@ -18,7 +18,7 @@ vv_namelast <- vv_raw %>%
   mutate(namelast = toupper(gsub("^([A-z-]+),.*", "\\1", bioname)))
 
 
-# formats --- 
+# formats ---
 vv <- vv_namelast %>%
   select(congress, chamber, icpsr, namelast, everything()) %>%
   rename(
@@ -40,12 +40,12 @@ vvS <- vv %>%
   filter(chamber == "S") %>%
   arrange(icpsr) %>%
   select(-dist)
-  
+
 
 
 ## sort for now ---
 vvH_min <- vvH %>%
-  select(congress, chamber, icpsr, st, dist, namelast) %>% 
+  select(congress, chamber, icpsr, st, dist, namelast) %>%
   mutate(CD = paste0(st, "-", dist))
 
 vvS_min <- vvS %>%

@@ -8,25 +8,27 @@ library(tidyverse)
 
 dime_raw <- read_csv("data/source/dime/dime_recipients_all_1979_2014.csv")
 
-dime_cand <- dime_raw %>% 
+dime_cand <- dime_raw %>%
   filter(!grepl("comm", bonica.rid))
 
-dime_cols <- dime_cand %>% 
-  select(FEC = FEC.ID,
-         ICPSR = ICPSR2, 
-         seat = seat)
+dime_cols <- dime_cand %>%
+  select(
+    FEC = FEC.ID,
+    ICPSR = ICPSR2,
+    seat = seat
+  )
 
 dime_full <- dime_cols %>%
   filter(!is.na(FEC))
 
-df <- dime_full %>% 
+df <- dime_full %>%
   distinct(FEC, ICPSR, seat)
 
 
 # strip away letters from icpsr
-df <-  df %>%
-  mutate(ICPSR  = gsub("[A-z]+", "", ICPSR)) %>%
-  mutate(ICPSR = as.integer(ICPSR)) %>% 
+df <- df %>%
+  mutate(ICPSR = gsub("[A-z]+", "", ICPSR)) %>%
+  mutate(ICPSR = as.integer(ICPSR)) %>%
   rename(icpsr = ICPSR)
 
 

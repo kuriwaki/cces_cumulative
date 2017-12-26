@@ -45,6 +45,3 @@ v_cen_10[, Variable10] <- "CEN10"
 
 # one row per variable
 combined_dataset <- bind_rows(v_acs_06, v_acs_11, v_cen_10)
-
-
-
