@@ -1,104 +1,90 @@
-rm(list = ls())
 library(readr)
 library(dplyr)
-library(haven)
+library(glue)
 library(stringr)
 library(ggplot2)
 library(scales)
 
 
 ## code that associates FIPS codes with state names
-statecode <- read.csv("data/source/statecode.csv", as.is = T)
+statecode <- read_csv("data/source/statecode.csv")
 
 
 # Read in data -----------------
-national109 <- read_delim(
-  "data/source/census_zcta/109/zcta_cd109_natl.txt",
-  delim = ",",
-  skip = 2, col_names = c("state", "zipcode", "distnum")
-)
 
-national110 <- read_delim(
-  "data/source/census_zcta/110/zcta_cd110_natl.txt",
-  delim = ",",
-  skip = 2, col_names = c("state", "zipcode", "distnum")
-)
-
-national113 <- read_delim(
-  "data/source/census_zcta/113/zcta_cd113_natl.txt",
-  delim = ",",
-  skip = 2, col_names = c("state", "zipcode", "distnum")
-)
+read_zcta <- function(cong) {
+  read_delim(
+    glue("data/source/census_zcta/{cong}/zcta_cd{cong}_natl.txt"),
+    delim = ",",
+    col_types = cols(),
+    skip = 2, 
+    col_names = c("fips", "zipcode", "distnum")
+  ) %>%
+    mutate(fips = as.integer(fips)) %>%
+    filter(!is.na(as.numeric(distnum)))
+}
 
 
-national115 <- read_delim(
-  "data/source/census_zcta/115/zcta_cd115_natl.txt",
-  delim = ",",
-  skip = 2, col_names = c("state", "zipcode", "distnum")
-)
+national109 <- read_zcta(109)
+national110 <- read_zcta(110)
+national113 <- read_zcta(113)
+national115 <- read_zcta(115)
 
 
 # Recode at large ------
 # 113 and 115 don't use at-large districts; so drop these
-
 national109 <- filter(national109, distnum != "00")
 national110 <- filter(national110, distnum != "00")
 
 
 # Group -------
-# sometimes zipcodes straddle districts! This will be a pain to account for by just merging, let's somehow manipulate the dataset so that each row is a unique zipcode.
 
-# group the dataset into state-zipcodes. Then, let's just list up the distnums that are _within each group_
-n109_byzip <- national109 %>%
-  group_by(state, zipcode) %>%
+# sometimes zipcodes straddle districts! This will be a pain to account for by
+# just merging, let's somehow manipulate the dataset so that each row is a
+# unique zipcode.
+
+# group the dataset into state-zipcodes. Then, let's just list up the distnums
+# that are _within each group_
+
+by_zip <- function(tbl) {
+  tbl %>% 
+  group_by(fips, zipcode) %>%
   summarize(distnums = paste0(distnum, collapse = ","))
+}
 
-n110_byzip <- national110 %>%
-  group_by(state, zipcode) %>%
-  summarize(distnums = paste0(distnum, collapse = ","))
+n109_byzip <- by_zip(national109)
+n110_byzip <- by_zip(national110)
+n113_byzip <- by_zip(national113)
+n115_byzip <- by_zip(national115)
 
-n113_byzip <- national113 %>%
-  group_by(state, zipcode) %>%
-  summarize(distnums = paste0(distnum, collapse = ","))
-
-n115_byzip <- national115 %>%
-  group_by(state, zipcode) %>%
-  summarize(distnums = paste0(distnum, collapse = ","))
-
-n109110_byzip <- left_join(n109_byzip, n110_byzip, by = c("zipcode", "state"))
-n113115_byzip <- left_join(n113_byzip, n115_byzip, by = c("zipcode", "state"))
-n109_115_byzip <- left_join(n109110_byzip, n113115_byzip, by = c("zipcode", "state")) %>%
+mkey <- c("fips","zipcode")
+n109_115_byzip <- left_join(n109_byzip, n110_byzip, by = mkey) %>% 
+  left_join(n113_byzip, mkey) %>%
+  left_join(n115_byzip, mkey) %>% 
   ungroup()
 
-colnames(n109_115_byzip) <- c("state", "zipcode", "distnum109", "distnum110", "distnum113", "distnum115")
+colnames(n109_115_byzip) <- c("fips", "zipcode", "distnum109", "distnum110", "distnum113", "distnum115")
 
-
-# add state name
-n109_115_byzip <- left_join(
-  mutate(n109_115_byzip, state = as.integer(state)),
-  dplyr::select(statecode, StateAbbr, fips),
-  by = c("state" = "fips")
-) %>%
-  dplyr::select(StateAbbr, zipcode, matches("distnum"))
-
+# add state name -----
+n109_115_byzip <- left_join(n109_115_byzip, select(statecode, st, fips), by = "fips") %>%
+  select(st, zipcode, matches("distnum"))
 
 ## Make a key of districts ------------
 
 all_CDs <- bind_rows(
-  national109, national110,
-  national113, national115
+  national109, 
+  national110,
+  national113, 
+  national115
 ) %>%
-  filter(!is.na(as.numeric(distnum))) %>%
-  distinct(state, distnum) %>%
-  mutate(state = as.integer(state)) %>%
-  left_join(statecode, by = c("state" = "fips")) %>%
-  mutate(CD = paste0(StateAbbr, "-", distnum)) %>%
+  left_join(statecode, by = "fips") %>%
+  mutate(CD = paste0(st, "-", distnum)) %>%
   distinct(CD) %>%
   arrange(CD) %>%
   pull(CD)
 
 
-# build container (empty),
+# build container (empty)
 container <- tibble(
   CD = all_CDs,
   zips109 = NA,
@@ -112,103 +98,85 @@ container <- tibble(
 ## Loop through and store zipcodes for a given district ----
 
 for (d in all_CDs) {
-  for (c in c(109, 110, 113, 115)) {
-    column_to_search <- paste(c("distnum", c), collapse = "")
-
-    state_of_d <- gsub(pattern = "-[0-9]+", replacement = "", x = d)
-
-    distnum_of_d <- gsub(pattern = "[-A-Z]+", replacement = "", x = d)
+  state_of_d <- gsub("-[0-9]+", "", d)
+  distnum_of_d <- gsub("[-A-Z]+", "", d)
+  
+  for (cong in c(109, 110, 113, 115)) {
+    column_to_search <- glue("distnum{cong}")
 
     # pull out the zips
     zips_in_d_at_c <- n109_115_byzip %>%
-      filter(StateAbbr == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
+      filter(st == state_of_d & grepl(distnum_of_d, .data[[column_to_search]])) %>%
       pull(zipcode)
 
-
-    # figure out which column to place our zip codes in
-    col_name_in_container <- paste(c("zips", c), collapse = "")
-
-    # figure out which row corresponds to district d
-    row_number_in_container <- which(d == container$CD)
-
-
-    container[row_number_in_container, col_name_in_container] <- paste(zips_in_d_at_c, collapse = ",")
+    container[which(d == container$CD), glue("zips{cong}")] <- paste(zips_in_d_at_c, collapse = ",")
   }
-
-  cat(paste0(d, "\n"))
 }
 
 
 # Loop through districts to get a easure of change ---------
 # build new container
-dataset1 <- tibble(
+over_post <- over_pre <- tibble(
   CD = all_CDs,
-  zips_calculation109110 = NA,
-  zips_calculation110113 = NA,
-  zips_calculation113115 = NA
+  rate_109_110 = NA,
+  rate_110_113 = NA,
+  rate_113_115 = NA
 )
-
-dataset2 <- tibble(
-  CD = all_CDs,
-  zips_calculation109110 = NA,
-  zips_calculation110113 = NA,
-  zips_calculation113115 = NA
-)
-
 
 
 for (d in all_CDs) {
+  row_number <- which(d == container$CD)
+  
   for (cong in c(109110, 110113, 113115)) {
-    row_number_in_container <- which(d == container$CD)
 
-
-    #### notes
     c_start <- substr(cong, start = 1, stop = 3)
     c_end <- substr(cong, start = 4, stop = 6)
-    column_name_container_pre <- paste(c("zips", c_start), collapse = "")
-    column_name_container_post <- paste(c("zips", c_end), collapse = "")
+    column_name_pre <- glue("zips{c_start}")
+    column_name_post <- glue("zips{c_end}")
 
-
-    zips_of_d_pre <- as.character(container[row_number_in_container, column_name_container_pre])
-    zips_of_d_post <- as.character(container[row_number_in_container, column_name_container_post])
-
-    zips_of_d_presplit <- str_split(zips_of_d_pre, ",")[[1]]
-    zips_of_d_postsplit <- str_split(zips_of_d_post, ",")[[1]]
-
-    inzips_of_d_pre_but_not_zips_of_d_post <- setdiff(x = zips_of_d_presplit, y = zips_of_d_postsplit)
-    inzips_of_d_post_but_not_zips_of_d_pre <- setdiff(x = zips_of_d_postsplit, y = zips_of_d_presplit)
-    inzips_of_d_pre_and_inzips_of_d_post <- intersect(zips_of_d_presplit, zips_of_d_postsplit)
-
-    count_of_zips_of_d_pre <- length(zips_of_d_presplit)
-    count_of_zips_of_d_post <- length(zips_of_d_postsplit)
     
-    count_in_zips_of_d_pre_but_not_zips_of_d_post <- length(inzips_of_d_pre_but_not_zips_of_d_post)
-    count_in_zips_of_d_post_but_not_zips_of_d_pre <- length(inzips_of_d_post_but_not_zips_of_d_pre)
+    zd_pre_char <- as.character(container[row_number, column_name_pre])
+    zd_post_char <- as.character(container[row_number, column_name_post])
 
-    count_ofbothprepost <- length(inzips_of_d_pre_and_inzips_of_d_post)
-    if (zips_of_d_post == "") {
-      count_ofbothprepost <- NA
+    zd_pre_vec <- str_split(zd_pre_char, ",")[[1]]
+    zd_post_vec <- str_split(zd_post_char, ",")[[1]]
+
+    zd_pre_notpost <- setdiff(x = zd_pre_vec, y = zd_post_vec)
+    zd_post_notpre <- setdiff(x = zd_post_vec, y = zd_pre_vec)
+    zd_pre_post <- intersect(zd_pre_vec, zd_post_vec)
+
+
+    # sizes     
+    n_zd_pre <- length(zd_pre_vec)
+    n_zd_post <- length(zd_post_vec)
+    n_zd_pre_notpost <- length(zd_pre_notpost)
+    n_zd_post_notpre <- length(zd_post_notpre)
+    n_zd_pre_post <- length(zd_pre_post)
+
+    # set disappearing districts to NA
+    if (zd_post_char == "") {
+      n_zd_pre_post <- NA
     }
 
     # figure out which row corresponds to district d
-    col_name_in_dataset1 <- paste(c("zips_calculation", cong), collapse = "")
-    row_number_in_dataset1 <- which(d == container$CD)
-    dataset1[row_number_in_dataset1, col_name_in_dataset1] <- (count_ofbothprepost / count_of_zips_of_d_pre)
-
-    col_name_in_dataset2 <- paste(c("zips_calculation", cong), collapse = "")
-    row_number_in_dataset2 <- which(d == container$CD)
-    dataset2[row_number_in_dataset2, col_name_in_dataset2] <- (count_ofbothprepost / count_of_zips_of_d_post)
+    over_pre[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <- 
+      (n_zd_pre_post / n_zd_pre)
+    
+    over_post[which(d == container$CD), glue("rate_{c_start}_{c_end}")] <- 
+      (n_zd_pre_post / n_zd_post)
+    
+    rm(n_zd_pre, n_zd_post, n_zd_pre_post, zd_pre_char, zd_post_char)
   }
 }
 
 
 # write to table -----
-write_excel_csv(dataset1, "data/output/changes_in_CD_composition_dataset1.csv", na = "")
-write_excel_csv(dataset2, "data/output/changes_in_CD_composition_dataset2.csv", na = "")
+write_excel_csv(over_pre, "data/output/03_contextual/zipchange_CD_overpre.csv", na = "")
+write_excel_csv(over_post, "data/output/03_contextual/zipchange_CD_overpost.csv", na = "")
 
 
 # visualize ------
-df_toplot <- dataset1 %>%
+df_toplot <- over_pre %>%
   reshape2::melt(
     id.vars = "CD",
     variable.name = "window",
