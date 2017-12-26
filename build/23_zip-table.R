@@ -183,22 +183,24 @@ df_toplot <- over_pre %>%
     value.name = "prop_zips_stay"
   ) %>%
   mutate(
-    state = gsub("-[0-9]+", "", CD),
+    st = gsub("-[0-9]+", "", CD),
     prop_zips_stay = as.numeric(prop_zips_stay)
   ) %>%
-  filter(state != "DC") %>%
+  left_join(select(statecode, st, division)) %>%
+  filter(st != "DC") %>%
   tbl_df()
 
 
-temp_lineplot <- ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = CD)) +
-  facet_wrap(~  state, ncol = 8) +
-  geom_line(alpha = 0.5) +
-  scale_x_discrete(labels = c("109 to 110", "110 to 113", "113 to 115")) +
+lineplot <- ggplot(df_toplot, aes(x = window, y = prop_zips_stay, group = CD)) +
+  facet_wrap(~ division, ncol = 3) +
+  geom_line(alpha = 0.35) +
+  scale_x_discrete(labels = c("2006-2008\n(109-110th)", "2009-2015\n(110-113th)", "2016-2019\n(113-115)")) +
   scale_y_continuous(labels = percent) +
-  theme(axis.text.x = element_text(angle = 90)) +
+  theme(axis.text.x = element_text(size = 6)) +
   labs(
-    y = "Proportion of Zips in Previous Congress \n that Stayed the Same in Subsequent Congress",
-    x = "Time Window (in Congresses)"
+    y = "Proportion of CD's zipcodes from previous congress \n that stayed remained in CD",
+    x = "Time Window (in Congresses)",
+    caption = "Each line is a Congressional District code (e.g. TX-23)"
   )
 
-ggsave("figures/district_change_lineplot.pdf", temp_lineplot, w = 14, h = 10)
+ggsave("figures/district_change_lineplot.pdf", lineplot, w = 7, h = 5.5)

@@ -1,52 +1,52 @@
-State,fips,StateAbbr,icpsr
-Alabama,1,AL,41
-Alaska,2,AK,81
-Arizona,4,AZ,61
-Arkansas,5,AR,42
-California,6,CA,71
-Colorado,8,CO,62
-Connecticut,9,CT,1
-Delaware,10,DE,11
-District of Columbia,11,DC,55
-Florida,12,FL,43
-Georgia,13,GA,44
-Hawaii,15,HI,82
-Idaho,16,ID,63
-Illinois,17,IL,21
-Indiana,18,IN,22
-Iowa,19,IA,31
-Kansas,20,KS,32
-Kentucky,21,KY,51
-Louisiana,22,LA,45
-Maine,23,ME,2
-Maryland,24,MD,52
-Massachusetts,25,MA,3
-Michigan,26,MI,23
-Minnesota,27,MN,33
-Mississippi,28,MS,46
-Missouri,29,MO,34
-Montana,30,MT,64
-Nebraska,31,NE,35
-Nevada,32,NV,65
-New Hampshire,33,NH,4
-New Jersey,34,NJ,12
-New Mexico,35,NM,66
-New York,36,NY,13
-North Carolina,37,NC,47
-North Dakota,38,ND,36
-Ohio,39,OH,24
-Oklahoma,40,OK,53
-Oregon,41,OR,72
-Pennsylvania,42,PA,14
-Rhode Island,44,RI,5
-South Carolina,45,SC,48
-South Dakota,46,SD,37
-Tennessee,47,TN,54
-Texas,48,TX,49
-Utah,49,UT,67
-Vermont,50,VT,6
-Virginia,51,VA,40
-Washington,53,WA,73
-West Virginia,54,WV,56
-Wisconsin,55,WI,25
-Wyoming,56,WY,68
+state,fips,st,icpsr,region,division
+Alabama,1,AL,41,South,East South Central
+Alaska,2,AK,81,West,Pacific
+Arizona,4,AZ,61,West,Mountain
+Arkansas,5,AR,42,South,West South Central 
+California,6,CA,71,West,Pacific
+Colorado,8,CO,62,West,Mountain
+Connecticut,9,CT,1,Northeast,New England
+Delaware,10,DE,11,South,South Atlantic
+District of Columbia,11,DC,55,South,South Atlantic
+Florida,12,FL,43,South,South Atlantic
+Georgia,13,GA,44,South,South Atlantic
+Hawaii,15,HI,82,West,Pacific
+Idaho,16,ID,63,West,Mountain
+Illinois,17,IL,21,Midwest,East North Central
+Indiana,18,IN,22,Midwest,East North Central
+Iowa,19,IA,31,Midwest,West North Central
+Kansas,20,KS,32,Midwest,West North Central
+Kentucky,21,KY,51,Midwest,East South Central
+Louisiana,22,LA,45,South,West South Central 
+Maine,23,ME,2,Northeast,New England
+Maryland,24,MD,52,South,South Atlantic
+Massachusetts,25,MA,3,Northeast,New England
+Michigan,26,MI,23,Midwest,East North Central
+Minnesota,27,MN,33,Midwest,West North Central
+Mississippi,28,MS,46,South,East South Central
+Missouri,29,MO,34,Midwest,West North Central
+Montana,30,MT,64,West,Mountain
+Nebraska,31,NE,35,Midwest,West North Central
+Nevada,32,NV,65,West,Mountain
+New Hampshire,33,NH,4,Northeast,New England
+New Jersey,34,NJ,12,Northeast,Mid-Atlantic
+New Mexico,35,NM,66,West,Mountain
+New York,36,NY,13,Northeast,Mid-Atlantic
+North Carolina,37,NC,47,South,South Atlantic
+North Dakota,38,ND,36,Midwest,West North Central
+Ohio,39,OH,24,Midwest,East North Central
+Oklahoma,40,OK,53,South,West South Central 
+Oregon,41,OR,72,West,Pacific
+Pennsylvania,42,PA,14,Northeast,Mid-Atlantic
+Rhode Island,44,RI,5,Northeast,New England
+South Carolina,45,SC,48,South,South Atlantic
+South Dakota,46,SD,37,Midwest,West North Central
+Tennessee,47,TN,54,South,East South Central
+Texas,48,TX,49,South,West South Central 
+Utah,49,UT,67,West,Mountain
+Vermont,50,VT,6,Northeast,New England
+Virginia,51,VA,40,South,South Atlantic
+Washington,53,WA,73,West,Pacific
+West Virginia,54,WV,56,South,South Atlantic
+Wisconsin,55,WI,25,Midwest,East North Central
+Wyoming,56,WY,68,West,Mountain
