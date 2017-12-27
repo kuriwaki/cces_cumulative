@@ -35,6 +35,20 @@ Note: most *data* files are not tracked on git.
 Main code
 ---------
 
--   `build/01_pull-08to11.R` pulls out some variables that we need separately from 2008 - 2011 CCES common content, that was masked in the 2006-2012 cumulative file.
--   `build/02_stack.R` pulls out the variabales of interest from annual CCES files. Then, we stack this into a long dataset where each row is a respondent from CCES. This is uploaded to Crunch.
+### CCES
+
+-   `build/01_read-common.R` pulls out the common contents with minimal foramtting (e.g. standardize record ID variable names)
+-   `build/02_pull-08to11.R` pulls out some variables that we need separately from 2008 - 2011 CCES common content, that was masked in the 2006-2012 cumulative file.
+-   `build/03_stack-cumulative.R` pulls out the variabales of interest from annual CCES files. Then, we stack this into a long dataset where each row is a respondent from CCES. This is uploaded to Crunch.
+-   `build/04_extract_contextual.R` pulls out the "contextual variables" at the respondent level, i.e. information on candidates and representatives
 -   `build/09_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset.
+
+### Contextual
+
+-   `11_build-voteview.R` formats datasets of incumbent MCs
+-   `12_build_CQ.R` formats data from CQ Alamnac on MCs biographical information
+-   `13_build-FEC.R` formats FEC identifier keys for all candidates in the FEC database, using Bonica's DIME databaset
+-   `14_join-incumbents.R` combines voteview, CQ, and FEC data for incumbents for congress, then to responses
+-   `15_join-challengers.R` combines FEC and district data for challengers for congress
+-   `16_join-governors.R` combines FEC and responses for Governor contextual data
+-   `17_join-contextual.R` combines all respondent-level contextual info in one long dataset
