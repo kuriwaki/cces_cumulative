@@ -41,7 +41,7 @@ df_fec <- df_distinct %>%
   mutate(icpsr = replace(icpsr, icpsr == fec, "")) %>%
   mutate(icpsr_num = as.integer(icpsr)) # a real ICPSR (of incumbents) should have no letters in the first place 
 
-sample_n(filter(df_fec, grepl("federal", office_sought)), 10)
+
 
 
 # modify dist
