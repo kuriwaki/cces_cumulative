@@ -1,9 +1,5 @@
 library(crunch)
-library(ggplot2)
 library(dplyr)
-library(foreach)
-library(readr)
-library(xtable)
 
 # ccc <- readRDS("data/output/cumulative_2006_2016.Rds") # on disk
 upload_again <- FALSE
@@ -21,11 +17,11 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("cumulative_2006_2016.sav", project = "CCES Common Content")
+ds <- loadDataset("cumulative_2006_2016.sav", project = "CCES")
 
 
 # description for dataset
-description(ds) <- "This is an alpha version -- formatting incomplete and may contain errors."
+description(ds) <- "This is a working version -- formatting incomplete and may contain errors."
 startDate(ds) <- "2006-10-06"
 endDate(ds) <- "2006-11-07"
 
