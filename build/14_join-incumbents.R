@@ -33,3 +33,6 @@ df_S <- left_join(vv_fec_S, cq, by = c("namelast", "chamber", "st", "congress"))
 # save -----
 saveRDS(df_H, "data/output/03_contextual/incumbents_H.Rds")
 saveRDS(df_S, "data/output/03_contextual/incumbents_S.Rds")
+
+write_csv(df_H, "data/output/03_contextual/incumbents_H.csv", na = "")
+write_csv(df_S, "data/output/03_contextual/incumbents_S.csv", na = "")

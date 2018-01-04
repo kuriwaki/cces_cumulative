@@ -58,3 +58,4 @@ df <-  df_fec %>%
 
 # save
 saveRDS(df, "data/output/03_contextual/fec_fmt.Rds")
+write_csv(filter(df, elec %in% 2004:2020),  "data/output/03_contextual/fec_fmt.csv")
