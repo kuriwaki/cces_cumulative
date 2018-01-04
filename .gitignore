@@ -58,11 +58,12 @@ Thumbs.db
 # data
 ####################
 data/source/*Rds
-data/source/cq/*
-data/source/cces/*
-data/source/dime/*
 data/source/anes/*
+data/source/cces/*
 data/source/census_demog
+data/source/cq/*
+data/source/dime/*
+data/source/fec/*
 data/output/*
 data/release/*
 pettigrew_code/*

@@ -78,8 +78,9 @@ description(ds$voted_gov_char) <- "For whom did you vote for Governor?"
 
 
 # ordering of categories ----
-st_order <- order(table(ds$state), decreasing = TRUE)
-categories(ds$state) <- categories(ds$state)[st_order]
+st_order <- c(order(table(ds$state, useNA = "ifany"), decreasing = TRUE),
+              which(ids(categories(ds$state)) < 0)) # missings
+categories(ds$state) <- categories(ds$state)[c(st_order)]
 
 
 
@@ -115,15 +116,3 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
 )
-
-
-
-foo <- ccc_factor %>% select(economy_retro) %>% mutate(economy_retro = as_factor(economy_retro))
-bar <- prepareDataForCrunch(foo)
-newDataset(, "test_R-upload")
-
-addVariables(ds, VarDef(
-  as_factor(foo$economy_retro),
-  name = "Economy Retrospective",
-  description = "Would you say that OVER THE PAST YEAR the nation's economy has... ?"
-))
