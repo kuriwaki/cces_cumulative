@@ -68,7 +68,6 @@ ccc_meta <- tribble(
 # appply
 
 lapply(ds, function(v){
-  if (! any(ccc_meta$alias == alias(v))) NULL
   name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
 })

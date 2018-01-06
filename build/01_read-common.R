@@ -12,9 +12,12 @@ std_dv <- function(path, guess_year = TRUE) {
   
   
   ## guess ID
-  if ("caseid" %in% colnames(tbl)) orig_key <- "caseid"
-  if ("V101" %in% colnames(tbl)) orig_key <- "V101"
-  if ("V100" %in% colnames(tbl)) orig_key <- "V100"
+  cnames <- colnames(tbl)
+  if ("caseid" %in% cnames) orig_key <- "caseid"
+  if ("V101" %in% cnames) orig_key <- "V101"
+  if ("V100" %in% cnames) orig_key <- "V100"
+  if ("v100" %in% cnames) orig_key <- "v100"
+  if ("v1000" %in% cnames) orig_key <- "v1000"
   
   
   # add year
@@ -56,11 +59,13 @@ pid3_cc10 <- pid10_raw %>%
 
 
 # individual files versions from 2008, 2010, and 2012
+cc06 <- std_dv("data/source/cces/2006_cc.dta")
+cc07 <- std_dv("data/source/cces/2007_cc.dta")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
+cc09 <- std_dv("data/source/cces/2009_cc.dta")
 cc10 <- std_dv("data/source/cces/2010_cc.dta")
+cc11 <- std_dv("data/source/cces/2011_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
-
-# take the needed columns for 2013- 2016
 cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
@@ -68,5 +73,5 @@ cc16 <- std_dv("data/source/cces/2016_cc_vv.dta")
 
 
 # save ---- 
-save(ccp, cc08, cc10, cc12, cc13, cc14, cc16, cc16, 
+save(ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, cc13, cc14, cc15, cc16, 
      file = "data/output/01_responses/common_all.RData")
