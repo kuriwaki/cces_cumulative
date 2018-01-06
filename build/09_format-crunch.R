@@ -17,11 +17,11 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("cumulative_2006_2016.sav", project = "CCES")
+ds <- loadDataset("CCES Cumulative Common", project = "CCES")
 
 
 # description for dataset
-description(ds) <- "This is a working version -- formatting incomplete and may contain errors."
+description(ds) <- "This is a working version -- formatting incomplete and may contain errors. Only a limited set of questions are included for this cumulative file."
 startDate(ds) <- "2006-10-06"
 endDate(ds) <- "2006-11-07"
 
@@ -68,6 +68,7 @@ ccc_meta <- tribble(
 # appply
 
 lapply(ds, function(v){
+  if (! any(ccc_meta$alias == alias(v))) NULL
   name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
 })
