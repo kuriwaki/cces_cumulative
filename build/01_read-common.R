@@ -6,9 +6,10 @@ statecode <- read_csv("data/source/statecode.csv")
 
 
 # functions ---
-# rudimentary standardization for data that comes out of dataverse
+#' rudimentary standardization for data that comes out of dataverse
 std_dv <- function(path, guess_year = TRUE) {
   if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_cc.*", "\\1", path))
+  if (!guess_year) guessed_yr <- NA
 
   ## then
   tbl <- haven::read_dta(path)
@@ -21,12 +22,26 @@ std_dv <- function(path, guess_year = TRUE) {
   if ("V100" %in% cnames) orig_key <- "V100"
   if ("v100" %in% cnames) orig_key <- "v100"
   if ("v1000" %in% cnames) orig_key <- "v1000"
-
-
+  
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
+  
+  # state
+  tbl_st <- std_state(tbl, guess_year, guessed_yr)
+  
+  # CD number
+  tbl_stc <- std_cdid(tbl_st, guess_year, guessed_yr)
 
-  ## change state for specific years
+
+  # then rename id
+  tbl_stc %>%
+    rename(caseID = !! orig_key) %>%
+    select(year, caseID, state, st, cdid,  everything())
+}
+
+
+#' change class of state for specific years
+std_state <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     statevar <- case_when(
       guessed_yr %in% c(2007, 2012:2016) ~ "inputstate",
@@ -34,38 +49,73 @@ std_dv <- function(path, guess_year = TRUE) {
       guessed_yr %in% 2009 ~ "v259",
       guessed_yr %in% 2006 ~ "v1002"
     )
-
+    
     if (!guessed_yr %in% c(2006, 2009)) {
       tbl <- tbl %>%
         mutate(state = as.character(as_factor(.data[[statevar]]))) %>%
         left_join(select(statecode, state, st), by = "state")
     }
-
-
+    
     if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
       tbl <- tbl %>%
         rename(st = !! statevar) %>%
         left_join(select(statecode, state, st), by = "st")
     }
-
+    
     if (guessed_yr %in% 2009) { # 2009 codes lower case labels
       tbl <- tbl %>%
         mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) %>%
         left_join(select(statecode, state, st), by = "state")
     }
   }
-
+  
   if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
     tbl <- tbl %>%
       mutate(state = as.character(as_factor(state_pre))) %>%
       left_join(select(statecode, state, st), by = "state")
   }
-
-  # then rename id
-  tbl %>%
-    rename(caseID = !! orig_key) %>%
-    select(year, caseID, state, st, everything())
+  tbl
 }
+
+
+#' change class of cdid for specific years
+std_cdid <- function(tbl, guess_year, guessed_yr) {
+  if (guess_year) {
+    cdidvar <- case_when(
+      guessed_yr %in% c(2013, 2016) ~ "cdid113",
+      guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
+      guessed_yr %in% 2006 ~ "v1003",
+      guessed_yr %in% 2007 ~ "cdid_num",
+      guessed_yr %in% 2008 ~ "V250",
+      guessed_yr %in% 2009 ~ "v264",
+      guessed_yr %in% c(2010, 2011) ~ "V276"
+    )
+    
+    if (!guessed_yr %in% c(2006, 2007)) {
+      tbl <- tbl %>%
+        rename(cdid = !!cdidvar) %>% 
+        mutate(cdid = as.integer(cdid)) %>% 
+        return()
+    }
+    
+    if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
+      tbl <- tbl %>%
+        mutate(cdid = as.integer(zap_labels(.data[[cdidvar]])))
+    }
+    
+    if (guessed_yr %in% 2007) { # 2009 codes lower case labels
+      tbl <- tbl %>%
+        mutate(cdid = as.integer(.data[[cdidvar]]))
+    }
+  }
+  
+  if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
+    tbl <- tbl %>%
+      mutate(cdid = as.integer(zap_labels(congdist_pre)))
+  }
+  tbl
+}
+
 
 
 
@@ -114,3 +164,5 @@ save(
   ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, cc13, cc14, cc15, cc16,
   file = "data/output/01_responses/common_all.RData"
 )
+
+saveRDS(pid3_cc10, "data/output/01_responses/pid3_cc10.Rds")

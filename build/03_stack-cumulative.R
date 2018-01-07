@@ -12,6 +12,198 @@ statecode <- read_csv("data/source/statecode.csv")
 
 # functions -----
 
+# name standardization
+stdName <- function(tbl) {
+  cces_year <- as.integer(unique(tbl$year))
+  
+  
+  if (identical(cces_year, 2006:2011)) {
+    tbl <- tbl %>%
+      rename(
+        zipcode = zip_pre,
+        countyFIPS = county_fips_pre,
+        starttime = start_pre,
+        reg_true = reg_validation,
+        reg_self = registered_pre,
+        validt_trn = gen_validated,
+        economy_retro = economy_retrospective,
+        voted_pres_08 = vote_pres_08,
+        voted_rep = vote_house,
+        voted_sen = vote_sen,
+        voted_gov = vote_gov,
+        intent_pres_08 = vote_intent_pres_08,
+        intent_pres_12 = vote_intent_pres_12,
+        intent_rep = vote_intent_house,
+        intent_sen = vote_intent_senate,
+        intent_gov = vote_intent_gov,
+        vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
+        vv_turnout_gvm = gen_validated,
+        vv_turnout_pvm = prim_validated
+      )
+  }
+  
+  if (identical(cces_year, 2012L)) {
+    tbl <- rename(
+      tbl,
+      weight = V103,
+      approval_pres = CC308a,
+      approval_rep = CC315a,
+      approval_sen1 = CC315b,
+      approval_sen2 = CC315c,
+      economy_retro = CC302,
+      approval_gov = CC308d,
+      intent_pres_12 = CC354c,
+      intent_pres_12x = CC354b,
+      voted_pres_12 = CC410a,
+      voted_pres_08 = CC317,
+      voted_rep = CC412,
+      voted_sen = CC410b,
+      voted_gov = CC411,
+      intent_sen = CC355b,
+      intent_senx = CC355,
+      intent_gov = CC356b,
+      intent_govx = CC356,
+      intent_rep = CC390b,
+      intent_repx = CC390,
+      vv_turnout_gvm = e2012g,
+      vv_turnout_pvm = e2012congp,
+      vv_turnout_ppvm = e2012presp,
+      vv_regstatus = voter_status,
+      vv_party_gen = PartyRegist,
+      vv_party_prm = congprim_pty,
+      vv_party_pprm = presprim_pty
+    ) %>%
+      mutate(
+        voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
+        voted_rep = coalesce(voted_rep, intent_repx),
+        voted_sen = coalesce(voted_sen, intent_senx),
+        voted_gov = coalesce(voted_gov, intent_govx)
+      )
+  }
+  
+  if (identical(cces_year, 2013L)) {
+    tbl <- tbl %>%
+      rename(
+        approval_pres = CC312a,
+        approval_rep = CC13_313a,
+        approval_sen1 = CC13_313b,
+        approval_sen2 = CC13_313c,
+        approval_gov = CC312d,
+        economy_retro = CC13_302,
+        voted_pres_12 = CC13_315
+      )
+  }
+  
+  if (identical(cces_year, 2014L)) {
+    tbl <- rename(
+      tbl,
+      approval_pres = CC14_308a,
+      approval_rep = CC14_315a,
+      approval_sen1 = CC14_315b,
+      approval_sen2 = CC14_313c,
+      approval_gov = CC14_308d,
+      economy_retro = CC14_302,
+      voted_rep = CC412,
+      voted_pres_12 = CC14_317,
+      voted_sen = CC410b,
+      voted_gov = CC411,
+      intent_sen = CC355,
+      intent_senx = CC355x,
+      intent_gov = CC356,
+      intent_govx = CC356x,
+      intent_rep = CC360,
+      intent_repx = CC360x,
+      vv_turnout_gvm = e2014gvm,
+      vv_turnout_pvm = e2014pvm,
+      vv_regstatus = voterstatus,
+      vv_party_gen = partyaffiliation,
+      vv_party_prm = e2014pep,
+      vv_st = state_cl
+    ) %>%
+      mutate(
+        voted_rep = coalesce(voted_rep, intent_repx),
+        voted_sen = coalesce(voted_sen, intent_senx),
+        voted_gov = coalesce(voted_gov, intent_govx)
+      )
+  }
+  
+  if (identical(cces_year, 2015L)) {
+    tbl <- rename(tbl, CC350 = CC15_350) %>%
+      rename(
+        approval_pres = CC15_312a,
+        approval_rep = CC15_313a,
+        approval_sen1 = CC15_313b,
+        approval_sen2 = CC15_313c,
+        approval_gov = CC15_312f,
+        economy_retro = CC15_302,
+        voted_pres_12 = CC15_315
+      )
+  }
+  
+  if (identical(cces_year, 2016L)) {
+    tbl <- tbl %>%
+      rename(
+        weight = commonweight,
+        CC350 = CC16_360,
+        starttime = starttime_pre,
+        approval_pres = CC16_320a,
+        approval_rep = CC16_320f,
+        approval_sen1 = CC16_320g,
+        approval_sen2 = CC16_320h,
+        approval_gov = CC16_320d,
+        economy_retro = CC16_302,
+        intent_trn = CC16_364,
+        intent_pres_16 = CC16_364c,
+        intent_pres_16x = CC16_364b,
+        intent_rep = CC16_367,
+        intent_repx = CC16_367x, # house early vote (already voted)
+        intent_sen = CC16_365,
+        intent_senx = CC16_365x,
+        intent_gov = CC16_366,
+        intent_govx = CC16_366x,
+        voted_trn = CC16_401,
+        voted_pres_12 = CC16_326,
+        voted_pres_16 = CC16_410a,
+        voted_rep = CC16_412,
+        voted_sen = CC16_410b,
+        voted_gov = CC16_411,
+        vv_turnout_gvm = CL_E2016GVM,
+        vv_turnout_pvm = CL_E2016PVM,
+        vv_turnout_ppvm = CL_E2016PPVM,
+        vv_regstatus = CL_voterstatus,
+        vv_party_gen = CL_partyaffiliation,
+        vv_party_prm = CL_E2016PEP,
+        vv_party_pprm = CL_E2016PPEP,
+        vv_st = CL_state
+      ) %>% # combine early vote
+      mutate(
+        voted_pres_16 = coalesce(voted_pres_16, intent_pres_16x),
+        voted_rep = coalesce(voted_rep, intent_repx),
+        voted_sen = coalesce(voted_sen, intent_senx),
+        voted_gov = coalesce(voted_gov, intent_gov)
+      )
+  }
+  
+  
+  # more standardization for post 2012
+  if (cces_year[1] %in% 2012:2016) {
+    tbl <- tbl %>%
+      rename(
+        reg_self = votereg,
+        family_income = faminc,
+        marriage_status = marstat,
+        zipcode = lookupzip,
+        countyFIPS = countyfips,
+        partyreg = CC350
+      ) %>%
+      mutate(
+        age = year - birthyr)
+  }
+  
+  return(tbl)
+}
+
+
 # inner extraction function for findStack
 extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name,
                        is_factor = TRUE) {
@@ -40,7 +232,6 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name,
     }
   }
 }
-
 
 # takes all datasets available, and given a var, pulls it out of each and stacks
 findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE) {
@@ -117,207 +308,6 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
   }
 
   list_yr
-}
-
-
-
-
-# more name standardization
-stdName <- function(tbl) {
-  cces_year <- as.integer(unique(tbl$year))
-
-
-  if (identical(cces_year, 2006:2011)) {
-    tbl <- tbl %>%
-      rename(
-        cdid = congdist_pre,
-        zipcode = zip_pre,
-        countyFIPS = county_fips_pre,
-        starttime = start_pre,
-        reg_true = reg_validation,
-        reg_self = registered_pre,
-        validt_trn = gen_validated,
-        economy_retro = economy_retrospective,
-        voted_pres_08 = vote_pres_08,
-        voted_rep = vote_house,
-        voted_sen = vote_sen,
-        voted_gov = vote_gov,
-        intent_pres_08 = vote_intent_pres_08,
-        intent_pres_12 = vote_intent_pres_12,
-        intent_rep = vote_intent_house,
-        intent_sen = vote_intent_senate,
-        intent_gov = vote_intent_gov,
-        vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
-        vv_turnout_gvm = gen_validated,
-        vv_turnout_pvm = prim_validated
-      )
-  }
-
-  if (identical(cces_year, 2012L)) {
-    tbl <- rename(
-      tbl,
-      weight = V103,
-      approval_pres = CC308a,
-      approval_rep = CC315a,
-      approval_sen1 = CC315b,
-      approval_sen2 = CC315c,
-      economy_retro = CC302,
-      approval_gov = CC308d,
-      intent_pres_12 = CC354c,
-      intent_pres_12x = CC354b,
-      voted_pres_12 = CC410a,
-      voted_pres_08 = CC317,
-      voted_rep = CC412,
-      voted_sen = CC410b,
-      voted_gov = CC411,
-      intent_sen = CC355b,
-      intent_senx = CC355,
-      intent_gov = CC356b,
-      intent_govx = CC356,
-      intent_rep = CC390b,
-      intent_repx = CC390,
-      vv_turnout_gvm = e2012g,
-      vv_turnout_pvm = e2012congp,
-      vv_turnout_ppvm = e2012presp,
-      vv_regstatus = voter_status,
-      vv_party_gen = PartyRegist,
-      vv_party_prm = congprim_pty,
-      vv_party_pprm = presprim_pty
-    ) %>%
-      mutate(
-        voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_govx)
-      )
-  }
-
-  if (identical(cces_year, 2013L)) {
-    tbl <- tbl %>%
-      mutate(
-        cdid = as.numeric(cdid113)
-      ) %>%
-      rename(
-        approval_pres = CC312a,
-        approval_rep = CC13_313a,
-        approval_sen1 = CC13_313b,
-        approval_sen2 = CC13_313c,
-        approval_gov = CC312d,
-        economy_retro = CC13_302,
-        voted_pres_12 = CC13_315
-      )
-  }
-
-  if (identical(cces_year, 2014L)) {
-    tbl <- rename(
-      tbl,
-      approval_pres = CC14_308a,
-      approval_rep = CC14_315a,
-      approval_sen1 = CC14_315b,
-      approval_sen2 = CC14_313c,
-      approval_gov = CC14_308d,
-      economy_retro = CC14_302,
-      voted_rep = CC412,
-      voted_pres_12 = CC14_317,
-      voted_sen = CC410b,
-      voted_gov = CC411,
-      intent_sen = CC355,
-      intent_senx = CC355x,
-      intent_gov = CC356,
-      intent_govx = CC356x,
-      intent_rep = CC360,
-      intent_repx = CC360x,
-      vv_turnout_gvm = e2014gvm,
-      vv_turnout_pvm = e2014pvm,
-      vv_regstatus = voterstatus,
-      vv_party_gen = partyaffiliation,
-      vv_party_prm = e2014pep,
-      vv_st = state_cl
-    ) %>%
-      mutate(
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_govx)
-      )
-  }
-
-  if (identical(cces_year, 2015L)) {
-    tbl <- rename(tbl, CC350 = CC15_350) %>%
-      rename(
-        approval_pres = CC15_312a,
-        approval_rep = CC15_313a,
-        approval_sen1 = CC15_313b,
-        approval_sen2 = CC15_313c,
-        approval_gov = CC15_312f,
-        economy_retro = CC15_302,
-        voted_pres_12 = CC15_315
-      )
-  }
-
-  if (identical(cces_year, 2016L)) {
-    tbl <- tbl %>%
-      rename(
-        weight = commonweight,
-        CC350 = CC16_360,
-        cdid = cdid113,
-        starttime = starttime_pre,
-        approval_pres = CC16_320a,
-        approval_rep = CC16_320f,
-        approval_sen1 = CC16_320g,
-        approval_sen2 = CC16_320h,
-        approval_gov = CC16_320d,
-        economy_retro = CC16_302,
-        intent_trn = CC16_364,
-        intent_pres_16 = CC16_364c,
-        intent_pres_16x = CC16_364b,
-        intent_rep = CC16_367,
-        intent_repx = CC16_367x, # house early vote (already voted)
-        intent_sen = CC16_365,
-        intent_senx = CC16_365x,
-        intent_gov = CC16_366,
-        intent_govx = CC16_366x,
-        voted_trn = CC16_401,
-        voted_pres_12 = CC16_326,
-        voted_pres_16 = CC16_410a,
-        voted_rep = CC16_412,
-        voted_sen = CC16_410b,
-        voted_gov = CC16_411,
-        vv_turnout_gvm = CL_E2016GVM,
-        vv_turnout_pvm = CL_E2016PVM,
-        vv_turnout_ppvm = CL_E2016PPVM,
-        vv_regstatus = CL_voterstatus,
-        vv_party_gen = CL_partyaffiliation,
-        vv_party_prm = CL_E2016PEP,
-        vv_party_pprm = CL_E2016PPEP,
-        vv_st = CL_state
-      ) %>% # combine early vote
-      mutate(
-        voted_pres_16 = coalesce(voted_pres_16, intent_pres_16x),
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_gov)
-      )
-  }
-
-
-  # more standardization for post 2012
-  if (cces_year[1] %in% 2012:2016) {
-    tbl <- tbl %>%
-      rename(
-        reg_self = votereg,
-        family_income = faminc,
-        marriage_status = marstat,
-        zipcode = lookupzip,
-        countyFIPS = countyfips,
-        partyreg = CC350
-      ) %>%
-      mutate(
-        age = year - birthyr,
-        cdid = as.integer(cdid)
-      )
-  }
-
-  return(tbl)
 }
 
 # replicate the filler value each respondent chose
@@ -452,6 +442,7 @@ gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
 race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "numeric")
+age <- findStack(ccs, age, "numeric")
 
 # geography
 state      <- findStack(ccs, state, "character")
@@ -526,6 +517,7 @@ ccc <- geo %>%
   left_join(pid7) %>%
   left_join(gend) %>%
   left_join(bryr) %>%
+  left_join(age) %>%
   left_join(race) %>%
   left_join(educ) %>%
   left_join(econ) %>%
