@@ -1,11 +1,14 @@
 library(tidyverse)
 library(haven)
 
+# helper data ---
+statecode <- read_csv("data/source/statecode.csv")
+
 
 # functions --- 
 # rudimentary standardization for data that comes out of dataverse
 std_dv <- function(path, guess_year = TRUE) {
-  if (guess_year) guessed_yr <- as.numeric(gsub(".*/([0-9]+)_cc.*", "\\1", path))
+  if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_cc.*", "\\1", path))
   
   ## then
   tbl <- haven::read_dta(path)
@@ -23,11 +26,44 @@ std_dv <- function(path, guess_year = TRUE) {
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
   
+  ## change state for specific years
+  if (guess_year) {
+    
+  statevar <- case_when(guessed_yr %in% c(2007, 2012:2016) ~ "inputstate",
+                        guessed_yr %in% c(2008, 2010:2011) ~ "V206",
+                        guessed_yr %in% 2009 ~ "v259",
+                        guessed_yr %in% 2006 ~ "v1002")
+  
+  if (!guessed_yr %in% c(2006, 2009)) {
+    tbl <- tbl %>% 
+      mutate(state = as.character(as_factor(.data[[statevar]]))) %>% 
+      left_join(select(statecode, state, st), by = "state")
+  }
+  
+  
+  if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
+    tbl <- tbl %>% 
+      rename(st = !!statevar) %>% 
+      left_join(select(statecode, state, st), by = "st")
+  }
+  
+  if (guessed_yr %in% 2009) { # 2009 codes lower case labels
+    tbl <- tbl %>% 
+      mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) %>% 
+      left_join(select(statecode, state, st), by = "state")
+  }
+  }
+  
+  if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
+    tbl <- tbl %>% 
+      mutate(state = as.character(as_factor(state_pre))) %>% 
+      left_join(select(statecode, state, st), by = "state")
+  }
   
   # then rename id
   tbl %>%
     rename(caseID = !! orig_key) %>%
-    dplyr::select(year, caseID, everything())
+    select(year, caseID, state, st, everything())
 }
 
 
