@@ -2,16 +2,13 @@ library(tidyverse)
 library(haven)
 library(foreach)
 library(stringr)
+library(glue)
 library(lubridate)
 library(data.table)
 
 
 # helper data --
-statecode <- read_csv(
-  "~/Dropbox/cces_rollcall/data/source/statecode.csv",
-  col_types = cols()
-)
-
+statecode <- read_csv("data/source/statecode.csv")
 
 # functions -----
 
@@ -133,7 +130,6 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2006:2011)) {
     tbl <- tbl %>%
       rename(
-        state = state_pre,
         cdid = congdist_pre,
         zipcode = zip_pre,
         countyFIPS = county_fips_pre,
@@ -151,7 +147,7 @@ stdName <- function(tbl) {
         intent_rep = vote_intent_house,
         intent_sen = vote_intent_senate,
         intent_gov = vote_intent_gov,
-        vv_regstatus = reg_validation,
+        vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
       )
@@ -199,7 +195,6 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2013L)) {
     tbl <- tbl %>%
       mutate(
-        fips = floor(as.numeric(countyfips) / 1000),
         cdid = as.numeric(cdid113)
       ) %>%
       rename(
@@ -210,16 +205,16 @@ stdName <- function(tbl) {
         approval_gov = CC312d,
         economy_retro = CC13_302,
         voted_pres_12 = CC13_315
-      ) %>%
-      left_join(statecode, by = "fips")
+      )
   }
 
   if (identical(cces_year, 2014L)) {
     tbl <- rename(
       tbl,
+      approval_pres = CC14_308a,
       approval_rep = CC14_315a,
       approval_sen1 = CC14_315b,
-      # approval_sen2 = CC14_315c,
+      approval_sen2 = CC14_313c,
       approval_gov = CC14_308d,
       economy_retro = CC14_302,
       voted_rep = CC412,
@@ -309,7 +304,6 @@ stdName <- function(tbl) {
   if (cces_year[1] %in% 2012:2016) {
     tbl <- tbl %>%
       rename(
-        state = inputstate,
         reg_self = votereg,
         family_income = faminc,
         marriage_status = marstat,
@@ -319,8 +313,7 @@ stdName <- function(tbl) {
       ) %>%
       mutate(
         age = year - birthyr,
-        countyFIPS = as.numeric(countyFIPS),
-        cdid = as.numeric(cdid)
+        cdid = as.integer(cdid)
       )
   }
 
@@ -357,8 +350,8 @@ sep_bind <- function(tbl, var) {
 
 
 # READ ------
-
-
+load("data/output/01_responses/common_all.RData")
+pid3_cc10 <- readRDS("data/output/01_responses/pid3_cc10.Rds")
 
 
 
@@ -400,9 +393,6 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
   key
 }
 
-
-
-
 # do this for each year and of the three offices
 
 # extract the choice number from the responses
@@ -410,21 +400,23 @@ cand_key <- foreach(r = races, .combine = "c") %do% {
 
 
 # execute name standardization -----
+
 # in list form
 ccs <- list(
-  stdName(filter(ccp, year != 2012)),
-  stdName(cc12),
-  stdName(cc13),
-  stdName(cc14),
-  stdName(cc15),
-  stdName(cc16)
+  "pettigrew" = stdName(filter(ccp, year != 2012)),
+  "2012" = stdName(cc12),
+  "2013" = stdName(cc13),
+  "2014" = stdName(cc14),
+  "2015" = stdName(cc15),
+  "2016" = stdName(cc16)
 )
 
 # mutations to data -----
 
 # fix county misalignment
-ccs[[1]] <- ccs[[1]] %>%
-  mutate(countyFIPS = (countyFIPS < 1000) * as.numeric(state) * 1000 + countyFIPS)
+ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
+  mutate(countyFIPS = (countyFIPS < 1000) * as.numeric(state_pre) * 1000 + countyFIPS) %>% 
+  mutate(countyFIPS = as.character(countyFIPS))
 
 
 # Extract variable by variable iniitial version -----
@@ -462,11 +454,12 @@ race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "numeric")
 
 # geography
-state <- findStack(ccs, state)
-zipcode <- findStack(ccs, zipcode, "character")
+state      <- findStack(ccs, state, "character")
+zipcode    <- findStack(ccs, zipcode, "character")
 countyFIPS <- findStack(ccs, countyFIPS, "numeric")
-cdid <- findStack(ccs, cdid, "numeric")
+cdid       <- findStack(ccs, cdid, "numeric")
 
+# approval and voting
 i_pres08 <- findStack(ccs, intent_pres_08)
 i_pres12 <- findStack(ccs, intent_pres_12)
 i_pres16 <- findStack(ccs, intent_pres_16)
@@ -484,20 +477,19 @@ v_rep <- findStack(ccs, voted_rep)
 v_sen <- findStack(ccs, voted_sen)
 v_gov <- findStack(ccs, voted_gov)
 
-
 apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
-apvrep <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels ax years
+apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels ax years
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
 apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
-apvgov <- findStack(ccs, approval_gov, makeLabelled = TRUE)
+apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE)
 
-
+# other
 econ <- findStack(ccs, economy_retro, makeLabelled = TRUE)
 
-
-vv_regstatus <- findStack(ccs, vv_regstatus)
-vv_party_gen <- findStack(ccs, vv_party_gen)
-vv_party_prm <- findStack(ccs, vv_party_prm)
+# validated vote
+vv_regstatus   <- findStack(ccs, vv_regstatus)
+vv_party_gen   <- findStack(ccs, vv_party_gen)
+vv_party_prm   <- findStack(ccs, vv_party_prm)
 vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm)
 vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm)
 
@@ -516,10 +508,9 @@ v_gov <- sep_bind(v_gov, voted_gov_char)
 
 # format state and CD, then zipcode and county ----
 stcd <- left_join(state, cdid) %>%
-  mutate(state = state_char) %>%
-  left_join(select(statecode, State, StateAbbr), by = c("state" = "State")) %>%
-  rename(st = StateAbbr) %>%
-  mutate(CD = paste0(st, "-", cdid)) %>%
+  left_join(select(statecode, state, st), by = "state") %>%
+  mutate(cdid = as.integer(cdid),
+         CD = glue("{st}-{cdid}")) %>%
   select(year, caseID, state, st, cdid, CD)
 
 geo <- stcd %>%
@@ -556,6 +547,8 @@ ccc <- geo %>%
   left_join(v_sen) %>%
   left_join(v_gov)
 
+# add vv_regstatus
+
 stopifnot(nrow(ccc) == nrow(pid3))
 
 # Order
@@ -565,9 +558,6 @@ ccc <- ccc %>%
     matches("_char$"),
     matches("_num$")
   )
-
-# View(sample_n(ccc, 30) %>% arrange(year))
-
 
 
 
@@ -584,20 +574,16 @@ ccc <- ccc %>%
   select(-size_factor) %>%
   select(year, caseID, weight, weight_cumulative, everything())
 
-
-
-
 # Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
 ccc_factor <- ccc %>%
   mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
-  mutate(countyFIPS = as.character(countyFIPS)) %>%
+  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state$|st$)")), as.factor)
-
 
 
 
