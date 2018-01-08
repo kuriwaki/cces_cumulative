@@ -14,6 +14,50 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
     tbl_df()
 }
 
+#' unique incumbent match
+match_MC <- function(tbl, key, var, carry_vars) {
+  
+  # variables that define a constituency 
+  # mcs that are unique and not unique wrt district
+  if (var %in% c("sen1", "sen2")) mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
+  if (var == "hou") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
+  
+  key_uniq <- semi_join(key, filter(mc_counts, n == 1))
+  key_notu <- semi_join(key, filter(mc_counts, n != 1))
+  
+  # vars to match on   
+  if (var %in% c("sen1", "sen2")) match_vars <- c("cong_inc" = "congress", "st")
+  if (var == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist")
+  
+  # match on district
+  uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
+  persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
+  
+  # for second round, extrat last name
+  persn_remain <- persn_unmatch %>% 
+    mutate(namelast = gsub(", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "", .data[[glue("{var}_inc")]]),
+           namelast = word(namelast, -1),
+           namelast = toupper(namelast))
+  
+  # vars to match on round2
+  if (var %in% c("sen1", "sen2")) match_vars <- c("cong_inc" = "congress", "st", "namelast")
+  if (var == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist", "namelast")
+  
+  # coerce key unique to lastname (check FEC to dedupe)
+  key_notu_dedup <- distinct(key_notu, congress, st, cdid, namelast, .keep_all = TRUE)
+  
+  uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
+  persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
+  
+  # check match rows
+  stopifnot(nrow(persn_unmatch2) + nrow(uniq_matched2) + nrow(uniq_matched1) == nrow(tbl))
+  
+  bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
+    arrange(year, caseID) %>% 
+    select(!!carry_vars, icpsr, fec)
+}
+
+
 # Variable Key ---
 
 # each row is a variable for the starndardized data, each column is for the cces year0
@@ -106,7 +150,7 @@ dfcc <- map_dfr(cclist, clean_out)
 df <- dfcc %>% 
   mutate(cong_inc = as.integer(ceiling((year - 1788)/2)),
          cong_up = cong_inc + 1L,
-         cdid = replace(cdid, cdid == 0, 1)) # At-LARGE is 1
+         cdid = replace(cdid, cdid == 0, 1L)) # At-LARGE is 1
 
 
 # add D/R if in 2008, 2010 ----- 
@@ -160,49 +204,13 @@ inc_H_mv <- c("congress", "st", "dist", "icpsr", "fec", "namelast")
 inckey_vars <- c("year", "caseID", "icpsr", "fec")
 
 
-#' unique incumbent match
-tbl = df; key = inc_H; type = "hou"
-
-match_MC <- function(tbl, key, type) {
-  
-  # variables that define a constituency 
-  # mcs that are unique and not unique wrt district
-  if (type == "sen") mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
-  if (type == "hou") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
-  
-  key_uniq <- semi_join(key, filter(mc_counts, n == 1))
-  key_notu <- semi_join(key, filter(mc_counts, n != 1))
-
-  # vars to match on   
-  if (type == "sen") match_vars <- c("cong_inc" = "congress", "st")
-  if (type == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist")
-  
-  # match on district
-  uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
-  persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
-  
-  # for second round, extrat last name
-  persn_remain <- persn_unmatch %>% 
-   mutate(namelast = gsub(", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "", .data[[glue("{type}_inc")]]),
-          namelast = word(namelast, -1),
-          namelast = toupper(namelast))
-  
-  # vars to match on round2
-  if (type == "sen") match_vars <- c("cong_inc" = "congress", "st", "namelast")
-  if (type == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist", "namelast")
-  
-  # coerce key unique to lastname (check FEC to dedupe)
-  key_notu_dedup <- distinct(key_notu, congress, st, cdid, namelast, .keep_all = TRUE)
-  
-  uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
-  persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
- 
- bind_rows(uniq_matched1, uniq_matched2)
-}
+# Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
 
 
-match_MC(df, inc_H, "hou")
 
+key_hou_inc <- match_MC(df, inc_H, "hou", carry_vars)
+key_sen1_inc <- match_MC(df, inc_S, "sen1", carry_vars)
+key_sen2_inc <- match_MC(df, inc_S, "sen2", carry_vars)
 
 # from 03 -----
 
