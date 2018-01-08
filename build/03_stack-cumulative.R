@@ -497,6 +497,7 @@ ccc_factor <- ccc %>%
 
 
 # Write -----
+save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
 write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
