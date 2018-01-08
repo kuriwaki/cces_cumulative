@@ -15,6 +15,8 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
 }
 
 #' unique incumbent match
+#' If congsession + districts are not unique identifiers (like senators or midway retirements)
+#' then merge in last name
 match_MC <- function(tbl, key, var, carry_vars) {
   
   # variables that define a constituency 
@@ -155,17 +157,17 @@ df <- dfcc %>%
 
 # add D/R if in 2008, 2010 ----- 
 
-assign_08_10_pty <- function(vec, yrvec, pty) {
-  replace(vec, yrvec %in% c(2008, 2012), pty)
+assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
+  replace(vec, yrvec %in% c(2008:2011) & candvec != "", pty)
 }
 
 df <- df %>% 
-  mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, "D"),
-         hou_pty1 = assign_08_10_pty(hou_pty1, year, "D"),
-         sen_pty1 = assign_08_10_pty(sen_pty1, year, "D"),
-         gov_pty2 = assign_08_10_pty(gov_pty2, year, "R"),
-         hou_pty2 = assign_08_10_pty(hou_pty2, year, "R"),
-         sen_pty2 = assign_08_10_pty(sen_pty2, year, "R") 
+  mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, gov_can1, "D"),
+         hou_pty1 = assign_08_10_pty(hou_pty1, year, hou_can1, "D"),
+         sen_pty1 = assign_08_10_pty(sen_pty1, year, sen_can1, "D"),
+         gov_pty2 = assign_08_10_pty(gov_pty2, year, gov_can2, "R"),
+         hou_pty2 = assign_08_10_pty(hou_pty2, year, hou_can1, "R"),
+         sen_pty2 = assign_08_10_pty(sen_pty2, year, sen_can2, "R")
          )
 
 # standardize to D/R -----
@@ -182,7 +184,6 @@ sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
 
 
-
 i_hou_name <- left_join(i_rep, hc_key, by = c("year", "caseID", "intent_rep_num" = "cand"))
 i_sen_name <- left_join(i_sen, sc_key, by = c("year", "caseID", "intent_sen_num" = "cand"))
 i_gov_name <- left_join(i_gov, gc_key, by = c("year", "caseID", "intent_gov_num" = "cand"))
@@ -191,26 +192,41 @@ i_gov_name <- left_join(i_gov, gc_key, by = c("year", "caseID", "intent_gov_num"
 # Lautenberg 2016 NJ sen
   
   
+# create key of candidates -------
+fec_hou <- filter(feckey, office_sought == "federal:house", elec %in% 2006:2016)
+
+
+
+hc_key_name <- hc_key %>% 
+    mutate(name = str_to_upper(gsub(", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "", name)),
+           namelast = word(name, -1),
+           namefirst = word(name, 1))
+
+fec_hou_uniq <- fec_hou %>% 
+  distinct(elec, st, dist, party, name, namelast, .keep_all = TRUE) %>% 
+  rename(name_fec = name,
+         namefirst_fec = namefirst)
+
+hc_fec <- left_join(hc_key_name, fec_hou_uniq,
+                    by = c("year" = "elec",
+                           "st",
+                           "cdid" = "dist",
+                           "party",
+                           "namelast"))
   
+table(is.na(filter(hc_fec, name != "") %>% pull(fec)))
 
+View(sample_n(hc_fec, 100) %>% arrange(year, st, cdid))
 
-# assigning keys to incumbents
-# vars
-inc_H_mv <- c("congress", "st", "dist", "icpsr", "fec", "namelast")
-
-
-# create key ----
-
-inckey_vars <- c("year", "caseID", "icpsr", "fec")
-
+# create key of incumbents----
 
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
-
-
-
-key_hou_inc <- match_MC(df, inc_H, "hou", carry_vars)
+key_hou_inc  <- match_MC(df, inc_H, "hou", carry_vars)
 key_sen1_inc <- match_MC(df, inc_S, "sen1", carry_vars)
 key_sen2_inc <- match_MC(df, inc_S, "sen2", carry_vars)
+
+
+
 
 # from 03 -----
 

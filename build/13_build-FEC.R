@@ -9,7 +9,8 @@ dime_cand <- dime_raw %>%
 
 dime_cols <- dime_cand %>%
   select(
-    elec = fecyear,
+    elec = fecyear, # target election, as recorded by FFEC
+    cycle,
     fec = Cand.ID,
     icpsr = ICPSR2, # ICPSR has the year of donation attached to it
     office_sought = seat,
@@ -19,11 +20,14 @@ dime_cols <- dime_cand %>%
     incumb = Incum.Chall,
     name,
     namelast = lname,
+    namefirst = fname,
     namefirstm = ffname
   ) %>% 
   mutate(
     name = toupper(name),
-    namelast = toupper(namelast)
+    namefirst = toupper(namefirst),
+    namelast = toupper(namelast),
+    namefirstm = toupper(namefirstm)
   )
 
 dime_full <- dime_cols %>%
@@ -54,6 +58,12 @@ df <-  df_fec %>%
   mutate(dist = gsub("[A-Z-]+", "", dist)) %>% # can strip state for these offices
   mutate(dist = as.integer(dist)) %>%
   mutate(st = toupper(st))  # formatting corrections
+
+
+# recode party 
+df <- df %>% 
+  mutate(party = dplyr::recode(party, `100` = "D", `200` = "R", `328` = "I", .default = "NA/Other"))
+
 
 
 # save
