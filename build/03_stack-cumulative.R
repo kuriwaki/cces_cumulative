@@ -205,24 +205,23 @@ stdName <- function(tbl) {
 
 
 # inner extraction function for findStack
-extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name,
-                       is_factor = TRUE) {
+extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor = TRUE) {
   if (is_factor) {
-    if (var_name %in% colnames(tbl)) {
+    if (var_name %in% colnames(tbl)) { # factor 
       select(tbl, year, caseID, !! var) %>%
         mutate(
           !! chr_var_name := as.character(as_factor(.data[[var_name]])),
-          !! num_var_name := as.numeric(.data[[var_name]])
+          !! num_var_name := as.integer(.data[[var_name]])
         ) %>%
         select(-!! var)
-    } else {
+    } else { # if var does not exist
       select(tbl, year, caseID) %>%
         mutate(
           !! chr_var_name := NA,
           !! num_var_name := NA
         )
     }
-  } else {
+  } else { # if not factor
     if (var_name %in% colnames(tbl)) {
       select(tbl, year, caseID, !! var) %>%
         mutate(!! var_name := zap_labels(!! var))
@@ -244,32 +243,13 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
       extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
     }
-
-    ## format to change NaN to NA
-    list_yr <- list_yr %>%
-      mutate(
-        !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
-        !! num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
-      ) %>%
-      mutate(
-        !! chr_var_name := str_to_title(.data[[chr_var_name]]),
-        !! chr_var_name := replace(
-          .data[[chr_var_name]],
-          .data[[chr_var_name]] == "Never Heard",
-          "Never Heard Of This Person"
-        ),
-        !! chr_var_name := replace(
-          .data[[chr_var_name]],
-          .data[[chr_var_name]] == "No Hs",
-          "No HS"
-        )
-      )
+    list_yr <- clean_values(list_yr, chr_var_name = chr_var_name, num_var_name = num_var_name)
   }
-
+    
 
   if (type != "factor") {
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-      extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name, FALSE)
+      extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name, is_factor = FALSE)
     }
 
     # change to specified type
@@ -310,83 +290,29 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
   list_yr
 }
 
-# replicate the filler value each respondent chose
-showCand <- function(stacked, var) {
-  var <- enquo(var)
-  var_name <- quo_name(var)
+  
 
-  if (grepl("rep", var_name)) race <- "House"
-  if (grepl("sen", var_name)) race <- "Sen"
-  if (grepl("gov", var_name)) race <- "Gov"
-
-  stacked %>%
-    mutate(number = gsub(".*cand([0-9]+)name.*", "\\1", !! var)) %>%
-    left_join(cand_key[[race]], by = c("year", "caseID", "number")) %>%
-    mutate(!! var_name := paste0(cand, " (", party, ")")) %>%
-    select(-number, -cand, -party)
+#' clean up missing values, format to change NaN to NA
+clean_values <- function(tbl, chr_var_name, num_var_name) {
+  tbl %>%
+    mutate( # replace NaN to NA
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
+      !! num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
+    ) %>%
+    mutate( # change al lvalues to title case
+      !! chr_var_name := str_to_title(.data[[chr_var_name]]),
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Never Heard", "Never Heard Of This Person")) %>% 
+    mutate(
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "No Hs", "No HS")
+      )
 }
 
-# separate out those that need `showCand`, then bidn
-sep_bind <- function(tbl, var) {
-  var <- enquo(var)
-
-  changed <- showCand(filter(tbl, grepl("cand", !! var)), !! var)
-  unchanged <- filter(tbl, !grepl("cand", !! var))
-
-  bind_rows(changed, unchanged) %>%
-    arrange(year, caseID)
-}
 
 
 
 # READ ------
 load("data/output/01_responses/common_all.RData")
 pid3_cc10 <- readRDS("data/output/01_responses/pid3_cc10.Rds")
-
-
-
-
-# key to label ----
-# cand info for 2013 - 2016
-
-races <- c("House", "Sen", "Gov")
-cand_regex <- c(
-  paste0(paste0("^", races, "cand[0-9+]"), "name$"),
-  paste0(paste0("^", races, "cand[0-9+]"), "party$")
-)
-
-# function to melt assigned options
-melt_year_reg <- function(tbl, measure_regex) {
-  melt(
-    as.data.table(tbl),
-    id.vars = c("year", "caseID"),
-    measure.vars = patterns(measure_regex),
-    variable.name = "number",
-    value.name = c("cand", "party"),
-    variable.factor = FALSE
-  ) %>%
-    subset(cand != "") %>%
-    tbl_df()
-}
-
-# employ melt_year_reg to 14 and 16
-cand_key <- foreach(r = races, .combine = "c") %do% {
-  measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
-  key <- list()
-
-  year_2012 <- melt_year_reg(cc12, measure_regex)
-  year_2014 <- melt_year_reg(cc14, measure_regex)
-  year_2016 <- melt_year_reg(cc16, measure_regex)
-
-
-  key[[r]] <- bind_rows(year_2012, year_2014, year_2016)
-  key
-}
-
-# do this for each year and of the three offices
-
-# extract the choice number from the responses
-# then left join to vote variable to get the name and party
 
 
 # execute name standardization -----
@@ -424,16 +350,15 @@ time <- findStack(ccs, starttime, type = "datetime", makeLabelled = FALSE) %>%
 pid3 <- findStack(ccs, pid3) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(pid3_cc10) %>%
-  mutate(pid3 = labelled(
-    as.integer(pid3_num),
-    c(
-      "Democrat" = 1,
-      "Republican" = 2,
-      "Independent" = 3,
-      "Other" = 4,
-      "Not sure" = 5,
-      "Skipped" = 8
-    )
+  mutate(pid3 = labelled(as.integer(pid3_num),
+                         c(
+                           "Democrat" = 1,
+                           "Republican" = 2,
+                           "Independent" = 3,
+                           "Other" = 4,
+                           "Not sure" = 5,
+                           "Skipped" = 8
+                         )
   )) %>%
   select(year, caseID, pid3) # manually do only this one
 
@@ -485,14 +410,6 @@ vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm)
 vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm)
 
 
-# mutate vote variables that are HouseCand fillers
-i_rep <- sep_bind(i_rep, intent_rep_char)
-i_sen <- sep_bind(i_sen, intent_sen_char)
-i_gov <- sep_bind(i_gov, intent_gov_char)
-
-v_rep <- sep_bind(v_rep, voted_rep_char)
-v_sen <- sep_bind(v_sen, voted_sen_char)
-v_gov <- sep_bind(v_gov, voted_gov_char)
 
 
 

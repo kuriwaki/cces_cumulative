@@ -1,4 +1,18 @@
 library(tidyverse)
+library(data.table)
+
+#' take a caseID - candidate key and melt to a df keyed on caseID _and_ candidate
+melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
+  melt(as.data.table(tbl),
+       id.vars = ids,
+       measure.vars = patterns(measure_regex),
+       variable.name = "cand",
+       value.name = c("name", "party"),
+       variable.factor = FALSE) %>%
+    subset(cand != "") %>%
+    mutate(cand = as.integer(cand)) %>%
+    tbl_df()
+}
 
 # Variable Key ---
 
@@ -75,7 +89,7 @@ for (yr in 2006:2016) {
 
 clean_out <- function(tbl) {
   tbl %>% 
-    mutate_at(vars(matches("_can")), function(x) replace(x, x == "__NA__" | x == "", NA)) %>% # make NA if empty or "_NA_" 
+    mutate_if(is.character, function(x) replace(x, x == "__NA__" | x == "", NA)) %>% # make NA if empty or "_NA_" 
     select(!!c("year", "caseID", "state", "st", "cdid", intersect(master$name, colnames(tbl)))) %>% 
     mutate_if(is.labelled, function(x) as.character(as_factor(x)))
 }
@@ -83,48 +97,174 @@ clean_out <- function(tbl) {
 # bind
 dfcc <- map_dfr(cclist, clean_out)
 
-         # hou_can1 = , # 2010 vote, D/R
-         # gov_inc = CurrentGovName) # NJ and VA Gov
-         # gov_inc = CurrentGovName, # KY, LA, MS Gov
+# hou_can1 = , # 2010 vote, D/R
+# gov_inc = CurrentGovName) # NJ and VA Gov
+# gov_inc = CurrentGovName, # KY, LA, MS Gov
 
 
 # derive more vars -------
 df <- dfcc %>% 
   mutate(cong_inc = as.integer(ceiling((year - 1788)/2)),
-         cong_up = cong_inc + 1L)
+         cong_up = cong_inc + 1L,
+         cdid = replace(cdid, cdid == 0, 1)) # At-LARGE is 1
 
 
 # add D/R if in 2008, 2010 ----- 
 
+assign_08_10_pty <- function(vec, yrvec, pty) {
+  replace(vec, yrvec %in% c(2008, 2012), pty)
+}
+
 df <- df %>% 
-  mutate(gov_pty1 = replace(gov_pty1, year %in% c(2010, 2012), "D"),
-         hou_pty1 = replace(hou_pty1, year %in% c(2010, 2012), "D"),
-         sen_pty1 = replace(sen_pty1, year %in% c(2010, 2012), "D"),
-         gov_pty2 = replace(gov_pty2, year %in% c(2010, 2012), "R"),
-         hou_pty2 = replace(hou_pty2, year %in% c(2010, 2012), "R"),
-         sen_pty2 = replace(sen_pty2, year %in% c(2010, 2012), "R")
+  mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, "D"),
+         hou_pty1 = assign_08_10_pty(hou_pty1, year, "D"),
+         sen_pty1 = assign_08_10_pty(sen_pty1, year, "D"),
+         gov_pty2 = assign_08_10_pty(gov_pty2, year, "R"),
+         hou_pty2 = assign_08_10_pty(hou_pty2, year, "R"),
+         sen_pty2 = assign_08_10_pty(sen_pty2, year, "R") 
          )
 
 # standardize to D/R -----
-std_pty <- function(vec) gsub("Democrat.*", "D", gsub("Repub.*", "R", vec))
-
 df <- df %>%
-  mutate_at(vars(matches("_pty")), std_pty)
+  mutate_at(vars(matches("_pty")), function(vec) gsub("Democrat.*", "D", gsub("Repub.*", "R", vec)))
+
+
+# long cand-party df --
+
+carry_vars <- c("year", "caseID", "state", "st", "cdid")
+
+hc_key <- melt_cand(df, c("hou_can", "hou_pty"), carry_vars)
+sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
+gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
+
+
+
+i_hou_name <- left_join(i_rep, hc_key, by = c("year", "caseID", "intent_rep_num" = "cand"))
+i_sen_name <- left_join(i_sen, sc_key, by = c("year", "caseID", "intent_sen_num" = "cand"))
+i_gov_name <- left_join(i_gov, gc_key, by = c("year", "caseID", "intent_gov_num" = "cand"))
+  
+  
+# Lautenberg 2016 NJ sen
+  
+  
   
 
 
+# assigning keys to incumbents
 # vars
 inc_H_mv <- c("congress", "st", "dist", "icpsr", "fec", "namelast")
 
 
-
-
 # create key ----
-hou_inc <- left_join(df, 
-          select(inc_H, !! inc_H_mv),
-          by = c("st", "cdid" = "dist", "cong_inc" = "congress")) %>%
-  select(year, caseID, icpsr, fec)
+
+inckey_vars <- c("year", "caseID", "icpsr", "fec")
+
+
+#' unique incumbent match
+tbl = df; key = inc_H; type = "hou"
+
+match_MC <- function(tbl, key, type) {
+  
+  # variables that define a constituency 
+  # mcs that are unique and not unique wrt district
+  if (type == "sen") mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
+  if (type == "hou") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
+  
+  key_uniq <- semi_join(key, filter(mc_counts, n == 1))
+  key_notu <- semi_join(key, filter(mc_counts, n != 1))
+
+  # vars to match on   
+  if (type == "sen") match_vars <- c("cong_inc" = "congress", "st")
+  if (type == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist")
+  
+  # match on district
+  uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
+  persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
+  
+  # for second round, extrat last name
+  persn_remain <- persn_unmatch %>% 
+   mutate(namelast = gsub(", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "", .data[[glue("{type}_inc")]]),
+          namelast = word(namelast, -1),
+          namelast = toupper(namelast))
+  
+  # vars to match on round2
+  if (type == "sen") match_vars <- c("cong_inc" = "congress", "st", "namelast")
+  if (type == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist", "namelast")
+  
+  # coerce key unique to lastname (check FEC to dedupe)
+  key_notu_dedup <- distinct(key_notu, congress, st, cdid, namelast, .keep_all = TRUE)
+  
+  uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
+  persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
+ 
+ bind_rows(uniq_matched1, uniq_matched2)
+}
+
+
+match_MC(df, inc_H, "hou")
+
+
+# from 03 -----
+
+# replicate the filler value each respondent chose
+showCand <- function(stacked, var, cand_key = cand_key) {
+  var <- enquo(var)
+  var_name <- quo_name(var)
+  
+  if (grepl("rep", var_name)) race <- "House"
+  if (grepl("sen", var_name)) race <- "Sen"
+  if (grepl("gov", var_name)) race <- "Gov"
+  
+  stacked %>%
+    mutate(number = gsub(".*cand([0-9]+)name.*", "\\1", !! var)) %>%
+    left_join(cand_key[[race]], by = c("year", "caseID", "number")) %>%
+    mutate(!! var_name := paste0(cand, " (", party, ")")) %>%
+    select(-number, -cand, -party)
+}
+
+# separate out those that need `showCand`, then bidn
+sep_bind <- function(tbl, var) {
+  var <- enquo(var)
+  
+  changed <- showCand(filter(tbl, grepl("cand", !! var)), !! var)
+  unchanged <- filter(tbl, !grepl("cand", !! var))
+  
+  bind_rows(changed, unchanged) %>%
+    arrange(year, caseID)
+}
 
 
 
 
+
+races <- c("House", "Sen", "Gov")
+cand_regex <- c(
+  paste0(paste0("^", races, "cand[0-9+]"), "name$"),
+  paste0(paste0("^", races, "cand[0-9+]"), "party$")
+)
+
+
+# employ melt_year_reg to 12, 14, 16
+cand_key <- foreach(r = races, .combine = "c") %do% {
+  measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
+  key <- list()
+  
+  year_2012 <- melt_year_reg(cc12, measure_regex)
+  year_2014 <- melt_year_reg(cc14, measure_regex)
+  year_2016 <- melt_year_reg(cc16, measure_regex)
+  
+  
+  key[[r]] <- bind_rows(year_2012, year_2014, year_2016)
+  key
+}
+
+
+
+# mutate vote variables that are HouseCand fillers
+i_rep <- sep_bind(i_rep, intent_rep_char)
+i_sen <- sep_bind(i_sen, intent_sen_char)
+i_gov <- sep_bind(i_gov, intent_gov_char)
+
+v_rep <- sep_bind(v_rep, voted_rep_char)
+v_sen <- sep_bind(v_sen, voted_sen_char)
+v_gov <- sep_bind(v_gov, voted_gov_char)
