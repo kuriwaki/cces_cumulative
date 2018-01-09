@@ -4,16 +4,6 @@ library(glue)
 
 
 
-# Data -------------
-load("data/output/01_responses/vote_responses.RData")
-load("data/output/01_responses/incumbents_key.RData")
-load("data/output/01_responses/candidates_key.RData")
-ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
-rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
-
-
-
-
 # apppend the candidatename-candidate party variables to the vote choice qs
 
 #' append labels to numeric responses
@@ -26,8 +16,7 @@ rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
 
 num_cand_match <- function(numdf, canddf) {
   type <- grep("_num", colnames(numdf), value = TRUE)
-  
-  show_varname <- glue("{gsub('_num', '', type)}_shown")
+  chosen_varname <- glue("{gsub('_num', '', type)}_chosen")
   abstract_varname <- as.character(glue("{gsub('_num', '', type)}_char"))
   
   canddf <- rename(canddf, !!type := cand)
@@ -36,8 +25,8 @@ num_cand_match <- function(numdf, canddf) {
   
   joined %>% 
     mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) %>%
-    mutate(!!show_varname := str_c(name, " (", party, ")", sep = "")) %>% 
-    select(!!c(colnames(numdf), show_varname), everything())
+    mutate(!!chosen_varname := str_c(name, " (", party, ")", sep = "")) %>% 
+    select(!!c(colnames(numdf), chosen_varname), everything())
 }
 
 #' Standardized the votechoice options for crunch
@@ -57,8 +46,33 @@ std_voteopts <- function(vec,
          `Republican Candidate` = chr2)
   
 }
+#' Slim out the data for crunch, and preparing for crunch match
+#' 
+#' @tbl The dataset to slim out
+slim <- function(tbl) {
+  
+  type <- grep('_chosen', colnames(tbl), value = TRUE)
+  fec_rename <- as.character(glue("{gsub('_chosen', '', type)}_fec"))
+  
+  tbl %>% 
+    select(!!c("year", "caseID"),
+           matches("_chosen$"),  
+           !!fec_rename := fec)
+  
+}
+
+# Data -------------
+load("data/output/01_responses/vote_responses.RData")
+load("data/output/01_responses/incumbents_key.RData")
+load("data/output/01_responses/candidates_key.RData")
+ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
+rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
 
 
+
+
+
+# add on name and fec, standardized option labels -----
 i_hou_who <- num_cand_match(i_rep, hc_fec_match)
 i_sen_who <- num_cand_match(i_sen, sc_fec_match)
 i_gov_who <- num_cand_match(i_gov, gc_fec_match)
@@ -68,11 +82,22 @@ v_sen_who <- num_cand_match(v_sen, sc_fec_match)
 v_gov_who <- num_cand_match(v_gov, gc_fec_match)
 
 
-i_hou_who %>% select(1:10) %>% mutate(intent_rep_char = std_voteopts(intent_rep_char))
+# create a separate dataset for chosen vars ------ 
+ids <- c("year", "caseID")
+
+chosen_with_fec <-  slim(i_hou_who) %>% 
+  left_join(slim(i_sen_who), ids) %>% 
+  left_join(slim(i_gov_who), ids) %>% 
+  left_join(slim(v_hou_who), ids) %>% 
+  left_join(slim(v_sen_who), ids) %>% 
+  left_join(slim(v_gov_who), ids)
 
 
 
-keep_from_fec <- c("year", "caseID", "fec", "icpsr_num")
+# nice dataset for incumbents ? ----
+
+hi_mc_match
+
 
 
 
