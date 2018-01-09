@@ -49,16 +49,16 @@ std_voteopts <- function(vec,
 #' Slim out the data for crunch, and preparing for crunch match
 #' 
 #' @tbl The dataset to slim out
-slim <- function(tbl) {
+slim <- function(tbl, varmarker = '_chosen', id = "fec") {
   
-  type <- grep('_chosen', colnames(tbl), value = TRUE)
-  fec_rename <- as.character(glue("{gsub('_chosen', '', type)}_fec"))
+  chosen_var <- grep(varmarker, colnames(tbl), value = TRUE)
+  type <- gsub(varmarker, '', chosen_var)
+  id_rename <- as.character(glue("{type}_{id}"))
   
   tbl %>% 
     select(!!c("year", "caseID"),
-           matches("_chosen$"),  
-           !!fec_rename := fec)
-  
+           matches(as.character(glue("{varmarker}$"))),  
+           !!id_rename := !!id)
 }
 
 # Data -------------
@@ -67,8 +67,6 @@ load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
-
-
 
 
 
@@ -92,11 +90,28 @@ chosen_with_fec <-  slim(i_hou_who) %>%
   left_join(slim(v_sen_who), ids) %>% 
   left_join(slim(v_gov_who), ids)
 
+# now we can wrap up the abstract labels 
+
+#' combined char to number
+
+bind_label <- function(tbl) {
+  
+  
+}
 
 
 # nice dataset for incumbents ? ----
 
-hi_mc_match
+incumbents_with_ID <-  slim(hi_mc_match, "_inc", "icpsr") %>% 
+  left_join(slim(s1i_mc_match, "_inc", "icpsr"), ids) %>% 
+  left_join(slim(s2i_mc_match, "_inc", "icpsr"), ids) %>% 
+  left_join(slim(gov_inc_match, "_inc"), ids)
+  
+
+
+# merge in. 
+
+select(i_hou_who, 1:7)
 
 
 

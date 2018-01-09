@@ -2,7 +2,6 @@ library(tidyverse)
 library(data.table)
 library(haven)
 library(glue)
-library(fastLink)
 library(stringdist)
 
 #' take a caseID - candidate key and melt to a df keyed on caseID _and_ candidate
@@ -74,7 +73,9 @@ match_MC <- function(tbl, key, var, carry_vars) {
   
   bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
     arrange(year, caseID) %>% 
-    select(!!carry_vars, icpsr, fec)
+    select(!!carry_vars,
+           !!paste0(var, "_inc"),
+           icpsr, fec)
 }
 
 
@@ -356,9 +357,40 @@ s1i_mc_match <- match_MC(df, inc_S, "sen1", carry_vars)
 s2i_mc_match <- match_MC(df, inc_S, "sen2", carry_vars)
 
 
+# use FEC for governor?
+fec_govincs <- fec_gov %>% 
+  filter(incumb == "I")
 
 
-save(hi_mc_match, s1i_mc_match, s2i_mc_match, file = "data/output/01_responses/incumbents_key.RData")
+# determine right key for  Governor -- is lastname good enough
+dupes <-  fec_govincs %>%
+  group_by(st, namelast) %>%
+  summarize(nnames =  n_distinct(name)) %>%
+  arrange(-nnames) %>% 
+  ungroup() %>%
+  filter(nnames > 1)
+
+# check to see if IDs are the same, if so we can merge by last name
+left_join(dupes, fec_govincs) %>% select(st, namelast, fec, name) %>% 
+  filter(name != "SCHWARZENEGGER, ARNOLD (COMMITTEE 1)") %>%
+  print(n = 50)
+
+fec_govinc_key <- fec_govincs %>% 
+  filter(name != "SCHWARZENEGGER, ARNOLD (COMMITTEE 1)") %>%
+  distinct(st, namelast, fec)
+
+# text to keep
+r_govinc <- df %>%
+  select(!!carry_vars, gov_inc) %>% 
+  mutate(namelast = str_to_upper(word(gov_inc, -1)))
+
+# merge
+gov_inc_match <- left_join(r_govinc, fec_govinc_key)
+stopifnot(nrow(gov_inc_match) == nrow(r_govinc))
+
+
+
+save(hi_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match, file = "data/output/01_responses/incumbents_key.RData")
 save(hc_fec_match, sc_fec_match, gc_fec_match, file = "data/output/01_responses/candidates_key.RData")
 saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 
