@@ -36,7 +36,7 @@ std_dv <- function(path, guess_year = TRUE) {
   # then rename id
   tbl_stc %>%
     rename(caseID = !! orig_key) %>%
-    select(year, caseID, state, st, cdid,  everything())
+    select(year, caseID, state, st, cdid, cdid_up, everything())
 }
 
 
@@ -91,27 +91,45 @@ std_cdid <- function(tbl, guess_year, guessed_yr) {
       guessed_yr %in% c(2010, 2011) ~ "V276"
     )
     
+    # district in the upcoming election
+    cdidupvar <- cdidvar
+    if (guessed_yr == 2012) cdidupvar <- "cdid113"
+    if (guessed_yr == 2016) cdidupvar <- "cdid115"
+    
+    
     if (!guessed_yr %in% c(2006, 2007)) {
-      tbl <- tbl %>%
-        rename(cdid = !!cdidvar) %>% 
-        mutate(cdid = as.integer(cdid)) %>% 
-        return()
+      
+      if (cdidupvar == cdidvar) {
+        tbl <- tbl %>%
+          rename(cdid = !!cdidvar) %>%
+          mutate(cdid = as.integer(cdid)) %>% 
+          mutate(cdid_up = cdid)
+      } else {
+        tbl <- tbl %>%
+          rename(cdid = !!cdidvar,
+                 cdid_up = !!cdidupvar) %>%
+          mutate(cdid = as.integer(cdid),
+                 cdid_up = as.integer(cdid_up))
+      }
     }
     
     if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
       tbl <- tbl %>%
-        mutate(cdid = as.integer(zap_labels(.data[[cdidvar]])))
+        mutate(cdid = as.integer(zap_labels(.data[[cdidvar]])),
+               cdid_up = cdid)
     }
     
     if (guessed_yr %in% 2007) { # 2009 codes lower case labels
       tbl <- tbl %>%
-        mutate(cdid = as.integer(.data[[cdidvar]]))
+        mutate(cdid = as.integer(.data[[cdidvar]]),
+               cdid_up = cdid)
     }
   }
   
   if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
     tbl <- tbl %>%
-      mutate(cdid = as.integer(zap_labels(congdist_pre)))
+      mutate(cdid = as.integer(zap_labels(congdist_pre)),
+             cdid_up = as.integer(zap_labels(congdist_redist_pre)))
   }
   tbl
 }
