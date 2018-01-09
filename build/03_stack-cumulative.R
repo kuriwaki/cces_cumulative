@@ -412,8 +412,6 @@ vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm)
 
 
 
-
-
 # format state and CD, then zipcode and county ----
 stcd <- left_join(state, cdid) %>%
   left_join(select(statecode, state, st), by = "state") %>%
@@ -483,21 +481,10 @@ ccc <- ccc %>%
   select(-size_factor) %>%
   select(year, caseID, weight, weight_cumulative, everything())
 
-# Format for output  --------
-# make char variables a factor so crunch knows it's a categorical?
-ccc_factor <- ccc %>%
-  mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
-  mutate(zipcode = as.character(zipcode)) %>%
-  mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
-  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
-  mutate_at(vars(matches("_char")), as.factor) %>%
-  mutate_at(vars(matches("^CD$")), as.factor) %>%
-  mutate_at(vars(matches("(state$|st$)")), as.factor)
-
 
 
 # Write -----
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
-saveRDS(ccc, "data/output/cumulative_2006_2016.Rds")
-write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
-write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
+saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
+
+s

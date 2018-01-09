@@ -6,6 +6,11 @@ library(fastLink)
 library(stringdist)
 
 #' take a caseID - candidate key and melt to a df keyed on caseID _and_ candidate
+#' 
+#' @param tbl the wide dataset
+#' @param measure_regex the office-party columns to  melt
+#' 
+#' @return a dataset with usually 2 x nrow(tbl) rows, or 3 if we record 3 options for office
 melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
   melt(as.data.table(tbl),
        id.vars = ids,
@@ -22,8 +27,14 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
 }
 
 #' unique incumbent match
+#' 
 #' If congsession + districts are not unique identifiers (like senators or midway retirements)
 #' then merge in last name
+#' 
+#' @param tbl the dataset of respondents
+#' @param key a dataset of incumbents (NOMINATE)
+#' @param var the variable in tbl to look at, which amounts to the office
+#' 
 match_MC <- function(tbl, key, var, carry_vars) {
   
   # variables that define a constituency 
@@ -67,6 +78,130 @@ match_MC <- function(tbl, key, var, carry_vars) {
 }
 
 
+#' match cces district + name + party with FEC candidates
+#' @param res a long dataset with a CCES identifiers + name and party. name should be all caps and have arguments namelast, namemf
+#' @param fec a FEC database to search
+#' @param stringdist_thresh the maximum distance for which a pair is a match. 
+#' We use JW distance for lastname and firstm, so total distance ranges 0 - 2
+#' @return A df with same number of rows as `res`, with FEC info appended.
+match_fec <- function(res, fec, stringdist_thresh = 0.2) {
+  
+  type <- unique(fec$office_sought)
+  
+  fec_rename <- fec %>% 
+    rename(name_fec = name, namefirst_fec = namefirst) %>% # to avoid name conflict
+    rename(cdid_up = dist, year = cycle)
+  
+  # coerce FEC unique wrt district-party-lastname (most duplicates is actually the same person with different accounts)
+  fec_counts <- fec_rename %>%
+    group_by(year, st, cdid_up, party, namelast) %>% 
+    summarize(n = n())
+  
+  key_uniq <- semi_join(fec_rename, filter(fec_counts, n == 1), by = c("year", "party", "st", "cdid_up", "namelast"))
+  key_notu <- semi_join(fec_rename, filter(fec_counts, n != 1), by = c("year", "party", "st", "cdid_up", "namelast"))
+  
+  if (type == "federal:house") 
+    matchvars <- c("year", "st", "cdid_up", "party", "namelast")
+  if (type %in% c("state:governor", "federal:senate")) 
+    matchvars <- c("year", "st", "party", "namelast")
+  
+  # separate out candidate keys with no candidate
+  res_nocand <- filter(res, is.na(name))
+  res_somecand <- filter(res, !is.na(name))
+  
+  # exact match on lastname
+  rf_exact <- inner_join(res_somecand, key_uniq, by =  matchvars)
+  r_exact_unmatched <- anti_join(res_somecand, key_uniq, by = matchvars)
+  f_exact_unmatched <- anti_join(key_uniq, res_somecand, by = matchvars)
+  
+  
+  n_with_info <- nrow(res_somecand)
+  n_matched <- nrow(filter(rf_exact, !is.na(fec)))
+  cat(glue("out of {n_with_info} rows with CCES candidate info, we merged
+           {n_matched} ({round(100*n_matched/n_with_info)} percent) to a FEC key. "), "\n")
+  
+  
+  
+  # stringdistance match within district
+  cells <- group_by_(r_exact_unmatched, .dots = setdiff(matchvars, "namelast")) %>% 
+    summarize(n = n()) %>% ungroup()
+  f_consider <- bind_rows(key_notu, f_exact_unmatched)
+  
+  r_stringdist <- foreach(index = 1:nrow(cells), .combine = "bind_rows") %do% {
+    if (index == 1) cat(" starting string distance matching\n")
+    if (index %% 100 == 0) cat(glue(" ... {index} out of {nrow(cells)} districts completed"), "\n")
+    
+    stringdist_left_join(i = index, 
+                         type0 = type, 
+                         cdata = cells, 
+                         rdata = r_exact_unmatched, 
+                         fdata = f_consider, 
+                         thresh = stringdist_thresh)
+    
+  }
+  
+  n_try_string <- nrow(r_exact_unmatched)
+  n_string_matched <- nrow(filter(r_stringdist, !is.na(fec)))
+  cat(glue("out of {n_try_string} rows that didn't match on first try, we merged
+           {n_string_matched} ({round(100*n_string_matched/n_try_string)} percent) to a FEC key. "), "\n")
+  
+  
+  stopifnot(nrow(rf_exact) + nrow(r_stringdist) + nrow(res_nocand) == nrow(res)) ## check no dupes
+  
+  bind_rows(rf_exact, r_stringdist, res_nocand)
+}
+
+#' fuzzy merge
+#' @param i the index of cdata to look for 
+#' @param type0 the office
+#' @param cdata the cell data that is keyed to district-party
+#' @param rdata responden-side data
+#' @param fdata fec level data
+#' @param thresh the string distance threshold
+#' 
+#' @return a dataset with cdata$n[i] rows with FEC data merged if applicable
+#' 
+stringdist_left_join <- function(i, type0, cdata, rdata, fdata, thresh) {
+  
+  r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
+  f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
+  
+  
+  # further subset by district
+  if (type0 == "federal:house") {
+    r_consider_i <- filter(r_consider_i, cdid_up == cdata$cdid_up[i])
+    f_consider_i <- filter(f_consider_i, cdid_up == cdata$cdid_up[i])
+  } 
+  stopifnot(cdata$n[i] == nrow(r_consider_i))
+  if (nrow(f_consider_i) == 0) return(r_consider_i) # if there is no one FEC to consider, return
+  
+  # get to the candidate level, not the respondennt level
+  r_i_uniq <- distinct(r_consider_i, year, st, cdid_up, party, namelast, namefirstm)
+  set.seed(02138)
+  f_i_shuffled <- sample_frac(f_consider_i)
+  
+  match_last  <- stringdistmatrix(r_i_uniq$namelast, f_i_shuffled$namelast, method = "jw")
+  match_first <- stringdistmatrix(r_i_uniq$namefirstm, f_i_shuffled$namefirstm, method = "jw")
+  
+  # for each row in r_i 
+  match_result <- foreach(i_r = 1:nrow(r_i_uniq), .combine = "bind_rows") %do% {
+    dists <- match_last[i_r, ] + match_first[i_r, ]
+    sort_dists <- order(dists)
+    is_match <- dists[sort_dists[1]] < thresh
+    
+    
+    if (!is_match) r_result <- slice(r_i_uniq, i_r) # if we call it a no matchreturn without anything
+    if (is_match) {
+      r_result <- bind_cols(slice(r_i_uniq, i_r),
+                            slice(f_i_shuffled, sort_dists[1]) %>% select(-year, -st, -cdid_up, -party, -namelast))
+    }
+    r_result
+  }
+  
+  left_join(r_consider_i, match_result, by = c(matchvars, "namelast", "namefirstm"))
+}
+
+
 # Variable Key ---
 
 # each row is a variable for the starndardized data, each column is for the cces year0
@@ -95,7 +230,6 @@ master <-
 
 # Data ----
 load("data/output/01_responses/common_all.RData")
-load("data/output/01_responses/vote_responses.RData")
 feckey <- readRDS("data/output/03_contextual/fec_fmt.Rds")
 inc_H <- readRDS("data/output/03_contextual/incumbents_H.Rds")
 inc_S <- readRDS("data/output/03_contextual/incumbents_S.Rds")
@@ -192,11 +326,7 @@ hc_key <- melt_cand(df, c("hou_can", "hou_pty"), carry_vars)
 sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
 
-# apppend the candidatename-candidate party variables to the vote choice qes
-i_hou_name <- left_join(i_rep, hc_key, by = c("year", "caseID", "intent_rep_num" = "cand"))
-i_sen_name <- left_join(i_sen, sc_key, by = c("year", "caseID", "intent_sen_num" = "cand"))
-i_gov_name <- left_join(i_gov, gc_key, by = c("year", "caseID", "intent_gov_num" = "cand"))
-  
+
   
 # Lautenberg 2016 NJ sen
   
@@ -208,119 +338,6 @@ fec_gov <- filter(feckey, office_sought == "state:governor", cycle %in% 2006:201
 
 
 
-#' match cces district + name + party with FEC candidates
-#' @param res a long dataset with a CCES identifiers + name and party. name should be all caps and have arguments namelast, namemf
-#' @param fec a FEC database to search
-#' @param stringdist_thresh the maximum distance for which a pair is a match. 
-#' We use JW distance for lastname and firstm, so total distance ranges 0 - 2
-#' @return A df with same number of rows as `res`, with FEC info appended.
-match_fec <- function(res, fec, stringdist_thresh = 0.2) {
-  
-  type <- unique(fec$office_sought)
-  
-  fec_rename <- fec %>% 
-    rename(name_fec = name, namefirst_fec = namefirst) %>% # to avoid name conflict
-    rename(cdid_up = dist, year = cycle)
-  
-  # coerce FEC unique wrt district-party-lastname (most duplicates is actually the same person with different accounts)
-  fec_counts <- fec_rename %>%
-    group_by(year, st, cdid_up, party, namelast) %>% 
-    summarize(n = n())
-  
-  key_uniq <- semi_join(fec_rename, filter(fec_counts, n == 1), by = c("year", "party", "st", "cdid_up", "namelast"))
-  key_notu <- semi_join(fec_rename, filter(fec_counts, n != 1), by = c("year", "party", "st", "cdid_up", "namelast"))
-  
-  if (type == "federal:house") 
-    matchvars <- c("year", "st", "cdid_up", "party", "namelast")
-  if (type %in% c("state:governor", "federal:senate")) 
-    matchvars <- c("year", "st", "party", "namelast")
-  
-  # separate out candidate keys with no candidate
-  res_nocand <- filter(res, is.na(name))
-  res_somecand <- filter(res, !is.na(name))
-
-  # exact match on lastname
-  rf_exact <- inner_join(res_somecand, key_uniq, by =  matchvars)
-  r_exact_unmatched <- anti_join(res_somecand, key_uniq, by = matchvars)
-  f_exact_unmatched <- anti_join(key_uniq, res_somecand, by = matchvars)
-  
-  
-  n_with_info <- nrow(res_somecand)
-  n_matched <- nrow(filter(rf_exact, !is.na(fec)))
-  cat(glue("out of {n_with_info} rows with CCES candidate info, we merged
-           {n_matched} ({round(100*n_matched/n_with_info)} percent) to a FEC key. "), "\n")
-  
-  
-  
-  # stringdistance match within district
-  cells <- group_by_(r_exact_unmatched, .dots = setdiff(matchvars, "namelast")) %>% 
-    summarize(n = n()) %>% ungroup()
-  f_consider <- bind_rows(key_notu, f_exact_unmatched)
-  
-  r_stringdist <- foreach(index = 1:nrow(cells), .combine = "bind_rows") %do% {
-    if (index == 1) cat(" starting string distance matching\n")
-    if (index %% 100 == 0) cat(glue(" ... {index} out of {nrow(cells)} districts completed"), "\n")
-    
-    stringdist_left_join(i = index, 
-                         type0 = type, 
-                         cdata = cells, 
-                         rdata = r_exact_unmatched, 
-                         fdata = f_consider, 
-                         thresh = stringdist_thresh)
-    
-  }
-  
-  n_try_string <- nrow(r_exact_unmatched)
-  n_string_matched <- nrow(filter(r_stringdist, !is.na(fec)))
-  cat(glue("out of {n_try_string} rows that didn't match on first try, we merged
-           {n_string_matched} ({round(100*n_string_matched/n_try_string)} percent) to a FEC key. "), "\n")
-  
-  
-  stopifnot(nrow(rf_exact) + nrow(r_stringdist) + nrow(res_nocand) == nrow(res)) ## check no dupes
-  
-  bind_rows(rf_exact, r_stringdist, res_nocand)
-}
-
-stringdist_left_join <- function(i, type0, cdata, rdata, fdata, thresh) {
-  
-  r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
-  f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
-  
-  
-  # further subset by district
-  if (type0 == "federal:house") {
-    r_consider_i <- filter(r_consider_i, cdid_up == cdata$cdid_up[i])
-    f_consider_i <- filter(f_consider_i, cdid_up == cdata$cdid_up[i])
-  } 
-  stopifnot(cdata$n[i] == nrow(r_consider_i))
-  if (nrow(f_consider_i) == 0) return(r_consider_i) # if there is no one FEC to consider, return
-  
-  # get to the candidate level, not the respondennt level
-  r_i_uniq <- distinct(r_consider_i, year, st, cdid_up, party, namelast, namefirstm)
-  set.seed(02138)
-  f_i_shuffled <- sample_frac(f_consider_i)
-  
-  match_last  <- stringdistmatrix(r_i_uniq$namelast, f_i_shuffled$namelast, method = "jw")
-  match_first <- stringdistmatrix(r_i_uniq$namefirstm, f_i_shuffled$namefirstm, method = "jw")
-  
-  # for each row in r_i 
-  match_result <- foreach(i_r = 1:nrow(r_i_uniq), .combine = "bind_rows") %do% {
-    dists <- match_last[i_r, ] + match_first[i_r, ]
-    sort_dists <- order(dists)
-    is_match <- dists[sort_dists[1]] < thresh
-    
-    
-    if (!is_match) r_result <- slice(r_i_uniq, i_r) # if we call it a no matchreturn without anything
-    if (is_match) {
-      r_result <- bind_cols(slice(r_i_uniq, i_r),
-                            slice(f_i_shuffled, sort_dists[1]) %>% select(-year, -st, -cdid_up, -party, -namelast))
-    }
-    r_result
-  }
-  
-  left_join(r_consider_i, match_result, by = c(matchvars, "namelast", "namefirstm"))
-}
-
 
 # do the match
 hc_fec_match <- match_fec(hc_key, fec_hou)
@@ -331,85 +348,17 @@ gc_fec_match <- match_fec(gc_key, fec_gov)
 
 
 
-
-
-
-
-  
-table(is.na(filter(hc_fec, name != "") %>% pull(fec)))
-
-
 # create key of incumbents----
 
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
-key_hou_inc  <- match_MC(df, inc_H, "hou", carry_vars)
-key_sen1_inc <- match_MC(df, inc_S, "sen1", carry_vars)
-key_sen2_inc <- match_MC(df, inc_S, "sen2", carry_vars)
+hi_mc_match  <- match_MC(df, inc_H, "hou", carry_vars)
+s1i_mc_match <- match_MC(df, inc_S, "sen1", carry_vars)
+s2i_mc_match <- match_MC(df, inc_S, "sen2", carry_vars)
 
 
 
 
-# from 03 -----
+save(hi_mc_match, s1i_mc_match, s2i_mc_match, file = "data/output/01_responses/incumbents_key.RData")
+save(hc_fec_match, sc_fec_match, gc_fec_match, file = "data/output/01_responses/candidates_key.RData")
+saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 
-# replicate the filler value each respondent chose
-showCand <- function(stacked, var, cand_key = cand_key) {
-  var <- enquo(var)
-  var_name <- quo_name(var)
-  
-  if (grepl("rep", var_name)) race <- "House"
-  if (grepl("sen", var_name)) race <- "Sen"
-  if (grepl("gov", var_name)) race <- "Gov"
-  
-  stacked %>%
-    mutate(number = gsub(".*cand([0-9]+)name.*", "\\1", !! var)) %>%
-    left_join(cand_key[[race]], by = c("year", "caseID", "number")) %>%
-    mutate(!! var_name := paste0(cand, " (", party, ")")) %>%
-    select(-number, -cand, -party)
-}
-
-# separate out those that need `showCand`, then bidn
-sep_bind <- function(tbl, var) {
-  var <- enquo(var)
-  
-  changed <- showCand(filter(tbl, grepl("cand", !! var)), !! var)
-  unchanged <- filter(tbl, !grepl("cand", !! var))
-  
-  bind_rows(changed, unchanged) %>%
-    arrange(year, caseID)
-}
-
-
-
-
-
-races <- c("House", "Sen", "Gov")
-cand_regex <- c(
-  paste0(paste0("^", races, "cand[0-9+]"), "name$"),
-  paste0(paste0("^", races, "cand[0-9+]"), "party$")
-)
-
-
-# employ melt_year_reg to 12, 14, 16
-cand_key <- foreach(r = races, .combine = "c") %do% {
-  measure_regex <- paste0(paste0("^", r, "Cand[0-9+]"), c("Name$", "Party$"))
-  key <- list()
-  
-  year_2012 <- melt_year_reg(cc12, measure_regex)
-  year_2014 <- melt_year_reg(cc14, measure_regex)
-  year_2016 <- melt_year_reg(cc16, measure_regex)
-  
-  
-  key[[r]] <- bind_rows(year_2012, year_2014, year_2016)
-  key
-}
-
-
-
-# mutate vote variables that are HouseCand fillers
-i_rep <- sep_bind(i_rep, intent_rep_char)
-i_sen <- sep_bind(i_sen, intent_sen_char)
-i_gov <- sep_bind(i_gov, intent_gov_char)
-
-v_rep <- sep_bind(v_rep, voted_rep_char)
-v_sen <- sep_bind(v_sen, voted_sen_char)
-v_gov <- sep_bind(v_gov, voted_gov_char)
