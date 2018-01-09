@@ -1,7 +1,7 @@
 library(tidyverse)
 
 
-dime_raw <- read_csv("data/source/dime/dime_recipients_all_1979_2014.csv")
+dime_raw <- read_csv("data/source/dime/dime_recipients_all_1979_2014.csv", col_types = cols())
 
 # filter only candidates
 dime_cand <- dime_raw %>%
@@ -62,7 +62,7 @@ df <-  df_fec %>%
 
 # recode party 
 df <- df %>% 
-  mutate(party = dplyr::recode(party, `100` = "D", `200` = "R", `328` = "I", .default = "NA/Other"))
+  mutate(party = dplyr::recode(party, `100` = "D", `200` = "R", `328` = "I", `400` = "G", `500` = "L", .default = "NA/Other"))
 
 
 
