@@ -41,8 +41,12 @@ std_voteopts <- function(vec,
                          chr2 = "[Republican / Candidate 2]") {
   recode(vec,
          `$Housecand1name ($Housecand1party)` = chr1,
+         `$Sencand1name ($Sencand1party)` = chr1,
+         `$Govcand1name ($Govcand1party)` = chr1,
          `Democratic Candidate` = chr1,
          `$Housecand2name ($Housecand2party)` = chr2,
+         `$Sencand2name ($Sencand2party)` = chr2,
+         `$Govcand2sname ($Govcand2party)` = chr2,
          `Republican Candidate` = chr2)
   
 }
@@ -161,4 +165,5 @@ ccc_factor <- ccc_cand %>%
 
 saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
+write_sav(sample_frac(ccc_factor, 0.5),  "data/release/cumulative_2006_2016_sample.sav")
 write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
