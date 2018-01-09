@@ -43,11 +43,11 @@ ccc_meta <- tribble(
   "approval_sen2_char",  "categorical", "Senator 2 Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Senator's Name and Party]",
   "approval_gov",        "categorical", "Governor Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Governor's Name and Party]",
   "economy_retro",       "categorical", "Retrospective Economy", "OVER THE PAST YEAR the nation's economy has ...?",
-  "vv_regstatus_char",   "categorical", "Validated Registration Status", "[Validation Results]",
-  "vv_party_gen_char",   "categorical", "Validated Registered Party", "[Validation Results]",
-  "vv_party_prm_char",   "categorical", "Validated Registered Primary Party", "[Validation Results]",
-  "vv_turnout_gvm_char", "categorical", "Validated Turnout Generals", "[Validation Results]",
-  "vv_turnout_pvm_char", "categorical", "Validated Turnout Primaries", "[Validation Results]",
+  "vv_regstatus",        "categorical", "Validated Registration Status", "[Validation Results. Missing if validation was not conducted in the year. Categories are aggregated. Both Matched-not registered and unmatched are labelled as a no record.]",
+  "vv_party_gen",        "categorical", "Validated Registered Party", "[Validation Results.]",
+  "vv_party_prm",        "categorical", "Validated Registered Primary Party", "[Validation Results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
+  "vv_turnout_gvm",      "categorical", "Validated Turnout General Election", "[Validation Results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
+  "vv_turnout_pvm",      "categorical", "Validated Turnout Primary Election (Congressional)", "[Validation Results]",
   "voted_pres_16_char",  "categorical", "2016 President vote choice", "For whom did you vote for President of the United States? [post, with early voters in pre coalesced]",
   "intent_pres_16_char", "categorical", "2016 President preference",  "Which candidate did you prefer for President of the United States?",
   "voted_pres_12_char",  "categorical", "2012 President vote choice", "[2012 wording] For whom did you vote for President of the United States? [2016 wording]: In 2012, who did you vote for in the election for President? [see appendix for wording in all years]",
@@ -57,11 +57,6 @@ ccc_meta <- tribble(
   "approval_rep_num",    "categorical", "approval_rep_num", "[Response values (may be specific to year)]",
   "approval_sen1_num",   "categorical", "approval_sen1_num", "[Response values (may be specific to year)]",
   "approval_sen2_num",   "categorical", "approval_sen2_num", "[Response values (may be specific to year)]",
-  "vv_regstatus_num",    "categorical", "vv_regstatus_num", "[Response values (may be specific to year)]",
-  "vv_party_gen_num",    "categorical", "vv_party_gen_num", "[Response values (may be specific to year)]",
-  "vv_party_prm_num",    "categorical", "vv_party_prm_num", "[Response values (may be specific to year)]",
-  "vv_turnout_gvm_num",  "categorical", "vv_turnout_gvm_num", "[Response values (may be specific to year)]",
-  "vv_turnout_pvm_num",  "categorical", "vv_turnout_pvm_num", "[Response values (may be specific to year)]",
   "voted_pres_16_num",   "categorical", "voted_pres_16_num", "[Response values (may be specific to year)]",
   "intent_pres_16_num",  "categorical", "intent_pres_16_num", "[Response values (may be specific to year)]",
   "voted_pres_12_num",   "categorical", "voted_pres_12_num", "[Response values (may be specific to year)]",
@@ -110,7 +105,7 @@ lapply(ds, function(v){
 dta_not_labelled <- FALSE 
 
 if (dta_not_labelled) {
-  ccc_factor <- readRDS("data/release/cumulative_2006_2016.Rds")
+  ccc_factor <- readRDS("data/release/cumulative_2006_2016_preStata.Rds")
   
   for (v in colnames(ccc_factor)) {
     attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
@@ -183,7 +178,7 @@ ordering(ds)[["Politician Names and Identifiers"]]  <- VariableOrder(
   VariableGroup("Current Representatives", ds[ind_incID])
 )
 
-
+# hide numeric variables for crunch
 ind_nuisance_num <- grep("_num$", vn)
 hideVariables(ds, ind_nuisance_num)
 

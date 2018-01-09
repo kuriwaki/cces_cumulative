@@ -1,7 +1,7 @@
 library(tidyverse)
 library(haven)
 library(glue)
-
+library(crunch)
 
 
 # apppend the candidatename-candidate party variables to the vote choice qs
@@ -61,7 +61,7 @@ std_voteopts <- function(vec,
 bind_label <- function(tbl) {
   
   charname <- grep("_char$", colnames(tbl), value = TRUE)
-  numname <- grep("(intent|voted).*_num$", colnames(tbl), value = TRUE)
+  numname <- grep("(intent|voted|vv).*_num$", colnames(tbl), value = TRUE)
   
   varname <- gsub("_char", "", charname)
   
@@ -103,7 +103,6 @@ ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
 
 
-
 # add on name and fec, standardized option labels -----
 i_hou_who <- num_cand_match(i_rep, hc_fec_match)
 i_sen_who <- num_cand_match(i_sen, sc_fec_match)
@@ -112,7 +111,6 @@ i_gov_who <- num_cand_match(i_gov, gc_fec_match)
 v_hou_who <- num_cand_match(v_rep, hc_fec_match)
 v_sen_who <- num_cand_match(v_sen, sc_fec_match)
 v_gov_who <- num_cand_match(v_gov, gc_fec_match)
-
 
 # create a separate dataset for chosen vars ------ 
 ids <- c("year", "caseID")
@@ -125,7 +123,6 @@ chosen_with_fec <-  slim(i_hou_who) %>%
   left_join(slim(v_gov_who), ids)
 
 # now we can wrap up the abstract labels 
-
 abstract_lbl <- bind_label(i_hou_who) %>% 
   left_join(bind_label(i_sen_who), ids) %>%
   left_join(bind_label(i_gov_who), ids) %>%
@@ -133,27 +130,18 @@ abstract_lbl <- bind_label(i_hou_who) %>%
   left_join(bind_label(v_sen_who), ids) %>%
   left_join(bind_label(v_gov_who), ids)
 
-
-
-
 # nice dataset for incumbents ? ----
-
 incumbents_with_ID <-  slim(hi_mc_match, "_inc", "icpsr") %>% 
   left_join(slim(s1i_mc_match, "_inc", "icpsr"), ids) %>% 
   left_join(slim(s2i_mc_match, "_inc", "icpsr"), ids) %>% 
   left_join(slim(gov_inc_match, "_inc"), ids)
-  
-
 
 # merge in the candidate vars ----
-
 ccc_cand <- ccc %>% 
   left_join(abstract_lbl, ids) %>% 
   left_join(chosen_with_fec, ids) %>% 
   left_join(incumbents_with_ID, ids)
   
-
-
 
 # Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
@@ -164,13 +152,17 @@ ccc_factor <- ccc_cand %>%
   mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
   mutate_at(vars(matches("icpsr")), as.character) %>%
   mutate_at(vars(matches("fec")), as.character) %>%
-  mutate_at(vars(matches("_char")), as.factor) %>%
+  mutate_at(vars(matches("^(approval|intent|voted).*_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state$|st$)")), as.factor)
 
-
+# Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
 saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
-saveRDS(ccc_factor, "data/release/cumulative_2006_2016.Rds")
+saveRDS(ccc_factor, "data/release/cumulative_2006_2016_preStata.Rds")
+
+
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
+login()
 newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common")
+logout()

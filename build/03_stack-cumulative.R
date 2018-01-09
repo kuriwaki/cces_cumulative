@@ -233,6 +233,14 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
 }
 
 # takes all datasets available, and given a var, pulls it out of each and stacks
+#' 
+#' @param dflist a list of cces datasets. column names need to be standardized.
+#' @param var a NSE variable to find and stack
+#' @param type a string, "factor", "numeric", or "dattetime". If numeric or datetime
+#'  that type is returned. if factor the label and values are returned separately as
+#'  different columns, unless labelled = TRUE
+#' @param makeLabelled to bind the two _char and _num columns to a label. ONLY
+#'   do this if the numbers and labels match 1:1 across all years
 findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE) {
   var <- enquo(var)
   var_name <- quo_name(var)
@@ -243,6 +251,21 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
       extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
     }
+    
+    if (grepl("^vv_", chr_var_name)) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
+      
+      list_yr <- mutate(list_yr, 
+                        !!chr_var_name := std_vvv(.data[[chr_var_name]], varname = chr_var_name, yrvec = .data[["year"]]))
+      
+      list_yr_factor <- list_yr %>% 
+        clean_values(chr_var_name = chr_var_name, num_var_name = num_var_name) %>% 
+        mutate(!!var_name := fct_infreq(.data[[chr_var_name]])) %>% 
+        select(year, caseID, !!var_name)
+      
+      return(list_yr_factor)
+    }
+    
+    # otherwise just clean up values as text
     list_yr <- clean_values(list_yr, chr_var_name = chr_var_name, num_var_name = num_var_name)
   }
     
@@ -290,8 +313,6 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
   list_yr
 }
 
-  
-
 #' clean up missing values, format to change NaN to NA
 clean_values <- function(tbl, chr_var_name, num_var_name) {
   tbl %>%
@@ -306,7 +327,86 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
       !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "No Hs", "No HS")
       )
 }
-
+#' standardize validated vote values 
+std_vvv <- function (vec, varname, yrvec) {
+  
+  vtd <- "Voted"
+  nov <- "No Record of Voting"
+  # turnout
+  if (grepl("turnout", varname)) {
+    recoded <- recode(vec,
+                      `Polling` = vtd,
+                      `polling` = vtd,
+                      `Absentee` = vtd,
+                      `absentee` = vtd,
+                      `Early` = vtd,
+                      `earlyVote` = vtd,
+                      `mail` = vtd,
+                      `Mail` = vtd,
+                      `unknown` = vtd,
+                      `Unknown` = vtd,
+                      `UnknownMethod` = vtd,
+                      `validated record of voting in general election` = vtd,
+                      `Virginia doesn't maintain vote history files` = "No Voter File",
+                      `MatchedNoVote` = nov,
+                      .default  = nov
+                      )
+  }
+  
+  # regstatus
+  if (grepl("regstatus", varname)) {
+    recoded <- recode(vec,
+                      inactiv = "Inactive",
+                      multipl = "Multiple Appearances",
+                      multipleAppearances = "Multiple Appearances",
+                      multipleAppe = "Multiple Appearances",
+                      unregis = "unregistered",
+                      MovedUnregistered = "unregistered",
+                      dropped = "Dropped",
+                      NoVoterFileMatch = "No Record of Registration"
+    )
+    recoded <- replace(recoded, yrvec %in% c(2006, 2007, 2009, 2011), NA) # these should be missing
+    recoded <- replace(recoded, recoded == "", "No Record of Registration") 
+  }
+  
+  
+  # regstatus
+  if (grepl("party", varname)) {
+    dem <- "Democratic Party"
+    gop <- "Republican Party"
+    npa <- "No Party Affiliation"
+    
+    recoded <- recode(vec,
+                      `DEM` = dem,
+                      `Democratic.Party` = dem,
+                      `Democratic` = dem,
+                      `REP` = gop,
+                      `Republican.Party` = gop,
+                      `Republican` = gop,
+                      `NPA` = npa,
+                      `No.Party.Affiliation` = npa,
+                      `Constitution.Party` = "Constitution Party",
+                      `CST` = "Constitution Party",
+                      `Green.Party` = "Green Party",
+                      `GRE` = "Green Party",
+                      `Libertarian.Party` = "Liberatarian Party",
+                      `LIB` = "Liberatarian Party",
+                      `Independent.Party` = "Independent Party",
+                      `IND` = "Independent Party",
+                      `Reform.Party` = "Reform Party",
+                      `REF` = "Reform Party",
+                      `Socialist.Party` = "Socialist Party",
+                      `SOC` = "Socialist Party",
+                      `Declined.To.State` = "Declined to State",
+                      `DTS` = "Declined to State",
+                      `OTH` = "Other",
+                      `UNK` = "Unknown"
+    )
+    recoded <- replace(recoded, recoded == "", "No Record of Party Registration") 
+  }
+  
+  recoded
+} 
 
 
 
@@ -446,7 +546,7 @@ ccc <- geo %>%
   left_join(i_pres16) %>%
   left_join(v_pres08) %>%
   left_join(v_pres12) %>%
-  left_join(v_pres16) %>% 
+  left_join(v_pres16) %>%
   left_join(vv_regstatus) %>%
   left_join(vv_party_gen) %>%
   left_join(vv_party_prm) %>%
@@ -461,6 +561,7 @@ ccc <- ccc %>%
   select(
     year:approval_gov,
     matches("_char$"),
+    matches("vv_"),
     matches("_num$")
   )
 
@@ -483,6 +584,5 @@ ccc <- ccc %>%
 
 # Write -----
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
+save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
-
-s
