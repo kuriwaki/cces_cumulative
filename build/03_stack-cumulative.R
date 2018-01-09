@@ -444,17 +444,15 @@ ccc <- geo %>%
   left_join(i_pres08) %>%
   left_join(i_pres12) %>%
   left_join(i_pres16) %>%
-  left_join(i_rep) %>%
-  left_join(i_sen) %>%
-  left_join(i_gov) %>%
   left_join(v_pres08) %>%
   left_join(v_pres12) %>%
-  left_join(v_pres16) %>%
-  left_join(v_rep) %>%
-  left_join(v_sen) %>%
-  left_join(v_gov)
+  left_join(v_pres16) %>% 
+  left_join(vv_regstatus) %>%
+  left_join(vv_party_gen) %>%
+  left_join(vv_party_prm) %>%
+  left_join(vv_turnout_gvm) %>%
+  left_join(vv_turnout_pvm)
 
-# add vv_regstatus
 
 stopifnot(nrow(ccc) == nrow(pid3))
 

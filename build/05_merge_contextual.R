@@ -46,6 +46,32 @@ std_voteopts <- function(vec,
          `Republican Candidate` = chr2)
   
 }
+
+#' combined char to number
+#' change consistent vars in to a labelled factor
+#' @param tbl A table with columns _char and _num for the labels
+bind_label <- function(tbl) {
+  
+  charname <- grep("_char$", colnames(tbl), value = TRUE)
+  numname <- grep("(intent|voted).*_num$", colnames(tbl), value = TRUE)
+  
+  varname <- gsub("_char", "", charname)
+  
+  # make numbered vector
+  key_arr <- tbl %>% 
+    select(!!c(charname, numname)) %>%
+    distinct() %>%
+    filter(!is.na(.data[[numname]]))
+  
+  nvec <- key_arr %>% select(!!numname) %>% pull()
+  names(nvec) <- key_arr %>% select(!!charname) %>% pull()
+  
+  
+  tbl  %>%
+    mutate(!! varname := labelled(as.integer(.data[[numname]]), sort(nvec))) %>%
+    select(year, caseID, !! varname)
+}
+
 #' Slim out the data for crunch, and preparing for crunch match
 #' 
 #' @tbl The dataset to slim out
@@ -92,12 +118,14 @@ chosen_with_fec <-  slim(i_hou_who) %>%
 
 # now we can wrap up the abstract labels 
 
-#' combined char to number
+abstract_lbl <- bind_label(i_hou_who) %>% 
+  left_join(bind_label(i_sen_who), ids) %>%
+  left_join(bind_label(i_gov_who), ids) %>%
+  left_join(bind_label(v_hou_who), ids) %>%
+  left_join(bind_label(v_sen_who), ids) %>%
+  left_join(bind_label(v_gov_who), ids)
 
-bind_label <- function(tbl) {
-  
-  
-}
+
 
 
 # nice dataset for incumbents ? ----
@@ -109,16 +137,19 @@ incumbents_with_ID <-  slim(hi_mc_match, "_inc", "icpsr") %>%
   
 
 
-# merge in. 
+# merge in the candidate vars ----
 
-select(i_hou_who, 1:7)
-
+ccc_cand <- ccc %>% 
+  left_join(abstract_lbl, ids) %>% 
+  left_join(chosen_with_fec, ids) %>% 
+  left_join(incumbents_with_ID, ids)
+  
 
 
 
 # Format for output  --------
 # make char variables a factor so crunch knows it's a categorical?
-ccc_factor <- ccc %>%
+ccc_factor <- ccc_cand %>%
   mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
@@ -128,5 +159,6 @@ ccc_factor <- ccc %>%
   mutate_at(vars(matches("(state$|st$)")), as.factor)
 
 
+saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
 write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
