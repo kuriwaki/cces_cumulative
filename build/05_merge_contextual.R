@@ -1,5 +1,6 @@
 library(tidyverse)
 library(haven)
+library(glue)
 
 
 
@@ -13,13 +14,65 @@ rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
 
 
 
-# apppend the candidatename-candidate party variables to the vote choice qes
-i_hou_name <- left_join(i_rep, hc_key, by = c("year", "caseID", "intent_rep_num" = "cand"))
-i_sen_name <- left_join(i_sen, sc_key, by = c("year", "caseID", "intent_sen_num" = "cand"))
-i_gov_name <- left_join(i_gov, gc_key, by = c("year", "caseID", "intent_gov_num" = "cand"))
+# apppend the candidatename-candidate party variables to the vote choice qs
+
+#' append labels to numeric responses
+#' 
+#' @param numdf the slim df with choices as numbers
+#' @param canddf the df with all the candidate info
+#' 
+#' @return A dataset with nrow(numdf) rows that has all the candidate info appended
+#' for the candidate the respondent chose
+
+num_cand_match <- function(numdf, canddf) {
+  type <- grep("_num", colnames(numdf), value = TRUE)
+  
+  show_varname <- glue("{gsub('_num', '', type)}_shown")
+  abstract_varname <- as.character(glue("{gsub('_num', '', type)}_char"))
+  
+  canddf <- rename(canddf, !!type := cand)
+  
+  joined <- left_join(numdf, canddf, by = c("year", "caseID", type))
+  
+  joined %>% 
+    mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) %>%
+    mutate(!!show_varname := str_c(name, " (", party, ")", sep = "")) %>% 
+    select(!!c(colnames(numdf), show_varname), everything())
+}
+
+#' Standardized the votechoice options for crunch
+#' 
+#' @param vec the vector to recode
+#' @param chr1 text to show for first option
+#' @param chr2 text to show for second option
+#' 
+#' @return A recoded vector
+std_voteopts <- function(vec, 
+                         chr1 = "[Democrat / Candidate 1]",
+                         chr2 = "[Republican / Candidate 2]") {
+  recode(vec,
+         `$Housecand1name ($Housecand1party)` = chr1,
+         `Democratic Candidate` = chr1,
+         `$Housecand2name ($Housecand2party)` = chr2,
+         `Republican Candidate` = chr2)
+  
+}
+
+
+i_hou_who <- num_cand_match(i_rep, hc_fec_match)
+i_sen_who <- num_cand_match(i_sen, sc_fec_match)
+i_gov_who <- num_cand_match(i_gov, gc_fec_match)
+
+v_hou_who <- num_cand_match(v_rep, hc_fec_match)
+v_sen_who <- num_cand_match(v_sen, sc_fec_match)
+v_gov_who <- num_cand_match(v_gov, gc_fec_match)
+
+
+i_hou_who %>% select(1:10) %>% mutate(intent_rep_char = std_voteopts(intent_rep_char))
 
 
 
+keep_from_fec <- c("year", "caseID", "fec", "icpsr_num")
 
 
 
