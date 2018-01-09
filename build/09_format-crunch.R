@@ -9,14 +9,10 @@ login() # you need a login and password to complete this command
 # connect to data---------
 ds <- loadDataset("CCES Cumulative Common")
 
-
 # description for dataset
 description(ds) <- "This is a working version -- formatting incomplete and may contain errors. Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each years common content and may contain minor errors. To ask a question or report a bug, file an issue at https://github.com/kuriwaki/cces_cumulative, where the build code can be seen."
 startDate(ds) <- "2006-10-06"
 endDate(ds) <- "2006-11-07"
-
-
-
 
 
 # add metadata ---------
@@ -100,11 +96,28 @@ ccc_meta <- tribble(
   "gov_fec",             "text",        "ID for current Governor", "[FEC ID]"
   )
 
+# need to be unique
+stopifnot(n_distinct(ccc_meta$alias) == nrow(ccc_meta))
+stopifnot(n_distinct(ccc_meta$name) == nrow(ccc_meta))
+
 # appply the name and variable
 lapply(ds, function(v){
   name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
 })
+
+# at the same time apply the variable labels to the dta as well
+dta_not_labelled <- FALSE 
+
+if (dta_not_labelled) {
+  ccc_factor <- readRDS("data/release/cumulative_2006_2016.Rds")
+  
+  for (v in colnames(ccc_factor)) {
+    attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+  }
+  
+  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
+}
 
 # apply weights ---
 weight(ds) <- ds$weight_cumulative
@@ -152,16 +165,24 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Administration", ds[ind_adm]),
   VariableGroup("Geography", ds[ind_geo]),
   VariableGroup("Demographics", ds[ind_dem]),
-  VariableGroup("Presidential Intent and Vote", ds[ind_pres]),
-  VariableGroup("Vote Intent (Other Offices)", ds[ind_int]),
-  VariableGroup("Vote Choice (Other Offices)", ds[ind_vtd]),
+  VariableGroup("Presidential Preference and Vote", ds[ind_pres]),
+  VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_int, ind_vtd)]),
+  VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
   VariableGroup("Approval", ds[ind_app]),
-  VariableGroup("Validated Vote", ds[ind_vv]),
-  VariableGroup("Candidate Names and Identifers", ds[ind_candID]),
-  VariableGroup("Current Representative Names and Identifers", ds[ind_incID]),
+  VariableGroup("Politician Names and Identifiers", ds[c(ind_candID, ind_incID)]),
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
 )
+ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrder(
+  VariableGroup("Preference", ds[ind_int]),
+  VariableGroup("Vote Choice", ds[ind_vtd])
+)
+
+ordering(ds)[["Politician Names and Identifiers"]]  <- VariableOrder(
+  VariableGroup("Candidates", ds[ind_candID]),
+  VariableGroup("Current Representatives", ds[ind_incID])
+)
+
 
 ind_nuisance_num <- grep("_num$", vn)
 hideVariables(ds, ind_nuisance_num)

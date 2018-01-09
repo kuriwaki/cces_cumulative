@@ -43,13 +43,17 @@ std_voteopts <- function(vec,
          `$Housecand1name ($Housecand1party)` = chr1,
          `$Sencand1name ($Sencand1party)` = chr1,
          `$Govcand1name ($Govcand1party)` = chr1,
+         `$Govcand1name (Democrat)` = chr1,
          `Democratic Candidate` = chr1,
          `$Housecand2name ($Housecand2party)` = chr2,
          `$Sencand2name ($Sencand2party)` = chr2,
-         `$Govcand2sname ($Govcand2party)` = chr2,
+         `$Govcand2name ($Govcand2party)` = chr2,
+         `$Govcand2name (Republican)` = chr2,
          `Republican Candidate` = chr2)
   
 }
+
+
 
 #' combined char to number
 #' change consistent vars in to a labelled factor
@@ -158,12 +162,15 @@ ccc_factor <- ccc_cand %>%
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
   mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
+  mutate_at(vars(matches("icpsr")), as.character) %>%
+  mutate_at(vars(matches("fec")), as.character) %>%
   mutate_at(vars(matches("_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state$|st$)")), as.factor)
 
 
+# write sav first for crunch. save RDS and write to dta after applying variable labels in 05
 saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
+saveRDS(ccc_factor, "data/release/cumulative_2006_2016.Rds")
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
-write_sav(sample_frac(ccc_factor, 0.5),  "data/release/cumulative_2006_2016_sample.sav")
-write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
+newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common")
