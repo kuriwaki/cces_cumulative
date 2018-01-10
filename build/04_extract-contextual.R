@@ -3,6 +3,7 @@ library(data.table)
 library(haven)
 library(glue)
 library(stringdist)
+library(foreach)
 
 #' take a caseID - candidate key and melt to a df keyed on caseID _and_ candidate
 #' 
@@ -136,6 +137,7 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
                          cdata = cells, 
                          rdata = r_exact_unmatched, 
                          fdata = f_consider, 
+                         matchvar = matchvars,
                          thresh = stringdist_thresh)
     
   }
@@ -157,15 +159,32 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
 #' @param cdata the cell data that is keyed to district-party
 #' @param rdata responden-side data
 #' @param fdata fec level data
+#' @param matchvar vector to key on in final match
 #' @param thresh the string distance threshold
 #' 
 #' @return a dataset with cdata$n[i] rows with FEC data merged if applicable
 #' 
-stringdist_left_join <- function(i, type0, cdata, rdata, fdata, thresh) {
+stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh) {
   
-  r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
-  f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == cdata$party[i])
+  pty_i <- cdata$party[i]
   
+  # If not coded party, expand search in FEC to all others
+  if (!is.na(pty_i) & !pty_i %in% c("D", "R", "L", "I")) {
+    r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
+    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == "NA/Other")
+  } 
+  
+  # If no party, use the appropriate rows (b/c R wont accept party == NA). And consider everyone in district
+  if (is.na(pty_i)) {
+    r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], is.na(party))
+    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i])
+  }
+  
+  # Usually there's no trouble
+  if (!is.na(pty_i) & pty_i %in% c("D", "R", "L", "I")) {
+    r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
+    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
+  }
   
   # further subset by district
   if (type0 == "federal:house") {
@@ -175,7 +194,7 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, thresh) {
   stopifnot(cdata$n[i] == nrow(r_consider_i))
   if (nrow(f_consider_i) == 0) return(r_consider_i) # if there is no one FEC to consider, return
   
-  # get to the candidate level, not the respondennt level
+  # get to the candidate level, not the respondent level
   r_i_uniq <- distinct(r_consider_i, year, st, cdid_up, party, namelast, namefirstm)
   set.seed(02138)
   f_i_shuffled <- sample_frac(f_consider_i)
@@ -193,20 +212,38 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, thresh) {
     if (!is_match) r_result <- slice(r_i_uniq, i_r) # if we call it a no matchreturn without anything
     if (is_match) {
       r_result <- bind_cols(slice(r_i_uniq, i_r),
-                            slice(f_i_shuffled, sort_dists[1]) %>% select(-year, -st, -cdid_up, -party, -namelast))
+                            slice(f_i_shuffled, sort_dists[1]) %>% 
+                              select(-year, -st, -cdid_up, -party, -namelast))
     }
     r_result
   }
   
-  left_join(r_consider_i, match_result, by = c(matchvars, "namelast", "namefirstm"))
+  left_join(r_consider_i, match_result, by = c("year", "st", "cdid_up", "party", "namelast", "namefirstm"))
 }
 
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
+#' @param tbl A dataset of respodents
 clean_out <- function(tbl, m = master) {
   tbl %>% 
     mutate_if(is.character, function(x) replace(x, x == "__NA__" | x == "", NA)) %>% # make NA if empty or "_NA_" 
     select(!!c(carry_vars, intersect(m$name, colnames(tbl)))) %>% 
     mutate_if(is.labelled, function(x) as.character(as_factor(x)))
+}
+
+
+#' Standardize party label especially collapse duplicates of common spellings.
+#' @param vec A string vector
+std_ptylabel <- function(vec) {
+  dplyr::recode(vec,
+                `Republican` = "R",
+                `Democratic` = "D", 
+                `R` = "R",                      
+                `D` = "D",
+                `Democrat` = "D",
+                `Libertarian` = "L",
+                `Independent` = "I",
+                `Green` = "G",
+                `Green Party` = "G")
 }
 
 # Variable Key ------
@@ -327,24 +364,11 @@ df <- df %>%
          )
 
 # standardize to D/R -----
-std_ptylabel <- function(vec) {
-  dplyr::recode(vec,
-         `Republican` = "R",
-           `Democratic` = "D", 
-           `R` = "R",                      
-           `D` = "D",
-           `Democrat` = "D",
-           `Libertarian` = "L",
-           `Independent` = "I",
-           `Green` = "G",
-           `Green Party` = "G")
-}
-
 df <- df %>%
-  mutate_at(vars(matches("_pty")), )
+  mutate_at(vars(matches("_pty")), std_ptylabel)
 
 
-# long cand-party df -----
+# wide to long cand-party df -----
 hc_key <- melt_cand(df, c("hou_can", "hou_pty"), carry_vars)
 sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
