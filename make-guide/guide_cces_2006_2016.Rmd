@@ -1,0 +1,122 @@
+---
+title: "Codebook"
+author: "Shiro Kuriwaki"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, comment = "")
+```
+
+```{r, include = FALSE}
+library(crunch)
+library(glue)
+library(tidyverse)
+library(haven)
+library(rprojroot)
+```
+```{r include = FALSE}
+# login()
+# ds <- loadDataset("CCES Cumulative Common Dev")
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
+```
+
+```{r}
+vn <- colnames(df)
+```
+
+```{r}
+print_tab <- function(var, do_sort = FALSE, tbl = df) {
+  var <- enquo(var)
+  varchar <- quo_name(var)
+  
+  tal <- tbl %>% 
+    mutate_if(is.labelled, as_factor) %>% 
+    group_by(!!var) %>% 
+    tally(sort = do_sort)
+  
+  dframe <- as.data.frame(tal)
+  
+  cat(varchar, "\n")
+  print(dframe, row.names = FALSE)
+  cat("\n\n")
+}
+```
+
+
+# Administration
+
+
+## Year
+
+```{r}
+print_tab(year)
+```
+
+# Approval
+
+### President
+```{r}
+print_tab(approval_pres)
+```
+
+
+### Governor
+
+```{r}
+print_tab(approval_gov)
+```
+
+### House Representative
+
+```{r}
+print_tab(approval_rep)
+```
+
+# Demographics
+```{r}
+print_tab(pid3)
+```
+
+```{r}
+print_tab(pid7)
+```
+
+# Voting
+
+```{r}
+print_tab(intent_rep)
+```
+
+
+# Validated Vote
+```{r}
+print_tab(vv_regstatus)
+```
+
+
+
+# Text
+
+## Incumbents
+```{r}
+glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*inc")))
+```
+
+## Incumbent Identifiers
+```{r}
+glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*(icpsr)"), gov_fec))
+```
+
+
+## Chosen
+```{r}
+glimpse(select(df, matches("(intent|voted)_.*chosen")))
+```
+
+
+## Candidate Identifiers
+```{r}
+glimpse(select(df, matches("(intent|voted)_.*fec")))
+```
