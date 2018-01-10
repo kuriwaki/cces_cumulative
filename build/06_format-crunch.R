@@ -105,7 +105,7 @@ lapply(ds, function(v){
 dta_not_labelled <- FALSE 
 
 if (dta_not_labelled) {
-  ccc_factor <- readRDS("data/release/cumulative_2006_2016_preStata.Rds")
+  ccc_factor <- readRDS("data/output/cumulative_2006_2016_preStata.Rds")
   
   for (v in colnames(ccc_factor)) {
     attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]

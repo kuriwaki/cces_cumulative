@@ -165,7 +165,7 @@ ccc_factor <- ccc_cand %>%
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
 saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
-saveRDS(ccc_factor, "data/release/cumulative_2006_2016_preStata.Rds")
+saveRDS(ccc_factor, "data/output/cumulative_2006_2016_preStata.Rds")
 
 
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
