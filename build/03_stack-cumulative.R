@@ -241,7 +241,7 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
 #'  different columns, unless labelled = TRUE
 #' @param makeLabelled to bind the two _char and _num columns to a label. ONLY
 #'   do this if the numbers and labels match 1:1 across all years
-findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE) {
+findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE, newReorder = TRUE) {
   var <- enquo(var)
   var_name <- quo_name(var)
   chr_var_name <- paste0(var_name, "_char")
@@ -292,7 +292,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
       mutate(!! var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
 
-  # coerce to labelled?
+  # coerce to labelled? do this if same across year
   if (type == "factor" & makeLabelled) {
 
     # change consistent vars in to a labelled factor
@@ -303,11 +303,26 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
 
     nvec <- key_arr %>% select(matches("num")) %>% pull()
     names(nvec) <- key_arr %>% select(matches("char")) %>% pull()
-
-
     list_yr <- list_yr %>%
       mutate(!! var_name := labelled(as.integer(.data[[num_var_name]]), sort(nvec))) %>%
       select(year, caseID, !! var_name)
+  }
+  
+  # if not labelled, consider reordering rather than keeping them separate
+  if (type == "factor" & newReorder & !makeLabelled) {
+    
+    # order x by y
+    median2 <- function(x, y) {
+      median(x[order(y, na.last = FALSE)])
+    }
+    
+    list_yr <- list_yr %>% 
+      mutate(!!var_name := fct_reorder2(.data[[chr_var_name]],
+                                        x = .data[[num_var_name]],
+                                        y = .data[["year"]], 
+                                        fun = median2,
+                                        .desc = FALSE)) %>% 
+      select(year, caseID, !!var_name)
   }
 
   list_yr
@@ -322,7 +337,10 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
     ) %>%
     mutate( # change al lvalues to title case
       !! chr_var_name := str_to_title(.data[[chr_var_name]]),
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Never Heard", "Never Heard Of This Person")) %>% 
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Never Heard", "Never Heard Of This Person"),
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "John Mccain", "John McCain"),
+      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Cynthia Mckinney", "Cynthia McKinney")
+      ) %>% 
     mutate(
       !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "No Hs", "No HS")
       )
@@ -475,24 +493,24 @@ zipcode    <- findStack(ccs, zipcode, "character")
 countyFIPS <- findStack(ccs, countyFIPS, "numeric")
 cdid       <- findStack(ccs, cdid, "numeric")
 
-# approval and voting
+# voting -- don't reorder because we'll need it to match candidates
 i_pres08 <- findStack(ccs, intent_pres_08)
 i_pres12 <- findStack(ccs, intent_pres_12)
 i_pres16 <- findStack(ccs, intent_pres_16)
 
-
-i_rep <- findStack(ccs, intent_rep)
-i_sen <- findStack(ccs, intent_sen)
-i_gov <- findStack(ccs, intent_gov)
+i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
+i_sen <- findStack(ccs, intent_sen, newReorder = FALSE)
+i_gov <- findStack(ccs, intent_gov, newReorder = FALSE)
 
 v_pres08 <- findStack(ccs, voted_pres_08)
 v_pres12 <- findStack(ccs, voted_pres_12)
 v_pres16 <- findStack(ccs, voted_pres_16)
 
-v_rep <- findStack(ccs, voted_rep)
-v_sen <- findStack(ccs, voted_sen)
-v_gov <- findStack(ccs, voted_gov)
+v_rep <- findStack(ccs, voted_rep, newReorder = FALSE)
+v_sen <- findStack(ccs, voted_sen, newReorder = FALSE)
+v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
 
+# approval -- reorder and factor
 apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
 apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels ax years
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
@@ -503,11 +521,11 @@ apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE)
 econ <- findStack(ccs, economy_retro, makeLabelled = TRUE)
 
 # validated vote
-vv_regstatus   <- findStack(ccs, vv_regstatus)
-vv_party_gen   <- findStack(ccs, vv_party_gen)
-vv_party_prm   <- findStack(ccs, vv_party_prm)
-vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm)
-vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm)
+vv_regstatus   <- findStack(ccs, vv_regstatus, newReorder = FALSE) # will reorder by frequency later
+vv_party_gen   <- findStack(ccs, vv_party_gen, newReorder = FALSE)
+vv_party_prm   <- findStack(ccs, vv_party_prm, newReorder = FALSE)
+vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm, newReorder = FALSE)
+vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm, newReorder = FALSE)
 
 
 
@@ -537,10 +555,10 @@ ccc <- geo %>%
   left_join(educ) %>%
   left_join(econ) %>%
   left_join(apvpres) %>%
-  left_join(apvgov) %>%
   left_join(apvrep) %>%
   left_join(apvsen1) %>%
   left_join(apvsen2) %>%
+  left_join(apvgov) %>%
   left_join(i_pres08) %>%
   left_join(i_pres12) %>%
   left_join(i_pres16) %>%
@@ -555,15 +573,6 @@ ccc <- geo %>%
 
 
 stopifnot(nrow(ccc) == nrow(pid3))
-
-# Order
-ccc <- ccc %>%
-  select(
-    year:approval_gov,
-    matches("_char$"),
-    matches("vv_"),
-    matches("_num$")
-  )
 
 
 

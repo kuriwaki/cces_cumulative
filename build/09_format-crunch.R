@@ -7,7 +7,7 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("CCES Cumulative Common")
+ds <- loadDataset("CCES Cumulative Common Dev")
 
 # description for dataset
 description(ds) <- "This is a working version -- formatting incomplete and may contain errors. Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each years common content and may contain minor errors. To ask a question or report a bug, file an issue at https://github.com/kuriwaki/cces_cumulative, where the build code can be seen."
@@ -38,9 +38,9 @@ ccc_meta <- tribble(
   "pid3",                "categorical", "Partisan Identity", "Generally speaking, do you think of yourself as a ...?",
   "pid7",                "categorical", "Partisan Identity (7 point)", "[based on branching from Partisan Identity question]",
   "approval_pres",       "categorical", "President Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent President]",
-  "approval_rep_char",   "categorical", "House Representative Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Representative's Name and Party]",
-  "approval_sen1_char",  "categorical", "Senator 1 Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Senator's Name and Party]",
-  "approval_sen2_char",  "categorical", "Senator 2 Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Senator's Name and Party]",
+  "approval_rep",   "categorical", "House Representative Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Representative's Name and Party]",
+  "approval_sen1",  "categorical", "Senator 1 Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Senator's Name and Party]",
+  "approval_sen2",  "categorical", "Senator 2 Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Senator's Name and Party]",
   "approval_gov",        "categorical", "Governor Approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Governor's Name and Party]",
   "economy_retro",       "categorical", "Retrospective Economy", "OVER THE PAST YEAR the nation's economy has ...?",
   "vv_regstatus",        "categorical", "Validated Registration Status", "[Validation Results. Missing if validation was not conducted in the year. Categories are aggregated. Both Matched-not registered and unmatched are labelled as a no record.]",
@@ -48,12 +48,12 @@ ccc_meta <- tribble(
   "vv_party_prm",        "categorical", "Validated Registered Primary Party", "[Validation Results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_gvm",      "categorical", "Validated Turnout General Election", "[Validation Results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_pvm",      "categorical", "Validated Turnout Primary Election (Congressional)", "[Validation Results]",
-  "voted_pres_16_char",  "categorical", "2016 President vote choice", "For whom did you vote for President of the United States? [post, with early voters in pre coalesced]",
-  "intent_pres_16_char", "categorical", "2016 President preference",  "Which candidate did you prefer for President of the United States?",
-  "voted_pres_12_char",  "categorical", "2012 President vote choice", "[2012 wording] For whom did you vote for President of the United States? [2016 wording]: In 2012, who did you vote for in the election for President? [see appendix for wording in all years]",
-  "intent_pres_12_char", "categorical", "2012 President preference", "In the race for President of the United States, who do you prefer?",
-  "voted_pres_08_char",  "categorical", "2008 President vote choice", "[2008 wording] For which candidate for President of the United States did you vote?  [see appendix for wording in all years]",
-  "intent_pres_08_char", "categorical", "2008 President preference", "For which candidate for President of the United States would you vote?",
+  "voted_pres_16",  "categorical", "2016 President vote choice", "For whom did you vote for President of the United States? [post, with early voters in pre coalesced]",
+  "intent_pres_16", "categorical", "2016 President preference",  "Which candidate did you prefer for President of the United States?",
+  "voted_pres_12",  "categorical", "2012 President vote choice", "[2012 wording] For whom did you vote for President of the United States? [2016 wording]: In 2012, who did you vote for in the election for President? [see appendix for wording in all years]",
+  "intent_pres_12", "categorical", "2012 President preference", "In the race for President of the United States, who do you prefer?",
+  "voted_pres_08",  "categorical", "2008 President vote choice", "[2008 wording] For which candidate for President of the United States did you vote?  [see appendix for wording in all years]",
+  "intent_pres_08", "categorical", "2008 President preference", "For which candidate for President of the United States would you vote?",
   "approval_rep_num",    "categorical", "approval_rep_num", "[Response values (may be specific to year)]",
   "approval_sen1_num",   "categorical", "approval_sen1_num", "[Response values (may be specific to year)]",
   "approval_sen2_num",   "categorical", "approval_sen2_num", "[Response values (may be specific to year)]",
@@ -139,7 +139,7 @@ ind_dem <- grep("(gender|birthyr|race|educ|pid|age)", vn)
 
 ind_app <- grep("(retro|approval_.*)", vn)
 
-ind_pres <- setdiff(grep("pres.*char$", vn), ind_app)
+ind_pres <- grep("(intent|voted)_pres", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 

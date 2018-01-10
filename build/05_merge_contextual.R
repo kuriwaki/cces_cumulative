@@ -3,6 +3,7 @@ library(haven)
 library(glue)
 library(crunch)
 
+writeToCrunch <- FALSE # to change the crunch dataset
 
 # apppend the candidatename-candidate party variables to the vote choice qs
 
@@ -38,45 +39,51 @@ num_cand_match <- function(numdf, canddf) {
 #' @return A recoded vector
 std_voteopts <- function(vec, 
                          chr1 = "[Democrat / Candidate 1]",
-                         chr2 = "[Republican / Candidate 2]") {
+                         chr2 = "[Republican / Candidate 2]",
+                         chr3 = "[Other / Candidate 3]") {
   recode(vec,
          `$Housecand1name ($Housecand1party)` = chr1,
          `$Sencand1name ($Sencand1party)` = chr1,
          `$Govcand1name ($Govcand1party)` = chr1,
          `$Govcand1name (Democrat)` = chr1,
+         `$Govcand1name (Democratic)` = chr1,
          `Democratic Candidate` = chr1,
          `$Housecand2name ($Housecand2party)` = chr2,
          `$Sencand2name ($Sencand2party)` = chr2,
          `$Govcand2name ($Govcand2party)` = chr2,
          `$Govcand2name (Republican)` = chr2,
-         `Republican Candidate` = chr2)
-  
+         `Republican Candidate` = chr2,
+         `$Housecand3name ($Housecand4party)` = chr3,
+         `$Sencand3name ($Sencand4party)` = chr3,
+         `$Govcand3name ($Govcand4party)` = chr3,
+         `$Govcand3name ($Govcan3party)` = chr3,
+         `Other, Third-Party Candidate` = chr3) %>% 
+    gsub("cand", "Cand", .) %>%  # capitalize
+    gsub("name", "Name", .) %>%
+    gsub("party", "Party", .)
 }
 
 
 
 #' combined char to number
-#' change consistent vars in to a labelled factor
+#' change character by re-defining label ordering ordered by the original number and breaking ties with year
 #' @param tbl A table with columns _char and _num for the labels
 bind_label <- function(tbl) {
-  
   charname <- grep("_char$", colnames(tbl), value = TRUE)
   numname <- grep("(intent|voted|vv).*_num$", colnames(tbl), value = TRUE)
-  
   varname <- gsub("_char", "", charname)
   
-  # make numbered vector
-  key_arr <- tbl %>% 
-    select(!!c(charname, numname)) %>%
-    distinct() %>%
-    filter(!is.na(.data[[numname]]))
-  
-  nvec <- key_arr %>% select(!!numname) %>% pull()
-  names(nvec) <- key_arr %>% select(!!charname) %>% pull()
-  
+  # order x by y
+  median2 <- function(x, y) {
+    median(x[order(y, na.last = FALSE)])
+  }
   
   tbl  %>%
-    mutate(!! varname := labelled(as.integer(.data[[numname]]), sort(nvec))) %>%
+    mutate(!! varname := fct_reorder2(.data[[charname]], 
+                                      x = .data[[numname]], 
+                                      y = .data[["year"]], 
+                                      fun = median2,
+                                      .desc = FALSE)) %>%
     select(year, caseID, !! varname)
 }
 
@@ -100,7 +107,6 @@ load("data/output/01_responses/vote_responses.RData")
 load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
-rmaster <- readRDS("data/output/01_responses/repsondent_contextual.Rds")
 
 
 # add on name and fec, standardized option labels -----
@@ -144,7 +150,8 @@ ccc_cand <- ccc %>%
   
 
 # Format for output  --------
-# make char variables a factor so crunch knows it's a categorical?
+# make char variables a factor so crunch knows it's a categorical
+# for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
 ccc_factor <- ccc_cand %>%
   mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate(zipcode = as.character(zipcode)) %>%
@@ -152,9 +159,9 @@ ccc_factor <- ccc_cand %>%
   mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
   mutate_at(vars(matches("icpsr")), as.character) %>%
   mutate_at(vars(matches("fec")), as.character) %>%
-  mutate_at(vars(matches("^(approval|intent|voted).*_char")), as.factor) %>%
   mutate_at(vars(matches("^CD$")), as.factor) %>%
   mutate_at(vars(matches("(state$|st$)")), as.factor)
+
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
@@ -163,6 +170,10 @@ saveRDS(ccc_factor, "data/release/cumulative_2006_2016_preStata.Rds")
 
 
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
-login()
-newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common")
-logout()
+
+if (writeToCrunch) {
+  login()
+  newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common Dev")
+  logout()  
+}
+
