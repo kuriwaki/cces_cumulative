@@ -3,12 +3,15 @@ Codebook
 Shiro Kuriwaki
 2018-01-10
 
+<<<<<<< HEAD
 Administration
 ==============
 
 Year
 ----
 
+=======
+>>>>>>> 1b3b89ed015ee86d12da978157e14a3da72efef9
     year 
      year     n
      2006 36421
@@ -26,6 +29,7 @@ Year
 Approval
 ========
 
+<<<<<<< HEAD
 ### President
 
     approval_pres 
@@ -41,6 +45,8 @@ Approval
 
 ### Governor
 
+=======
+>>>>>>> 1b3b89ed015ee86d12da978157e14a3da72efef9
     approval_gov 
                        approval_gov      n
                    Strongly Approve  54544
@@ -53,8 +59,11 @@ Approval
                           Not Asked    230
                                <NA>   1597
 
+<<<<<<< HEAD
 ### House Representative
 
+=======
+>>>>>>> 1b3b89ed015ee86d12da978157e14a3da72efef9
     approval_rep 
                        approval_rep     n
                    Strongly Approve 55069
@@ -131,6 +140,7 @@ Validated Vote
                       Inactive   2983
           Multiple Appearances   1126
                           <NA> 111021
+<<<<<<< HEAD
 
 Text
 ====
@@ -178,3 +188,5 @@ Candidate Identifiers
     $ voted_rep_fec  <chr> "H6NC10141", "H6OH03142", "H0NJ01066", "H8IL090...
     $ voted_sen_fec  <chr> NA, "S6OH00163", "S6NJ00289", NA, "S0NY00188", ...
     $ voted_gov_fec  <chr> NA, "OH19691", NA, "IL7", "NY19490", NA, "MN472...
+=======
+>>>>>>> 1b3b89ed015ee86d12da978157e14a3da72efef9
