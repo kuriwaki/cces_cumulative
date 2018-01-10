@@ -144,25 +144,6 @@ ccp <- std_dv(
   guess_year = FALSE
 )
 
-
-pid10_raw <- read_dta("data/source/cces/cc10_pid.dta")
-pid3_cc10 <- pid10_raw %>%
-  mutate(
-    pid3 = CC421a,
-    caseID = V100
-  ) %>%
-  mutate(
-    year = 2010,
-    pid3_char = as.character(as_factor(pid3)),
-    pid3_num = as.numeric(pid3)
-  ) %>%
-  mutate(
-    pid3_char = replace(pid3_char, pid3_char == "NaN", NA),
-    pid3_num = replace(pid3_num, is.nan(pid3_num), NA)
-  ) %>%
-  select(year, caseID, pid3_char, pid3_num)
-
-
 # individual files versions from 2008, 2010, and 2012
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
 cc07 <- std_dv("data/source/cces/2007_cc.dta")
@@ -183,4 +164,3 @@ save(
   file = "data/output/01_responses/common_all.RData"
 )
 
-saveRDS(pid3_cc10, "data/output/01_responses/pid3_cc10.Rds")
