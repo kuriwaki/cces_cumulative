@@ -53,10 +53,9 @@ std_voteopts <- function(vec,
          `$Govcand2name ($Govcand2party)` = chr2,
          `$Govcand2name (Republican)` = chr2,
          `Republican Candidate` = chr2,
-         `$Housecand3name ($Housecand4party)` = chr3,
-         `$Sencand3name ($Sencand4party)` = chr3,
-         `$Govcand3name ($Govcand4party)` = chr3,
-         `$Govcand3name ($Govcan3party)` = chr3,
+         `$Housecand3name ($Housecand3party)` = chr3,
+         `$Sencand3name ($Sencand3party)` = chr3,
+         `$Govcand3name ($Govcand3party)` = chr3,
          `Other, Third-Party Candidate` = chr3) %>% 
     gsub("cand", "Cand", .) %>%  # capitalize
     gsub("name", "Name", .) %>%
