@@ -92,6 +92,7 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
 )
+
 ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrder(
   VariableGroup("Preference", ds[ind_int]),
   VariableGroup("Vote Choice", ds[ind_vtd])

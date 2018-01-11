@@ -313,7 +313,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     
     # order x by y
     median2 <- function(x, y) {
-      median(x[order(y, na.last = FALSE)])
+      median(x[order(y, na.last = FALSE)], na.rm = TRUE)
     }
     
     list_yr <- list_yr %>% 
@@ -337,14 +337,19 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
     ) %>%
     mutate( # change al lvalues to title case
       !! chr_var_name := str_to_title(.data[[chr_var_name]]),
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Never Heard", "Never Heard Of This Person"),
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "John Mccain", "John McCain"),
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "Cynthia Mckinney", "Cynthia McKinney")
-      ) %>% 
-    mutate(
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "No Hs", "No HS")
-      )
+      !! chr_var_name := value_changes(.data[[chr_var_name]]))
 }
+
+value_changes <- function(vec) {
+  dplyr::recode(vec,
+                `Never Heard Of This Person` = "Never Heard",
+                `No Hs` = "No HS",
+                `John Mccain` = "John McCain",
+                `John Mccain (Republican)` = "John McCain (Republican)",
+                `Cynthia Mckinney` = "Cynthia McKinney",
+                `Evan Mcmullin (Independent))` = "Evan McMullin (Independent)")
+}
+
 #' standardize validated vote values 
 std_vvv <- function (vec, varname, yrvec) {
   
@@ -388,7 +393,7 @@ std_vvv <- function (vec, varname, yrvec) {
   }
   
   
-  # regstatus
+  # regparty
   if (grepl("party", varname)) {
     dem <- "Democratic Party"
     gop <- "Republican Party"
@@ -428,6 +433,19 @@ std_vvv <- function (vec, varname, yrvec) {
 
 
 
+#' Quick fix for 2012 voted, where labels are too mixed to fix automatically
+clps_pres12 <- function(vec) {
+  fct_collapse(vec, 
+               `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote For Barack Obama"),
+               `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote For Mitt Romney"),
+               `Other / Someone Else` = c("Someone Else", "Vote For Someone Else", "Other", "3"),
+               `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote For This Office"),
+               `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall"),
+               `Not Asked (2016)` = c("Not Asked")
+  )
+}
+
+
 # READ ------
 load("data/output/01_responses/common_all.RData")
 pid3_cc10 <- readRDS("data/output/01_responses/pid3_cc10.Rds")
@@ -458,14 +476,14 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 # admin
 wgt <- findStack(ccs, weight, "numeric")
 
-time <- findStack(ccs, starttime, type = "datetime", makeLabelled = FALSE) %>%
+time <- findStack(ccs, starttime, type = "datetime") %>%
   filter(year != 2006, year != 2009) %>%
   bind_rows(readRDS("data/source/cces/cc06_datetime.Rds")) %>%
   bind_rows(readRDS("data/source/cces/cc09_datetime.Rds"))
 
 
 # demos
-pid3 <- findStack(ccs, pid3) %>%
+pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(pid3_cc10) %>%
   mutate(pid3 = labelled(as.integer(pid3_num),
@@ -498,17 +516,24 @@ i_pres08 <- findStack(ccs, intent_pres_08)
 i_pres12 <- findStack(ccs, intent_pres_12)
 i_pres16 <- findStack(ccs, intent_pres_16)
 
-i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
-i_sen <- findStack(ccs, intent_sen, newReorder = FALSE)
-i_gov <- findStack(ccs, intent_gov, newReorder = FALSE)
 
 v_pres08 <- findStack(ccs, voted_pres_08)
 v_pres12 <- findStack(ccs, voted_pres_12)
 v_pres16 <- findStack(ccs, voted_pres_16)
 
+# quick fixes
+v_pres08 <- mutate(v_pres08, voted_pres_08 = replace(voted_pres_08, year < 2008, NA))
+v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
+v_pres16 <- mutate(v_pres16, voted_pres_16 = replace(voted_pres_16, voted_pres_16 == "9", NA))
+
+# House, Sen, Gov
+i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
+i_sen <- findStack(ccs, intent_sen, newReorder = FALSE)
+i_gov <- findStack(ccs, intent_gov, newReorder = FALSE)
 v_rep <- findStack(ccs, voted_rep, newReorder = FALSE)
 v_sen <- findStack(ccs, voted_sen, newReorder = FALSE)
 v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
+
 
 # approval -- reorder and factor
 apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
