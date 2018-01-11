@@ -236,7 +236,7 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
 #' 
 #' @param dflist a list of cces datasets. column names need to be standardized.
 #' @param var a NSE variable to find and stack
-#' @param type a string, "factor", "numeric", or "dattetime". If numeric or datetime
+#' @param type a string, "factor", "numeric", "integer", or "dattetime". If numeric or datetime
 #'  that type is returned. if factor the label and values are returned separately as
 #'  different columns, unless labelled = TRUE
 #' @param makeLabelled to bind the two _char and _num columns to a label. ONLY
@@ -279,6 +279,11 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     if (type == "numeric") {
       list_yr <- mutate(list_yr, !! var_name := as.numeric(.data[[var_name]]))
     }
+    
+    if (type == "integer") {
+      list_yr <- mutate(list_yr, !! var_name := as.integer(.data[[var_name]]))
+    }
+    
 
     if (type == "character") {
       list_yr <- mutate(list_yr, !! var_name := as.character(as_factor(!! var)))
@@ -502,14 +507,17 @@ pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
 gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
 race <- findStack(ccs, race, makeLabelled = TRUE)
-bryr <- findStack(ccs, birthyr, "numeric")
-age <- findStack(ccs, age, "numeric")
+bryr <- findStack(ccs, birthyr, "integer")
+age <- findStack(ccs, age, "integer")
 
 # geography
 state      <- findStack(ccs, state, "character")
 zipcode    <- findStack(ccs, zipcode, "character")
 countyFIPS <- findStack(ccs, countyFIPS, "numeric")
-cdid       <- findStack(ccs, cdid, "numeric")
+cdid       <- findStack(ccs, cdid, "integer")
+cdid_up    <- findStack(ccs, cdid_up, "integer")
+cong       <- findStack(ccs, cong, "integer")
+cong_up    <- findStack(ccs, cong_up, "integer")
 
 # voting -- don't reorder because we'll need it to match candidates
 i_pres08 <- findStack(ccs, intent_pres_08)
@@ -557,10 +565,12 @@ vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm, newReorder = FALSE)
 
 # format state and CD, then zipcode and county ----
 stcd <- left_join(state, cdid) %>%
+  left_join(cdid_up) %>%
+  left_join(cong) %>%
+  left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(cdid = as.integer(cdid),
-         CD = glue("{st}-{cdid}")) %>%
-  select(year, caseID, state, st, cdid, CD)
+  mutate(CD = glue("{st}-{cdid}")) %>%
+  select(year, caseID, state, st, CD, cdid, cdid_up, cong, cong_up)
 
 geo <- stcd %>%
   left_join(zipcode) %>%

@@ -40,14 +40,14 @@ match_MC <- function(tbl, key, var, carry_vars) {
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
   if (var %in% c("sen1", "sen2")) mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
-  if (var == "hou") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
+  if (var == "rep") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
   
   key_uniq <- semi_join(key, filter(mc_counts, n == 1))
   key_notu <- semi_join(key, filter(mc_counts, n != 1))
   
   # vars to match on   
-  if (var %in% c("sen1", "sen2")) match_vars <- c("cong_inc" = "congress", "st")
-  if (var == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist")
+  if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st")
+  if (var == "rep") match_vars <- c("cong" = "congress", "st", "cdid" = "dist")
   
   # match on district
   uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
@@ -60,8 +60,8 @@ match_MC <- function(tbl, key, var, carry_vars) {
            namelast = toupper(namelast))
   
   # vars to match on round2
-  if (var %in% c("sen1", "sen2")) match_vars <- c("cong_inc" = "congress", "st", "namelast")
-  if (var == "hou") match_vars <- c("cong_inc" = "congress", "st", "cdid" = "dist", "namelast")
+  if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st", "namelast")
+  if (var == "rep") match_vars <- c("cong" = "congress", "st", "cdid" = "dist", "namelast")
   
   # coerce key unique to lastname (check FEC to dedupe)
   key_notu_dedup <- distinct(key_notu, congress, st, cdid, namelast, .keep_all = TRUE)
@@ -72,12 +72,30 @@ match_MC <- function(tbl, key, var, carry_vars) {
   # check match rows
   stopifnot(nrow(persn_unmatch2) + nrow(uniq_matched2) + nrow(uniq_matched1) == nrow(tbl))
   
+  
+  namevar <- glue("{var}_inc")
+  ptyvar <- glue("{var}_ipt")
+  
+  
   bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
+    mutate(!!paste0(var, "_shown") := concatenate_shown(namevec = .data[[namevar]], partyvec = .data[[ptyvar]])) %>%
     arrange(year, caseID) %>% 
     select(!!carry_vars,
-           !!paste0(var, "_inc"),
-           icpsr, fec)
+           matches("_shown"),
+           icpsr, 
+           fec)
 }
+
+#' Concatenate name and party to a formatted label.
+#' if partyvec is missing, don't use parentheses
+concatenate_shown <- function(namevec, partyvec) {
+  str_c(namevec, 
+        ifelse(!is.na(partyvec), " (", ""),
+        ifelse(!is.na(partyvec), partyvec, ""),
+        ifelse(!is.na(partyvec), ")", ""),
+        sep = "")
+}
+
 
 #' match cces district + name + party with FEC candidates
 #' @param res a long dataset with a CCES identifiers + name and party. name should be all caps and have arguments namelast, namemf
@@ -223,10 +241,10 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh
 
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
 #' @param tbl A dataset of respodents
-clean_out <- function(tbl, m = master) {
+clean_out <- function(tbl, cvars = carry_vars, m = master) {
   tbl %>% 
     mutate_if(is.character, function(x) replace(x, x == "__NA__" | x == "", NA)) %>% # make NA if empty or "_NA_" 
-    select(!!c(carry_vars, intersect(m$name, colnames(tbl)))) %>% 
+    select(!!c(cvars, intersect(m$name, colnames(tbl)))) %>% # the carry_vars specified and any vars in master
     mutate_if(is.labelled, function(x) as.character(as_factor(x)))
 }
 
@@ -248,39 +266,6 @@ std_ptylabel <- function(vec) {
 
 # Variable Key ------
 
-# each row is a variable for the starndardized data, each column is for the cces year0
-master <- 
-  tribble(~name,      ~`2006`, ~`2007`,     ~`2008`, ~`2009`, ~`2010`, ~`2011`, ~`2012`,            ~`2013`,            ~`2014`,            ~`2015`,            ~`2016`,
-          "hou_inc",  "v5013", "repname",    "V527",  "v627",  "V501",  "V501", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName",
-          "hou_ipt",  "v5014", NA,           "V535",  NA,      "V502",  NA,     "CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty",
-          "sen1_inc", "v5015", "sen1name",   "V551",  "v651",  "V513",  "V513", "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",
-          "sen1_ipt", "v5016", NA,           "V544",  NA,      "V514",  NA,     "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party",
-          "sen2_inc", "v5017", "sen2name",   "V552",  "v652",  "V521",  "V521", "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",
-          "sen2_ipt", "v5018", NA,           "V548",  NA,      "V522",  NA,     "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party",
-          "gov_inc",  "v5019", "govname",    "V508",  "v608",  "V529",  "V529", "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",
-          "gov_ipt",  "v5020", NA,           "V513",  NA,      "V530",  NA,     "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",
-          "hou_can1", "v5001", NA,           "V518",  NA,      "V533",  NA,     "HouseCand1Name",   NA,                 "HouseCand1Name",   NA,                 "HouseCand1Name",
-          "hou_pty1", "v5002", NA,            NA,     NA,      NA,      NA,     "HouseCand1Party",  NA,                 "HouseCand1Party",  NA,                 "HouseCand1Party",
-          "hou_can2", "v5003", NA,           "V519",  NA,      "V536",  NA,     "HouseCand2Name",   NA,                 "HouseCand2Name",   NA,                 "HouseCand2Name",
-          "hou_pty2", "v5004", NA,            NA,     NA,      NA,      NA,     "HouseCand2Party",  NA,                 "HouseCand2Party",  NA,                 "HouseCand2Party",
-          "hou_can3",  NA,     NA,           "V520",  NA,      "V539",  NA,     "HouseCand3Name",   NA,                 "HouseCand3Name",   NA,                 "HouseCand3Name",
-          "hou_pty3",  NA,     NA,           "V533",  NA,      "V542",  NA,     "HouseCand3Party",  NA,                 "HouseCand3Party",  NA,                 "HouseCand3Party",
-          "sen_can1", "v5005", NA,           "V553",  NA,      "V548",  NA,     "SenCand1Name",     NA,                 "SenCand1Name",     NA,                 "SenCand1Name",
-          "sen_pty1", "v5006", NA,            NA,     NA,      NA,      NA,     "SenCand1Party",    NA,                 "SenCand1Party",    NA,                 "SenCand1Party",
-          "sen_can2", "v5007", NA,           "V555",  NA,      "V551",  NA,     "SenCand2Name",     NA,                 "SenCand2Name",     NA,                 "SenCand2Name",
-          "sen_pty2", "v5008", NA,            NA,     NA,      NA,      NA,     "SenCand2Party",    NA,                 "SenCand2Party",    NA,                 "SenCand2Party",
-          "sen_can3", NA,      NA,           "V556",  NA,      "V554",  NA,     "SenCand3Name",     NA,                 "SenCand3Name",     NA,                 "SenCand3Name",
-          "sen_pty3", NA,      NA,           "V572",  NA,      "V556",  NA,     "SenCand3Party",    NA,                 "SenCand3Party",    NA,                 "SenCand3Party",
-          "gov_can1", "v5009", NA,           "V501",  NA,      "V564",  NA,     "GovCand1Name",     NA,                 "GovCand1Name",     NA,                 "GovCand1Name",
-          "gov_pty1", "v5010", NA,            NA,     NA,      NA,      NA,     "GovCand1Party",    NA,                 "GovCand1Party",    NA,                 "GovCand1Party",
-          "gov_can2", "v5011", NA,           "V502",  NA,      "V567",  NA,     "GovCand2Name",     NA,                 "GovCand2Name",     NA,                 "GovCand2Name",
-          "gov_pty2", "v5012", NA,            NA,     NA,      NA,      NA,     "GovCand2Party",    NA,                 "GovCand2Party",    NA,                 "GovCand2Party",
-          "gov_can3", NA,      NA,           "V503",  NA,      "V570",  NA,     NA,                 NA,                 NA,                 NA,                 "GovCand3Name",
-          "gov_pty3", NA,      NA,           "V512",  NA,      "V572",  NA,     NA,                 NA,                 NA,                 NA,                 "GovCand3Party"
-  )
-
-check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
-for (c in 2:ncol(master)) check_no_dupes(c)
 
 # 2008, 2009, 2010, 2011 takes D and R so no party column. but note there is an "other party candidate for 2008, 2010
 
@@ -306,6 +291,7 @@ cclist <- list(`2006` = cc06,
 
 
 # Rename variables ----
+master <- readRDS("data/output/02_questions/variable_std_key.Rds")
 
 for (yr in 2006:2016) {
   for (var in master$name) {
@@ -331,45 +317,35 @@ for (yr in 2006:2016) {
 
 
 # bind ------
-carry_vars <- c("year", "caseID", "state", "st", "cdid", "cdid_up")
-
-# bind
-dfcc <- map_dfr(cclist, clean_out)
+carry_vars <- c("year", "caseID", "state", "st", "cdid", "cdid_up", "cong", "cong_up")
+dfcc <- map_dfr(cclist, clean_out, carry_vars, master)
 
 # hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
 # gov_inc = CurrentGovName, # KY, LA, MS Gov
 
-# derive more vars -------
-df <- dfcc %>% 
-  mutate(cong_inc = as.integer(ceiling((year - 1788)/2)),
-         cong_up = cong_inc + 1L,
-         cdid = replace(cdid, cdid == 0, 1L), # At-LARGE is 1
-         cdid_up = replace(cdid_up, cdid_up == 0, 1L))
 
 
-# add D/R if in 2008, 2010 ----- 
+# standardize party label add D/R if in 2008, 2010 ----- 
 
 assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
   replace(vec, yrvec %in% c(2008:2011) & !is.na(candvec), pty)
 }
 
-df <- df %>% 
+df <- dfcc %>% 
   mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, gov_can1, "D"),
-         hou_pty1 = assign_08_10_pty(hou_pty1, year, hou_can1, "D"),
+         rep_pty1 = assign_08_10_pty(rep_pty1, year, rep_can1, "D"),
          sen_pty1 = assign_08_10_pty(sen_pty1, year, sen_can1, "D"),
          gov_pty2 = assign_08_10_pty(gov_pty2, year, gov_can2, "R"),
-         hou_pty2 = assign_08_10_pty(hou_pty2, year, hou_can2, "R"),
+         rep_pty2 = assign_08_10_pty(rep_pty2, year, rep_can2, "R"),
          sen_pty2 = assign_08_10_pty(sen_pty2, year, sen_can2, "R")
-         )
+         ) %>%
+  mutate_at(vars(matches("(_pty|_ipt)")), std_ptylabel)
 
-# standardize to D/R -----
-df <- df %>%
-  mutate_at(vars(matches("_pty")), std_ptylabel)
 
 
 # wide to long cand-party df -----
-hc_key <- melt_cand(df, c("hou_can", "hou_pty"), carry_vars)
+rc_key <- melt_cand(df, c("rep_can", "rep_pty"), carry_vars)
 sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
 
@@ -377,18 +353,18 @@ gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
   
   
 # create key of candidates -------
-fec_hou <- filter(feckey, office_sought == "federal:house", cycle %in% 2006:2016)
+fec_rep <- filter(feckey, office_sought == "federal:house", cycle %in% 2006:2016)
 fec_sen <- filter(feckey, office_sought == "federal:senate", cycle %in% 2006:2016)
 fec_gov <- filter(feckey, office_sought == "state:governor", cycle %in% 2006:2016)
 
 # do the match
-hc_fec_match <- match_fec(hc_key, fec_hou)
+rc_fec_match <- match_fec(rc_key, fec_rep)
 sc_fec_match <- match_fec(sc_key, fec_sen)
 gc_fec_match <- match_fec(gc_key, fec_gov)
   
 # create key of incumbent MC ----
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
-hi_mc_match  <- match_MC(df, inc_H, "hou", carry_vars)
+ri_mc_match  <- match_MC(df, inc_H, "rep", carry_vars)
 s1i_mc_match <- match_MC(df, inc_S, "sen1", carry_vars)
 s2i_mc_match <- match_MC(df, inc_S, "sen2", carry_vars)
 
@@ -407,27 +383,28 @@ dupes <-  fec_govincs %>%
   filter(nnames > 1)
 
 # check to see if IDs are the same, if so we can merge by last name
-left_join(dupes, fec_govincs) %>% select(st, namelast, fec, name) %>% 
-  filter(name != "SCHWARZENEGGER, ARNOLD (COMMITTEE 1)") %>%
-  print(n = 50)
-
 fec_govinc_key <- fec_govincs %>% 
   filter(name != "SCHWARZENEGGER, ARNOLD (COMMITTEE 1)") %>%
   distinct(st, namelast, fec)
 
 # text to keep
 r_govinc <- df %>%
-  select(!!carry_vars, gov_inc) %>% 
+  select(!!carry_vars, gov_inc, gov_ipt) %>% 
   mutate(namelast = str_to_upper(word(gov_inc, -1)))
 
-# merge
-gov_inc_match <- left_join(r_govinc, fec_govinc_key)
+# merge, then create "shown"
+gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>% 
+  mutate(gov_shown = concatenate_shown(gov_inc, gov_ipt)) %>%
+  arrange(year, caseID) %>% 
+  select(!!carry_vars,
+         matches("_shown"),
+         fec)
 stopifnot(nrow(gov_inc_match) == nrow(r_govinc))
 
 
 
 # Save ---------
-save(hi_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match, file = "data/output/01_responses/incumbents_key.RData")
-save(hc_fec_match, sc_fec_match, gc_fec_match, file = "data/output/01_responses/candidates_key.RData")
+save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match, file = "data/output/01_responses/incumbents_key.RData")
+save(rc_fec_match, sc_fec_match, gc_fec_match, file = "data/output/01_responses/candidates_key.RData")
 saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 

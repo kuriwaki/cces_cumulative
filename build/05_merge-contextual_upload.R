@@ -109,37 +109,37 @@ ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 
 
 # add on name and fec, standardized option labels -----
-i_hou_who <- num_cand_match(i_rep, hc_fec_match)
+i_rep_who <- num_cand_match(i_rep, rc_fec_match)
 i_sen_who <- num_cand_match(i_sen, sc_fec_match)
 i_gov_who <- num_cand_match(i_gov, gc_fec_match)
 
-v_hou_who <- num_cand_match(v_rep, hc_fec_match)
+v_rep_who <- num_cand_match(v_rep, rc_fec_match)
 v_sen_who <- num_cand_match(v_sen, sc_fec_match)
 v_gov_who <- num_cand_match(v_gov, gc_fec_match)
 
 # create a separate dataset for chosen vars ------ 
 ids <- c("year", "caseID")
 
-chosen_with_fec <-  slim(i_hou_who) %>% 
+chosen_with_fec <-  slim(i_rep_who) %>% 
   left_join(slim(i_sen_who), ids) %>% 
   left_join(slim(i_gov_who), ids) %>% 
-  left_join(slim(v_hou_who), ids) %>% 
+  left_join(slim(v_rep_who), ids) %>% 
   left_join(slim(v_sen_who), ids) %>% 
   left_join(slim(v_gov_who), ids)
 
 # now we can wrap up the abstract labels 
-abstract_lbl <- bind_label(i_hou_who) %>% 
+abstract_lbl <- bind_label(i_rep_who) %>% 
   left_join(bind_label(i_sen_who), ids) %>%
   left_join(bind_label(i_gov_who), ids) %>%
-  left_join(bind_label(v_hou_who), ids) %>%
+  left_join(bind_label(v_rep_who), ids) %>%
   left_join(bind_label(v_sen_who), ids) %>%
   left_join(bind_label(v_gov_who), ids)
 
 # nice dataset for incumbents ? ----
-incumbents_with_ID <-  slim(hi_mc_match, "_inc", "icpsr") %>% 
-  left_join(slim(s1i_mc_match, "_inc", "icpsr"), ids) %>% 
-  left_join(slim(s2i_mc_match, "_inc", "icpsr"), ids) %>% 
-  left_join(slim(gov_inc_match, "_inc"), ids)
+incumbents_with_ID <-  slim(ri_mc_match, "_shown", "icpsr") %>% 
+  left_join(slim(s1i_mc_match, "_shown", "icpsr"), ids) %>% 
+  left_join(slim(s2i_mc_match, "_shown", "icpsr"), ids) %>% 
+  left_join(slim(gov_inc_match, "_shown"), ids)
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
@@ -149,24 +149,23 @@ ccc_cand <- ccc %>%
   
 
 # Format for output  --------
-# make char variables a factor so crunch knows it's a categorical
 # for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
-ccc_factor <- ccc_cand %>%
-  mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
+ccc_df <- ccc_cand %>%
   mutate(zipcode = as.character(zipcode)) %>%
-  mutate(cdid = as.factor(cdid)) %>% # we don't want to take summary stats of this, so better a factor
-  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>%
+  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0"))
+
+
+# make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
+ccc_factor <- ccc_df %>% 
+  mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("icpsr")), as.character) %>%
   mutate_at(vars(matches("fec")), as.character) %>%
-  mutate_at(vars(matches("^CD$")), as.factor) %>%
-  mutate_at(vars(matches("(state$|st$)")), as.factor)
-
+  mutate_at(vars(matches("^CD$|cdid|cong|state$|st$")), as.factor)
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-saveRDS(ccc_cand, "data/release/cumulative_2006_2016.Rds")
-saveRDS(ccc_factor, "data/output/cumulative_2006_2016_preStata.Rds")
-
+saveRDS(ccc_df, "data/release/cumulative_2006_2016.Rds")
+saveRDS(ccc_factor, "data/output/cumulative_2006_2016_factor.Rds")
 
 write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
 

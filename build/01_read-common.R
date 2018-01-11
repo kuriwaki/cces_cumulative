@@ -26,8 +26,15 @@ std_dv <- function(path, guess_year = TRUE) {
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
   
+  # add congressional session
+  tbl_cong <- tbl %>% 
+    mutate(
+      cong = as.integer(ceiling((year - 1788)/2)),
+      cong_up = cong + 1L
+    )
+  
   # state
-  tbl_st <- std_state(tbl, guess_year, guessed_yr)
+  tbl_st <- std_state(tbl_cong, guess_year, guessed_yr)
   
   # CD number
   tbl_stc <- std_cdid(tbl_st, guess_year, guessed_yr)
@@ -36,7 +43,7 @@ std_dv <- function(path, guess_year = TRUE) {
   # then rename id
   tbl_stc %>%
     rename(caseID = !! orig_key) %>%
-    select(year, caseID, state, st, cdid, cdid_up, everything())
+    select(year, caseID, state, st, cdid, cdid_up, cong, cong_up, everything())
 }
 
 
@@ -129,11 +136,19 @@ std_cdid <- function(tbl, guess_year, guessed_yr) {
   if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
     tbl <- tbl %>%
       mutate(cdid = as.integer(zap_labels(congdist_pre)),
-             cdid_up = as.integer(zap_labels(congdist_redist_pre)))
+             cdid_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
+      mutate(cdid_up = replace(cdid_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
+      mutate(cdid_up = coalesce(cdid_up, cdid)) # for 2006:2011, append cdid for now
   }
-  tbl
+  # fix at large
+  fix_al <- tbl %>%
+       mutate(
+         cdid = replace(cdid, cdid == 0, 1L), # At-LARGE is 1
+         cdid_up = replace(cdid_up, cdid_up == 0, 1L)
+         )
+  
+  fix_al
 }
-
 
 
 
