@@ -1,8 +1,14 @@
 ---
-title: "Codebook"
+title: "CCES Cumulative Common Content (2006 - 2016) Codebook"
 author: "Shiro Kuriwaki"
-date: "`r Sys.Date()`"
-output: github_document
+thanks: "Department of Government, Harvard University. www.shirokuriwaki.com"
+date: "Codebook Last Updated: `r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    template: sk_helvet.sty
+    toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +25,9 @@ library(rprojroot)
 ```{r include = FALSE}
 # login()
 # ds <- loadDataset("CCES Cumulative Common Dev")
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/temp_sample.Rds"))
+# saveRDS(sample_frac(df, 0.01), "data/release/temp_sample.Rds")
+meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 ```
 
 ```{r}
@@ -38,9 +46,46 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
   
   dframe <- as.data.frame(tal)
   
-  cat(varchar, "\n")
   print(dframe, row.names = FALSE)
   cat("\n\n")
+}
+```
+
+```{r}
+print_numeric <- function(var, tbl = df) {
+  var <- enquo(var)
+  
+  summary(pull(df, !!var))
+}
+```
+
+
+```{r}
+in_years <- function(var, tbl = df) {
+  var <- enquo(var)
+  
+  yrs_vec <- tbl %>% 
+    filter(!is.na(!!var)) %>% 
+    distinct(year) %>% 
+    arrange(year) %>%
+    pull() 
+  
+  if (identical(yrs_vec, as.numeric(2006:2016))) return("All of 2006-2016")  
+  if (!identical(yrs_vec, as.numeric(2006:2016))) return(str_c(yrs_vec, collapse = ", "))
+}
+```
+
+```{r}
+descrip <- function(var, tbl = meta) {
+  varchar <- quo_name(enquo(var))
+  tbl$description[tbl$alias == varchar]
+}
+```
+
+```{r}
+nam <- function(var, tbl = meta) {
+  varchar <- quo_name(enquo(var))
+  glue("`{varchar}`: {tbl$name[tbl$alias == varchar]}")
 }
 ```
 
@@ -48,58 +93,395 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
 # Administration
 
 
-## Year
+### `r nam(year)`
+
+`r descrip(year)`
+
+* Years: `r in_years(year)`
 
 ```{r}
 print_tab(year)
 ```
 
-# Approval
+### `r nam(starttime)`
 
-### President
+`r descrip(starttime)`
+
+* Years: `r in_years(starttime)`
+
 ```{r}
-print_tab(approval_pres)
+print_numeric(starttime)
+```
+
+### `r nam(weight)`
+
+`r descrip(weight)`
+
+* Years: `r in_years(weight)`
+
+```{r}
+print_numeric(weight)
+```
+
+### `r nam(weight_cumulative)`
+
+`r descrip(weight_cumulative)`
+
+* Years: `r in_years(weight_cumulative)`
+
+```{r}
+print_numeric(weight_cumulative)
 ```
 
 
-### Governor
 
+# Geography
 ```{r}
-print_tab(approval_gov)
-```
-
-### House Representative
-
-```{r}
-print_tab(approval_rep)
+glimpse(select(df, matches("(state|st$|CD|zipcode|countyFIPS)")))
 ```
 
 # Demographics
 
-### Partisanship 
+### `r nam(gender)`
+
+`r descrip(gender)`
+
+* Years: `r in_years(gender)`
+
+```{r}
+print_tab(gender)
+```
+
+### `r nam(birthyr)`
+
+`r descrip(birthyr)`
+
+* Years: `r in_years(birthyr)`
+
+```{r}
+print_numeric(birthyr)
+```
+
+
+### `r nam(age)`
+
+`r descrip(age)`
+
+* Years: `r in_years(age)`
+
+```{r}
+print_numeric(age)
+```
+
+
+### `r nam(educ)`
+
+`r descrip(educ)`
+
+* Years: `r in_years(educ)`
+
+
+```{r}
+print_tab(educ)
+```
+
+
+### `r nam(race)`
+
+`r descrip(race)`
+
+* Years: `r in_years(race)`
+
+```{r}
+print_tab(race)
+```
+
+
+### `r nam(pid3)`
+
+`r descrip(pid3)`
+
+* Years: `r in_years(pid3)`
+
 ```{r}
 print_tab(pid3)
 ```
+
+### `r nam(pid7)`
+
+`r descrip(pid7)`
+
+* Years: `r in_years(pid7)`
 
 ```{r}
 print_tab(pid7)
 ```
 
+
+# Presidential Vote
+
+### `r nam(intent_pres_08)`
+
+`r descrip(intent_pres_08)`
+
+* Years: `r in_years(intent_pres_08)`
+
+```{r}
+print_tab(intent_pres_08)
+```
+
+
+### `r nam(intent_pres_12)`
+
+`r descrip(intent_pres_12)`
+
+* Years: `r in_years(intent_pres_12)`
+
+```{r}
+print_tab(intent_pres_12)
+```
+
+
+### `r nam(intent_pres_16)`
+
+`r descrip(intent_pres_16)`
+
+* Years: `r in_years(intent_pres_16)`
+
+```{r}
+print_tab(intent_pres_16)
+```
+
+
+### `r nam(voted_pres_08)`
+
+`r descrip(voted_pres_08)`
+
+* Years: `r in_years(voted_pres_08)`
+
+```{r}
+print_tab(voted_pres_08)
+```
+
+
+### `r nam(voted_pres_12)`
+
+`r descrip(voted_pres_12)`
+
+* Years: `r in_years(voted_pres_12)`
+
+```{r}
+print_tab(voted_pres_12)
+```
+
+
+### `r nam(voted_pres_16)`
+
+`r descrip(voted_pres_16)`
+
+* Years: `r in_years(voted_pres_16)`
+
+```{r}
+print_tab(voted_pres_16)
+```
+
+
+
+# Approval
+
+### `r nam(approval_pres)`
+
+`r descrip(approval_pres)`
+
+* Years: `r in_years(approval_pres)`
+
+```{r}
+print_tab(approval_pres)
+```
+
+
+### `r nam(approval_rep)`
+
+`r descrip(approval_rep)`
+
+* Years: `r in_years(approval_rep)`
+
+```{r}
+print_tab(approval_rep)
+```
+
+### `r nam(approval_sen1)`
+
+`r descrip(approval_sen1)`
+
+* Years: `r in_years(approval_sen1)`
+
+```{r}
+print_tab(approval_sen1)
+```
+
+### `r nam(approval_sen2)`
+
+`r descrip(approval_sen2)`
+
+* Years: `r in_years(approval_sen2)`
+
+```{r}
+print_tab(approval_sen2)
+```
+
+### `r nam(approvla_gov)`
+
+`r descrip(approval_gov)`
+
+* Years: `r in_years(approval_gov)`
+
+```{r}
+print_tab(approval_gov)
+```
+
 # Voting
+
+## Preference
+
+### `r nam(intent_rep)`
+
+`r descrip(intent_rep)`
+
+* Years: `r in_years(intent_rep)`
 
 ```{r}
 print_tab(intent_rep)
 ```
 
+### `r nam(intent_sen)`
 
-# Validated Vote
+`r descrip(intent_sen)`
+
+* Years: `r in_years(intent_sen)`
+
 ```{r}
-print_tab(vv_regstatus)
+print_tab(intent_sen)
+```
+
+### `r nam(intent_gov)`
+
+`r descrip(intent_gov)`
+
+* Years: `r in_years(intent_gov)`
+
+```{r}
+print_tab(intent_gov)
+```
+
+
+## Vote Choice
+
+### `r nam(voted_rep)`
+
+`r descrip(voted_rep)`
+
+* Years: `r in_years(voted_rep)`
+
+```{r}
+print_tab(voted_rep)
+```
+
+### `r nam(voted_sen)`
+
+`r descrip(voted_sen)`
+
+* Years: `r in_years(voted_sen)`
+
+```{r}
+print_tab(voted_sen)
+```
+
+### `r nam(voted_gov)`
+
+`r descrip(voted_gov)`
+
+* Years: `r in_years(voted_gov)`
+
+```{r}
+print_tab(voted_gov)
 ```
 
 
 
+
+
+# Validations 
+
+### `r nam(vv_regstatus)`
+
+`r descrip(vv_regstatus)`
+
+* Years: `r in_years(vv_regstatus)`
+
+```{r}
+print_tab(vv_regstatus)
+```
+
+### `r nam(vv_party_gen)`
+
+`r descrip(vv_party_gen)`
+
+* Years: `r in_years(vv_party_gen)`
+
+
+```{r}
+print_tab(vv_party_gen)
+```
+
+
+
+### `r nam(vv_party_prm)`
+
+`r descrip(vv_party_prm)`
+
+* Years: `r in_years(vv_party_prm)`
+
+```{r}
+print_tab(vv_party_prm)
+```
+
+
+## Turnout 
+
+### `r nam(vv_turnout_gvm)`
+
+`r descrip(vv_turnout_gvm)`
+
+* Years: `r in_years(vv_turnout_gvm)`
+
+```{r}
+print_tab(vv_turnout_gvm)
+```
+
+
+### `r nam(vv_turnout_pvm)`
+
+`r descrip(vv_turnout_pvm)`
+
+* Years: `r in_years(vv_turnout_pvm)`
+
+
+```{r}
+print_tab(vv_turnout_pvm)
+```
+
+
+
+
 # Text
+
+## Identifiers
+```{r}
+glimpse(select(df, matches("caseID")))
+```
+
+## Current Representatives
 
 ### Incumbents
 ```{r}
@@ -111,6 +493,7 @@ glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*inc")))
 glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*(icpsr)"), gov_fec))
 ```
 
+## Candidates
 
 ### Chosen
 ```{r}

@@ -1,0 +1,129 @@
+\documentclass[10pt,article,oneside]{memoir}
+\usepackage[top=0.9in, bottom=0.9in, left=1.4in, right=1.4in]{geometry}
+
+\usepackage{amssymb, amsmath, amsthm, mathtools}
+
+% Essential packages
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{url}
+
+% Hyperref
+\usepackage[pdfencoding = auto, hidelinks = true]{hyperref}
+
+
+% Parameters
+\usepackage{soul} % underline
+\usepackage{tcolorbox}
+
+% Minion for main text and math
+% \usepackage{MinionPro}
+
+% Helvetica for sans serif
+% (scaled to match size of Minion)
+% \usepackage[scaled=0.90]{helvet}
+
+% Bera Mono for monospaced
+% (scaled to match size of Minion)
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.9]{beramono}
+
+% FORCE HELVET
+\renewcommand\familydefault{\sfdefault}
+
+% Spacing
+\usepackage{setspace}
+\OnehalfSpacing
+
+
+% Sectioing
+\setcounter{secnumdepth}{0} % fix starting with "0.1"
+
+
+
+% Theorems
+\usepackage{etoolbox}
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{assump}{Assumption}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\AtEndEnvironment{definition}{\null\hfill\qedsymbol}%
+\newtheorem{example}{Example}
+\newtheorem{error}{Common Error}
+\AtEndEnvironment{error}{\null\hfill\qedsymbol}%
+
+% Math
+\newcommand{\var}{\textnormal{Var}}
+\newcommand{\cov}{\textnormal{Cov}} 
+\newcommand{\cor}{\textnormal{Cor}} 
+
+% Figures
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+
+% Shading and Rmd macros
+$if(listings)$
+\usepackage{listings}
+$endif$
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=r,basicstyle=\small\ttfamily}}{}
+$endif$
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+% Parmaters
+
+$if(title)$
+\title{\bigskip \Large\textbf{$title$}}
+$endif$ 
+
+\author{$for(author)$$author$$if(thanks)$\thanks{$thanks$} $endif$ $sep$\\$endfor$}
+
+
+$if(date)$
+\date{$date$}
+$endif$
+
+\begin{document}
+
+$if(title)$
+\maketitle
+$endif$
+
+$if(toc)$
+{
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
+}
+$endif$
+
+$if(abstract)$
+
+\begin{abstract}
+
+\noindent $abstract$
+
+\end{abstract}
+
+$endif$
+
+
+
+$body$
+\end{document}
+
