@@ -31,10 +31,6 @@ meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vart
 ```
 
 ```{r}
-vn <- colnames(df)
-```
-
-```{r}
 print_tab <- function(var, do_sort = FALSE, tbl = df) {
   var <- enquo(var)
   varchar <- quo_name(var)
@@ -113,6 +109,28 @@ print_tab(year)
 print_numeric(starttime)
 ```
 
+### `r nam(cong)`
+
+`r descrip(cong)`
+
+* Years: `r in_years(cong)`
+
+```{r}
+print_tab(cong)
+```
+
+### `r nam(cong_up)`
+
+`r descrip(cong_up)`
+
+* Years: `r in_years(cong_up)`
+
+```{r}
+print_tab(cong_up)
+```
+
+
+# Weights 
 ### `r nam(weight)`
 
 `r descrip(weight)`
@@ -185,7 +203,6 @@ print_numeric(age)
 print_tab(educ)
 ```
 
-
 ### `r nam(race)`
 
 `r descrip(race)`
@@ -195,28 +212,6 @@ print_tab(educ)
 ```{r}
 print_tab(race)
 ```
-
-
-### `r nam(pid3)`
-
-`r descrip(pid3)`
-
-* Years: `r in_years(pid3)`
-
-```{r}
-print_tab(pid3)
-```
-
-### `r nam(pid7)`
-
-`r descrip(pid7)`
-
-* Years: `r in_years(pid7)`
-
-```{r}
-print_tab(pid7)
-```
-
 
 # Presidential Vote
 
@@ -287,7 +282,32 @@ print_tab(voted_pres_16)
 
 
 
-# Approval
+# Identity and Attitudes
+
+## Partisan Identity
+
+### `r nam(pid3)`
+
+`r descrip(pid3)`
+
+* Years: `r in_years(pid3)`
+
+```{r}
+print_tab(pid3)
+```
+
+### `r nam(pid7)`
+
+`r descrip(pid7)`
+
+* Years: `r in_years(pid7)`
+
+```{r}
+print_tab(pid7)
+```
+
+
+## Approval
 
 ### `r nam(approval_pres)`
 
@@ -330,7 +350,7 @@ print_tab(approval_sen1)
 print_tab(approval_sen2)
 ```
 
-### `r nam(approvla_gov)`
+### `r nam(approval_gov)`
 
 `r descrip(approval_gov)`
 
@@ -485,12 +505,12 @@ glimpse(select(df, matches("caseID")))
 
 ### Incumbents
 ```{r}
-glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*inc")))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*shown")))
 ```
 
 ### Incumbent Identifiers
 ```{r}
-glimpse(select(df, matches("(hou|sen1|sen2|gov)_.*(icpsr)"), gov_fec))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*(icpsr)"), gov_fec))
 ```
 
 ## Candidates
