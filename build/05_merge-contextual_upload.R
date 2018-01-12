@@ -69,15 +69,30 @@ std_voteopts <- function(vec,
 #' @param tbl A table with columns _char and _num for the labels
 bind_label <- function(tbl) {
   charname <- grep("_char$", colnames(tbl), value = TRUE)
-  numname <- grep("(intent|voted|vv).*_num$", colnames(tbl), value = TRUE)
+  numname <- grep("(intent|voted).*_num$", colnames(tbl), value = TRUE)
   varname <- gsub("_char", "", charname)
+  
+  if (grepl("sen", varname)) values_nv <- c(5, 6, 9)
+  if (grepl("rep|gov", varname)) values_nv <- c(8, 9)
+  
+  tbl_clps <- tbl %>% 
+    # put not asked to NA
+    mutate(!!charname := replace(.data[[charname]], .data[[numname]] >= 98, NA),
+           !!charname := replace(.data[[charname]], .data[[numname]] %in% 8:9 & .data[["year"]] == 2012, NA)) %>% 
+    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] >= 98, NA),
+           !!numname  := replace(.data[[numname]], .data[[numname]] %in% 8:9 & .data[["year"]] == 2012, NA)) %>% 
+    mutate(!!charname := replace(.data[[charname]], .data[[numname]] %in% values_nv, "I Did Not Vote In This Race")) %>% 
+    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] %in% values_nv, 9)) %>%  # set no votes to 9
+    mutate(!!charname := replace(.data[[charname]], .data[[numname]] == 90, "Not Sure")) %>% 
+    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] == 90, 10)) # set not sure to 10
+    
   
   # order x by y
   median2 <- function(x, y) {
     median(x[order(y, na.last = FALSE)])
   }
   
-  tbl  %>%
+  tbl_clps  %>%
     mutate(!! varname := fct_reorder2(.data[[charname]], 
                                       x = .data[[numname]], 
                                       y = .data[["year"]], 
@@ -85,6 +100,10 @@ bind_label <- function(tbl) {
                                       .desc = FALSE)) %>%
     select(year, caseID, !! varname)
 }
+
+#sen did not vote: 5, 6, 9
+# house and gov 8:9
+
 
 #' Slim out the data for crunch, and preparing for crunch match
 #' 
@@ -116,6 +135,7 @@ i_gov_who <- num_cand_match(i_gov, gc_fec_match)
 v_rep_who <- num_cand_match(v_rep, rc_fec_match)
 v_sen_who <- num_cand_match(v_sen, sc_fec_match)
 v_gov_who <- num_cand_match(v_gov, gc_fec_match)
+
 
 # create a separate dataset for chosen vars ------ 
 ids <- c("year", "caseID")
