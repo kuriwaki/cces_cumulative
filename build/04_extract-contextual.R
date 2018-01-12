@@ -9,9 +9,13 @@ library(foreach)
 #' 
 #' @param tbl the wide dataset
 #' @param measure_regex the office-party columns to  melt
+#' @param ids thethe identifying variables to keep
+#' @param remove_regex regex to remove from the names -- suffix that would hinder the last name extraction
 #' 
 #' @return a dataset with usually 2 x nrow(tbl) rows, or 3 if we record 3 options for office
-melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
+melt_cand <- 
+  function(tbl, measure_regex, ids = carry_vars, 
+           remove_regex = suffixes) {
   melt(as.data.table(tbl),
        id.vars = ids,
        measure.vars = patterns(measure_regex),
@@ -20,7 +24,7 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
        variable.factor = FALSE) %>%
     filter(cand != "") %>%
     mutate(cand = as.integer(cand)) %>%
-    mutate(name_caps = str_to_upper(str_replace(name, ", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "")),
+    mutate(name_caps = str_to_upper(gsub(remove_regex , "", name)),
            namelast = word(name_caps, -1),
            namefirstm = word(name_caps, start = 1, end = -2)) %>%
     tbl_df()
@@ -35,7 +39,7 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars) {
 #' @param key a dataset of incumbents (NOMINATE)
 #' @param var the variable in tbl to look at, which amounts to the office
 #' 
-match_MC <- function(tbl, key, var, carry_vars) {
+match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
@@ -53,9 +57,12 @@ match_MC <- function(tbl, key, var, carry_vars) {
   uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
   persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
   
+  cat(glue("Out of {nrow(tbl)} incumbent-rows, {nrow(uniq_matched1)} ({round(100*nrow(uniq_matched1) / nrow(tbl))} percent)
+           matched uniquely by district"), "\n")
+  
   # for second round, extrat last name
   persn_remain <- persn_unmatch %>% 
-    mutate(namelast = gsub(", (MD|M\\.D\\.|Jr\\.|Sr\\.)$", "", .data[[glue("{var}_inc")]]),
+    mutate(namelast = gsub(remove_regex, "", .data[[glue("{var}_inc")]]),
            namelast = word(namelast, -1),
            namelast = toupper(namelast))
   
@@ -69,6 +76,10 @@ match_MC <- function(tbl, key, var, carry_vars) {
   uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
   persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
   
+  
+  cat(glue("Out of {nrow(persn_remain)} incumbent-rows that didn't match on first try, {nrow(uniq_matched2)}  
+           matched uniquely by district-lastname (match rate up to {round(100*(nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))} percent)"), "\n")
+  
   # check match rows
   stopifnot(nrow(persn_unmatch2) + nrow(uniq_matched2) + nrow(uniq_matched1) == nrow(tbl))
   
@@ -80,7 +91,7 @@ match_MC <- function(tbl, key, var, carry_vars) {
   bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
     mutate(!!paste0(var, "_shown") := concatenate_shown(namevec = .data[[namevar]], partyvec = .data[[ptyvar]])) %>%
     arrange(year, caseID) %>% 
-    select(!!carry_vars,
+    select(!!ids,
            matches("_shown"),
            icpsr, 
            fec)
@@ -163,7 +174,7 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
   n_try_string <- nrow(r_exact_unmatched)
   n_string_matched <- nrow(filter(r_stringdist, !is.na(fec)))
   cat(glue("out of {n_try_string} rows that didn't match on first try, we merged
-           {n_string_matched} ({round(100*n_string_matched/n_try_string)} percent) to a FEC key. "), "\n")
+           {n_string_matched} (match rate up to {round(100*(n_string_matched + n_matched)/n_with_info)} percent) to a FEC key. "), "\n")
   
   
   stopifnot(nrow(rf_exact) + nrow(r_stringdist) + nrow(res_nocand) == nrow(res)) ## check no dupes
@@ -276,6 +287,9 @@ inc_H <- readRDS("data/output/03_contextual/incumbents_H.Rds")
 inc_S <- readRDS("data/output/03_contextual/incumbents_S.Rds")
 statecode <- read_csv("data/source/statecode.csv")
 
+# parameters
+suffixes <- "(,\\sIV|?,\\sI{1,3}|,?\\sM?\\.D?\\.|,?\\sJr\\.|,?\\sSr\\.)$" # remove generations, MDs, Jr/Srs.
+carry_vars <- c("year", "caseID", "state", "st", "cdid", "cdid_up", "cong", "cong_up") # carry these along as id vectors 
 
 cclist <- list(`2006` = cc06, 
                `2007` = cc07, 
@@ -317,7 +331,7 @@ for (yr in 2006:2016) {
 
 
 # bind ------
-carry_vars <- c("year", "caseID", "state", "st", "cdid", "cdid_up", "cong", "cong_up")
+
 dfcc <- map_dfr(cclist, clean_out, carry_vars, master)
 
 # hou_can1 = , # 2010 vote, D/R
@@ -390,7 +404,7 @@ fec_govinc_key <- fec_govincs %>%
 # text to keep
 r_govinc <- df %>%
   select(!!carry_vars, gov_inc, gov_ipt) %>% 
-  mutate(namelast = str_to_upper(word(gov_inc, -1)))
+  mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
 
 # merge, then create "shown"
 gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>% 
@@ -400,6 +414,9 @@ gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>%
          matches("_shown"),
          fec)
 stopifnot(nrow(gov_inc_match) == nrow(r_govinc))
+cat(glue("Out of {nrow(r_govinc)} governor-rows, we matched
+         {sum(!is.na(gov_inc_match$fec))} ({round(100*sum(!is.na(gov_inc_match$fec)) /nrow(r_govinc))} percent)
+         to a FEC key"), "\n")
 
 
 
