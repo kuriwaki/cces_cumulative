@@ -178,9 +178,9 @@ ccc_df <- ccc_cand %>%
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
 ccc_factor <- ccc_df %>% 
   mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
-  mutate_at(vars(matches("icpsr")), as.character) %>%
-  mutate_at(vars(matches("fec")), as.character) %>%
-  mutate_at(vars(matches("^CD$|dist|cong|state$|st$")), as.factor)
+  mutate_at(vars(matches("_icpsr$")), as.character) %>%
+  mutate_at(vars(matches("_fec$")), as.character) %>%
+  mutate_at(vars(matches("(^dist|^cong|^state$|^st$)")), as.factor)
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
