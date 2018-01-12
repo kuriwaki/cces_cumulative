@@ -20,6 +20,7 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2006:2011)) {
     tbl <- tbl %>%
       rename(
+        tookpost = survey_complete,
         zipcode = zip_pre,
         countyFIPS = county_fips_pre,
         starttime = start_pre,
@@ -39,7 +40,10 @@ stdName <- function(tbl) {
         vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
-      )
+      ) %>% 
+      mutate(tookpost = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
+             voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
+             voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
   if (identical(cces_year, 2012L)) {
@@ -121,6 +125,7 @@ stdName <- function(tbl) {
       vv_st = state_cl
     ) %>%
       mutate(
+        tookpost = labelled(tookpost, labels = c(`1` = 1, `0` = 0)), # for consistency
         voted_rep = coalesce(voted_rep, intent_repx),
         voted_sen = coalesce(voted_sen, intent_senx),
         voted_gov = coalesce(voted_gov, intent_govx)
@@ -144,6 +149,8 @@ stdName <- function(tbl) {
     tbl <- tbl %>%
       rename(
         weight = commonweight,
+        weight_vv = commonweight_vv,
+        weight_vv_post = commonweight_vv_post,
         CC350 = CC16_360,
         starttime = starttime_pre,
         approval_pres = CC16_320a,
@@ -214,14 +221,14 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
           !! num_var_name := as.integer(.data[[var_name]])
         ) %>%
         select(-!! var)
-    } else { # if var does not exist
+    } else {# if var does not exist
       select(tbl, year, caseID) %>%
         mutate(
           !! chr_var_name := NA,
           !! num_var_name := NA
         )
     }
-  } else { # if not factor
+  } else {# if not factor
     if (var_name %in% colnames(tbl)) {
       select(tbl, year, caseID, !! var) %>%
         mutate(!! var_name := zap_labels(!! var))
@@ -276,50 +283,30 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     }
 
     # change to specified type
-    if (type == "numeric") {
-      list_yr <- mutate(list_yr, !! var_name := as.numeric(.data[[var_name]]))
-    }
+    if (type == "numeric") list_yr <- mutate(list_yr, !! var_name := as.numeric(.data[[var_name]]))
     
-    if (type == "integer") {
-      list_yr <- mutate(list_yr, !! var_name := as.integer(.data[[var_name]]))
-    }
-    
+    if (type == "integer") list_yr <- mutate(list_yr, !! var_name := as.integer(.data[[var_name]]))
 
-    if (type == "character") {
-      list_yr <- mutate(list_yr, !! var_name := as.character(as_factor(!! var)))
-    }
+    if (type == "character") list_yr <- mutate(list_yr, !! var_name := as.character(as_factor(!! var)))
 
-    if (type == "datetime") {
-      list_yr <- mutate(list_yr, !! var_name := as.POSIXct(.data[[var_name]]))
-    }
+    if (type == "datetime") list_yr <- mutate(list_yr, !! var_name := as.POSIXct(.data[[var_name]]))
 
     list_yr <- list_yr %>%
       mutate(!! var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
-
-  # coerce to labelled? do this if same across year
-  if (type == "factor" & makeLabelled) {
-
-    # change consistent vars in to a labelled factor
-    # make numbered vector
-    key_arr <- select(list_yr, -year, -caseID) %>%
-      distinct() %>%
-      filter(!is.na(.data[[num_var_name]]))
-
-    nvec <- key_arr %>% select(matches("num")) %>% pull()
-    names(nvec) <- key_arr %>% select(matches("char")) %>% pull()
-    list_yr <- list_yr %>%
-      mutate(!! var_name := labelled(as.integer(.data[[num_var_name]]), sort(nvec))) %>%
-      select(year, caseID, !! var_name)
+  
+  # specific recoding
+  if (grepl("approval_(rep|sen)", chr_var_name)) {
+    list_yr <- recode_congapv(list_yr, chr_var_name)
   }
+
+  
+  # fit to labels or factors
+  # coerce to labelled? do this if same across year
+  if (type == "factor" & makeLabelled) list_yr <- set_to_label(list_yr, num_var_name, var_name)
   
   # if not labelled, consider reordering rather than keeping them separate
   if (type == "factor" & newReorder & !makeLabelled) {
-    
-    # order x by y
-    median2 <- function(x, y) {
-      median(x[order(y, na.last = FALSE)], na.rm = TRUE)
-    }
     
     list_yr <- list_yr %>% 
       mutate(!!var_name := fct_reorder2(.data[[chr_var_name]],
@@ -332,6 +319,47 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
 
   list_yr
 }
+
+
+#' Coerce-labelled 
+#' 
+#' @param df the slim table
+#' @param numvarname the name of the variable (number)
+
+set_to_label <- function(df, numvarname, varname) {
+  # change consistent vars in to a labelled factor
+  # make numbered vector
+  label_key <- select(df, -year, -caseID) %>%
+    distinct() %>%
+    select(matches("_char"), matches("_num")) %>%
+    deframe()
+  
+  df %>%
+    mutate(!! varname := labelled(as.integer(.data[[numvarname]]), label_key)) %>%
+    select(year, caseID, !! varname)
+}
+
+
+# order x by y
+median2 <- function(x, y) {
+  median(x[order(y, na.last = FALSE)], na.rm = TRUE)
+}
+
+
+#' recode approval
+#' 
+#' 
+recode_congapv <- function(tbl, char_name) {
+  tbl %>% 
+  mutate(!!char_name := recode(.data[[char_name]],
+                              `Approve`             = "Approve / Somewhat Approve", 
+                              `Somewhat Approve`     = "Approve / Somewhat Approve", 
+                              `Disapprove`           = "Disapprove / Somewhat Disapprove", 
+                              `Somewhat Disapprove`  = "Disapprove / Somewhat Disapprove", 
+                              `Never Heard`          = "Never Heard / Not Sure",
+                              `Not Sure`             = "Never Heard / Not Sure"))
+}
+
 
 #' clean up missing values, format to change NaN to NA
 clean_values <- function(tbl, chr_var_name, num_var_name) {
@@ -352,7 +380,7 @@ value_changes <- function(vec) {
                 `John Mccain` = "John McCain",
                 `John Mccain (Republican)` = "John McCain (Republican)",
                 `Cynthia Mckinney` = "Cynthia McKinney",
-                `Evan Mcmullin (Independent))` = "Evan McMullin (Independent)")
+                `Evan Mcmullin (Independent)` = "Evan McMullin (Independent)")
 }
 
 #' standardize validated vote values 
@@ -453,7 +481,10 @@ clps_pres12 <- function(vec) {
 
 # READ ------
 load("data/output/01_responses/common_all.RData")
-pid3_cc10 <- readRDS("data/output/01_responses/pid3_cc10.Rds")
+cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
+cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
+cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
+cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 
 
 # execute name standardization -----
@@ -478,31 +509,34 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 
 # Extract variable by variable iniitial version -----
 
-# admin
+# admin ------
 wgt <- findStack(ccs, weight, "numeric")
+wgt_vv <- findStack(ccs, weight_vv, "numeric")
+wgt_vvpost <- findStack(ccs, weight_vv_post, "numeric")
+
+tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) %>% 
+  mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
+                             labels = c("Took Post-Election Survey" = 1,
+                                        "Did NOT Take Post-Election Survey" = 0))) %>% 
+  select(year, caseID, tookpost)
+
 
 time <- findStack(ccs, starttime, type = "datetime") %>%
   filter(year != 2006, year != 2009) %>%
-  bind_rows(readRDS("data/source/cces/cc06_datetime.Rds")) %>%
-  bind_rows(readRDS("data/source/cces/cc09_datetime.Rds"))
+  bind_rows(cc06_time, cc09_time)
 
 
-# demos
+# pid -------
+pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
+                 "Other" = 4, "Not Sure" = 5, "Skipped" = 8)
+
 pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
-  bind_rows(pid3_cc10) %>%
-  mutate(pid3 = labelled(as.integer(pid3_num),
-                         c(
-                           "Democrat" = 1,
-                           "Republican" = 2,
-                           "Independent" = 3,
-                           "Other" = 4,
-                           "Not sure" = 5,
-                           "Skipped" = 8
-                         )
-  )) %>%
+  bind_rows(cc10_pid3) %>%
+  mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   select(year, caseID, pid3) # manually do only this one
 
+# demographics ----
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
 gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
@@ -510,20 +544,23 @@ race <- findStack(ccs, race, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "integer")
 age <- findStack(ccs, age, "integer")
 
-# geography
+# geography ----
 state      <- findStack(ccs, state, "character")
 zipcode    <- findStack(ccs, zipcode, "character")
-countyFIPS <- findStack(ccs, countyFIPS, "numeric")
+countyFIPS <- findStack(ccs, countyFIPS, "numeric") %>% 
+  filter(year != 2007) %>% 
+  bind_rows(select(cc07, year, caseID, countyFIPS = CC06_V1004) %>% 
+              mutate_all(zap_labels))
+
 cdid       <- findStack(ccs, cdid, "integer")
 cdid_up    <- findStack(ccs, cdid_up, "integer")
 cong       <- findStack(ccs, cong, "integer")
 cong_up    <- findStack(ccs, cong_up, "integer")
 
-# voting -- don't reorder because we'll need it to match candidates
+# president -------
 i_pres08 <- findStack(ccs, intent_pres_08)
 i_pres12 <- findStack(ccs, intent_pres_12)
 i_pres16 <- findStack(ccs, intent_pres_16)
-
 
 v_pres08 <- findStack(ccs, voted_pres_08)
 v_pres12 <- findStack(ccs, voted_pres_12)
@@ -534,7 +571,7 @@ v_pres08 <- mutate(v_pres08, voted_pres_08 = replace(voted_pres_08, year < 2008,
 v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- mutate(v_pres16, voted_pres_16 = replace(voted_pres_16, voted_pres_16 == "9", NA))
 
-# House, Sen, Gov
+# House, Sen, Gov -----
 i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
 i_sen <- findStack(ccs, intent_sen, newReorder = FALSE)
 i_gov <- findStack(ccs, intent_gov, newReorder = FALSE)
@@ -543,17 +580,37 @@ v_sen <- findStack(ccs, voted_sen, newReorder = FALSE)
 v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
 
 
-# approval -- reorder and factor
+# approval -----
 apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
-apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE) # slightly different labels ax years
+apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE)
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
 apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
 apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE)
 
-# other
-econ <- findStack(ccs, economy_retro, makeLabelled = TRUE)
+# economy -----
+econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FALSE) %>% 
+  mutate(economy_retro_char = recode(economy_retro_char,
+                                     `Gotten Worse`           = "Gotten Worse / Somewhat Worse", 
+                                     `Gotten Somewhat Worse`  = "Gotten Worse / Somewhat Worse", 
+                                     `Gotten Better`          = "Gotten Better / Somewhat Better",
+                                     `Gotten Somewhat Better` = "Gotten Better / Somewhat Better")) %>% 
+  mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
+         economy_retro_num  = replace(economy_retro_num, economy_retro_num == 8, NA)) %>%
+  filter(year != 2009) %>% 
+  bind_rows(cc09_econ)
 
-# validated vote
+# check all categories are aligned
+stopifnot(nrow(dcast(econ_char, economy_retro_char + economy_retro_num ~ year, value.var = "caseID")) == n_distinct(econ_char$economy_retro_num))
+
+# coercet to labelled
+econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
+econ <-  econ_char %>% 
+  mutate(economy_retro = labelled(economy_retro_num, labels = econ_key)) %>% 
+  select(year, caseID, economy_retro)
+
+
+
+# validated vote -----
 vv_regstatus   <- findStack(ccs, vv_regstatus, newReorder = FALSE) # will reorder by frequency later
 vv_party_gen   <- findStack(ccs, vv_party_gen, newReorder = FALSE)
 vv_party_prm   <- findStack(ccs, vv_party_prm, newReorder = FALSE)
@@ -579,7 +636,10 @@ geo <- stcd %>%
 
 # bind together ----
 ccc <- geo %>%
+  left_join(tookpost) %>%
   left_join(wgt) %>%
+  left_join(wgt_vv) %>%
+  left_join(wgt_vvpost) %>%
   left_join(time) %>%
   left_join(pid3) %>%
   left_join(pid7) %>%

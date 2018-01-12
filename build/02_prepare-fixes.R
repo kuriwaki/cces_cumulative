@@ -1,10 +1,12 @@
 # subsets to fix in 02
-
 library(dplyr)
 load("data/output/01_responses/common_all.RData")
 
 
-# Fix 2010 PID  -------
+# Retrieve 2007 County -----
+
+
+# Retrieve 2010 PID  -------
 pid3_cc10 <- cc10 %>%
   mutate(pid3 = CC421a) %>%
   mutate(
@@ -17,6 +19,20 @@ pid3_cc10 <- cc10 %>%
   ) %>%
   select(year, caseID, pid3_char, pid3_num)
 
+
+# 2009 Economic retrospective recode
+
+econ_recoded <- cc09 %>% 
+  select(year, caseID, cc09_20) %>% 
+  mutate(economy_retro_num = recode(as.integer(haven::zap_labels(cc09_20)),
+                      `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L)) %>% 
+  mutate(economy_retro_char = case_when(economy_retro_num == 5L ~ "Gotten Much Worse",
+                                        economy_retro_num == 4L ~ "Gotten Worse / Somewhat Worse",
+                                        economy_retro_num == 3L ~ "Stayed About The Same",
+                                        economy_retro_num == 2L ~ "Gotten Better / Somewhat Better",
+                                        economy_retro_num == 1L ~ "Gotten Much Better"
+                                        )) %>% 
+  select(-cc09_20)
 
 # date time in 2006 and 2009 ----
 fmt_date <- function(vec) {
@@ -33,6 +49,7 @@ cc09_time <- cc09 %>%
 
 
 # save ---------
-saveRDS(pid3_cc10, "data/output/01_responses/pid3_cc10.Rds")
-saveRDS(cc06_time, "data/source/cces/cc06_datetime.Rds")
-saveRDS(cc09_time, "data/source/cces/cc09_datetime.Rds")
+saveRDS(pid3_cc10, "data/output/01_responses/cc10_pid3.Rds")
+saveRDS(econ_recoded, "data/output/01_responses/cc09_econ_retro.Rds")
+saveRDS(cc06_time, "data/output/01_responses/cc06_datetime.Rds")
+saveRDS(cc09_time, "data/output/01_responses/cc09_datetime.Rds")
