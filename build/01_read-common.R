@@ -37,13 +37,13 @@ std_dv <- function(path, guess_year = TRUE) {
   tbl_st <- std_state(tbl_cong, guess_year, guessed_yr)
   
   # CD number
-  tbl_stc <- std_cdid(tbl_st, guess_year, guessed_yr)
+  tbl_stc <- std_dist(tbl_st, guess_year, guessed_yr)
 
 
   # then rename id
   tbl_stc %>%
-    rename(caseID = !! orig_key) %>%
-    select(year, caseID, state, st, cdid, cdid_up, cong, cong_up, everything())
+    rename(case_id = !! orig_key) %>%
+    select(year, case_id, state, st, dist, dist_up, cong, cong_up, everything())
 }
 
 
@@ -85,10 +85,10 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 }
 
 
-#' change class of cdid for specific years
-std_cdid <- function(tbl, guess_year, guessed_yr) {
+#' change class of dist for specific years
+std_dist <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
-    cdidvar <- case_when(
+    distvar <- case_when(
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
       guessed_yr %in% 2006 ~ "v1003",
@@ -99,52 +99,52 @@ std_cdid <- function(tbl, guess_year, guessed_yr) {
     )
     
     # district in the upcoming election
-    cdidupvar <- cdidvar
-    if (guessed_yr == 2012) cdidupvar <- "cdid113"
-    if (guessed_yr == 2016) cdidupvar <- "cdid115"
+    distupvar <- distvar
+    if (guessed_yr == 2012) distupvar <- "cdid113"
+    if (guessed_yr == 2016) distupvar <- "cdid115"
     
     
     if (!guessed_yr %in% c(2006, 2007)) {
       
-      if (cdidupvar == cdidvar) {
+      if (distupvar == distvar) {
         tbl <- tbl %>%
-          rename(cdid = !!cdidvar) %>%
-          mutate(cdid = as.integer(cdid)) %>% 
-          mutate(cdid_up = cdid)
+          rename(dist = !!distvar) %>%
+          mutate(dist = as.integer(dist)) %>% 
+          mutate(dist_up = dist)
       } else {
         tbl <- tbl %>%
-          rename(cdid = !!cdidvar,
-                 cdid_up = !!cdidupvar) %>%
-          mutate(cdid = as.integer(cdid),
-                 cdid_up = as.integer(cdid_up))
+          rename(dist = !!distvar,
+                 dist_up = !!distupvar) %>%
+          mutate(dist = as.integer(dist),
+                 dist_up = as.integer(dist_up))
       }
     }
     
     if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
       tbl <- tbl %>%
-        mutate(cdid = as.integer(zap_labels(.data[[cdidvar]])),
-               cdid_up = cdid)
+        mutate(dist = as.integer(zap_labels(.data[[distvar]])),
+               dist_up = dist)
     }
     
     if (guessed_yr %in% 2007) { # 2009 codes lower case labels
       tbl <- tbl %>%
-        mutate(cdid = as.integer(.data[[cdidvar]]),
-               cdid_up = cdid)
+        mutate(dist = as.integer(.data[[distvar]]),
+               dist_up = dist)
     }
   }
   
   if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
     tbl <- tbl %>%
-      mutate(cdid = as.integer(zap_labels(congdist_pre)),
-             cdid_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
-      mutate(cdid_up = replace(cdid_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
-      mutate(cdid_up = coalesce(cdid_up, cdid)) # for 2006:2011, append cdid for now
+      mutate(dist = as.integer(zap_labels(congdist_pre)),
+             dist_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
+      mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
+      mutate(dist_up = coalesce(dist_up, dist)) # for 2006:2011, append dist for now
   }
   # fix at large
   fix_al <- tbl %>%
        mutate(
-         cdid = replace(cdid, cdid == 0, 1L), # At-LARGE is 1
-         cdid_up = replace(cdid_up, cdid_up == 0, 1L)
+         dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
+         dist_up = replace(dist_up, dist_up == 0, 1L)
          )
   
   fix_al

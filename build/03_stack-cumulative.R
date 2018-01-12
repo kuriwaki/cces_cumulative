@@ -215,14 +215,14 @@ stdName <- function(tbl) {
 extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor = TRUE) {
   if (is_factor) {
     if (var_name %in% colnames(tbl)) { # factor 
-      select(tbl, year, caseID, !! var) %>%
+      select(tbl, year, case_id, !! var) %>%
         mutate(
           !! chr_var_name := as.character(as_factor(.data[[var_name]])),
           !! num_var_name := as.integer(.data[[var_name]])
         ) %>%
         select(-!! var)
     } else {# if var does not exist
-      select(tbl, year, caseID) %>%
+      select(tbl, year, case_id) %>%
         mutate(
           !! chr_var_name := NA,
           !! num_var_name := NA
@@ -230,10 +230,10 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
     }
   } else {# if not factor
     if (var_name %in% colnames(tbl)) {
-      select(tbl, year, caseID, !! var) %>%
+      select(tbl, year, case_id, !! var) %>%
         mutate(!! var_name := zap_labels(!! var))
     } else {
-      select(tbl, year, caseID) %>%
+      select(tbl, year, case_id) %>%
         mutate(!! var_name := NA)
     }
   }
@@ -267,7 +267,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
       list_yr_factor <- list_yr %>% 
         clean_values(chr_var_name = chr_var_name, num_var_name = num_var_name) %>% 
         mutate(!!var_name := fct_infreq(.data[[chr_var_name]])) %>% 
-        select(year, caseID, !!var_name)
+        select(year, case_id, !!var_name)
       
       return(list_yr_factor)
     }
@@ -314,7 +314,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
                                         y = .data[["year"]], 
                                         fun = median2,
                                         .desc = FALSE)) %>% 
-      select(year, caseID, !!var_name)
+      select(year, case_id, !!var_name)
   }
 
   list_yr
@@ -329,14 +329,14 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
 set_to_label <- function(df, numvarname, varname) {
   # change consistent vars in to a labelled factor
   # make numbered vector
-  label_key <- select(df, -year, -caseID) %>%
+  label_key <- select(df, -year, -case_id) %>%
     distinct() %>%
     select(matches("_char"), matches("_num")) %>%
     deframe()
   
   df %>%
     mutate(!! varname := labelled(as.integer(.data[[numvarname]]), label_key)) %>%
-    select(year, caseID, !! varname)
+    select(year, case_id, !! varname)
 }
 
 
@@ -518,7 +518,7 @@ tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) 
   mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
                              labels = c("Took Post-Election Survey" = 1,
                                         "Did NOT Take Post-Election Survey" = 0))) %>% 
-  select(year, caseID, tookpost)
+  select(year, case_id, tookpost)
 
 
 time <- findStack(ccs, starttime, type = "datetime") %>%
@@ -534,7 +534,7 @@ pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
   mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
-  select(year, caseID, pid3) # manually do only this one
+  select(year, case_id, pid3) # manually do only this one
 
 # demographics ----
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
@@ -549,11 +549,11 @@ state      <- findStack(ccs, state, "character")
 zipcode    <- findStack(ccs, zipcode, "character")
 countyFIPS <- findStack(ccs, countyFIPS, "numeric") %>% 
   filter(year != 2007) %>% 
-  bind_rows(select(cc07, year, caseID, countyFIPS = CC06_V1004) %>% 
+  bind_rows(select(cc07, year, case_id, countyFIPS = CC06_V1004) %>% 
               mutate_all(zap_labels))
 
-cdid       <- findStack(ccs, cdid, "integer")
-cdid_up    <- findStack(ccs, cdid_up, "integer")
+dist       <- findStack(ccs, dist, "integer")
+dist_up    <- findStack(ccs, dist_up, "integer")
 cong       <- findStack(ccs, cong, "integer")
 cong_up    <- findStack(ccs, cong_up, "integer")
 
@@ -600,13 +600,13 @@ econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FA
   bind_rows(cc09_econ)
 
 # check all categories are aligned
-stopifnot(nrow(dcast(econ_char, economy_retro_char + economy_retro_num ~ year, value.var = "caseID")) == n_distinct(econ_char$economy_retro_num))
+stopifnot(nrow(dcast(econ_char, economy_retro_char + economy_retro_num ~ year, value.var = "case_id")) == n_distinct(econ_char$economy_retro_num))
 
 # coercet to labelled
 econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
 econ <-  econ_char %>% 
   mutate(economy_retro = labelled(economy_retro_num, labels = econ_key)) %>% 
-  select(year, caseID, economy_retro)
+  select(year, case_id, economy_retro)
 
 
 
@@ -621,13 +621,13 @@ vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm, newReorder = FALSE)
 
 
 # format state and CD, then zipcode and county ----
-stcd <- left_join(state, cdid) %>%
-  left_join(cdid_up) %>%
+stcd <- left_join(state, dist) %>%
+  left_join(dist_up) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(CD = glue("{st}-{cdid}")) %>%
-  select(year, caseID, state, st, CD, cdid, cdid_up, cong, cong_up)
+  mutate(CD = glue("{st}-{dist}")) %>%
+  select(year, case_id, state, st, CD, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
   left_join(zipcode) %>%
@@ -682,7 +682,7 @@ ccc <- ccc %>%
   left_join(select(size_year, year, size_factor)) %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
-  select(year, caseID, weight, weight_cumulative, everything())
+  select(year, case_id, weight, weight_cumulative, everything())
 
 
 

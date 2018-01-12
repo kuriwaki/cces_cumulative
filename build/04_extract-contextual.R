@@ -5,7 +5,7 @@ library(glue)
 library(stringdist)
 library(foreach)
 
-#' take a caseID - candidate key and melt to a df keyed on caseID _and_ candidate
+#' take a case_id - candidate key and melt to a df keyed on case_id _and_ candidate
 #' 
 #' @param tbl the wide dataset
 #' @param measure_regex the office-party columns to  melt
@@ -51,7 +51,7 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   # vars to match on   
   if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st")
-  if (var == "rep") match_vars <- c("cong" = "congress", "st", "cdid" = "dist")
+  if (var == "rep") match_vars <- c("cong" = "congress", "st", "dist")
   
   # match on district
   uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
@@ -68,10 +68,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   # vars to match on round2
   if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st", "namelast")
-  if (var == "rep") match_vars <- c("cong" = "congress", "st", "cdid" = "dist", "namelast")
+  if (var == "rep") match_vars <- c("cong" = "congress", "st", "dist" = "dist", "namelast")
   
   # coerce key unique to lastname (check FEC to dedupe)
-  key_notu_dedup <- distinct(key_notu, congress, st, cdid, namelast, .keep_all = TRUE)
+  key_notu_dedup <- distinct(key_notu, congress, st, dist, namelast, .keep_all = TRUE)
   
   uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
   persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
@@ -90,7 +90,7 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
     mutate(!!paste0(var, "_shown") := concatenate_shown(namevec = .data[[namevar]], partyvec = .data[[ptyvar]])) %>%
-    arrange(year, caseID) %>% 
+    arrange(year, case_id) %>% 
     select(!!ids,
            matches("_shown"),
            icpsr, 
@@ -120,18 +120,18 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
   
   fec_rename <- fec %>% 
     rename(name_fec = name, namefirst_fec = namefirst) %>% # to avoid name conflict
-    rename(cdid_up = dist, year = cycle)
+    rename(dist_up = dist, year = cycle)
   
   # coerce FEC unique wrt district-party-lastname (most duplicates is actually the same person with different accounts)
   fec_counts <- fec_rename %>%
-    group_by(year, st, cdid_up, party, namelast) %>% 
+    group_by(year, st, dist_up, party, namelast) %>% 
     summarize(n = n())
   
-  key_uniq <- semi_join(fec_rename, filter(fec_counts, n == 1), by = c("year", "party", "st", "cdid_up", "namelast"))
-  key_notu <- semi_join(fec_rename, filter(fec_counts, n != 1), by = c("year", "party", "st", "cdid_up", "namelast"))
+  key_uniq <- semi_join(fec_rename, filter(fec_counts, n == 1), by = c("year", "party", "st", "dist_up", "namelast"))
+  key_notu <- semi_join(fec_rename, filter(fec_counts, n != 1), by = c("year", "party", "st", "dist_up", "namelast"))
   
   if (type == "federal:house") 
-    matchvars <- c("year", "st", "cdid_up", "party", "namelast")
+    matchvars <- c("year", "st", "dist_up", "party", "namelast")
   if (type %in% c("state:governor", "federal:senate")) 
     matchvars <- c("year", "st", "party", "namelast")
   
@@ -217,14 +217,14 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh
   
   # further subset by district
   if (type0 == "federal:house") {
-    r_consider_i <- filter(r_consider_i, cdid_up == cdata$cdid_up[i])
-    f_consider_i <- filter(f_consider_i, cdid_up == cdata$cdid_up[i])
+    r_consider_i <- filter(r_consider_i, dist_up == cdata$dist_up[i])
+    f_consider_i <- filter(f_consider_i, dist_up == cdata$dist_up[i])
   } 
   stopifnot(cdata$n[i] == nrow(r_consider_i))
   if (nrow(f_consider_i) == 0) return(r_consider_i) # if there is no one FEC to consider, return
   
   # get to the candidate level, not the respondent level
-  r_i_uniq <- distinct(r_consider_i, year, st, cdid_up, party, namelast, namefirstm)
+  r_i_uniq <- distinct(r_consider_i, year, st, dist_up, party, namelast, namefirstm)
   set.seed(02138)
   f_i_shuffled <- sample_frac(f_consider_i)
   
@@ -242,12 +242,12 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh
     if (is_match) {
       r_result <- bind_cols(slice(r_i_uniq, i_r),
                             slice(f_i_shuffled, sort_dists[1]) %>% 
-                              select(-year, -st, -cdid_up, -party, -namelast))
+                              select(-year, -st, -dist_up, -party, -namelast))
     }
     r_result
   }
   
-  left_join(r_consider_i, match_result, by = c("year", "st", "cdid_up", "party", "namelast", "namefirstm"))
+  left_join(r_consider_i, match_result, by = c("year", "st", "dist_up", "party", "namelast", "namefirstm"))
 }
 
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
@@ -289,7 +289,7 @@ statecode <- read_csv("data/source/statecode.csv")
 
 # parameters
 suffixes <- "(,\\sIV|?,\\sI{1,3}|,?\\sM?\\.D?\\.|,?\\sJr\\.|,?\\sSr\\.)$" # remove generations, MDs, Jr/Srs.
-carry_vars <- c("year", "caseID", "state", "st", "cdid", "cdid_up", "cong", "cong_up") # carry these along as id vectors 
+carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "cong_up") # carry these along as id vectors 
 
 cclist <- list(`2006` = cc06, 
                `2007` = cc07, 
@@ -409,7 +409,7 @@ r_govinc <- df %>%
 # merge, then create "shown"
 gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>% 
   mutate(gov_shown = concatenate_shown(gov_inc, gov_ipt)) %>%
-  arrange(year, caseID) %>% 
+  arrange(year, case_id) %>% 
   select(!!carry_vars,
          matches("_shown"),
          fec)

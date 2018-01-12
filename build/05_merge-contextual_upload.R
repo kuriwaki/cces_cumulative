@@ -22,7 +22,7 @@ num_cand_match <- function(numdf, canddf) {
   
   canddf <- rename(canddf, !!type := cand)
   
-  joined <- left_join(numdf, canddf, by = c("year", "caseID", type))
+  joined <- left_join(numdf, canddf, by = c("year", "case_id", type))
   
   joined %>% 
     mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) %>%
@@ -98,7 +98,7 @@ bind_label <- function(tbl) {
                                       y = .data[["year"]], 
                                       fun = median2,
                                       .desc = FALSE)) %>%
-    select(year, caseID, !! varname)
+    select(year, case_id, !! varname)
 }
 
 #sen did not vote: 5, 6, 9
@@ -115,7 +115,7 @@ slim <- function(tbl, varmarker = '_chosen', id = "fec") {
   id_rename <- as.character(glue("{type}_{id}"))
   
   tbl %>% 
-    select(!!c("year", "caseID"),
+    select(!!c("year", "case_id"),
            matches(as.character(glue("{varmarker}$"))),  
            !!id_rename := !!id)
 }
@@ -138,7 +138,7 @@ v_gov_who <- num_cand_match(v_gov, gc_fec_match)
 
 
 # create a separate dataset for chosen vars ------ 
-ids <- c("year", "caseID")
+ids <- c("year", "case_id")
 
 chosen_with_fec <-  slim(i_rep_who) %>% 
   left_join(slim(i_sen_who), ids) %>% 
@@ -177,10 +177,10 @@ ccc_df <- ccc_cand %>%
 
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
 ccc_factor <- ccc_df %>% 
-  mutate(caseID = as.character(caseID)) %>% # better this than let crunch think its a numeric
+  mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("icpsr")), as.character) %>%
   mutate_at(vars(matches("fec")), as.character) %>%
-  mutate_at(vars(matches("^CD$|cdid|cong|state$|st$")), as.factor)
+  mutate_at(vars(matches("^CD$|dist|cong|state$|st$")), as.factor)
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
