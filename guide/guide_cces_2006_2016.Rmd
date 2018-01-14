@@ -23,9 +23,7 @@ library(haven)
 library(rprojroot)
 ```
 ```{r include = FALSE}
-# login()
-# ds <- loadDataset("CCES Cumulative Common Dev")
-df <- readRDS(find_rstudio_root_file("data/release/temp_sample.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
 # saveRDS(sample_frac(df, 0.01), "data/release/temp_sample.Rds")
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 ```
@@ -33,7 +31,6 @@ meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vart
 ```{r}
 print_tab <- function(var, do_sort = FALSE, tbl = df) {
   var <- enquo(var)
-  varchar <- quo_name(var)
   
   tal <- tbl %>% 
     mutate_if(is.labelled, as_factor) %>% 
@@ -85,15 +82,42 @@ nam <- function(var, tbl = meta) {
 }
 ```
 
+This dataset combines responses from eleven years (2006 - 2016) of the Cooperative Congressional Election Study (CCES, Principal Investigators: Stephen Ansolabehere, Brian Schaffner, and Sam Luks). 
 
+The CCES is an online survey conducted around November of each year, asking a wide range of questions on political behavior and public opinion. One particular strength of the CCES is its relatively large sample size that covers all Congressional districts. While questions can change from year to year, some standard questions, as this compiled file contains, afford comparison. 
+
+The dataset was constructed based off the public flat file CCES datasets from each year. A set of R scripts formatted, merged, and standardized these datasets to generate a `tibble`-style data frame in `R`. A `Stata` `.dta` file is also provided, generated from the `haven` package. In addition, the same data frame is uploaded to a `Crunch` interface, a new online tool (in beta at the time of writing) that makes data visualization and tabulation intuitive and sharable.  
+
+This dataset sometimes standardizes responses whose question wording or response options that have changed slightly over years. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+
+
+* For source code that created this dataset's variables and formatting, see the Github repository <https://github.com/kuriwaki/cces_cumulative>
+* To report a bug in the dataset or ask a question about the build process, please feel free to file an issue at the same page, <https://github.com/kuriwaki/cces_cumulative/issues>. Alternatively, please contact me by email: <kuriwaki@g.harvard.edu>
+* The CCES homepage is <https://cces.gov.harvard.edu/>
+* For each year's CCES datasets and more, search the CCES dataverse: <https://dataverse.harvard.edu/dataverse/cces>
+* A cumulative file for 2006-2012, in a slightly different format, is:  Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), <doi:10.7910/DVN/26451>, Harvard Dataverse, V5, UNF:`5:rXSA73aoDi28uu+IOg7DEg==`
+* To read more on the survey methodology, consult the Methodology section of the most recent Common Content's codebook: Ansolabehere, Stephen; Schaffner, Brian F., 2017, "CCES Common Content, 2016", <doi:10.7910/DVN/GDF6Z0>, Harvard Dataverse, V3, UNF:`6:Hacct7qJt1WXOGPb63A5Gg==`
+* NOMINATE data on incumbents relies on: Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). Voteview: Congressional Roll-Call Votes Database. <https://voteview.com/>
+* FEC data on candidates and governors relies on: Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
+
+
+
+The sections below provide summary more information on each variable. 
+
+* The title is followed by the name of the variable in the dataset ("alias" in Crunch) followed by the variable label ("name" in Crunch).
+* Question wordings, where applicable, immediately follow. Otherwise an description is provide in square brackets ("[]"). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw (rather than the verbatim response). 
+* A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts. Options are ordered by the ordering of the options. 
+* The "Years" variable lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporate in the creation of this dataset. 
+* Finally, "Limitations" notes some of the caveats required when interpreting this variable. As this dataset is synthetic, some year-specific details on implementation are inevitably lost.
+ 
+ 
+ 
 # Administration
 
 
 ### `r nam(year)`
 
 `r descrip(year)`
-
-* Years: `r in_years(year)`
 
 ```{r}
 print_tab(year)
@@ -103,31 +127,23 @@ print_tab(year)
 
 `r descrip(starttime)`
 
-* Years: `r in_years(starttime)`
-
 ```{r}
 print_numeric(starttime)
 ```
+* Years: `r in_years(starttime)`
 
-### `r nam(cong)`
 
-`r descrip(cong)`
+### `r nam(tookpost)`
 
-* Years: `r in_years(cong)`
-
-```{r}
-print_tab(cong)
-```
-
-### `r nam(cong_up)`
-
-`r descrip(cong_up)`
-
-* Years: `r in_years(cong_up)`
+`r descrip(tookpost)`
 
 ```{r}
-print_tab(cong_up)
+print_tab(tookpost)
 ```
+
+* Years: `r in_years(tookpost)` (Post-election wave only exists for even years)
+
+
 
 
 # Weights 
@@ -135,28 +151,77 @@ print_tab(cong_up)
 
 `r descrip(weight)`
 
-* Years: `r in_years(weight)`
-
 ```{r}
 print_numeric(weight)
 ```
+
+* Years: `r in_years(weight)`
+* The weights applied to the sample (which is originally drawn from a matched sample) are constructed to make each year's respondents' pool representative of the national adult population. See the methodology section of the [2016 Guide](https://dataverse.harvard.edu/api/access/datafile/3047286) for details. 
+* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. 
+
 
 ### `r nam(weight_cumulative)`
 
 `r descrip(weight_cumulative)`
 
-* Years: `r in_years(weight_cumulative)`
 
 ```{r}
 print_numeric(weight_cumulative)
 ```
 
+* Years: `r in_years(weight_cumulative)`
+* Limitations: Only a simple transformation of `weight`
+
+
+
+### `r nam(weight_vv)`
+
+`r descrip(weight_vv)`
+
+
+```{r}
+print_numeric(weight_vv)
+```
+
+* Years: `r in_years(weight_vv)`
+* Limitations: Only available for some even years.
+
+### `r nam(weight_vv_post)`
+
+`r descrip(weight_vv_post)`
+
+```{r}
+print_numeric(weight_vv_post)
+```
+
+* Years: `r in_years(weight_vv_post)`
+* Limitations: Only available for some even years.
+
 
 
 # Geography
+
+A series of variables for the respondent's location
+
+* `r nam(state)`: `r descrip(state)`
+* `r nam(st)`: `r descrip(st)`
+* `r nam(dist)`: `r descrip(dist)`
+* `r nam(dist_up)`: `r descrip(dist_up)`
+* `r nam(CD)`: `r descrip(CD)`
+* `r nam(zipcode)`: `r descrip(zipcode)`
+* `r nam(countyFIPS)`: `r descrip(countyFIPS)`
+
 ```{r}
-glimpse(select(df, matches("(state|st$|CD|zipcode|countyFIPS)")))
+df %>%
+  mutate(is_2012 = year == 2012) %>%
+  arrange(desc(is_2012)) %>%
+  select(matches("(state|^st$|dist|CD|zipcode|countyFIPS)")) %>% 
+  glimpse()
 ```
+
+* Years: `r in_years(state)`
+* Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect, for example, district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
+
 
 # Demographics
 
@@ -164,54 +229,57 @@ glimpse(select(df, matches("(state|st$|CD|zipcode|countyFIPS)")))
 
 `r descrip(gender)`
 
-* Years: `r in_years(gender)`
 
 ```{r}
 print_tab(gender)
 ```
 
+* Years: `r in_years(gender)`
+
 ### `r nam(birthyr)`
 
 `r descrip(birthyr)`
 
-* Years: `r in_years(birthyr)`
 
 ```{r}
 print_numeric(birthyr)
 ```
 
+* Years: `r in_years(birthyr)`
 
 ### `r nam(age)`
 
 `r descrip(age)`
 
-* Years: `r in_years(age)`
 
 ```{r}
 print_numeric(age)
 ```
 
+* Years: `r in_years(age)`
 
 ### `r nam(educ)`
 
 `r descrip(educ)`
-
-* Years: `r in_years(educ)`
 
 
 ```{r}
 print_tab(educ)
 ```
 
+* Years: `r in_years(educ)`
+
 ### `r nam(race)`
 
 `r descrip(race)`
 
-* Years: `r in_years(race)`
 
 ```{r}
 print_tab(race)
 ```
+
+* Years: `r in_years(race)`
+
 
 # Presidential Vote
 
@@ -219,56 +287,60 @@ print_tab(race)
 
 `r descrip(intent_pres_08)`
 
-* Years: `r in_years(intent_pres_08)`
 
 ```{r}
 print_tab(intent_pres_08)
 ```
+
+* Years: `r in_years(intent_pres_08)`
 
 
 ### `r nam(intent_pres_12)`
 
 `r descrip(intent_pres_12)`
 
-* Years: `r in_years(intent_pres_12)`
 
 ```{r}
 print_tab(intent_pres_12)
 ```
 
+* Years: `r in_years(intent_pres_12)`
 
 ### `r nam(intent_pres_16)`
 
 `r descrip(intent_pres_16)`
 
-* Years: `r in_years(intent_pres_16)`
 
 ```{r}
 print_tab(intent_pres_16)
 ```
+
+* Years: `r in_years(intent_pres_16)`
 
 
 ### `r nam(voted_pres_08)`
 
 `r descrip(voted_pres_08)`
 
-* Years: `r in_years(voted_pres_08)`
 
 ```{r}
 print_tab(voted_pres_08)
 ```
 
+* Years: `r in_years(voted_pres_08)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
 
 ### `r nam(voted_pres_12)`
 
 `r descrip(voted_pres_12)`
 
-* Years: `r in_years(voted_pres_12)`
 
 ```{r}
 print_tab(voted_pres_12)
 ```
 
+* Years: `r in_years(voted_pres_12)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
 
 ### `r nam(voted_pres_16)`
 
@@ -290,21 +362,35 @@ print_tab(voted_pres_16)
 
 `r descrip(pid3)`
 
-* Years: `r in_years(pid3)`
-
 ```{r}
 print_tab(pid3)
 ```
+
+* Years: `r in_years(pid3)`
+* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 
 
 ### `r nam(pid7)`
 
 `r descrip(pid7)`
 
-* Years: `r in_years(pid7)`
-
 ```{r}
 print_tab(pid7)
 ```
+
+* Years: `r in_years(pid7)`
+* Limitations: See `pid3` 
+
+## Economy
+### `r nam(economy_retro)`
+
+`r descrip(economy_retro)`
+
+```{r}
+print_tab(economy_retro)
+```
+
+* Years: `r in_years(economy_retro)`
+* Limitations: Response options varies by year. Some are collapsed into one category (e.g. `Gotten Better`, presented in some years, and `Gotten Somewhat Better`, presented in other years, are collapsed into `Gotten Better / Somewhat Better`). Some are left as is. For example, `Not Sure` was not an option in 2009.
 
 
 ## Approval
@@ -313,52 +399,66 @@ print_tab(pid7)
 
 `r descrip(approval_pres)`
 
-* Years: `r in_years(approval_pres)`
 
 ```{r}
 print_tab(approval_pres)
 ```
 
+* Years: `r in_years(approval_pres)`
+* Limitations: `Neither approve nor disapprove` only included in 2007.
+* This question is asked in a grid format, along with Governors, Congress, and Courts. 
 
 ### `r nam(approval_rep)`
 
 `r descrip(approval_rep)`
 
-* Years: `r in_years(approval_rep)`
 
 ```{r}
 print_tab(approval_rep)
 ```
 
+* Years: `r in_years(approval_rep)`
+* Limitations: `Neither approve nor disapprove` only included in 2007.
+* This question is asked in a grid format, along with Senators (`approval_sen1`, `approval_sen2`). 
+* To see who [Representative] refers to for a particular respondent, see `rep_inc` (incumbent identifier in `rep_icpsr`)
+
 ### `r nam(approval_sen1)`
 
 `r descrip(approval_sen1)`
 
-* Years: `r in_years(approval_sen1)`
 
 ```{r}
 print_tab(approval_sen1)
 ```
 
+* Years: `r in_years(approval_sen1)`
+* Limitations: : Response options varies by year. Some are collapsed into one category (e.g. `Approve`, presented in some years, and `Somewhat Approve`, presented in other years, are collapsed into `Approve / Somewhat Approve`). `Neither approve nor disapprove` only included in 2007.
+* To see who [Senator 1] refers to for a particular respondent, see `sen1_inc` (incumbent identifier in `sen1_icpsr`)
+
 ### `r nam(approval_sen2)`
 
 `r descrip(approval_sen2)`
 
-* Years: `r in_years(approval_sen2)`
 
 ```{r}
 print_tab(approval_sen2)
 ```
 
+* See `approval_sen2`
+
 ### `r nam(approval_gov)`
 
 `r descrip(approval_gov)`
 
-* Years: `r in_years(approval_gov)`
 
 ```{r}
 print_tab(approval_gov)
 ```
+
+* Years: `r in_years(approval_gov)`
+* Limitations: See `approval_pres`
+* To see who the Governor refers to for a particular respondent, see `gov_inc` (incumbent identifier in `gov_fec`, if applicable).
+
 
 # Voting
 
@@ -498,14 +598,14 @@ print_tab(vv_turnout_pvm)
 
 ## Identifiers
 ```{r}
-glimpse(select(df, matches("caseID")))
+glimpse(select(df, matches("case_id")))
 ```
 
 ## Current Representatives
 
 ### Incumbents
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*shown")))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_.inc")))
 ```
 
 ### Incumbent Identifiers
