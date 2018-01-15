@@ -12,7 +12,7 @@ login() # you need a login and password to complete this command
 ds <- loadDataset("CCES Cumulative Common Dev")
 
 # description for dataset
-description(ds) <- "This is a working version -- formatting incomplete and may contain errors. Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each years common content and may contain minor errors. To ask a question or report a bug, file an issue at https://github.com/kuriwaki/cces_cumulative, where the build code can be seen."
+description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- "2006-10-06"
 endDate(ds) <- "2006-11-07"
 

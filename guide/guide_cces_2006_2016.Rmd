@@ -7,8 +7,6 @@ output:
   pdf_document:
     latex_engine: xelatex
     template: sk_helvet.sty
-    toc: yes
-    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -90,6 +88,7 @@ The dataset was constructed based off the public flat file CCES datasets from ea
 
 This dataset sometimes standardizes responses whose question wording or response options that have changed slightly over years. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
+# Links
 
 * For source code that created this dataset's variables and formatting, see the Github repository <https://github.com/kuriwaki/cces_cumulative>
 * To report a bug in the dataset or ask a question about the build process, please feel free to file an issue at the same page, <https://github.com/kuriwaki/cces_cumulative/issues>. Alternatively, please contact me by email: <kuriwaki@g.harvard.edu>
@@ -101,6 +100,42 @@ This dataset sometimes standardizes responses whose question wording or response
 * FEC data on candidates and governors relies on: Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
 
 
+# Getting Started
+
+```{r, eval = FALSE, echo = TRUE}
+df <- readRDS("cumulative_2006_2016.Rds")
+```
+
+
+```{r, echo = TRUE}
+library(tidyverse)
+df
+```
+
+```{r}
+select(df, year, case_id, st, matches("voted_sen"))
+```
+
+
+
+`cumulative_2006_2016.dta` can be read by Stata, or in R by the `haven` package 
+
+```{r, eval = FALSE, echo = TRUE}
+library(haven)
+df <- read_dta("cumulative_2006_2016.dta")
+```
+
+
+# Crunch
+
+## Requesting access
+
+## Browsing and analyzing
+
+
+
+
+# Variables
 
 The sections below provide summary more information on each variable. 
 
@@ -341,17 +376,166 @@ print_tab(voted_pres_12)
 
 * Years: `r in_years(voted_pres_12)`
 * Limitations: Response options offer slightly by year; some are collapsed into one. 
+* This variable coalesces two variables: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 ### `r nam(voted_pres_16)`
 
 `r descrip(voted_pres_16)`
 
-* Years: `r in_years(voted_pres_16)`
 
 ```{r}
 print_tab(voted_pres_16)
 ```
 
+* Years: `r in_years(voted_pres_16)`
+* This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+
+# Voting
+
+## Preference
+
+### `r nam(intent_rep)`
+
+`r descrip(intent_rep)`
+
+
+```{r}
+print_tab(intent_rep)
+```
+
+* Years: `r in_years(intent_rep)`
+* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years. 
+* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
+
+
+
+### `r nam(intent_sen)`
+
+`r descrip(intent_sen)`
+
+
+* Years: `r in_years(intent_sen)`
+* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
+
+```{r}
+print_tab(intent_sen)
+```
+
+
+### `r nam(intent_gov)`
+
+`r descrip(intent_gov)`
+
+* Years: `r in_years(intent_gov)`
+* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
+
+
+```{r}
+print_tab(intent_gov)
+```
+
+
+## Vote Choice
+
+### `r nam(voted_rep)`
+
+`r descrip(voted_rep)`
+
+* Years: `r in_years(voted_rep)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+```{r}
+print_tab(voted_rep)
+```
+
+### `r nam(voted_sen)`
+
+`r descrip(voted_sen)`
+
+* Years: `r in_years(voted_sen)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+```{r}
+print_tab(voted_sen)
+```
+
+### `r nam(voted_gov)`
+
+`r descrip(voted_gov)`
+
+* Years: `r in_years(voted_gov)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+```{r}
+print_tab(voted_gov)
+```
+
+
+
+# Validations 
+
+### `r nam(vv_regstatus)`
+
+`r descrip(vv_regstatus)`
+
+```{r}
+print_tab(vv_regstatus)
+```
+
+* Years: `r in_years(vv_regstatus)`
+* Limitations: Collapses some response options
+
+
+### `r nam(vv_party_gen)`
+
+`r descrip(vv_party_gen)`
+
+```{r}
+print_tab(vv_party_gen)
+```
+
+* Years: `r in_years(vv_party_gen)`
+* Limitations: Not available for some even years
+
+
+### `r nam(vv_party_prm)`
+
+`r descrip(vv_party_prm)`
+
+
+```{r}
+print_tab(vv_party_prm)
+```
+
+* Years: `r in_years(vv_party_prm)`
+* Limitations: Not available for some even years
+
+## Turnout 
+
+### `r nam(vv_turnout_gvm)`
+
+`r descrip(vv_turnout_gvm)`
+
+
+```{r}
+print_tab(vv_turnout_gvm)
+```
+
+* Years: `r in_years(vv_turnout_gvm)`
+* Limitations: Collapses most response options. In particular, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting method. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
+
+### `r nam(vv_turnout_pvm)`
+
+`r descrip(vv_turnout_pvm)`
+
+
+```{r}
+print_tab(vv_turnout_pvm)
+```
+
+* Years: `r in_years(vv_turnout_pvm)`
+* Limitations: See `vv_turnout_gvm`
 
 
 # Identity and Attitudes
@@ -460,168 +644,85 @@ print_tab(approval_gov)
 * To see who the Governor refers to for a particular respondent, see `gov_inc` (incumbent identifier in `gov_fec`, if applicable).
 
 
-# Voting
-
-## Preference
-
-### `r nam(intent_rep)`
-
-`r descrip(intent_rep)`
-
-* Years: `r in_years(intent_rep)`
-
-```{r}
-print_tab(intent_rep)
-```
-
-### `r nam(intent_sen)`
-
-`r descrip(intent_sen)`
-
-* Years: `r in_years(intent_sen)`
-
-```{r}
-print_tab(intent_sen)
-```
-
-### `r nam(intent_gov)`
-
-`r descrip(intent_gov)`
-
-* Years: `r in_years(intent_gov)`
-
-```{r}
-print_tab(intent_gov)
-```
-
-
-## Vote Choice
-
-### `r nam(voted_rep)`
-
-`r descrip(voted_rep)`
-
-* Years: `r in_years(voted_rep)`
-
-```{r}
-print_tab(voted_rep)
-```
-
-### `r nam(voted_sen)`
-
-`r descrip(voted_sen)`
-
-* Years: `r in_years(voted_sen)`
-
-```{r}
-print_tab(voted_sen)
-```
-
-### `r nam(voted_gov)`
-
-`r descrip(voted_gov)`
-
-* Years: `r in_years(voted_gov)`
-
-```{r}
-print_tab(voted_gov)
-```
-
-
-
-
-
-# Validations 
-
-### `r nam(vv_regstatus)`
-
-`r descrip(vv_regstatus)`
-
-* Years: `r in_years(vv_regstatus)`
-
-```{r}
-print_tab(vv_regstatus)
-```
-
-### `r nam(vv_party_gen)`
-
-`r descrip(vv_party_gen)`
-
-* Years: `r in_years(vv_party_gen)`
-
-
-```{r}
-print_tab(vv_party_gen)
-```
-
-
-
-### `r nam(vv_party_prm)`
-
-`r descrip(vv_party_prm)`
-
-* Years: `r in_years(vv_party_prm)`
-
-```{r}
-print_tab(vv_party_prm)
-```
-
-
-## Turnout 
-
-### `r nam(vv_turnout_gvm)`
-
-`r descrip(vv_turnout_gvm)`
-
-* Years: `r in_years(vv_turnout_gvm)`
-
-```{r}
-print_tab(vv_turnout_gvm)
-```
-
-
-### `r nam(vv_turnout_pvm)`
-
-`r descrip(vv_turnout_pvm)`
-
-* Years: `r in_years(vv_turnout_pvm)`
-
-
-```{r}
-print_tab(vv_turnout_pvm)
-```
-
-
 
 
 # Text
 
+
 ## Identifiers
+
+The case identifier `case_id` is unique within the year and is identical to the case identifiers in the individual year's CCES. It should be used in conjunction with `year` for a unique identifier for the whole dataset. Some individuals across years may be the same YouGov panel respondent with different identifiers; for example the 2007 CCES draws from the 2006 CCES respondents.  
+
 ```{r}
-glimpse(select(df, matches("case_id")))
+glimpse(select(df, matches("year|case_id")))
 ```
 
 ## Current Representatives
 
 ### Incumbents
+
+The four names in the three offices that represent the respondent _at the time of the survey_. Parties are not shown if the particular year's CCES did not show party. 
+
 ```{r}
 glimpse(select(df, matches("(rep|sen1|sen2|gov)_.inc")))
 ```
 
 ### Incumbent Identifiers
+
+Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES but merged on for this cumulative dataset only. 
+
+The matching of identifiers to respondent occurs through matching by district, by district and last name, or both:
+
+* For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g. in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
+* For Senators, we join entirely on `cong`, `st`, and last name
+* For Governors, we join only on `st` and last name. In this period, there are no two governors in the same state that share the same last name. 
+
+
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*(icpsr)"), gov_fec))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*icpsr"), gov_fec))
 ```
 
+* Years: `r in_years(rep_icpsr)`
+* Limitations: Matching procedure may be incomplete or inaccurate.
+
+The unique identifiers can be used to join with other databases to append additional information such as committee membership and ideology scores, such as 
+
+> Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). Voteview: Congressional Roll-Call Votes Database. <https://voteview.com/>
+
 ## Candidates
+
+The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that for this particular respondent, the first option was `Maxine Waters (Democrat)` who has a FEC Identifier of `H4CA23011`.
+
+```{r, size="small"}
+filter(df, year == 2012, st == "CA", dist_up == 43) %>% select(year, case_id, st, dist_up, matches("intent_rep")) %>% sample_n(10)
+```
+
+The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). The FEC ID is not part of the CCES but joined in this dataset. 
+
+For all three offices, the matching generally occurs by `year`, `st`, `dist_up` (not `dist`, because `dist_up`, refers to the district of the upcoming session) and `party`.  `party` is the party affiliation as indicated in the CCES. For years 2008 and 2010, the first option is automatically labelled as a Democrat and the second option as a Republican, although these may be inaccurate at times. 
+
+The FEC database originates from
+
+> Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
+
+
+which helpfully includes candidates office sought, district (for House members), party affiliation, and cycle in which the candidate filed. The variable `cycle` in Bonica's data is used to join on the CCES dataset's `year` variable. 
+
+Only candidates who are unique within the district and party are considered for the first join. However, many candidates are not unique within the district-party, as many co-partisans may file in the same district. The second matching process thus considers the full name of the candidate listed in the CCES and the candidates in the FEC database. _Within_ the subset of year, district, and party, a Jaro-Winker string distance (that ranges from 0 to 1) is computed for both last name and the first name - middle name. If the sum of the two string distances are more than 0.2 for all possible combinations, no match is returned. If there is a unique combination that achieves a unique minimum that is below 0.2, that combination is declared a match. If there are multiple matches with the same minimum string distance, one is randomly chosen. 
+
 
 ### Chosen
 ```{r}
 glimpse(select(df, matches("(intent|voted)_.*chosen")))
 ```
 
+* Years: `r in_years(intent_rep_chosen)`
+* Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
 
 ### Candidate Identifiers
 ```{r}
 glimpse(select(df, matches("(intent|voted)_.*fec")))
 ```
+
+* Years: `r in_years(intent_rep_fec)`
+* Limitations: Matching may be inaccurate (see previous section on matching methodology). In particular, a lack of a FEC ID may either indicate a failure of the matching procedure, or that the candidate in question did not file under the FEC.  The match rate in the current procedure is upwards of 80 percent in the current procedure. 
