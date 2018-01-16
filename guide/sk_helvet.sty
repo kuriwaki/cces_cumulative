@@ -1,5 +1,5 @@
 \documentclass[10pt,article,oneside]{memoir}
-\usepackage[top=0.9in, bottom=0.9in, left=1.4in, right=1.4in]{geometry}
+\usepackage[top=1.4in, bottom=1.4in, left=1.4in, right=1.4in]{geometry}
 
 \usepackage{amssymb, amsmath, amsthm, mathtools}
 
@@ -11,8 +11,24 @@
 \usepackage{enumitem}
 \usepackage{url}
 
+
+% Colors ------------
+\usepackage{xcolor}
+\definecolor{mygray}{gray}{0.5} % define color on gray scale
+\definecolor{lgray}{gray}{0.9} % define color on gray scale
+\definecolor{crimson}{RGB}{204,0,0}
+\definecolor{dgray}{RGB}{125,125,125}
+\newcommand{\crimson}[1]{\textcolor{crimson}{#1}}
+  \newcommand{\dgray}[1]{\textcolor{dgray}{#1}}
+    \newcommand{\lgray}[1]{\textcolor{lgray}{#1}}
+      \newcommand{\mygray}[1]{\textcolor{mygray}{#1}}
+
 % Hyperref
-\usepackage[pdfencoding = auto, hidelinks = true]{hyperref}
+\usepackage[pdfencoding = auto, 
+            hidelinks = true, 
+            urlcolor = MidnightBlue, 
+            citecolor = blue,
+            linkcolor = ]{hyperref}
 
 
 % Parameters
@@ -24,19 +40,20 @@
 
 % Helvetica for sans serif
 % (scaled to match size of Minion)
-% \usepackage[scaled=0.90]{helvet}
+\usepackage[scaled=0.95]{helvet}
 
 % Bera Mono for monospaced
 % (scaled to match size of Minion)
 \usepackage[T1]{fontenc}
 \usepackage[scaled=0.9]{beramono}
+% \usepackage{fontspec}
+% \setmonofont[Scale=0.85]{Monaco}
 
 % FORCE HELVET
 \renewcommand\familydefault{\sfdefault}
 
 % Spacing
 \usepackage{setspace}
-\OnehalfSpacing
 
 
 % Sectioing
@@ -84,11 +101,18 @@ $endif$
 $if(highlighting-macros)$
 $highlighting-macros$
 $endif$
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+$endif$
+$if(tables)$
+\usepackage{longtable,booktabs}
+$endif$
+
 
 % Parmaters
 
 $if(title)$
-\title{\bigskip \Large\textbf{$title$}}
+\title{\bigskip \LARGE\textbf{$title$}}
 $endif$ 
 
 \author{$for(author)$$author$$if(thanks)$\thanks{$thanks$} $endif$ $sep$\\$endfor$}

@@ -1,12 +1,13 @@
 ---
-title: "CCES Cumulative Common Content (2006 - 2016) Codebook"
-author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. www.shirokuriwaki.com"
-date: "Codebook Last Updated: `r Sys.Date()`"
 output:
   pdf_document:
     latex_engine: xelatex
     template: sk_helvet.sty
+title: "CCES Cumulative Common Content (2006 - 2016)"
+author: "Shiro Kuriwaki"
+thanks: "Department of Government, Harvard University. \url{www.shirokuriwaki.com}. Thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for datasets, code, and guidance."
+date: "Codebook Last Updated: `r Sys.Date()`"
+urlcolor: MidNightBlue
 ---
 
 ```{r setup, include=FALSE}
@@ -90,47 +91,55 @@ This dataset sometimes standardizes responses whose question wording or response
 
 # Links
 
-* For source code that created this dataset's variables and formatting, see the Github repository <https://github.com/kuriwaki/cces_cumulative>
-* To report a bug in the dataset or ask a question about the build process, please feel free to file an issue at the same page, <https://github.com/kuriwaki/cces_cumulative/issues>. Alternatively, please contact me by email: <kuriwaki@g.harvard.edu>
-* The CCES homepage is <https://cces.gov.harvard.edu/>
-* For each year's CCES datasets and more, search the CCES dataverse: <https://dataverse.harvard.edu/dataverse/cces>
-* A cumulative file for 2006-2012, in a slightly different format, is:  Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), <doi:10.7910/DVN/26451>, Harvard Dataverse, V5, UNF:`5:rXSA73aoDi28uu+IOg7DEg==`
-* To read more on the survey methodology, consult the Methodology section of the most recent Common Content's codebook: Ansolabehere, Stephen; Schaffner, Brian F., 2017, "CCES Common Content, 2016", <doi:10.7910/DVN/GDF6Z0>, Harvard Dataverse, V3, UNF:`6:Hacct7qJt1WXOGPb63A5Gg==`
-* NOMINATE data on incumbents relies on: Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). Voteview: Congressional Roll-Call Votes Database. <https://voteview.com/>
-* FEC data on candidates and governors relies on: Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
+* For source code that created this dataset's variables and formatting, see the Github repository \url{https://github.com/kuriwaki/cces_cumulative}
+* To report a bug in the dataset or ask a question about the build process, please feel free to file an issue at the same page, \url{https://github.com/kuriwaki/cces_cumulative/issues}. Alternatively, please contact me by email: \url{kuriwaki@g.harvard.edu}
+* The CCES homepage is \url{https://cces.gov.harvard.edu/}
+* For each year's CCES datasets and more, search the CCES dataverse: \url{https://dataverse.harvard.edu/dataverse/cces}
+* A cumulative file for 2006-2012, in a slightly different format, is:  Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), \url{doi:10.7910/DVN/26451}, Harvard Dataverse, V5, UNF:\texttt{5:rXSA73aoDi28uu+IOg7DEg==}
+* To read more on the survey methodology, consult the Methodology section of the most recent Common Content's codebook: Ansolabehere, Stephen; Schaffner, Brian F., 2017, "CCES Common Content, 2016", \url{doi:10.7910/DVN/GDF6Z0}, Harvard Dataverse, V3, UNF:\texttt{6:Hacct7qJt1WXOGPb63A5Gg==}
 
 
 # Getting Started
 
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 ```{r, eval = FALSE, echo = TRUE}
 df <- readRDS("cumulative_2006_2016.Rds")
 ```
 
-
+The dataset in R is best viewed in `dplyr`, although it can be analyzed as a standard data frame.
 ```{r, echo = TRUE}
 library(tidyverse)
 df
 ```
 
-```{r}
-select(df, year, case_id, st, matches("voted_sen"))
-```
 
-
-
-`cumulative_2006_2016.dta` can be read by Stata, or in R by the `haven` package 
+A Stata dta file is provided as well. `cumulative_2006_2016.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
 df <- read_dta("cumulative_2006_2016.dta")
 ```
 
+# Features
 
-# Crunch
+## Unified Variable Names
 
-## Requesting access
+## Candidate Names and Identifiers
+One addition to this cumulative dataset above the individual years that comprise it is the addition of candidate name and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables with those names are appended, requiring users to look-up the relevant candidate for each respondent. The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
 
-## Browsing and analyzing
+```{r, echo = TRUE}
+select(df, year, case_id, st, matches("voted_sen"))
+```
+
+## Crunch
+
+1. Obtain Access
+
+2. Browse
+
+3. Analyze: The crunch interface allows Viewers to make 
+
+
 
 
 
@@ -369,7 +378,6 @@ print_tab(voted_pres_08)
 
 `r descrip(voted_pres_12)`
 
-
 ```{r}
 print_tab(voted_pres_12)
 ```
@@ -381,7 +389,6 @@ print_tab(voted_pres_12)
 ### `r nam(voted_pres_16)`
 
 `r descrip(voted_pres_16)`
-
 
 ```{r}
 print_tab(voted_pres_16)
@@ -405,7 +412,7 @@ print_tab(intent_rep)
 ```
 
 * Years: `r in_years(intent_rep)`
-* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years. 
+* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
 * Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
 
@@ -414,26 +421,24 @@ print_tab(intent_rep)
 
 `r descrip(intent_sen)`
 
-
-* Years: `r in_years(intent_sen)`
-* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
-
 ```{r}
 print_tab(intent_sen)
 ```
 
+* Years: `r in_years(intent_sen)`
+* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
 
 ### `r nam(intent_gov)`
 
 `r descrip(intent_gov)`
 
-* Years: `r in_years(intent_gov)`
-* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
-
 
 ```{r}
 print_tab(intent_gov)
 ```
+
+* Years: `r in_years(intent_gov)`
+* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
 
 
 ## Vote Choice
@@ -442,34 +447,35 @@ print_tab(intent_gov)
 
 `r descrip(voted_rep)`
 
-* Years: `r in_years(voted_rep)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
 ```{r}
 print_tab(voted_rep)
 ```
+
+* Years: `r in_years(voted_rep)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 ### `r nam(voted_sen)`
 
 `r descrip(voted_sen)`
 
-* Years: `r in_years(voted_sen)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 ```{r}
 print_tab(voted_sen)
 ```
 
+* Years: `r in_years(voted_sen)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
 ### `r nam(voted_gov)`
 
 `r descrip(voted_gov)`
 
-* Years: `r in_years(voted_gov)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
 ```{r}
 print_tab(voted_gov)
 ```
+
+* Years: `r in_years(voted_gov)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 
 
@@ -693,8 +699,10 @@ The unique identifiers can be used to join with other databases to append additi
 
 The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that for this particular respondent, the first option was `Maxine Waters (Democrat)` who has a FEC Identifier of `H4CA23011`.
 
-```{r, size="small"}
-filter(df, year == 2012, st == "CA", dist_up == 43) %>% select(year, case_id, st, dist_up, matches("intent_rep")) %>% sample_n(10)
+```{r, echo = TRUE}
+df %>% 
+  filter(year == 2012, st == "CA", dist_up == 43) %>% 
+  select(matches("intent_rep")) 
 ```
 
 The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). The FEC ID is not part of the CCES but joined in this dataset. 

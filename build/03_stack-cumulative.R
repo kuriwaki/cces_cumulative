@@ -352,7 +352,7 @@ median2 <- function(x, y) {
 recode_congapv <- function(tbl, char_name) {
   tbl %>% 
   mutate(!!char_name := recode(.data[[char_name]],
-                              `Approve`             = "Approve / Somewhat Approve", 
+                              `Approve`              = "Approve / Somewhat Approve", 
                               `Somewhat Approve`     = "Approve / Somewhat Approve", 
                               `Disapprove`           = "Disapprove / Somewhat Disapprove", 
                               `Somewhat Disapprove`  = "Disapprove / Somewhat Disapprove", 

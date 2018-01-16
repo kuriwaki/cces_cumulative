@@ -65,10 +65,11 @@ vn <- names(ds)
 ind_top <- grep("(year|state)", vn)
 ind_dem <- grep("(gender|birthyr|race|educ|age)", vn)
 
-ind_geo <- grep("(CD|zipcode|countyFIPS|dist)", vn)
+ind_geo <- grep("(CD|zipcode|countyFIPS)", vn)
 
 ind_pid <- grep("(pid)", vn)
-ind_app <- grep("(retro|approval_.*)", vn)
+ind_app <- grep("(approval_.*)", vn)
+ind_econ <- grep("(retro)", vn)
 
 ind_pres <- grep("(intent|voted)_pres", vn)
 
@@ -87,7 +88,8 @@ ind_other <- setdiff(
   1:length(vn),
   c(ind_top, 
     ind_geo, ind_wgt, 
-    ind_dem, ind_pid, ind_app, 
+    ind_dem, 
+    ind_econ, ind_pid, ind_app, 
     ind_pres, ind_int, ind_vtd, ind_vv,
     ind_incID, ind_candID)
 )
@@ -96,10 +98,10 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Year and State", ds[ind_top]),
   VariableGroup("Demographics", ds[ind_dem]),
   VariableGroup("Geography", ds[ind_geo]),
+  VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app)]),
+  VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
   VariableGroup("Presidential Preference and Vote", ds[ind_pres]),
   VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_int, ind_vtd)]),
-  VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
-  VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_app)]),
   VariableGroup("Politician Names and Identifiers", ds[c(ind_candID, ind_incID)]),
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
@@ -112,6 +114,7 @@ ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrd
 
 ordering(ds)[["Identity and Attitudes"]] <- VariableOrder(
   VariableGroup("Partisan Identity", ds[ind_pid]),
+  VariableGroup("Economy", ds[ind_econ]),
   VariableGroup("Approval", ds[ind_app])
 )
 
