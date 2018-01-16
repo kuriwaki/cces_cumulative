@@ -72,20 +72,8 @@ bind_label <- function(tbl) {
   numname <- grep("(intent|voted).*_num$", colnames(tbl), value = TRUE)
   varname <- gsub("_char", "", charname)
   
-  if (grepl("sen", varname)) values_nv <- c(5, 6, 9)
-  if (grepl("rep|gov", varname)) values_nv <- c(8, 9)
-  
-  tbl_clps <- tbl %>% 
-    # put not asked to NA
-    mutate(!!charname := replace(.data[[charname]], .data[[numname]] >= 98, NA),
-           !!charname := replace(.data[[charname]], .data[[numname]] %in% 8:9 & .data[["year"]] == 2012, NA)) %>% 
-    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] >= 98, NA),
-           !!numname  := replace(.data[[numname]], .data[[numname]] %in% 8:9 & .data[["year"]] == 2012, NA)) %>% 
-    mutate(!!charname := replace(.data[[charname]], .data[[numname]] %in% values_nv, "I Did Not Vote In This Race")) %>% 
-    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] %in% values_nv, 9)) %>%  # set no votes to 9
-    mutate(!!charname := replace(.data[[charname]], .data[[numname]] == 90, "Not Sure")) %>% 
-    mutate(!!numname  := replace(.data[[numname]],  .data[[numname]] == 90, 10)) # set not sure to 10
-    
+
+  tbl_clps <- int_vot_manual(tbl, vn = varname, cn = charname, nn = numname)
   
   # order x by y
   median2 <- function(x, y) {
@@ -101,9 +89,38 @@ bind_label <- function(tbl) {
     select(year, case_id, !! varname)
 }
 
-#sen did not vote: 5, 6, 9
-# house and gov 8:9
-
+#' Manual edit vote/intent vars to collapse
+#' 
+#' 
+#' 
+int_vot_manual <- function(tbl, vn, cn, nn) {
+  if (grepl("intent", vn)) {
+    tbl_fmt <- tbl %>% 
+      mutate(!!cn := replace(.data[[cn]], .data[[nn]] >= 98, NA),
+             !!nn := replace(.data[[nn]], .data[[nn]] >= 98, NA))
+  }
+  
+  if (grepl("voted", vn)) {
+    text_nv <- "I Did Not Vote In This Race"
+    if (grepl("sen", vn)) values_nv <- c(5, 6, 9)
+    if (grepl("rep|gov", vn)) values_nv <- c(8, 9)
+    
+    tbl_fmt <- tbl %>% 
+      mutate(!!cn := replace(.data[[cn]], .data[[nn]] >= 98, NA), # 2016 gives these a number but coerce to NA
+             !!nn := replace(.data[[nn]], .data[[nn]] >= 98, NA)) %>%
+      mutate(!!cn := replace(.data[[cn]], .data[[nn]] %in% values_nv, text_nv),  # set "no vote to a 9"
+             !!nn := replace(.data[[nn]],  .data[[nn]] %in% values_nv, 9)) %>% 
+      mutate(!!cn := replace(.data[[cn]], .data[[nn]] == 90, "Not Sure")) %>% 
+      mutate(!!nn := replace(.data[[nn]],  .data[[nn]] == 90, 10)) # set not sure to 10, match up to others
+    
+    if (grepl("sen", vn)) {
+      tbl_fmt <- tbl_fmt %>%
+        mutate(!!cn := replace(.data[[cn]], .data[[nn]] %in% values_nv & .data[["year"]] == 2012, NA), # only in 2012 senate voted does NotAsked get this label
+               !!nn := replace(.data[[nn]], .data[[nn]] %in% values_nv & .data[["year"]] == 2012, NA))
+    }
+  }
+  tbl_fmt
+}
 
 #' Slim out the data for crunch, and preparing for crunch match
 #' 
@@ -180,7 +197,7 @@ ccc_factor <- ccc_df %>%
   mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("_icpsr$")), as.character) %>%
   mutate_at(vars(matches("_fec$")), as.character) %>%
-  mutate_at(vars(matches("(^dist|^cong|^state$|^st$)")), as.factor)
+  mutate_at(vars(matches("(^dist|^CD$|^cong|^state$|^st$)")), as.factor)
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
