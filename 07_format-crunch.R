@@ -36,7 +36,7 @@ if (dta_not_labelled) {
     attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
   }
   
-  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta")
+  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta", version = 13)
 }
 
 # apply weights ---
