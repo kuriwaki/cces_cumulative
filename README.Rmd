@@ -20,7 +20,7 @@ Data is currently not tracked, but releases will be made as flat files in the CC
 
 # Getting Started 
 
-The `.Rds` format can be read into R^[In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.]
+The `.Rds` format^[In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.] can be read into R.
 
 ```{r, echo = FALSE, include = FALSE}
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
@@ -62,11 +62,11 @@ select(df, year, case_id, matches("voted_sen"))
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience.  For access to View the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. Some features include:
 
 
-### A web GUI that is accessible anywhere and can quickly browse variables
+### A web GUI for quickly browsing variables
 
 ![Browse Variables with Crunch](guide/01_crunch_browse.gif)
 
-### Quick interfaces to show cross-tabs and bar graphs with the data, and customize formatting
+### Quickly check cross-tabs and bar graphs, with customize formatting
 
 ![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
 
@@ -76,7 +76,14 @@ A version of the dataset is also included in Crunch, a database platform that ma
 For questions and more access, please contact the CCES Team.
 
 
+Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. 
 
+```{r, eval = FALSE}
+install.packages("crunch")
+```
+
+
+For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a short vignette in this repo. 
 
 
 # Code Organization

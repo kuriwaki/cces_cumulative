@@ -2,7 +2,7 @@ library(tibble)
 
 
 
-# each row is a variable for the starndardized data, each column is for the cces year0
+# each row is a variable for the standardized data, each column is for the cces year0
 master <- tribble(
     ~name,      ~`2006`, ~`2007`,     ~`2008`, ~`2009`, ~`2010`, ~`2011`, ~`2012`,            ~`2013`,            ~`2014`,            ~`2015`,            ~`2016`,
     "rep_inc",  "v5013", "repname",    "V527",  "v627",  "V501",  "V501", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName",
@@ -42,10 +42,10 @@ ccc_meta <- tribble(
   ~alias, ~type, ~name, ~description,
   "year",                "categorical", "CCES year",  "[Year of CCES Common Content]",
   "starttime",           "datetime",    "Start time", "[Pre-election wave start time]",
-  "case_id",             "text",        "Case identifier", "[Case (Respondent) Idenfitier. Unique within year]",
+  "case_id",             "text",        "Case identifier", "[Case (Respondent) Identifier. Unique within year]",
   "tookpost",            "categorical", "Took post-election wave",                   "[Whether or not the respondent took the post-election wave of the survey (in even years)]",
-  "weight",              "numeric",     "Survey weight (Year-Specific)",      "[weights from pre-survey of each year]",
-  "weight_cumulative",   "numeric",     "Survey weight (Cumulative)",         "[weight variable with simple adjustment: mulitiplied a constant within year to make years comparable]",
+  "weight",              "numeric",     "Survey weight (Year-Specific)",      "[weights from pre-election survey of each year]",
+  "weight_cumulative",   "numeric",     "Survey weight (Cumulative)",         "[weight variable with simple adjustment: multiplied a constant within year to make years comparable]",
   "weight_vv",           "numeric",     "Survey weight for validated voters", "[weight among validated voters to construct a representative sample of the voters. Only available for some years.]",
   "weight_vv_post",      "numeric",     "Survey weight for post-election wave validated voters", "[weight among validated voters and post-election wave respondents to construct a representative sample of the voters. Only available for some years.]",
   "cd",                  "categorical", "Congressional district in current Congress",          "[Current Congressional District (Imputed from input zipcode)]",
@@ -70,14 +70,14 @@ ccc_meta <- tribble(
   "approval_sen2",       "categorical", "Senator 2 approval",            "Do you approve of the way each is doing their job... [Pipe Incumbent Senator 2's Name]",
   "approval_gov",        "categorical", "Governor approval",             "Do you approve of the way each is doing their job... Governor of [Pipe State]",
   "economy_retro",       "categorical", "Retrospective economy",         "OVER THE PAST YEAR the nation's economy has ...?",
-  "vv_regstatus",        "categorical", "Validated registration status",                      "[Validation results. Missing if validation was not conducted in the year. Categories are aggregated. Both Matched-not registered and unmatched are labelled as a no record.]",
+  "vv_regstatus",        "categorical", "Validated registration status",                      "[Validation results. Missing if validation was not conducted in the year. Categories are aggregated. Both Matched-not registered and unmatched are labeled as a no record.]",
   "vv_party_gen",        "categorical", "Validated registered party",                         "[Validation results]",
   "vv_party_prm",        "categorical", "Validated registered Primary party",                 "[Validation results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_gvm",      "categorical", "Validated turnout General Election",                 "[Validation results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_pvm",      "categorical", "Validated turnout Primary Election (Congressional)", "[Validation results]",
   "voted_pres_16",       "categorical", "2016 President vote choice",   "For whom did you vote for President of the United States?",
   "intent_pres_16",      "categorical", "2016 President preference",    "Which candidate did you prefer for President of the United States?",
-  "voted_pres_12",       "categorical", "2012 President vote choice",   "[2012 wording] For whom did you vote for President of the United States? [2016 wording]: In 2012, who did you vote for in the election for President? [see appendix for wording in all years]",
+  "voted_pres_12",       "categorical", "2012 President vote choice",   "[2012 wording] For whom did you vote for President of the United States? [2016 wording]: In 2012, who did you vote for in the election for President? [see guide for wording in all years]",
   "intent_pres_12",      "categorical", "2012 President preference",    "In the race for President of the United States, who do you prefer?",
   "voted_pres_08",       "categorical", "2008 President vote choice",   "[2008 wording] For which candidate for President of the United States did you vote?  [see appendix for wording in all years]",
   "intent_pres_08",      "categorical", "2008 President preference",    "For which candidate for President of the United States would you vote?",
