@@ -33,8 +33,7 @@ vv <- vv_namelast %>%
 
 ## H and S
 vvH <- vv %>%
-  filter(chamber == "H") %>%
-  mutate(chamber = "H")
+  filter(chamber == "H")
 
 vvS <- vv %>%
   filter(chamber == "S") %>%
@@ -51,7 +50,11 @@ vvH_min <- vvH %>%
 vvS_min <- vvS %>%
   select(congress, chamber, icpsr, st, namelast)
 
+vv_crunch <- vv %>% 
+  select(congress:dim2)
+
 ## save ---
 saveRDS(vv, "data/output/03_contextual/voteview_mcs.Rds")
+write_csv(vv_crunch, "data/output/03_contextual/voteview_mcs.csv", na = "")
 saveRDS(vvH_min, "data/output/03_contextual/voteview_H_key.Rds")
 saveRDS(vvS_min, "data/output/03_contextual/voteview_S_key.Rds")

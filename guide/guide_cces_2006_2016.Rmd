@@ -5,10 +5,11 @@ output:
     template: sk_helvet.sty
 title: "CCES Cumulative Common Content (2006 - 2016)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. \url{www.shirokuriwaki.com}. Thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for datasets, code, and guidance."
-date: "Codebook Last Updated: `r Sys.Date()`"
-urlcolor: MidNightBlue
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}, Website:  \\url{www.shirokuriwaki.com}. My thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
+date: "Guide last updated: `r Sys.Date()`"
 ---
+
+\renewcommand\UrlFont{\color{crimson}\ttfamily}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, comment = "")
@@ -81,23 +82,36 @@ nam <- function(var, tbl = meta) {
 }
 ```
 
-This dataset combines responses from eleven years (2006 - 2016) of the Cooperative Congressional Election Study (CCES, Principal Investigators: Stephen Ansolabehere, Brian Schaffner, and Sam Luks). 
+> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2016)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
-The CCES is an online survey conducted around November of each year, asking a wide range of questions on political behavior and public opinion. One particular strength of the CCES is its relatively large sample size that covers all Congressional districts. While questions can change from year to year, some standard questions, as this compiled file contains, afford comparison. 
+This dataset combines responses from eleven years (2006 - 2016) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Brian Schaffner, and Sam Luks) 
 
-The dataset was constructed based off the public flat file CCES datasets from each year. A set of R scripts formatted, merged, and standardized these datasets to generate a `tibble`-style data frame in `R`. A `Stata` `.dta` file is also provided, generated from the `haven` package. In addition, the same data frame is uploaded to a `Crunch` interface, a new online tool (in beta at the time of writing) that makes data visualization and tabulation intuitive and sharable.  
+The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a wide range of questions on political behavior and public opinion. While questions can change from year to year, some standard questions, as this compiled file contains, allow for interesting comparisons. 
 
-This dataset sometimes standardizes responses whose question wording or response options that have changed slightly over years. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+The dataset was constructed based off CCES datasets from each year. A set of R scripts formatted, merged, and standardized these datasets to generate a `tibble`-style data frame. In addition, the same dataset is available on `Crunch`, an accessible analytics interface (in beta at the time of writing).  
 
-# Links
+Please note that this cumulative dataset makes modifications to the original CCES datasets for comparability. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
-* For source code that created this dataset's variables and formatting, see the Github repository \url{https://github.com/kuriwaki/cces_cumulative}
-* To report a bug in the dataset or ask a question about the build process, please feel free to file an issue at the same page, \url{https://github.com/kuriwaki/cces_cumulative/issues}. Alternatively, please contact me by email: \url{kuriwaki@g.harvard.edu}
-* The CCES homepage is \url{https://cces.gov.harvard.edu/}
-* For each year's CCES datasets and more, search the CCES dataverse: \url{https://dataverse.harvard.edu/dataverse/cces}
-* A cumulative file for 2006-2012, in a slightly different format, is:  Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), \url{doi:10.7910/DVN/26451}, Harvard Dataverse, V5, UNF:\texttt{5:rXSA73aoDi28uu+IOg7DEg==}
-* To read more on the survey methodology, consult the Methodology section of the most recent Common Content's codebook: Ansolabehere, Stephen; Schaffner, Brian F., 2017, "CCES Common Content, 2016", \url{doi:10.7910/DVN/GDF6Z0}, Harvard Dataverse, V3, UNF:\texttt{6:Hacct7qJt1WXOGPb63A5Gg==}
 
+\bigskip
+
+
+\begin{tcolorbox}[boxrule=0pt, subtitle style={boxrule=0.4pt, colback=black!75!white}]
+
+\tcbsubtitle{To see the source code, }
+report a bug, or ask a question, please feel free to file an issue from the source code page, \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
+
+\tcbsubtitle{To obtain the individual year's CCES datasets,}
+search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}).
+
+\tcbsubtitle{To examine the survey methodology, }
+consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
+
+\end{tcolorbox}
+
+\bigskip
+
+\newpage
 
 # Getting Started
 
@@ -143,6 +157,7 @@ select(df, year, case_id, st, matches("voted_sen"))
 
 
 
+\newpage
 
 # Variables
 
@@ -324,159 +339,7 @@ print_tab(race)
 
 * Years: `r in_years(race)`
 
-
-# Presidential Vote
-
-### `r nam(intent_pres_08)`
-
-`r descrip(intent_pres_08)`
-
-
-```{r}
-print_tab(intent_pres_08)
-```
-
-* Years: `r in_years(intent_pres_08)`
-
-
-### `r nam(intent_pres_12)`
-
-`r descrip(intent_pres_12)`
-
-
-```{r}
-print_tab(intent_pres_12)
-```
-
-* Years: `r in_years(intent_pres_12)`
-
-### `r nam(intent_pres_16)`
-
-`r descrip(intent_pres_16)`
-
-
-```{r}
-print_tab(intent_pres_16)
-```
-
-* Years: `r in_years(intent_pres_16)`
-
-
-### `r nam(voted_pres_08)`
-
-`r descrip(voted_pres_08)`
-
-
-```{r}
-print_tab(voted_pres_08)
-```
-
-* Years: `r in_years(voted_pres_08)`
-* Limitations: Response options offer slightly by year; some are collapsed into one. 
-
-### `r nam(voted_pres_12)`
-
-`r descrip(voted_pres_12)`
-
-```{r}
-print_tab(voted_pres_12)
-```
-
-* Years: `r in_years(voted_pres_12)`
-* Limitations: Response options offer slightly by year; some are collapsed into one. 
-* This variable coalesces two variables: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
-### `r nam(voted_pres_16)`
-
-`r descrip(voted_pres_16)`
-
-```{r}
-print_tab(voted_pres_16)
-```
-
-* Years: `r in_years(voted_pres_16)`
-* This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
-
-# Voting
-
-## Preference
-
-### `r nam(intent_rep)`
-
-`r descrip(intent_rep)`
-
-
-```{r}
-print_tab(intent_rep)
-```
-
-* Years: `r in_years(intent_rep)`
-* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
-* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
-
-
-
-### `r nam(intent_sen)`
-
-`r descrip(intent_sen)`
-
-```{r}
-print_tab(intent_sen)
-```
-
-* Years: `r in_years(intent_sen)`
-* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
-
-### `r nam(intent_gov)`
-
-`r descrip(intent_gov)`
-
-
-```{r}
-print_tab(intent_gov)
-```
-
-* Years: `r in_years(intent_gov)`
-* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
-
-
-## Vote Choice
-
-### `r nam(voted_rep)`
-
-`r descrip(voted_rep)`
-
-```{r}
-print_tab(voted_rep)
-```
-
-* Years: `r in_years(voted_rep)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
-### `r nam(voted_sen)`
-
-`r descrip(voted_sen)`
-
-
-```{r}
-print_tab(voted_sen)
-```
-
-* Years: `r in_years(voted_sen)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
-### `r nam(voted_gov)`
-
-`r descrip(voted_gov)`
-
-```{r}
-print_tab(voted_gov)
-```
-
-* Years: `r in_years(voted_gov)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-
+\newpage
 
 
 # Validations 
@@ -543,6 +406,7 @@ print_tab(vv_turnout_pvm)
 * Years: `r in_years(vv_turnout_pvm)`
 * Limitations: See `vv_turnout_gvm`
 
+\newpage
 
 # Identity and Attitudes
 
@@ -651,6 +515,169 @@ print_tab(approval_gov)
 
 
 
+\newpage
+
+# Presidential Vote
+
+\begin{tcolorbox}[title={A note on \texttt{intent} and \texttt{voted}}]
+In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospecetive question of the sort "in the election this November, who did you vote for?" Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respodents who reported having already voted early. 
+\end{tcolorbox}
+
+
+### `r nam(intent_pres_08)`
+
+`r descrip(intent_pres_08)`
+
+
+```{r}
+print_tab(intent_pres_08)
+```
+
+* Years: `r in_years(intent_pres_08)`
+
+
+### `r nam(intent_pres_12)`
+
+`r descrip(intent_pres_12)`
+
+
+```{r}
+print_tab(intent_pres_12)
+```
+
+* Years: `r in_years(intent_pres_12)`
+
+### `r nam(intent_pres_16)`
+
+`r descrip(intent_pres_16)`
+
+
+```{r}
+print_tab(intent_pres_16)
+```
+
+* Years: `r in_years(intent_pres_16)`
+
+
+### `r nam(voted_pres_08)`
+
+`r descrip(voted_pres_08)`
+
+
+```{r}
+print_tab(voted_pres_08)
+```
+
+* Years: `r in_years(voted_pres_08)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
+
+### `r nam(voted_pres_12)`
+
+`r descrip(voted_pres_12)`
+
+```{r}
+print_tab(voted_pres_12)
+```
+
+* Years: `r in_years(voted_pres_12)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
+* This variable coalesces two variables: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+### `r nam(voted_pres_16)`
+
+`r descrip(voted_pres_16)`
+
+```{r}
+print_tab(voted_pres_16)
+```
+
+* Years: `r in_years(voted_pres_16)`
+* This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+
+# House, Senat and Governor Voting
+
+## Preference
+
+### `r nam(intent_rep)`
+
+`r descrip(intent_rep)`
+
+
+```{r}
+print_tab(intent_rep)
+```
+
+* Years: `r in_years(intent_rep)`
+* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
+* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
+
+
+
+### `r nam(intent_sen)`
+
+`r descrip(intent_sen)`
+
+```{r}
+print_tab(intent_sen)
+```
+
+* Years: `r in_years(intent_sen)`
+* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
+
+### `r nam(intent_gov)`
+
+`r descrip(intent_gov)`
+
+
+```{r}
+print_tab(intent_gov)
+```
+
+* Years: `r in_years(intent_gov)`
+* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
+
+
+## Vote Choice
+
+### `r nam(voted_rep)`
+
+`r descrip(voted_rep)`
+
+```{r}
+print_tab(voted_rep)
+```
+
+* Years: `r in_years(voted_rep)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+### `r nam(voted_sen)`
+
+`r descrip(voted_sen)`
+
+
+```{r}
+print_tab(voted_sen)
+```
+
+* Years: `r in_years(voted_sen)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+### `r nam(voted_gov)`
+
+`r descrip(voted_gov)`
+
+```{r}
+print_tab(voted_gov)
+```
+
+* Years: `r in_years(voted_gov)`
+* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+
+
+\newpage
+
 
 # Text
 
@@ -665,12 +692,12 @@ glimpse(select(df, matches("year|case_id")))
 
 ## Current Representatives
 
-### Incumbents
+### Name and Party
 
-The four names in the three offices that represent the respondent _at the time of the survey_. Parties are not shown if the particular year's CCES did not show party. 
+The four names in the three offices that represent the respondent _at the time of the survey_. Parties are not shown if the particular year's CCES did not show party. Party names are also abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset.
 
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_.inc")))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_.current")))
 ```
 
 ### Incumbent Identifiers
