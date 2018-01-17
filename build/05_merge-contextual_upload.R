@@ -189,7 +189,8 @@ ccc_cand <- ccc %>%
 # for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
 ccc_df <- ccc_cand %>%
   mutate(zipcode = as.character(zipcode)) %>%
-  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0"))
+  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>% 
+  mutate_at(vars(year, case_id), as.integer)
 
 
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
