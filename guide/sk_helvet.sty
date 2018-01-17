@@ -10,6 +10,7 @@
 \usepackage{longtable}
 \usepackage{enumitem}
 \usepackage{url}
+\usepackage{float}
 
 
 % Colors ------------
@@ -111,7 +112,7 @@ $endif$
 % Parmaters
 
 $if(title)$
-\title{\bigskip \LARGE\textbf{$title$}}
+\title{ \LARGE\textbf{$title$}}
 $endif$ 
 
 \author{$for(author)$$author$$if(thanks)$\thanks{$thanks$} $endif$ $sep$\\$endfor$}

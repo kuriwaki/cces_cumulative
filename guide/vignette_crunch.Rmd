@@ -5,7 +5,7 @@ output: github_document
 
 Crunch is a interface for viewing and manipulating datasets.
 
-```{r}
+```{r, message = FALSE}
 library(crunch)
 ```
 
@@ -21,7 +21,8 @@ library(tibble)
 # dataset
 cc12_link <- curl("www.shirokuriwaki.com/datasets/cces_sample.dta")
 cc12 <- read_dta(cc12_link) %>%
-  mutate_if(is.labelled, as_factor) # switch lablled to factor b/c crunch doesn't accept
+  mutate_if(is.labelled, as_factor) 
+# switch lablled to factor b/c crunch doesn't accept
 ```
 
 
@@ -62,12 +63,18 @@ crunch_ds <- loadDataset("2018-01-03_sample_cces-2012")
 
 
 
-Apply meta-data for each variable
-```{r}
+Apply meta-data for each variable to format names and descriptions. 
+```{r, message=FALSE}
 lapply(crunch_ds, function(v){
-  description(v) <- cc12_meta$description[cc12_meta$alias == name(v)]
+  name(v) <-        cc12_meta$name[cc12_meta$alias == alias(v)]
+  description(v) <- cc12_meta$description[cc12_meta$alias == alias(v)]
 })
 ```
+
+```{r}
+crunch_ds
+```
+
 
 and make cross-tabs, for example. 
 
