@@ -1,5 +1,6 @@
 ---
 title: "CCES cumulative"
+author: "Shiro Kuriwaki"
 output: github_document
 ---
 
@@ -9,17 +10,17 @@ library(tidyverse)
 library(rprojroot)
 ```
 
-Directory for building a CCES cumulative file (2006 - 2016) collaboratively. Follow the development of dataset building at [this Github page](https://github.com/kuriwaki/cces_cumulative). Project page of tasks [here](https://github.com/kuriwaki/cces_cumulative/projects/1).
+Source code for building a CCES cumulative file (2006 - 2016). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
+
 
 A 2006-2012 cumulative file, as well as datasets from individual years, can be found at the CCES homepage: https://cces.gov.harvard.edu/
 
-Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
-Data is currently not tracked, but releases will be made as flat files and a [Crunch dataset](crunch.io). For an intermediate dataset, please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>.
+Data is currently not tracked, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io). 
 
 # Getting Started 
 
-The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
+The `.Rds` format can be read into R^[In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.]
 
 ```{r, echo = FALSE, include = FALSE}
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
@@ -28,38 +29,66 @@ df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
 ```{r, eval = FALSE, echo = TRUE}
 df <- readRDS("cumulative_2006_2016.Rds")
 ```
-
 ```{r}
 library(tidyverse)
 df
 ```
+
+Each row is a respondent, and each variable is information associated with that respondent. Note that this cumulative dataset extracts only a couple of key variables from each year's CCES, which has hundreds of columns. 
+
 
 
 # What's New
 
 ## Unified Variable Names
 
+Most variables in this dataset come straight from each year's CCES. However, it renames and standardizes variable names, making them accessible in one place. 
+
+Please see the guide or the Crunch dataset for a full list and description of variables. 
+
+
+
 ## Candidate Names and Identifiers
 One addition to this cumulative dataset above the individual years that comprise it is the addition of candidate name and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables with those names are appended, requiring users to look-up the relevant candidate for each respondent. The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
 
 ```{r, echo = TRUE}
-select(df, year, case_id, st, matches("voted_sen"))
+select(df, year, case_id, matches("voted_sen"))
 ```
 
+
+
 ## Crunch
+
+A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience.  For access to View the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. Some features include:
+
+
+### A web GUI that is accessible anywhere and can quickly browse variables
+
+![Browse Variables with Crunch](guide/01_crunch_browse.gif)
+
+### Quick interfaces to show cross-tabs and bar graphs with the data, and customize formatting
+
+![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
+
+### Sharable widgets.  
+
+
+For questions and more access, please contact the CCES Team.
+
+
 
 
 
 # Code Organization
 
-R scripsts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
+R scripts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
 
-- `01_define-names-labels.R` constructs two variable name tables -- one that names andibes each variable to be in the final dataset, and another that indicates which varalias corresponds to the candidate columns in each year's CCES.
-- `02_read-common.R` pulls out the common contents with minimal foramtting (e.g. staze record ID variable names)
+- `01_define-names-labels.R` constructs two variable name tables -- one that names and describes each variable to be in the final dataset, and another that indicates which variables corresponds to the candidate columns in each year's CCES.
+- `02_read-common.R` pulls out the common contents with minimal formatting (e.g. state, case identifier variable names)
 - `03_prepare-fixes.R` makes some fixes to variables in each year's datasets.
-- `04_stack-cumulative.R` pulls out the variabales of interest from annual CCES filen, we stack this into a long dataset where each row is a respondent from CCES.
-- `05_extract_contextual.R` pulls out the "contextual variables" at the respondent leve. information on candidates and representatives. It uses some long format voting restables from `04`.
-- `06_merge-contextual_upload.R` combines all the variables together, essentially colnding the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
+- `04_stack-cumulative.R` pulls out the variables of interest from annual CCES files, we stack this into a long dataset where each row is a respondent from CCES.
+- `05_extract_contextual.R` pulls out the "contextual variables" at the respondent-level. information on candidates and representatives. It uses some long format voting tables from `04`.
+- `06_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
 - `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
 
@@ -67,4 +96,14 @@ More scripts in `00_prepare` format other datasets like NOMINATE, CQ, and DIME.
 
 
 
+# Acknowledgements
 
+Thanks to the contributors of this project: Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, and Joe Williams.
+
+I also relied on compiled datasets to build off of:
+
+* Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), doi:10.7910/DVN/26451, Harvard Dataverse, V5, UNF:5:rXSA73aoDi28uu+IOg7DEg==
+* Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). ["Voteview: Congressional Roll-Call Votes Database"](https://voteview.com).
+* Bonica, Adam , 2015, ["Database on Ideology, Money in Politics, and Elections (DIME)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/O5PX0B), <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
+
+--------
