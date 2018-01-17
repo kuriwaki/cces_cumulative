@@ -7,201 +7,98 @@ A 2006-2012 cumulative file, as well as datasets from individual years, can be f
 
 Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues).
 
-Data is currently not tracked, but releases will be made as flat files and a [Crunch dataset](crunch.io). For an intermediate dataset, please [email](mailto:kuriwaki@g.harvard.edu).
+Data is currently not tracked, but releases will be made as flat files and a [Crunch dataset](crunch.io). For an intermediate dataset, please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>.
 
-Structure of the directory
---------------------------
+Getting Started
+===============
 
-### code
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 
--   `build` stores code that is used to wrangle data and build datasets
--   `analyze` stores code to visualize and analyze data.
--   `old_code` for code that is out of use
+``` r
+df <- readRDS("cumulative_2006_2016.Rds")
+```
 
-### data
+``` r
+library(tidyverse)
+df
+```
 
--   `data/source` is where all the input data is. Things in here should not be overwritten. Instead, manipulated output should go in `data/output`.
--   `data/source/cces` stores all the CCES common content material.
--   `data/source/census` stores all the census-related data, and so on.
+    ## # A tibble: 374,556 x 67
+    ##     year case_id weight weight_cumulative state  st    CD     dist dist_up
+    ##    <int>   <int>  <dbl>             <dbl> <chr>  <chr> <chr> <int>   <int>
+    ##  1  2006  439219  1.85              1.67  North… NC    NC-10    10      10
+    ##  2  2006  439224  0.968             0.872 Ohio   OH    OH-3      3       3
+    ##  3  2006  439228  1.59              1.44  New J… NJ    NJ-1      1       1
+    ##  4  2006  439237  1.40              1.26  Illin… IL    IL-9      9       9
+    ##  5  2006  439238  0.903             0.813 New Y… NY    NY-22    22      22
+    ##  6  2006  439242  0.839             0.756 Texas  TX    TX-11    11      11
+    ##  7  2006  439251  0.777             0.700 Minne… MN    MN-3      3       3
+    ##  8  2006  439254  0.839             0.756 Nevada NV    NV-2      2       2
+    ##  9  2006  439255  0.331             0.299 Texas  TX    TX-24    24      24
+    ## 10  2006  439263  1.10              0.993 Maryl… MD    MD-2      2       2
+    ## # ... with 374,546 more rows, and 58 more variables: cong <int>, cong_up
+    ## #   <int>, zipcode <chr>, countyFIPS <chr>, tookpost <int+lbl>, weight_vv
+    ## #   <dbl>, weight_vv_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7
+    ## #   <int+lbl>, gender <int+lbl>, birthyr <int>, age <int>, race <int+lbl>,
+    ## #   educ <int+lbl>, economy_retro <int+lbl>, approval_pres <int+lbl>,
+    ## #   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
+    ## #   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
+    ## #   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
+    ## #   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
+    ## #   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
+    ## #   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
+    ## #   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
+    ## #   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+    ## #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
+    ## #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
+    ## #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
+    ## #   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>, sen2_current
+    ## #   <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
 
-Note: most *data* files are not tracked on git.
+What's New
+==========
 
-### other references
+Unified Variable Names
+----------------------
 
--   `figures` for generated figures
--   `tables` for generated tables
--   `guides` stores all the codebooks, guides, etc.. to explain the common content.
+Candidate Names and Identifiers
+-------------------------------
 
-Main code
----------
+One addition to this cumulative dataset above the individual years that comprise it is the addition of candidate name and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables with those names are appended, requiring users to look-up the relevant candidate for each respondent. The cumulative dataset shows both the generic label *and* the chosen candidate's name, party, and identifier, which will vary across individuals.
 
-### CCES
+``` r
+select(df, year, case_id, st, matches("voted_sen"))
+```
 
--   `build/01_read-common.R` pulls out the common contents with minimal foramtting (e.g. standardize record ID variable names)
--   `build/02_pull-08to11.R` pulls out some variables that we need separately from 2008 - 2011 CCES common content, that was masked in the 2006-2012 cumulative file.
--   `build/03_stack-cumulative.R` pulls out the variabales of interest from annual CCES files. Then, we stack this into a long dataset where each row is a respondent from CCES. This is uploaded to Crunch.
--   `build/04_extract_contextual.R` pulls out the "contextual variables" at the respondent level, i.e. information on candidates and representatives
--   `build/09_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset.
-
-### Contextual
-
--   `11_build-voteview.R` formats datasets of incumbent MCs
--   `12_build_CQ.R` formats data from CQ Alamnac on MCs biographical information
--   `13_build-FEC.R` formats FEC identifier keys for all candidates in the FEC database, using Bonica's DIME databaset
--   `14_join-incumbents.R` combines voteview, CQ, and FEC data for incumbents for congress, then to responses
--   `15_join-challengers.R` combines FEC and district data for challengers for congress
--   `16_join-governors.R` combines FEC and responses for Governor contextual data
--   `17_join-contextual.R` combines all respondent-level contextual info in one long dataset
+    ## # A tibble: 374,556 x 6
+    ##     year case_id st    voted_sen         voted_sen_chosen    voted_sen_fec
+    ##    <int>   <int> <chr> <fct>             <chr>               <chr>        
+    ##  1  2006  439219 NC    <NA>              <NA>                <NA>         
+    ##  2  2006  439224 OH    [Democrat / Cand… Sherrod C. Brown (… S6OH00163    
+    ##  3  2006  439228 NJ    [Democrat / Cand… Robert Menendez (D) S6NJ00289    
+    ##  4  2006  439237 IL    <NA>              <NA>                <NA>         
+    ##  5  2006  439238 NY    [Democrat / Cand… Hillary Rodham Cli… S0NY00188    
+    ##  6  2006  439242 TX    I Did Not Vote I… <NA>                <NA>         
+    ##  7  2006  439251 MN    [Republican / Ca… Mark Kennedy (R)    S6MN00275    
+    ##  8  2006  439254 NV    [Democrat / Cand… Jack Carter (D)     S6NV00150    
+    ##  9  2006  439255 TX    [Democrat / Cand… Barbara Ann Radnof… S6TX00180    
+    ## 10  2006  439263 MD    I Did Not Vote I… <NA>                <NA>         
+    ## # ... with 374,546 more rows
 
 Crunch
-======
+------
 
-Crunch is a interface for viewing and manipulating datasets.
+Code Organization
+=================
 
-``` r
-library(crunch)
-```
+R scripsts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse.
 
-    ## 
-    ## Attaching package: 'crunch'
+-   `01_define-names-labels.R` constructs two variable name tables -- one that names andibes each variable to be in the final dataset, and another that indicates which varalias corresponds to the candidate columns in each year's CCES.
+-   `02_read-common.R` pulls out the common contents with minimal foramtting (e.g. staze record ID variable names)
+-   `03_prepare-fixes.R` makes some fixes to variables in each year's datasets.
+-   `04_stack-cumulative.R` pulls out the variabales of interest from annual CCES filen, we stack this into a long dataset where each row is a respondent from CCES.
+-   `05_extract_contextual.R` pulls out the "contextual variables" at the respondent leve. information on candidates and representatives. It uses some long format voting restables from `04`.
+-   `06_merge-contextual_upload.R` combines all the variables together, essentially colnding the output of `04` on `05`. Saves a `.Rds` and `sav` version.
+-   `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
-    ## The following object is masked from 'package:utils':
-    ## 
-    ##     write.csv
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     table
-
-For example, start with a survey you already have
-
-``` r
-library(haven)
-library(curl)
-library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:crunch':
-    ## 
-    ##     combine, id
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(tibble)
-
-# dataset
-cc12_link <- curl("www.shirokuriwaki.com/datasets/cces_sample.dta")
-cc12 <- read_dta(cc12_link) %>%
-  mutate_if(is.labelled, as_factor) # switch lablled to factor b/c crunch doesn't accept
-```
-
-You might have meta-data that accompanies this.
-
-``` r
-cc12_meta <- tribble(
-  ~alias, ~type, ~name, ~description,
-  "state", "categorical", "State", "[State]",
-  "age", "numeric", "Age", "How old are you?",
-  "gender", "categorical", "Gender", "What is your Gender?",
-  "race", "categorical", "Race", "What racial or ethnic group best describes you?",
-  "employ", "categorical", "Employment Status", "Which of the following best describes your current employment status?",
-  "family_income", "categorical", "Family Income", "Thinking back over the last year, what was your family's annual income?",
-  "religion", "categorical", "Religion", "What is your present religion, if any?",
-  "obama12", "numeric", "Obama Vote", "[vote for Obama]"
-)
-```
-
-Now login to crunch
-
-``` r
-login()
-```
-
-    ## Logged into crunch.io as kuriwaki@g.harvard.edu
-
-Upload the dataset to crunch (do this only once)
-
-``` r
-newDataset(cc12, "2018-01-03_sample_cces-2012")
-```
-
-You can then load it,
-
-``` r
-crunch_ds <- loadDataset("2018-01-03_sample_cces-2012")
-```
-
-Apply meta-data for each variable
-
-``` r
-lapply(crunch_ds, function(v){
-  description(v) <- cc12_meta$description[cc12_meta$alias == name(v)]
-})
-```
-
-    ## [[1]]
-    ## [1] "[State]"
-    ## 
-    ## [[2]]
-    ## [1] "How old are you?"
-    ## 
-    ## [[3]]
-    ## [1] "What is your Gender?"
-    ## 
-    ## [[4]]
-    ## [1] "What racial or ethnic group best describes you?"
-    ## 
-    ## [[5]]
-    ## [1] "Which of the following best describes your current employment status?"
-    ## 
-    ## [[6]]
-    ## [1] "Thinking back over the last year, what was your family's annual income?"
-    ## 
-    ## [[7]]
-    ## [1] "What is your present religion, if any?"
-    ## 
-    ## [[8]]
-    ## [1] "[vote for Obama]"
-
-and make cross-tabs, for example.
-
-``` r
-xtab <- crtabs(~ religion + obama12, crunch_ds)
-```
-
-``` r
-round(prop.table(xtab, margin = 1), 3)
-```
-
-    ##                            obama12
-    ## religion                        0     1
-    ##   Protestant                0.656 0.344
-    ##   Roman Catholic            0.607 0.393
-    ##   Mormon                    0.858 0.142
-    ##   Eastern or Greek Orthodox 0.657 0.343
-    ##   Jewish                    0.373 0.627
-    ##   Muslim                    0.427 0.573
-    ##   Buddhist                  0.346 0.654
-    ##   Hindu                     0.562 0.438
-    ##   Atheist                   0.264 0.736
-    ##   Agnostic                  0.336 0.664
-    ##   Nothing in particular     0.495 0.505
-    ##   Something else            0.520 0.480
-    ##   Skipped                     NaN   NaN
-    ##   Not Asked                   NaN   NaN
-
-you can view it here like this
-
-``` r
-webApp(crunch_ds)
-```
+More scripts in `00_prepare` format other datasets like NOMINATE, CQ, and DIME.

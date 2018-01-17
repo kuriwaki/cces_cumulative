@@ -5,6 +5,8 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rprojroot)
 ```
 
 Directory for building a CCES cumulative file (2006 - 2016) collaboratively. Follow the development of dataset building at [this Github page](https://github.com/kuriwaki/cces_cumulative). Project page of tasks [here](https://github.com/kuriwaki/cces_cumulative/projects/1).
@@ -15,137 +17,54 @@ Please feel free to file any questions or requests about the cumulative file as 
 
 Data is currently not tracked, but releases will be made as flat files and a [Crunch dataset](crunch.io). For an intermediate dataset, please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>.
 
+# Getting Started 
 
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 
-
-
-## Structure of the directory
-
-
-### code
-- `build` stores code that is used to wrangle data and build datasets
-- `analyze` stores code to visualize and analyze data.
-- `old_code` for code that is out of use
-
-### data
-- `data/source` is where all the input data is. Things in here should not be overwritten. Instead, manipulated output should go in `data/output`.
-- `data/source/cces` stores all the CCES common content material.
-- `data/source/census` stores all the census-related data, and so on.
-
-Note: most _data_ files are not tracked on git.
-
-
-### other references
-- `figures` for generated figures
-- `tables` for generated tables
-- `guides` stores all the codebooks, guides, etc.. to explain the common content.
-
-
-
-## Main code
-
-### CCES
-
-- `build/01_read-common.R` pulls out the common contents with minimal foramtting (e.g. standardize record ID variable names)
-- `build/02_pull-08to11.R` pulls out some variables that we need separately from 2008 - 2011 CCES common content, that was masked in the 2006-2012 cumulative file.
-- `build/03_stack-cumulative.R` pulls out the variabales of interest from annual CCES files. Then, we stack this into a long dataset where each row is a respondent from CCES. This is uploaded to Crunch.
-- `build/04_extract_contextual.R` pulls out the "contextual variables" at the respondent level, i.e. information on candidates and representatives
-- `build/09_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset.
-
-### Contextual
-
-- `11_build-voteview.R` formats datasets of incumbent MCs
-- `12_build_CQ.R` formats data from CQ Alamnac on MCs biographical information
-- `13_build-FEC.R` formats FEC identifier keys for all candidates in the FEC database, using Bonica's DIME databaset
-- `14_join-incumbents.R` combines voteview, CQ, and FEC data for incumbents for congress, then to responses
-- `15_join-challengers.R` combines FEC and district data for challengers for congress
-- `16_join-governors.R` combines FEC and responses for Governor contextual data
-- `17_join-contextual.R` combines all respondent-level contextual info in one long dataset
-
-
-# Crunch
-
-Crunch is a interface for viewing and manipulating datasets.
-
-```{r}
-library(crunch)
+```{r, echo = FALSE, include = FALSE}
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
 ```
 
-For example, start with a survey you already have
-
-
-```{r}
-library(haven)
-library(curl)
-library(dplyr)
-library(tibble)
-
-# dataset
-cc12_link <- curl("www.shirokuriwaki.com/datasets/cces_sample.dta")
-cc12 <- read_dta(cc12_link) %>%
-  mutate_if(is.labelled, as_factor) # switch lablled to factor b/c crunch doesn't accept
-```
-
-
-
-You might have meta-data that accompanies this. 
-
-```{r}
-cc12_meta <- tribble(
-  ~alias, ~type, ~name, ~description,
-  "state", "categorical", "State", "[State]",
-  "age", "numeric", "Age", "How old are you?",
-  "gender", "categorical", "Gender", "What is your Gender?",
-  "race", "categorical", "Race", "What racial or ethnic group best describes you?",
-  "employ", "categorical", "Employment Status", "Which of the following best describes your current employment status?",
-  "family_income", "categorical", "Family Income", "Thinking back over the last year, what was your family's annual income?",
-  "religion", "categorical", "Religion", "What is your present religion, if any?",
-  "obama12", "numeric", "Obama Vote", "[vote for Obama]"
-)
-
-```
-
-Now login to crunch
-```{r}
-login()
-```
-
-Upload the dataset to crunch (do this only once)
-```{r, eval = FALSE}
-newDataset(cc12, "2018-01-03_sample_cces-2012")
-```
-
-
-
-You can then load it,
-```{r}
-crunch_ds <- loadDataset("2018-01-03_sample_cces-2012")
-```
-
-
-
-Apply meta-data for each variable
-```{r}
-lapply(crunch_ds, function(v){
-  description(v) <- cc12_meta$description[cc12_meta$alias == name(v)]
-})
-```
-
-and make cross-tabs, for example. 
-
-```{r}
-xtab <- crtabs(~ religion + obama12, crunch_ds)
+```{r, eval = FALSE, echo = TRUE}
+df <- readRDS("cumulative_2006_2016.Rds")
 ```
 
 ```{r}
-round(prop.table(xtab, margin = 1), 3)
+library(tidyverse)
+df
 ```
 
 
+# What's New
 
-you can view it here like this
-```{r, eval = FALSE}
-webApp(crunch_ds)
+## Unified Variable Names
+
+## Candidate Names and Identifiers
+One addition to this cumulative dataset above the individual years that comprise it is the addition of candidate name and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables with those names are appended, requiring users to look-up the relevant candidate for each respondent. The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
+
+```{r, echo = TRUE}
+select(df, year, case_id, st, matches("voted_sen"))
 ```
+
+## Crunch
+
+
+
+# Code Organization
+
+R scripsts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
+
+- `01_define-names-labels.R` constructs two variable name tables -- one that names andibes each variable to be in the final dataset, and another that indicates which varalias corresponds to the candidate columns in each year's CCES.
+- `02_read-common.R` pulls out the common contents with minimal foramtting (e.g. staze record ID variable names)
+- `03_prepare-fixes.R` makes some fixes to variables in each year's datasets.
+- `04_stack-cumulative.R` pulls out the variabales of interest from annual CCES filen, we stack this into a long dataset where each row is a respondent from CCES.
+- `05_extract_contextual.R` pulls out the "contextual variables" at the respondent leve. information on candidates and representatives. It uses some long format voting restables from `04`.
+- `06_merge-contextual_upload.R` combines all the variables together, essentially colnding the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
+- `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
+
+
+More scripts in `00_prepare` format other datasets like NOMINATE, CQ, and DIME. 
+
+
 
 
