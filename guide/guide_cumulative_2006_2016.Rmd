@@ -5,7 +5,7 @@ output:
     template: sk_helvet.sty
 title: "CCES Cumulative Common Content (2006 - 2016)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}, Website:  \\url{www.shirokuriwaki.com}. My thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 

@@ -18,6 +18,12 @@ A 2006-2012 cumulative file, as well as datasets from individual years, can be f
 
 Data is currently not tracked, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io). 
 
+Current Dataverse Version: 
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6
+
+Current Guide: 
+https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf
+
 # Getting Started 
 
 The `.Rds` format^[In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.] can be read into R.

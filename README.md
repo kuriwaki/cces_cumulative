@@ -8,10 +8,14 @@ A 2006-2012 cumulative file, as well as datasets from individual years, can be f
 
 Data is currently not tracked, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io).
 
+Current Dataverse Version: <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6>
+
+Current Guide: <https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf>
+
 Getting Started
 ===============
 
-The `.Rds` format can be read into R[1]
+The `.Rds` format[1] can be read into R.
 
 ``` r
 df <- readRDS("cumulative_2006_2016.Rds")
@@ -95,17 +99,25 @@ Crunch
 
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. For access to View the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. Some features include:
 
-### A web GUI that is accessible anywhere and can quickly browse variables
+### A web GUI for quickly browsing variables
 
 ![Browse Variables with Crunch](guide/01_crunch_browse.gif)
 
-### Quick interfaces to show cross-tabs and bar graphs with the data, and customize formatting
+### Quickly check cross-tabs and bar graphs, with customize formatting
 
 ![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
 
 ### Sharable widgets.
 
 For questions and more access, please contact the CCES Team.
+
+Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>.
+
+``` r
+install.packages("crunch")
+```
+
+For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a short vignette in this repo.
 
 Code Organization
 =================
