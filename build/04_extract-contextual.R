@@ -89,17 +89,17 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   
   bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
-    mutate(!!paste0(var, "_shown") := concatenate_shown(namevec = .data[[namevar]], partyvec = .data[[ptyvar]])) %>%
+    mutate(!!paste0(var, "_current") := concatenate_current(namevec = .data[[namevar]], partyvec = .data[[ptyvar]])) %>%
     arrange(year, case_id) %>% 
     select(!!ids,
-           matches("_shown"),
+           matches("_current"),
            icpsr, 
            fec)
 }
 
 #' Concatenate name and party to a formatted label.
 #' if partyvec is missing, don't use parentheses
-concatenate_shown <- function(namevec, partyvec) {
+concatenate_current <- function(namevec, partyvec) {
   str_c(namevec, 
         ifelse(!is.na(partyvec), " (", ""),
         ifelse(!is.na(partyvec), partyvec, ""),
@@ -406,12 +406,12 @@ r_govinc <- df %>%
   select(!!carry_vars, gov_inc, gov_ipt) %>% 
   mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
 
-# merge, then create "shown"
+# merge, then create "current"
 gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>% 
-  mutate(gov_shown = concatenate_shown(gov_inc, gov_ipt)) %>%
+  mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) %>%
   arrange(year, case_id) %>% 
   select(!!carry_vars,
-         matches("_shown"),
+         matches("_current"),
          fec)
 stopifnot(nrow(gov_inc_match) == nrow(r_govinc))
 cat(glue("Out of {nrow(r_govinc)} governor-rows, we matched

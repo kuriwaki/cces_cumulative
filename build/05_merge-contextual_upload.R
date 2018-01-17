@@ -173,10 +173,10 @@ abstract_lbl <- bind_label(i_rep_who) %>%
   left_join(bind_label(v_gov_who), ids)
 
 # nice dataset for incumbents ? ----
-incumbents_with_ID <-  slim(ri_mc_match, "_shown", "icpsr") %>% 
-  left_join(slim(s1i_mc_match, "_shown", "icpsr"), ids) %>% 
-  left_join(slim(s2i_mc_match, "_shown", "icpsr"), ids) %>% 
-  left_join(slim(gov_inc_match, "_shown"), ids)
+incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>% 
+  left_join(slim(s1i_mc_match, "_current", "icpsr"), ids) %>% 
+  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids) %>% 
+  left_join(slim(gov_inc_match, "_current"), ids)
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
