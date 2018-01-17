@@ -189,7 +189,7 @@ ccc_cand <- ccc %>%
 # for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
 ccc_df <- ccc_cand %>%
   mutate(zipcode = as.character(zipcode)) %>%
-  mutate(countyFIPS = str_pad(as.character(countyFIPS), width = 5, pad = "0")) %>% 
+  mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
   mutate_at(vars(year, case_id), as.integer)
 
 
@@ -198,7 +198,7 @@ ccc_factor <- ccc_df %>%
   mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("_icpsr$")), as.character) %>%
   mutate_at(vars(matches("_fec$")), as.character) %>%
-  mutate_at(vars(matches("(^dist|^CD$|^cong|^state$|^st$)")), as.factor)
+  mutate_at(vars(matches("(^dist|^cd$|^cong|^state$|^st$)")), as.factor)
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05

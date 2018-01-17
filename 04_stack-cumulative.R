@@ -22,7 +22,7 @@ stdName <- function(tbl) {
       rename(
         tookpost = survey_complete,
         zipcode = zip_pre,
-        countyFIPS = county_fips_pre,
+        county_fips = county_fips_pre,
         starttime = start_pre,
         reg_true = reg_validation,
         reg_self = registered_pre,
@@ -99,8 +99,7 @@ stdName <- function(tbl) {
   }
   
   if (identical(cces_year, 2014L)) {
-    tbl <- rename(
-      tbl,
+    tbl <- tbl %>% rename(
       approval_pres = CC14_308a,
       approval_rep = CC14_315a,
       approval_sen1 = CC14_315b,
@@ -200,7 +199,7 @@ stdName <- function(tbl) {
         family_income = faminc,
         marriage_status = marstat,
         zipcode = lookupzip,
-        countyFIPS = countyfips,
+        county_fips = countyfips,
         partyreg = CC350
       ) %>%
       mutate(
@@ -503,15 +502,15 @@ ccs <- list(
 
 # fix county misalignment
 ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
-  mutate(countyFIPS = (countyFIPS < 1000) * as.numeric(state_pre) * 1000 + countyFIPS) %>% 
-  mutate(countyFIPS = as.character(countyFIPS))
+  mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
+  mutate(county_fips = as.character(county_fips))
 
 
 # Extract variable by variable iniitial version -----
 
 # admin ------
-wgt <- findStack(ccs, weight, "numeric")
-wgt_vv <- findStack(ccs, weight_vv, "numeric")
+wgt        <- findStack(ccs, weight, "numeric")
+wgt_vv     <- findStack(ccs, weight_vv, "numeric")
 wgt_vvpost <- findStack(ccs, weight_vv_post, "numeric")
 
 tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) %>% 
@@ -547,9 +546,9 @@ age <- findStack(ccs, age, "integer")
 # geography ----
 state      <- findStack(ccs, state, "character")
 zipcode    <- findStack(ccs, zipcode, "character")
-countyFIPS <- findStack(ccs, countyFIPS, "numeric") %>% 
+county_fips <- findStack(ccs, county_fips, "numeric") %>% 
   filter(year != 2007) %>% 
-  bind_rows(select(cc07, year, case_id, countyFIPS = CC06_V1004) %>% 
+  bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
               mutate_all(zap_labels))
 
 dist       <- findStack(ccs, dist, "integer")
@@ -626,12 +625,12 @@ stcd <- left_join(state, dist) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(CD = glue("{st}-{dist}")) %>%
-  select(year, case_id, state, st, CD, dist, dist_up, cong, cong_up)
+  mutate(cd = glue("{st}-{dist}")) %>%
+  select(year, case_id, state, st, cd, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
   left_join(zipcode) %>%
-  left_join(countyFIPS)
+  left_join(county_fips)
 
 
 # bind together ----

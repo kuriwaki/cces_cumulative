@@ -50,7 +50,6 @@ type(ds$cong) <- type(ds$cong_up) <- "categorical"
 names(categories(ds$cong)) <- c(as.character(109:114), "No Data")
 names(categories(ds$cong_up)) <- c(as.character(110:115), "No Data")
 
-type(ds$CD) <- "categorical"
 
 # ordering of categories ----
 st_order <- c(order(table(ds$state, useNA = "ifany"), decreasing = TRUE),
@@ -65,7 +64,7 @@ vn <- names(ds)
 ind_top <- grep("(year|state)", vn)
 ind_dem <- grep("(gender|birthyr|race|educ|age)", vn)
 
-ind_geo <- grep("(CD|zipcode|countyFIPS)", vn)
+ind_geo <- grep("(cd|zipcode|county_fips)", vn)
 
 ind_pid <- grep("(pid)", vn)
 ind_app <- grep("(approval_.*)", vn)
@@ -78,7 +77,7 @@ ind_vv  <- grep("^vv_.*", vn)
 ind_int <- grep("intent_(rep|sen|gov)$", vn)
 ind_vtd <- grep("voted_(rep|sen|gov)$", vn)
 ind_candID  <- grep("intent_rep_chosen", vn):grep("voted_gov_fec", vn) 
-ind_incID  <- grep("^rep_shown$", vn):grep("^gov_fec$", vn) 
+ind_incID  <- grep("^rep_current$", vn):grep("^gov_fec$", vn) 
 
 
 ind_wgt <- grep("(weight)", vn)
