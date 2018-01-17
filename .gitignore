@@ -56,7 +56,7 @@ Thumbs.db
 
 # data
 ####################
-data/source/*Rds
+data/source/*
 data/source/anes/*
 data/source/cces/*
 data/source/census_demog
