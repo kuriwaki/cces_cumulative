@@ -71,7 +71,9 @@ ind_pid <- grep("(pid)", vn)
 ind_app <- grep("(approval_.*)", vn)
 ind_econ <- grep("(retro)", vn)
 
-ind_pres <- grep("(intent|voted)_pres", vn)
+ind_pres_08 <- grep("(intent|voted)_pres_08", vn)
+ind_pres_12 <- grep("(intent|voted)_pres_12", vn)
+ind_pres_16 <- grep("(intent|voted)_pres_16", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 
@@ -90,7 +92,8 @@ ind_other <- setdiff(
     ind_geo, ind_wgt, 
     ind_dem, 
     ind_econ, ind_pid, ind_app, 
-    ind_pres, ind_int, ind_vtd, ind_vv,
+    c(ind_pres_08, ind_pres_12, ind_pres_16),  
+    ind_int, ind_vtd, ind_vv,
     ind_incID, ind_candID)
 )
 
@@ -100,11 +103,18 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Geography", ds[ind_geo]),
   VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app)]),
   VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
-  VariableGroup("Presidential Preference and Vote", ds[ind_pres]),
+  VariableGroup("Presidential Preference and Vote", ds[c(ind_pres_08, ind_pres_12, ind_pres_16)]),
   VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_int, ind_vtd)]),
   VariableGroup("Politician Names and Identifiers", ds[c(ind_candID, ind_incID)]),
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
+)
+
+
+ordering(ds)[["Presidential Preference and Vote"]] <- VariableOrder(
+  VariableGroup("2008 Obama - McCain",  ds[ind_pres_08]),
+  VariableGroup("2012 Obama - Romney",  ds[ind_pres_12]),
+  VariableGroup("2016 Trump - Clinton", ds[ind_pres_16])
 )
 
 ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrder(
@@ -126,4 +136,7 @@ ordering(ds)[["Politician Names and Identifiers"]]  <- VariableOrder(
 # hide numeric variables for crunch
 ind_nuisance_num <- grep("_num$", vn)
 hideVariables(ds, ind_nuisance_num)
+
+
+lock(ds)
 
