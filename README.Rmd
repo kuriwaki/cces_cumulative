@@ -72,7 +72,7 @@ A version of the dataset is also included in Crunch, a database platform that ma
 
 ![Browse Variables with Crunch](guide/01_crunch_browse.gif)
 
-### Quickly check cross-tabs and bar graphs, with customize formatting
+### Quickly check cross-tabs and bar graphs, with customizable formatting
 
 ![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
 
@@ -82,7 +82,7 @@ A version of the dataset is also included in Crunch, a database platform that ma
 For questions and more access, please contact the CCES Team.
 
 
-Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. 
+Crunch datasets can also be manipulated from a R package, `crunch`: <https://github.com/Crunch-io/rcrunch>. 
 
 ```{r, eval = FALSE}
 install.packages("crunch")
