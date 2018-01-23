@@ -545,6 +545,24 @@ pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
 
 # demographics ----
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
+
+# put leaners into partisans
+leaner_lbl_code <- c(`Democrat (Including Leaners)` = 1L,
+                     `Republican (Including Leaners)` = 2L,
+                     `Independent (Excluding Leaners)` = 3L,
+                     `Not Sure` = 8L,
+                     `Not Asked` = 99L,
+                     `Skipped` = 98L)
+pid3_leaner <- pid7 %>%
+  mutate(pid3_leaner = as_factor(pid7)) %>% 
+  mutate(pid3_leaner = fct_collapse(pid3_leaner, 
+                                    "Republican (Including Leaners)" = c("Strong Republican", "Not Very Strong Republican", "Lean Republican"),
+                                    "Democrat (Including Leaners)" = c("Strong Democrat", "Not Very Strong Democrat", "Lean Democrat"),
+                                    "Independent (Excluding Leaners)" = "Independent")) %>% 
+  mutate(pid3_leaner_num = recode(pid3_leaner, !!!leaner_lbl_code)) %>% 
+  mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code))
+
+
 gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
 race <- findStack(ccs, race, makeLabelled = TRUE)
@@ -649,6 +667,7 @@ ccc <- geo %>%
   left_join(wgt_vvpost) %>%
   left_join(time) %>%
   left_join(pid3) %>%
+  left_join(pid3_leaner) %>%
   left_join(pid7) %>%
   left_join(gend) %>%
   left_join(bryr) %>%
