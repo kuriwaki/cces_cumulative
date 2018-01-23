@@ -11,6 +11,7 @@ login() # you need a login and password to complete this command
 
 # connect to data---------
 ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+unlock(ds)
 
 # description for dataset
 description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
@@ -27,7 +28,7 @@ lapply(ds, function(v){
 })
 
 # at the same time apply the variable labels to the dta as well
-dta_not_labelled <- TRUE
+dta_not_labelled <- FALSE
 
 if (dta_not_labelled) {
   ccc_factor <- readRDS("data/output/cumulative_2006_2016_factor.Rds")
@@ -77,8 +78,10 @@ ind_pres_16 <- grep("(intent|voted)_pres_16", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 
-ind_int <- grep("intent_(rep|sen|gov)$", vn)
-ind_vtd <- grep("voted_(rep|sen|gov)$", vn)
+ind_rep <- grep("(intent|voted)_rep$", vn)
+ind_sen <- grep("(intent|voted)_sen$", vn)
+ind_gov <- grep("(intent|voted)_gov$", vn)
+
 ind_candID  <- grep("intent_rep_chosen", vn):grep("voted_gov_fec", vn) 
 ind_incID  <- grep("^rep_current$", vn):grep("^gov_fec$", vn) 
 
@@ -93,7 +96,8 @@ ind_other <- setdiff(
     ind_dem, 
     ind_econ, ind_pid, ind_app, 
     c(ind_pres_08, ind_pres_12, ind_pres_16),  
-    ind_int, ind_vtd, ind_vv,
+    ind_rep, ind_sen, ind_gov, 
+    ind_vv,
     ind_incID, ind_candID)
 )
 
@@ -104,7 +108,7 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app)]),
   VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
   VariableGroup("Presidential Preference and Vote", ds[c(ind_pres_08, ind_pres_12, ind_pres_16)]),
-  VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_int, ind_vtd)]),
+  VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_rep, ind_sen, ind_gov)]),
   VariableGroup("Politician Names and Identifiers", ds[c(ind_candID, ind_incID)]),
   VariableGroup("Weights", ds[ind_wgt]),
   VariableGroup("Other", ds[ind_other])
@@ -118,8 +122,9 @@ ordering(ds)[["Presidential Preference and Vote"]] <- VariableOrder(
 )
 
 ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrder(
-  VariableGroup("Preference", ds[ind_int]),
-  VariableGroup("Vote Choice", ds[ind_vtd])
+  VariableGroup("House", ds[ind_rep]),
+  VariableGroup("Senate", ds[ind_sen]),
+  VariableGroup("Governor", ds[ind_gov])
 )
 
 ordering(ds)[["Identity and Attitudes"]] <- VariableOrder(

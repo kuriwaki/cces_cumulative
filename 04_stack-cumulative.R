@@ -211,6 +211,14 @@ stdName <- function(tbl) {
 
 
 # inner extraction function for findStack
+#' @param tbl data
+#' @param var NSE variable name to look for
+#' @param var_name in characters
+#' @param chr_var_name name of the variablethat  will hold the labels (in chars)
+#' @param num_var_name name of the variable that will hold the levels (in integers)
+#' 
+#' @return 
+#' A dataset, for each year, with standardized names, separating labels and values (if factor)
 extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor = TRUE) {
   if (is_factor) {
     if (var_name %in% colnames(tbl)) { # factor 
