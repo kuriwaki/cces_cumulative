@@ -5,7 +5,7 @@ output:
     template: sk_helvet.sty
 title: "CCES Cumulative Common Content (2006 - 2016)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -163,13 +163,13 @@ A version of the dataset is also included in Crunch, a database platform that ma
 
 \begin{figure}[H]
 \centering
-\centerline{\includegraphics[width=1.25\linewidth]{01_crunch_browse.png}}
+\centerline{\includegraphics[width=1.05\linewidth]{01_crunch_browse.png}}
 \end{figure}
 
 3. Analyze: The crunch interface allows Viewers to make cross-tabs and bar graphs quickly.  
 \begin{figure}[H]
 \centering
-\centerline{\includegraphics[width=1.25\linewidth]{02_crunch_tab.png}}
+\centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
 \end{figure}
 
 Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. 
@@ -180,12 +180,12 @@ Crunch datasets can also be manipulated from a R package, `crunch` <https://gith
 
 The sections below provide summary more information on each variable. 
 
-* The title is followed by the name of the variable in the dataset ("alias" in Crunch) followed by the variable label ("name" in Crunch).
-* Question wordings, where applicable, immediately follow. Otherwise an description is provide in square brackets ("[]"). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw (rather than the verbatim response). 
-* A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts. Response options are ordered by the ordering in the dataset. 
-* The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporate in the creation of this dataset. 
+* The title shows the name as used in the dataset, suitable for coding ("alias" in Crunch terminology). followed by a more descriptive. name suitable for presentation ("name" in Crunch terminology).
+* Question wordings, where applicable, immediately follow. Otherwise an description is provide in square brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
+* A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
+* The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
 * Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
- 
+
  
  
 # Administration
@@ -440,16 +440,6 @@ print_tab(pid3)
 * Years: `r in_years(pid3)`
 * Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 2010 values are from the post-election wave. 
 
-### `r nam(pid3_leaner)`
-
-`r descrip(pid3_leaner)`
-
-```{r}
-print_tab(pid3_leaner)
-```
-
-* Years: `r in_years(pid3_leaner)`
-* Limitations: See `pid3`
 
 ### `r nam(pid7)`
 
@@ -461,6 +451,18 @@ print_tab(pid7)
 
 * Years: `r in_years(pid7)`
 * Limitations: See `pid3` 
+
+### `r nam(pid3_leaner)`
+
+`r descrip(pid3_leaner)`
+
+```{r}
+print_tab(pid3_leaner)
+```
+
+* Years: `r in_years(pid3_leaner)`
+* Limitations: See `pid3`
+
 
 ## Economy
 ### `r nam(economy_retro)`
@@ -725,7 +727,7 @@ glimpse(select(df, matches("year|case_id")))
 The four names in the three offices that represent the respondent _at the time of the survey_. Parties are not shown if the particular year's CCES did not show party. Party names are also abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset.
 
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_.current")))
+glimpse(select(df, matches("(rep|sen1|sen2|gov)_current")))
 ```
 
 ### Incumbent Identifiers
