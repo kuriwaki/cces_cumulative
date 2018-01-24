@@ -26,7 +26,7 @@ library(tidyverse)
 df
 ```
 
-    ## # A tibble: 374,556 x 67
+    ## # A tibble: 374,556 x 68
     ##     year case_id weight weight_cumulative state  st    cd     dist dist_up
     ##    <int>   <int>  <dbl>             <dbl> <chr>  <chr> <chr> <int>   <int>
     ##  1  2006  439219  1.85              1.67  North… NC    NC-10    10      10
@@ -39,24 +39,25 @@ df
     ##  8  2006  439254  0.839             0.756 Nevada NV    NV-2      2       2
     ##  9  2006  439255  0.331             0.299 Texas  TX    TX-24    24      24
     ## 10  2006  439263  1.10              0.993 Maryl… MD    MD-2      2       2
-    ## # ... with 374,546 more rows, and 58 more variables: cong <int>, cong_up
+    ## # ... with 374,546 more rows, and 59 more variables: cong <int>, cong_up
     ## #   <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>, weight_vv
     ## #   <dbl>, weight_vv_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7
-    ## #   <int+lbl>, gender <int+lbl>, birthyr <int>, age <int>, race <int+lbl>,
-    ## #   educ <int+lbl>, economy_retro <int+lbl>, approval_pres <int+lbl>,
-    ## #   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
-    ## #   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
-    ## #   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
-    ## #   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
-    ## #   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
-    ## #   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
-    ## #   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
-    ## #   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
-    ## #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
-    ## #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
-    ## #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
-    ## #   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>, sen2_current
-    ## #   <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
+    ## #   <int+lbl>, pid3_leaner <int+lbl>, gender <int+lbl>, birthyr <int>, age
+    ## #   <int>, race <int+lbl>, educ <int+lbl>, economy_retro <int+lbl>,
+    ## #   approval_pres <int+lbl>, approval_rep <fct>, approval_sen1 <fct>,
+    ## #   approval_sen2 <fct>, approval_gov <int+lbl>, intent_pres_08 <fct>,
+    ## #   intent_pres_12 <fct>, intent_pres_16 <fct>, voted_pres_08 <fct>,
+    ## #   voted_pres_12 <fct>, voted_pres_16 <fct>, vv_regstatus <fct>,
+    ## #   vv_party_gen <fct>, vv_party_prm <fct>, vv_turnout_gvm <fct>,
+    ## #   vv_turnout_pvm <fct>, intent_rep <fct>, intent_sen <fct>, intent_gov
+    ## #   <fct>, voted_rep <fct>, voted_sen <fct>, voted_gov <fct>,
+    ## #   intent_rep_chosen <chr>, intent_rep_fec <chr>, intent_sen_chosen
+    ## #   <chr>, intent_sen_fec <chr>, intent_gov_chosen <chr>, intent_gov_fec
+    ## #   <chr>, voted_rep_chosen <chr>, voted_rep_fec <chr>, voted_sen_chosen
+    ## #   <chr>, voted_sen_fec <chr>, voted_gov_chosen <chr>, voted_gov_fec
+    ## #   <chr>, rep_current <chr>, rep_icpsr <int>, sen1_current <chr>,
+    ## #   sen1_icpsr <int>, sen2_current <chr>, sen2_icpsr <int>, gov_current
+    ## #   <chr>, gov_fec <chr>
 
 Each row is a respondent, and each variable is information associated with that respondent. Note that this cumulative dataset extracts only a couple of key variables from each year's CCES, which has hundreds of columns.
 
@@ -103,7 +104,7 @@ A version of the dataset is also included in Crunch, a database platform that ma
 
 ![Browse Variables with Crunch](guide/01_crunch_browse.gif)
 
-### Quickly check cross-tabs and bar graphs, with customize formatting
+### Quickly check cross-tabs and bar graphs, with customizable formatting
 
 ![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
 
@@ -111,7 +112,7 @@ A version of the dataset is also included in Crunch, a database platform that ma
 
 For questions and more access, please contact the CCES Team.
 
-Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>.
+Crunch datasets can also be manipulated from a R package, `crunch`: <https://github.com/Crunch-io/rcrunch>.
 
 ``` r
 install.packages("crunch")
@@ -133,18 +134,6 @@ R scripts `01` - `06` reproduce the cumulative dataset starting from each year's
 -   `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
 More scripts in `00_prepare` format other datasets like NOMINATE, CQ, and DIME.
-
-Acknowledgements
-================
-
-Thanks to the contributors of this project: Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, and Joe Williams.
-
-I also relied on compiled datasets to build off of:
-
--   Ansolabehere, Stephen; Pettigrew, Stephen, 2014, ["Cumulative CCES Common Content (2006-2012)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26451), <doi:10.7910/DVN/26451>, Harvard Dataverse, V5, UNF:5:rXSA73aoDi28uu+IOg7DEg==
--   Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). ["Voteview: Congressional Roll-Call Votes Database"](https://voteview.com).
--   Bonica, Adam , 2015, ["Database on Ideology, Money in Politics, and Elections (DIME)"](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/O5PX0B), <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
-
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 [1] In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
