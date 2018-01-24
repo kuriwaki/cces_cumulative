@@ -64,7 +64,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   persn_remain <- persn_unmatch %>% 
     mutate(namelast = gsub(remove_regex, "", .data[[glue("{var}_inc")]]),
            namelast = word(namelast, -1),
-           namelast = toupper(namelast))
+           namelast = toupper(namelast)) %>% 
+    mutate(namelast = replace(namelast, st == "TX" & namelast == "HUTCHINSON", "HUTCHISON"),
+           namelast = replace(namelast, st == "NJ" & namelast == "MENÉNDEZ", "MENENDEZ"),
+           namelast = replace(namelast, st == "NY" & namelast == "VELAZQUEZ", "VELÁZQUEZ"))
   
   # vars to match on round2
   if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st", "namelast")
@@ -288,7 +291,7 @@ inc_S <- readRDS("data/output/03_contextual/incumbents_S.Rds")
 statecode <- read_csv("data/source/statecode.csv")
 
 # parameters
-suffixes <- "(,\\sIV|?,\\sI{1,3}|,?\\sM?\\.D?\\.|,?\\sJr\\.|,?\\sSr\\.)$" # remove generations, MDs, Jr/Srs.
+suffixes <- "(,?\\sIV|,?\\sI{1,3}|,?\\sM\\.?D\\.?|,?\\sJr\\.|,?\\sSr\\.)$" # remove generations, MDs, Jr/Srs.
 carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "cong_up") # carry these along as id vectors 
 
 cclist <- list(`2006` = cc06, 
