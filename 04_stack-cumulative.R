@@ -372,6 +372,14 @@ recode_congapv <- function(tbl, char_name) {
 
 #' clean up missing values, format to change NaN to NA
 clean_values <- function(tbl, chr_var_name, num_var_name) {
+  if (grepl("approval", chr_var_name)) {
+    skipped_num  <- 8
+    notasked_num <- 9
+  } else {
+    skipped_num  <- 98
+    notasked_num <- 99
+  }
+  
   tbl %>%
     mutate( # replace NaN to NA
       !! chr_var_name := na_if(.data[[chr_var_name]], "NaN"),
@@ -383,8 +391,8 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
     mutate( # change not asked and skipped to NAs
       !! chr_var_name := na_if(.data[[chr_var_name]], "Not Asked"),
       !! chr_var_name := na_if(.data[[chr_var_name]], "Skipped"),
-      !! num_var_name := na_if(.data[[num_var_name]], 99),
-      !! num_var_name := na_if(.data[[num_var_name]], 98))
+      !! num_var_name := na_if(.data[[num_var_name]], notasked_num),
+      !! num_var_name := na_if(.data[[num_var_name]], skipped_num))
 }
 
 value_changes <- function(vec) {
@@ -547,9 +555,9 @@ pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
 pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
-  mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   mutate(pid3 = na_if(pid3_num, 98)) %>%
   mutate(pid3 = na_if(pid3_num, 99)) %>%
+  mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   select(year, case_id, pid3) # manually do only this one
 
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
@@ -615,14 +623,11 @@ v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
 
 
 # approval -----
-apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE) %>% 
-  mutate(approval_pres = na_if(zap_labels(approval_pres), 8))
+apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
 apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE)
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
 apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
-apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE) %>% 
-  mutate(approval_gov = na_if(zap_labels(approval_gov), 8),
-         approval_gov = na_if(zap_labels(approval_gov), 9))
+apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE) 
 
 # economy -----
 econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FALSE) %>% 
