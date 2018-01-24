@@ -555,8 +555,8 @@ pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
 pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
-  mutate(pid3 = na_if(pid3_num, 8)) %>%
-  mutate(pid3 = na_if(pid3_num, 9)) %>%
+  mutate(pid3_num = na_if(pid3_num, 8)) %>%
+  mutate(pid3_num = na_if(pid3_num, 9)) %>%
   mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   select(year, case_id, pid3) # manually do only this one
 
