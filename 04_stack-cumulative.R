@@ -539,7 +539,7 @@ wgt_vvpost <- findStack(ccs, weight_vv_post, "numeric")
 tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) %>% 
   mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
                              labels = c("Took Post-Election Survey" = 1,
-                                        "Did NOT Take Post-Election Survey" = 0))) %>% 
+                                        "Did Not Take Post-Election Survey" = 0))) %>% 
   select(year, case_id, tookpost)
 
 
@@ -550,13 +550,13 @@ time <- findStack(ccs, starttime, type = "datetime") %>%
 
 # pid -------
 pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
-                 "Other" = 4, "Not Sure" = 5, "Skipped" = 8)
+                 "Other" = 4, "Not Sure" = 5)
 
 pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
-  mutate(pid3 = na_if(pid3_num, 98)) %>%
-  mutate(pid3 = na_if(pid3_num, 99)) %>%
+  mutate(pid3 = na_if(pid3_num, 8)) %>%
+  mutate(pid3 = na_if(pid3_num, 9)) %>%
   mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   select(year, case_id, pid3) # manually do only this one
 
@@ -733,3 +733,6 @@ ccc <- ccc %>%
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
+
+
+cat("Finished stacking vars for cumulative \n")
