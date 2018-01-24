@@ -10,7 +10,7 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds <- loadDataset("CCES Cumulative Common Dev")
 unlock(ds)
 
 # description for dataset
@@ -28,7 +28,7 @@ lapply(ds, function(v){
 })
 
 # at the same time apply the variable labels to the dta as well
-dta_not_labelled <- FALSE
+dta_not_labelled <- TRUE
 
 if (dta_not_labelled) {
   ccc_factor <- readRDS("data/output/cumulative_2006_2016_factor.Rds")
@@ -37,7 +37,7 @@ if (dta_not_labelled) {
     attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
   }
   
-  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta", version = 13)
+  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta", version = 14)
 }
 
 # apply weights ---
@@ -145,3 +145,5 @@ hideVariables(ds, ind_nuisance_num)
 
 lock(ds)
 
+
+cat("Finished formatting Crunch dataset. ")

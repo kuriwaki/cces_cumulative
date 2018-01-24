@@ -179,3 +179,5 @@ save(
   file = "data/output/01_responses/common_all.RData"
 )
 
+
+cat("Finished standardizing input\n")

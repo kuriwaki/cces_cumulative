@@ -428,3 +428,5 @@ save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match, file = "data/output
 save(rc_fec_match, sc_fec_match, gc_fec_match, file = "data/output/01_responses/candidates_key.RData")
 saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 
+
+cat("Finished matching candidate info to identifiers\n")

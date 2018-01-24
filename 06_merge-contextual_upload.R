@@ -209,3 +209,5 @@ if (writeToCrunch) {
   logout()  
 }
 
+
+cat("Finished merging candidadte vars and the rest. Update Rds and sav. Upload to crunch?\n")

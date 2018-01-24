@@ -1,3 +1,4 @@
+library(tidyverse)
 library(tibble)
 
 
@@ -116,3 +117,5 @@ stopifnot(n_distinct(ccc_meta$name) == nrow(ccc_meta))
 
 
 saveRDS(ccc_meta, "data/output/02_questions/cumulative_vartable.Rds")
+
+cat("Finished naming and describing variables")
