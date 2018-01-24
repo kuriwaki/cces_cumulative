@@ -21,8 +21,7 @@ library(glue)
 library(tidyverse)
 library(haven)
 library(rprojroot)
-```
-```{r include = FALSE}
+
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
 # saveRDS(sample_frac(df, 0.01), "data/release/temp_sample.Rds")
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
@@ -185,7 +184,7 @@ The sections below provide summary more information on each variable.
 * Question wordings, where applicable, immediately follow. Otherwise an description is provide in square brackets ("[]"). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw (rather than the verbatim response). 
 * A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts. Response options are ordered by the ordering in the dataset. 
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporate in the creation of this dataset. 
-* Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost.
+* Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
  
  
  
@@ -439,7 +438,18 @@ print_tab(pid3)
 ```
 
 * Years: `r in_years(pid3)`
-* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 
+* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 2010 values are from the post-election wave. 
+
+### `r nam(pid3_leaner)`
+
+`r descrip(pid3_leaner)`
+
+```{r}
+print_tab(pid3_leaner)
+```
+
+* Years: `r in_years(pid3_leaner)`
+* Limitations: See `pid3`
 
 ### `r nam(pid7)`
 
