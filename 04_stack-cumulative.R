@@ -218,7 +218,8 @@ stdName <- function(tbl) {
 #' @param num_var_name name of the variable that will hold the levels (in integers)
 #' 
 #' @return 
-#' A dataset, for each year, with standardized names, separating labels and values (if factor)
+#' A dataset, for each year, with standardized names, separating labels and values (if factor).
+#' Sets Not Asked to NA
 extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor = TRUE) {
   if (is_factor) {
     if (var_name %in% colnames(tbl)) { # factor 
@@ -323,6 +324,7 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
                                         .desc = FALSE)) %>% 
       select(year, case_id, !!var_name)
   }
+  
 
   list_yr
 }
@@ -372,12 +374,17 @@ recode_congapv <- function(tbl, char_name) {
 clean_values <- function(tbl, chr_var_name, num_var_name) {
   tbl %>%
     mutate( # replace NaN to NA
-      !! chr_var_name := replace(.data[[chr_var_name]], .data[[chr_var_name]] == "NaN", NA),
+      !! chr_var_name := na_if(.data[[chr_var_name]], "NaN"),
       !! num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
     ) %>%
     mutate( # change al lvalues to title case
       !! chr_var_name := str_to_title(.data[[chr_var_name]]),
-      !! chr_var_name := value_changes(.data[[chr_var_name]]))
+      !! chr_var_name := value_changes(.data[[chr_var_name]])) %>% 
+    mutate( # change not asked and skipped to NAs
+      !! chr_var_name := na_if(.data[[chr_var_name]], "Not Asked"),
+      !! chr_var_name := na_if(.data[[chr_var_name]], "Skipped"),
+      !! num_var_name := na_if(.data[[num_var_name]], 99),
+      !! num_var_name := na_if(.data[[num_var_name]], 98))
 }
 
 value_changes <- function(vec) {
@@ -541,18 +548,17 @@ pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
   mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
+  mutate(pid3 = na_if(pid3_num, 98)) %>%
+  mutate(pid3 = na_if(pid3_num, 99)) %>%
   select(year, case_id, pid3) # manually do only this one
 
-# demographics ----
 pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
 
 # put leaners into partisans
 leaner_lbl_code <- c(`Democrat (Including Leaners)` = 1L,
                      `Republican (Including Leaners)` = 2L,
                      `Independent (Excluding Leaners)` = 3L,
-                     `Not Sure` = 8L,
-                     `Not Asked` = 99L,
-                     `Skipped` = 98L)
+                     `Not Sure` = 8L)
 pid3_leaner <- pid7 %>%
   mutate(pid3_leaner = as_factor(pid7)) %>% 
   mutate(pid3_leaner = fct_collapse(pid3_leaner, 
@@ -560,8 +566,11 @@ pid3_leaner <- pid7 %>%
                                     "Democrat (Including Leaners)" = c("Strong Democrat", "Not Very Strong Democrat", "Lean Democrat"),
                                     "Independent (Excluding Leaners)" = "Independent")) %>% 
   mutate(pid3_leaner_num = recode(pid3_leaner, !!!leaner_lbl_code)) %>% 
-  mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code))
+  mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) %>% 
+  select(-pid3_leaner_num)
 
+
+# demographics ----
 
 gend <- findStack(ccs, gender, makeLabelled = TRUE)
 educ <- findStack(ccs, educ, makeLabelled = TRUE)
@@ -594,7 +603,7 @@ v_pres16 <- findStack(ccs, voted_pres_16)
 # quick fixes
 v_pres08 <- mutate(v_pres08, voted_pres_08 = replace(voted_pres_08, year < 2008, NA))
 v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
-v_pres16 <- mutate(v_pres16, voted_pres_16 = replace(voted_pres_16, voted_pres_16 == "9", NA))
+v_pres16 <- mutate(v_pres16, voted_pres_16 = na_if(voted_pres_16, "9"))
 
 # House, Sen, Gov -----
 i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
@@ -606,11 +615,14 @@ v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
 
 
 # approval -----
-apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
+apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE) %>% 
+  mutate(approval_pres = na_if(zap_labels(approval_pres), 8))
 apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE)
 apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
 apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
-apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE)
+apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE) %>% 
+  mutate(approval_gov = na_if(zap_labels(approval_gov), 8),
+         approval_gov = na_if(zap_labels(approval_gov), 9))
 
 # economy -----
 econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FALSE) %>% 
@@ -620,7 +632,7 @@ econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FA
                                      `Gotten Better`          = "Gotten Better / Somewhat Better",
                                      `Gotten Somewhat Better` = "Gotten Better / Somewhat Better")) %>% 
   mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
-         economy_retro_num  = replace(economy_retro_num, economy_retro_num == 8, NA)) %>%
+         economy_retro_num  = na_if(economy_retro_num, 8)) %>%
   filter(year != 2009) %>% 
   bind_rows(cc09_econ)
 

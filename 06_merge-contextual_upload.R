@@ -95,9 +95,7 @@ bind_label <- function(tbl) {
 #' 
 int_vot_manual <- function(tbl, vn, cn, nn) {
   if (grepl("intent", vn)) {
-    tbl_fmt <- tbl %>% 
-      mutate(!!cn := replace(.data[[cn]], .data[[nn]] >= 98, NA),
-             !!nn := replace(.data[[nn]], .data[[nn]] >= 98, NA))
+    tbl_fmt <- tbl
   }
   
   if (grepl("voted", vn)) {
@@ -106,8 +104,6 @@ int_vot_manual <- function(tbl, vn, cn, nn) {
     if (grepl("rep|gov", vn)) values_nv <- c(8, 9)
     
     tbl_fmt <- tbl %>% 
-      mutate(!!cn := replace(.data[[cn]], .data[[nn]] >= 98, NA), # 2016 gives these a number but coerce to NA
-             !!nn := replace(.data[[nn]], .data[[nn]] >= 98, NA)) %>%
       mutate(!!cn := replace(.data[[cn]], .data[[nn]] %in% values_nv, text_nv),  # set "no vote to a 9"
              !!nn := replace(.data[[nn]],  .data[[nn]] %in% values_nv, 9)) %>% 
       mutate(!!cn := replace(.data[[cn]], .data[[nn]] == 90, "Not Sure")) %>% 
