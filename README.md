@@ -1,21 +1,19 @@
-CCES cumulative
+Cooperative Congressional Election Study (CCES) cumulative file
 ================
 Shiro Kuriwaki
 
 Source code for building a CCES cumulative file (2006 - 2016). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues).
 
-A 2006-2012 cumulative file, as well as datasets from individual years, can be found at the CCES homepage: <https://cces.gov.harvard.edu/>
+Data is currently not tracked due to size constraints, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io).
 
-Data is currently not tracked, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io).
+*Current Dataverse Version*: <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6>
 
-Current Dataverse Version: <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6>
-
-Current Guide: <https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf>
+*Current Guide*: <https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf>
 
 Getting Started
 ===============
 
-The `.Rds` format[1] can be read into R.
+Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format[1] can be read into R.
 
 ``` r
 df <- readRDS("cumulative_2006_2016.Rds")
@@ -118,7 +116,7 @@ Crunch datasets can also be manipulated from a R package, `crunch`: <https://git
 install.packages("crunch")
 ```
 
-For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a short vignette in this repo.
+For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a [short vignette in this repo](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/vignette_crunch.md).
 
 Code Organization
 =================
@@ -133,7 +131,6 @@ R scripts `01` - `06` reproduce the cumulative dataset starting from each year's
 -   `06_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version.
 -   `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
-More scripts in `00_prepare` format other datasets like NOMINATE, CQ, and DIME.
--------------------------------------------------------------------------------
+More scripts arein `00_prepare` format other datasets like NOMINATE, CQ, and DIME.
 
 [1] In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
