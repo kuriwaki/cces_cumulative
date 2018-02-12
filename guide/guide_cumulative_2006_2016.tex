@@ -144,7 +144,7 @@ Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe
 Williams, and the Crunch Team for their contributions and guidance.}  }
 
 
-\date{Guide last updated: 2018-02-11}
+\date{Guide last updated: 2018-02-12}
 
 \begin{document}
 
@@ -557,7 +557,7 @@ years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.32    0.64    0.89    1.06   15.00  265121 
+   0.00    0.43    0.71    1.00    1.13   15.00  276779 
 \end{verbatim}
 
 \begin{itemize}
@@ -735,12 +735,12 @@ unmatched are labeled as a no record.{]}
 
 \begin{verbatim}
               vv_regstatus      n
-                    Active 176387
- No Record Of Registration  64474
-              Unregistered  13397
-                   Dropped   5168
-                  Inactive   2983
-      Multiple Appearances   1126
+                    Active 178356
+ No Record Of Registration  61861
+              Unregistered  13826
+                   Dropped   5294
+                  Inactive   3047
+      Multiple Appearances   1151
                       <NA> 111021
 \end{verbatim}
 
@@ -760,19 +760,20 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 
 \begin{verbatim}
                     vv_party_gen      n
- No Record Of Party Registration  63049
-                         Unknown  51053
-                Democratic Party  26323
-                Republican Party  21131
-            No Party Affiliation   9187
-               Declined To State   1559
-                           Other   1275
-               Independent Party   1169
-              Liberatarian Party    366
-                     Green Party    185
+ No Record Of Party Registration  60890
+                         Unknown  51379
+                Democratic Party  27058
+                Republican Party  21522
+            No Party Affiliation   9835
+               Declined To State   1579
+                           Other   1286
+               Independent Party   1176
+              Liberatarian Party    376
+                     Green Party    194
               Constitution Party     27
                     Reform Party      9
-                 Socialist Party      2
+                 Socialist Party      3
+                             Cns      1
                             <NA> 199221
 \end{verbatim}
 
@@ -793,9 +794,10 @@ etc..) are aggregated as a vote.{]}
 
 \begin{verbatim}
                     vv_party_prm      n
- No Record Of Party Registration 157651
-                Republican Party   9827
-                Democratic Party   7857
+ No Record Of Party Registration 157120
+                Republican Party  10010
+                Democratic Party   8202
+                           Other      3
                             <NA> 199221
 \end{verbatim}
 
@@ -818,8 +820,8 @@ etc..) are aggregated as a vote.{]}
 
 \begin{verbatim}
       vv_turnout_gvm      n
-               Voted 167531
- No Record Of Voting 130692
+               Voted 169204
+ No Record Of Voting 129019
        No Voter File   1733
                 <NA>  74600
 \end{verbatim}
@@ -847,8 +849,8 @@ turnout Primary Election
 
 \begin{verbatim}
       vv_turnout_pvm      n
- No Record Of Voting 186905
-               Voted  75267
+ No Record Of Voting 185927
+               Voted  76245
        No Voter File   1363
                 <NA> 111021
 \end{verbatim}
@@ -1269,15 +1271,15 @@ For whom did you vote for President of the United States?
 
 \begin{verbatim}
                   voted_pres_16      n
-      Donald Trump (Republican)  18826
-     Hillary Clinton (Democrat)  22264
-     Gary Johnson (Libertarian)   1858
-             Jill Stein (Green)    924
-                          Other   1144
- I Didn't Vote In This Election     89
-                   I'm Not Sure    238
-    Evan McMullin (Independent)    164
-                           <NA> 329049
+      Donald Trump (Republican)  18836
+     Hillary Clinton (Democrat)  22284
+     Gary Johnson (Libertarian)   1865
+             Jill Stein (Green)    926
+                          Other   1147
+ I Didn't Vote In This Election     91
+                   I'm Not Sure    240
+    Evan McMullin (Independent)    163
+                           <NA> 329004
 \end{verbatim}
 
 \begin{itemize}
@@ -1407,21 +1409,21 @@ For whom did you vote for U.S. House?
 
 \begin{verbatim}
                             voted_rep      n
-             [Democrat / Candidate 1]  94644
-           [Republican / Candidate 2]  94109
+             [Democrat / Candidate 1]  94662
+           [Republican / Candidate 2]  94122
                 [Other / Candidate 3]   2571
    $HouseCand4Name ($HouseCand4Party)     15
                                 Other   2434
-          I Did Not Vote In This Race  11576
+          I Did Not Vote In This Race  11591
    $HouseCand5Name ($HouseCand5Party)     22
-                             Not Sure   4015
+                             Not Sure   4020
    $HouseCand6Name ($HouseCand6Party)     15
    $HouseCand7Name ($HouseCand7Party)     13
    $HouseCand8Name ($HouseCand8Party)     16
    $HouseCand9Name ($HouseCand9Party)      2
  $HouseCand10Name ($HouseCand10Party)      2
  $HouseCand11Name ($HouseCand11Party)      3
-                                 <NA> 165119
+                                 <NA> 165068
 \end{verbatim}
 
 \begin{itemize}
@@ -1443,14 +1445,14 @@ For whom did you vote for U.S. Senator?
 
 \begin{verbatim}
                       voted_sen      n
-       [Democrat / Candidate 1]  68796
-     [Republican / Candidate 2]  63838
+       [Democrat / Candidate 1]  68808
+     [Republican / Candidate 2]  63844
           [Other / Candidate 3]   2743
                           Other   1624
-                       Not Sure   1845
+                       Not Sure   1849
  $SenCand4Name ($SenCand4Party)     11
-    I Did Not Vote In This Race   4097
-                           <NA> 231602
+    I Did Not Vote In This Race   4108
+                           <NA> 231569
 \end{verbatim}
 
 \begin{itemize}
@@ -1472,13 +1474,13 @@ For whom did you vote for Governor?
 
 \begin{verbatim}
                    voted_gov      n
-    [Democrat / Candidate 1]  46270
-  [Republican / Candidate 2]  44908
-       [Other / Candidate 3]   2451
-                       Other   1158
- I Did Not Vote In This Race   3928
+    [Democrat / Candidate 1]  46504
+  [Republican / Candidate 2]  45056
+       [Other / Candidate 3]   2466
+                       Other   1162
+ I Did Not Vote In This Race   4509
                     Not Sure    911
-                        <NA> 274930
+                        <NA> 273948
 \end{verbatim}
 
 \begin{itemize}
