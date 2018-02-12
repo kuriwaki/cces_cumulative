@@ -12,7 +12,7 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year) guessed_yr <- NA
 
   ## then
-  tbl <- haven::read_dta(path)
+  tbl <- haven::read_dta(path, encoding = 'latin1')
 
 
   ## guess ID
@@ -170,7 +170,7 @@ cc12 <- std_dv("data/source/cces/2012_cc.dta")
 cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
-cc16 <- std_dv("data/source/cces/2016_cc_vv.dta")
+cc16 <- std_dv("data/source/cces/2016_cc.dta")
 
 
 # save ----

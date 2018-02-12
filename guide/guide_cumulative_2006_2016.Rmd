@@ -3,6 +3,7 @@ output:
   pdf_document:
     latex_engine: xelatex
     template: sk_helvet.sty
+    keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2016)"
 author: "Shiro Kuriwaki"
 thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
