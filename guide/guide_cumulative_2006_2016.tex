@@ -144,7 +144,7 @@ Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe
 Williams, and the Crunch Team for their contributions and guidance.}  }
 
 
-\date{Guide last updated: 2018-02-16}
+\date{Guide last updated: 2018-02-17}
 
 \begin{document}
 
@@ -257,18 +257,18 @@ analyzed as a standard data frame.
 10  2006  439263  1.10              0.993 Maryl~ MD    MD-2      2       2
 # ... with 374,546 more rows, and 59 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
-#   weight_vv <dbl>, weight_vv_post <dbl>, starttime <dttm>,
-#   pid3 <int+lbl>, pid7 <int+lbl>, pid3_leaner <int+lbl>,
-#   gender <int+lbl>, birthyr <int>, age <int>, race <int+lbl>,
-#   educ <int+lbl>, economy_retro <int+lbl>, approval_pres <int+lbl>,
-#   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
-#   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
-#   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
-#   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
-#   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
-#   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
-#   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
-#   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7 <int+lbl>,
+#   pid3_leaner <int+lbl>, gender <int+lbl>, birthyr <int>, age <int>,
+#   race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>,
+#   economy_retro <int+lbl>, approval_pres <int+lbl>, approval_rep <fct>,
+#   approval_sen1 <fct>, approval_sen2 <fct>, approval_gov <int+lbl>,
+#   intent_pres_08 <fct>, intent_pres_12 <fct>, intent_pres_16 <fct>,
+#   voted_pres_08 <fct>, voted_pres_12 <fct>, voted_pres_16 <fct>,
+#   vv_regstatus <fct>, vv_party_gen <fct>, vv_party_prm <fct>,
+#   vv_turnout_gvm <fct>, vv_turnout_pvm <fct>, intent_rep <fct>,
+#   intent_sen <fct>, intent_gov <fct>, voted_rep <fct>, voted_sen <fct>,
+#   voted_gov <fct>, intent_rep_chosen <chr>, intent_rep_fec <chr>,
+#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
 #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
 #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
 #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -487,7 +487,7 @@ survey (in even years){]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.3859  0.6986  1.0000  1.1686 20.0004 
+ 0.0000  0.4094  0.7226  1.0000  1.1849 15.0006 
 \end{verbatim}
 
 \begin{itemize}
@@ -495,6 +495,8 @@ survey (in even years){]}
 \item
   Years: All of 2006-2016
 \item
+  In even years, they are re-computed after vote validation has been
+  computed and those re-computed weights are taken here when available.
   The weights applied to the sample (which is originally drawn from a
   matched sample) are constructed to make each year's respondents' pool
   representative of the national adult population. See the methodology
@@ -504,7 +506,7 @@ survey (in even years){]}
 \item
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
-  wave respondents.
+  wave respondents. See \texttt{weight\_post}
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{weight\_cumulative}: Survey
@@ -516,7 +518,7 @@ year to make years comparable{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.2892  0.5687  0.9633  1.1382 24.0297 
+ 0.0000  0.2985  0.5839  0.9633  1.1182 24.0297 
 \end{verbatim}
 
 \begin{itemize}
@@ -527,33 +529,12 @@ year to make years comparable{]}
   Limitations: Only a simple transformation of \texttt{weight}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\texttt{weight\_vv}: Survey weight for
-validated
-voters}{weight\_vv: Survey weight for validated voters}}\label{weight_vv-survey-weight-for-validated-voters}
+\subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
+post-election
+wave}{weight\_post: Survey weight for post-election wave}}\label{weight_post-survey-weight-for-post-election-wave}
 
-{[}weight among validated voters to construct a representative sample of
-the voters. Only available for some years.{]}
-
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.43    0.74    1.00    1.19   15.00  255421 
-\end{verbatim}
-
-\begin{itemize}
-\tightlist
-\item
-  Years: 2012, 2016
-\item
-  Limitations: Only available for some even years.
-\end{itemize}
-
-\subsubsection{\texorpdfstring{\texttt{weight\_vv\_post}: Survey weight
-for post-election wave validated
-voters}{weight\_vv\_post: Survey weight for post-election wave validated voters}}\label{weight_vv_post-survey-weight-for-post-election-wave-validated-voters}
-
-{[}weight among validated voters and post-election wave respondents to
-construct a representative sample of the voters. Only available for some
-years.{]}
+{[}weight for post-election wave respondents. Only available for some of
+the even years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
@@ -719,6 +700,32 @@ What racial or ethnic group best describes you?
 \tightlist
 \item
   Years: All of 2006-2016
+\item
+  Limitations: The ``Hispanic'' value may undercount self-identified
+  Hispanics. See \texttt{hispanic}
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\texttt{hispanic}:
+Hispanic}{hispanic: Hispanic}}\label{hispanic-hispanic}
+
+Are you of Spanish, Latino, or Hispanic origin or descent? {[}Asked if
+response to race is not Hispanic{]}
+
+\begin{verbatim}
+ hispanic      n
+      Yes   8356
+       No 249115
+     <NA> 117085
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016
+\item
+  In years in which this question was fielded, this question supplements
+  the \texttt{race} variable by asking does who did \emph{not} respnd
+  ``Hipsanic'' in the \texttt{race} question.
 \end{itemize}
 
 \newpage

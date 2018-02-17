@@ -210,4 +210,4 @@ if (writeToCrunch) {
 }
 
 
-cat("Finished merging candidadte vars and the rest. Update Rds and sav. Upload to crunch?\n")
+cat("Finished merging candidate vars and the rest. Updated Rds and sav. Upload to crunch?\n")

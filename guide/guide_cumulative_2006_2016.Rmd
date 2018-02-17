@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2016)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -233,8 +233,8 @@ print_numeric(weight)
 ```
 
 * Years: `r in_years(weight)`
-* The weights applied to the sample (which is originally drawn from a matched sample) are constructed to make each year's respondents' pool representative of the national adult population. See the methodology section of the [2016 Guide](https://dataverse.harvard.edu/api/access/datafile/3047286) for details. 
-* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. 
+* In even years, they are re-computed after vote validation has been computed and those re-computed weights are taken here when available. The weights applied to the sample (which is originally drawn from a matched sample) are constructed to make each year's respondents' pool representative of the national adult population. See the methodology section of the [2016 Guide](https://dataverse.harvard.edu/api/access/datafile/3047286) for details. 
+* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `weight_post` 
 
 
 ### `r nam(weight_cumulative)`
@@ -251,27 +251,15 @@ print_numeric(weight_cumulative)
 
 
 
-### `r nam(weight_vv)`
+### `r nam(weight_post)`
 
-`r descrip(weight_vv)`
-
-
-```{r}
-print_numeric(weight_vv)
-```
-
-* Years: `r in_years(weight_vv)`
-* Limitations: Only available for some even years.
-
-### `r nam(weight_vv_post)`
-
-`r descrip(weight_vv_post)`
+`r descrip(weight_post)`
 
 ```{r}
-print_numeric(weight_vv_post)
+print_numeric(weight_post)
 ```
 
-* Years: `r in_years(weight_vv_post)`
+* Years: `r in_years(weight_post)`
 * Limitations: Only available for some even years.
 
 
@@ -356,6 +344,20 @@ print_tab(race)
 ```
 
 * Years: `r in_years(race)`
+* Limitations: The "Hispanic" value may undercount self-identified Hispanics. See `hispanic`
+
+### `r nam(hispanic)`
+
+`r descrip(hispanic)`
+
+
+```{r}
+print_tab(hispanic)
+```
+
+* Years: `r in_years(hispanic)`
+* In years  in which this question was fielded, this question supplements the `race` variable by asking does who did _not_ respnd "Hipsanic" in the `race` question.
+
 
 \newpage
 
