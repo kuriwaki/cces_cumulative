@@ -49,7 +49,8 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2012L)) {
     tbl <- rename(
       tbl,
-      weight = V103,
+      weight = weight_vv,
+      weight_post = weight_vv_post,
       approval_pres = CC308a,
       approval_rep = CC315a,
       approval_sen1 = CC315b,
@@ -147,9 +148,8 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2016L)) {
     tbl <- tbl %>%
       rename(
-        weight = commonweight,
-        weight_vv = commonweight_vv,
-        weight_vv_post = commonweight_vv_post,
+        weight = commonweight_vv,
+        weight_post = commonweight_vv_post,
         CC350 = CC16_360,
         starttime = starttime_pre,
         approval_pres = CC16_320a,
@@ -533,8 +533,7 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 
 # admin ------
 wgt        <- findStack(ccs, weight, "numeric")
-wgt_vv     <- findStack(ccs, weight_vv, "numeric")
-wgt_vvpost <- findStack(ccs, weight_vv_post, "numeric")
+wgt_post <- findStack(ccs, weight_post, "numeric")
 
 tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) %>% 
   mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
@@ -680,8 +679,7 @@ geo <- stcd %>%
 ccc <- geo %>%
   left_join(tookpost) %>%
   left_join(wgt) %>%
-  left_join(wgt_vv) %>%
-  left_join(wgt_vvpost) %>%
+  left_join(wgt_post) %>%
   left_join(time) %>%
   left_join(pid3) %>%
   left_join(pid3_leaner) %>%
