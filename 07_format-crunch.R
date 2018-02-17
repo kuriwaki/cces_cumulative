@@ -27,19 +27,6 @@ lapply(ds, function(v){
   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
 })
 
-# at the same time apply the variable labels to the dta as well
-dta_not_labelled <- TRUE
-
-if (dta_not_labelled) {
-  ccc_factor <- readRDS("data/output/cumulative_2006_2016_factor.Rds")
-  
-  for (v in colnames(ccc_factor)) {
-    attributes(ccc_factor[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
-  }
-  
-  write_dta(ccc_factor, "data/release/cumulative_2006_2016.dta", version = 14)
-}
-
 # apply weights ---
 weightVariables(ds) <- list(ds$weight, ds$weight_cumulative, ds$weight_vv, ds$weight_vv_post)
 weight(ds) <- ds$weight_cumulative

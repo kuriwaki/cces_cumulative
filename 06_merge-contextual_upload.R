@@ -138,6 +138,8 @@ load("data/output/01_responses/vote_responses.RData")
 load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
+ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
+
 
 
 # add on name and fec, standardized option labels -----
@@ -209,5 +211,15 @@ if (writeToCrunch) {
   logout()  
 }
 
+# Write to dta with var labels and minor type changes
+ccc_dta <- ccc_factor
+for (v in colnames(ccc_factor)) {
+    attributes(ccc_dta[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+}
 
-cat("Finished merging candidate vars and the rest. Updated Rds and sav. Upload to crunch?\n")
+ccc_dta <- ccc_dta %>% 
+  mutate_at(vars(st), as.character)
+
+write_dta(ccc_dta, "data/release/cumulative_2006_2016.dta", version = 14)
+
+cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")
