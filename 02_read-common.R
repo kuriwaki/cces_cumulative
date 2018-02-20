@@ -51,7 +51,7 @@ std_dv <- function(path, guess_year = TRUE) {
 std_state <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     statevar <- case_when(
-      guessed_yr %in% c(2007, 2012:2016) ~ "inputstate",
+      guessed_yr %in% c(2007, 2012:2017) ~ "inputstate",
       guessed_yr %in% c(2008, 2010:2011) ~ "V206",
       guessed_yr %in% 2009 ~ "v259",
       guessed_yr %in% 2006 ~ "v1002"
@@ -89,6 +89,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 std_dist <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     distvar <- case_when(
+      guessed_yr %in% c(2017) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
       guessed_yr %in% 2006 ~ "v1003",
@@ -171,11 +172,12 @@ cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
+cc17 <- std_dv("data/source/cces/2017_ccA.dta")
 
 
 # save ----
 save(
-  ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, cc13, cc14, cc15, cc16,
+  ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, cc13, cc14, cc15, cc16, cc17,
   file = "data/output/01_responses/common_all.RData"
 )
 
