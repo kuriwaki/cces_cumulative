@@ -190,9 +190,25 @@ stdName <- function(tbl) {
       )
   }
   
+  if (identical(cces_year, 2017L)) {
+    tbl <- rename(tbl, CC350 = CC17_325) %>%
+      rename(
+        approval_pres = CC17_322a,
+        approval_rep = CC17_323a,
+        approval_sen1 = CC17_323b,
+        approval_sen2 = CC17_323c,
+        approval_gov = CC17_322e,
+        economy_retro = CC17_301,
+        voted_pres_12 = CC17_327) %>%
+      mutate(
+        faminc = NA,
+        countyfips = NA
+      )
+  }
+  
   
   # more standardization for post 2012
-  if (cces_year[1] %in% 2012:2016) {
+  if (cces_year[1] %in% 2012:2017) {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -518,7 +534,8 @@ ccs <- list(
   "2013" = stdName(cc13),
   "2014" = stdName(cc14),
   "2015" = stdName(cc15),
-  "2016" = stdName(cc16)
+  "2016" = stdName(cc16),
+  "2017" = stdName(cc17)
 )
 
 # mutations to data -----
