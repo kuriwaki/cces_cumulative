@@ -304,13 +304,14 @@ cclist <- list(`2006` = cc06,
                `2013` = cc13,
                `2014` = cc14,
                `2015` = cc15, 
-               `2016` = cc16)
+               `2016` = cc16,
+               `2017` = cc17)
 
 
 # Rename variables ----
 master <- readRDS("data/output/02_questions/variable_std_key.Rds")
 
-for (yr in 2006:2016) {
+for (yr in 2006:2017) {
   for (var in master$name) {
     
     # lookup this var
