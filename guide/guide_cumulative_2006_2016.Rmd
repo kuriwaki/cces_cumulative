@@ -64,7 +64,8 @@ in_years <- function(var, tbl = df) {
     pull() 
   
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
-  if (!identical(yrs_vec, 2006:2016)) return(str_c(yrs_vec, collapse = ", "))
+  if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
+  if (!(identical(yrs_vec, 2006:2016) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
 }
 ```
 
@@ -357,6 +358,18 @@ print_tab(hispanic)
 
 * Years: `r in_years(hispanic)`
 * In years  in which this question was fielded, this question supplements the `race` variable by asking does who did _not_ respnd "Hipsanic" in the `race` question.
+
+### `r nam(faminc)`
+
+`r descrip(faminc)`
+
+
+```{r}
+print_tab(faminc)
+```
+
+* Years: `r in_years(faminc)`
+* Limitations: The income brackets provided in the question has changed slightly over time. The brackets in this cumulative dataset coarsens the brackets so that the bracket labeling are all correct, but with loss of some granularity. In particular, the brackets from 2006 - 2010 are different from those before. From 2011-2016, brackets over 150k were asked in a follow-up question when the respondent initially selected "over 150k". These are all grouped in this cumulative dataset.
 
 
 \newpage

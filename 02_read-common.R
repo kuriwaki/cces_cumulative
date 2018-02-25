@@ -155,10 +155,10 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
 
 
 # 2012 and before (compiled by Stephen Pettigrew and others)
-ccp <- std_dv(
-  "data/source/cces/2006_2012_cumulative.dta",
-  guess_year = FALSE
-)
+ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
+ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not exist
+
+
 
 # individual files versions from 2008, 2010, and 2012
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
