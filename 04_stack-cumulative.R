@@ -24,9 +24,7 @@ stdName <- function(tbl) {
         zipcode = zip_pre,
         county_fips = county_fips_pre,
         starttime = start_pre,
-        reg_true = reg_validation,
         reg_self = registered_pre,
-        validt_trn = gen_validated,
         economy_retro = economy_retrospective,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
@@ -199,9 +197,9 @@ stdName <- function(tbl) {
         approval_sen2 = CC17_323c,
         approval_gov = CC17_322e,
         economy_retro = CC17_301,
+        faminc = faminc_new,
         voted_pres_12 = CC17_327) %>%
       mutate(
-        faminc = NA,
         countyfips = NA
       )
   }
@@ -603,6 +601,57 @@ hisp <- findStack(ccs, hispanic, makeLabelled = TRUE)
 bryr <- findStack(ccs, birthyr, "integer")
 age <- findStack(ccs, age, "integer")
 
+# income wrangling -----
+inc_old <- findStack(ccs, family_income_old, "integer", makeLabelled = FALSE) %>%
+  mutate(faminc = recode(
+    family_income_old,
+    `1` = "Less than 10k",
+    `2` = "10k - 20k",
+    `3` = "10k - 20k",
+    `4` = "20k - 30k",
+    `5` = "20k - 30k",
+    `6` = "30k - 40k",
+    `7` = "40k - 50k",
+    `8` = "50k - 60k",
+    `9` = "60k - 70k",
+    `10` = "70k - 80k",
+    `11` = "80k - 100k",
+    `12` = "100k - 120k",
+    `13` = "120k - 150k",
+    `14` = "150k+",
+    `15` = "Prefer not to say"))
+
+inc_new <- findStack(ccs, family_income, "integer", makeLabelled = FALSE) %>%
+  mutate(faminc = recode(
+    family_income,
+    `1` = "Less than 10k",
+    `2` = "10k - 20k",
+    `3` = "20k - 30k",
+    `4` = "30k - 40k",
+    `5` = "40k - 50k",
+    `6` = "50k - 60k",
+    `7` = "60k - 70k",
+    `8` = "70k - 80k",
+    `9` = "80k - 100k",
+    `10` = "100k - 120k",
+    `11` = "120k - 150k",
+    `12` = "150k+",
+    `13` = "150k+",
+    `14` = "150k+",
+    `15` = "150k+",
+    `16` = "150k+",
+    `31` = "150k+",
+    `32` = "150k+",
+    `97` = "Prefer not to say",
+    `98` = "Skipped",
+    `99` = "Not Asked"))
+
+faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>% 
+  mutate(faminc_char = coalesce(faminc.x, faminc.y),
+         faminc_num = coalesce(family_income_old, family_income)) %>% 
+  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num))
+
+
 # geography ----
 state      <- findStack(ccs, state, "character")
 zipcode    <- findStack(ccs, zipcode, "character")
@@ -708,6 +757,7 @@ ccc <- geo %>%
   left_join(race) %>%
   left_join(hisp) %>%
   left_join(educ) %>%
+  left_join(faminc) %>%
   left_join(econ) %>%
   left_join(apvpres) %>%
   left_join(apvrep) %>%
