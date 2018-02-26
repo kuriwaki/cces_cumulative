@@ -198,7 +198,7 @@ stdName <- function(tbl) {
         approval_gov = CC17_322e,
         economy_retro = CC17_301,
         faminc = faminc_new,
-        voted_pres_12 = CC17_327) %>%
+        voted_pres_16 = CC17_327) %>%
       mutate(
         countyfips = NA
       )
@@ -513,6 +513,16 @@ clps_pres12 <- function(vec) {
                `Not Asked (2016)` = c("Not Asked")
   )
 }
+clps_pres16 <- function(vec) {
+  fct_collapse(vec, 
+               `Hilary Clinton` = c("Hillary Clinton", "Hillary Clinton (Democrat)"),
+               `Donald Trump` = c("Donald Trump", "Donald Trump (Republican)"),
+               `Other / Someone Else` = c("Gary Johnson (Libertarian)", "Evan McMullin (Independent)", "Jill Stein (Green)", "Other", "Someone Else"),
+               `Did Not Vote` = c("I Didn't Vote In This Election", "I Did Not Cast A Vote For President"),
+               `Not Sure / Don't Recall` = c("I'm Not Sure", "I Don't Recall"),
+               `Not Asked (2016)` = c("Not Asked")
+  )
+}
 
 
 # READ ------
@@ -677,7 +687,9 @@ v_pres16 <- findStack(ccs, voted_pres_16)
 # quick fixes
 v_pres08 <- mutate(v_pres08, voted_pres_08 = replace(voted_pres_08, year < 2008, NA))
 v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
-v_pres16 <- mutate(v_pres16, voted_pres_16 = na_if(voted_pres_16, "9"))
+v_pres16 <- v_pres16 %>%
+  mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
+         voted_pres_16 = clps_pres16(voted_pres_16))
 
 # House, Sen, Gov -----
 i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
