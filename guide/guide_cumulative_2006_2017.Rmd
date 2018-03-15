@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2017)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and pointing out bugs."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -23,7 +23,7 @@ library(tidyverse)
 library(haven)
 library(rprojroot)
 
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
 # saveRDS(sample_frac(df, 0.01), "data/release/temp_sample.Rds")
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 ```
@@ -86,7 +86,7 @@ nam <- function(var, tbl = meta) {
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2016)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
-\noindent This dataset combines eleven years (2006 - 2016) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Brian Schaffner, and Sam Luks).
+\noindent This dataset combines eleven years (2006 - 2016) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
 The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. While questions can change from year to year, some standard questions like the ones this cumulative file includes allow for interesting comparisons. 
 
