@@ -243,7 +243,7 @@ analyzed as a standard data frame.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 69
+# A tibble: 392,755 x 70
     year case_id weight weight_cumulative state  st    cd     dist dist_up
    <int>   <int>  <dbl>             <dbl> <chr>  <chr> <chr> <int>   <int>
  1  2006  439219  1.85              1.35  North~ NC    NC-10    10      10
@@ -256,20 +256,20 @@ analyzed as a standard data frame.
  8  2006  439254  0.839             0.610 Nevada NV    NV-2      2       2
  9  2006  439255  0.331             0.241 Texas  TX    TX-24    24      24
 10  2006  439263  1.10              0.802 Maryl~ MD    MD-2      2       2
-# ... with 392,745 more rows, and 60 more variables: cong <int>,
+# ... with 392,745 more rows, and 61 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
 #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7 <int+lbl>,
-#   pid3_leaner <int+lbl>, gender <int+lbl>, birthyr <int>, age <int>,
-#   race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>, faminc <fct>,
-#   economy_retro <int+lbl>, approval_pres <int+lbl>, approval_rep <fct>,
-#   approval_sen1 <fct>, approval_sen2 <fct>, approval_gov <int+lbl>,
-#   intent_pres_08 <fct>, intent_pres_12 <fct>, intent_pres_16 <fct>,
-#   voted_pres_08 <fct>, voted_pres_12 <fct>, voted_pres_16 <fct>,
-#   vv_regstatus <fct>, vv_party_gen <fct>, vv_party_prm <fct>,
-#   vv_turnout_gvm <fct>, vv_turnout_pvm <fct>, intent_rep <fct>,
-#   intent_sen <fct>, intent_gov <fct>, voted_rep <fct>, voted_sen <fct>,
-#   voted_gov <fct>, intent_rep_chosen <chr>, intent_rep_fec <chr>,
-#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   pid3_leaner <int+lbl>, ideo5 <fct>, gender <int+lbl>, birthyr <int>,
+#   age <int>, race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>,
+#   faminc <fct>, economy_retro <int+lbl>, approval_pres <int+lbl>,
+#   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
+#   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
+#   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
+#   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
+#   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
+#   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
+#   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
+#   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
 #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
 #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
 #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -558,9 +558,10 @@ A series of variables for the respondent's location
 \begin{itemize}
 \tightlist
 \item
-  \texttt{state}: State: {[}State by FIPS code{]}
+  \texttt{state}: State: {[}State (Imputed from input zipcode){]}
 \item
-  \texttt{st}: State abbreviation: {[}State by FIPS code{]}
+  \texttt{st}: State abbreviation: {[}State (Imputed from input
+  zipcode){]}
 \item
   \texttt{dist}: Congressional district number in current Congress:
   {[}Current Congressional District Number (Imputed from input
@@ -993,6 +994,28 @@ towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
   Limitations: See \texttt{pid3}
 \end{itemize}
 
+\subsubsection{\texorpdfstring{\texttt{ideo5}: Ideology (5
+point)}{ideo5: Ideology (5 point)}}\label{ideo5-ideology-5-point}
+
+In general, how would you describe your own political viewpoint?
+
+\begin{verbatim}
+             ideo5      n
+      Very Liberal  32708
+           Liberal  68662
+          Moderate 124331
+      Conservative  93216
+ Very Conservative  45010
+          Not Sure  27473
+              <NA>   1355
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2017
+\end{itemize}
+
 \subsection{Economy}\label{economy}
 
 \subsubsection{\texorpdfstring{\texttt{economy\_retro}: Retrospective
@@ -1314,8 +1337,9 @@ for wording in all years{]}
 vote choice (after
 voting)}{voted\_pres\_16: 2016 President vote choice (after voting)}}\label{voted_pres_16-2016-president-vote-choice-after-voting}
 
-2016: For whom did you vote for President of the United States?
-{[}Post-election{]}
+2017: In the election for U.S. President, who did you vote for? {[}If
+reported voting{]} 2016: For whom did you vote for President of the
+United States? {[}Post-election{]}
 
 \begin{verbatim}
            voted_pres_16      n

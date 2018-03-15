@@ -68,6 +68,7 @@ ccc_meta <- tribble(
   "pid3",                "categorical", "Partisan identity (3 point)",             "Generally speaking, do you think of yourself as a ...?",
   "pid3_leaner",         "categorical", "Partisan identity (including leaners)", "[Codes self-identified Independents in pid3 who expressed leaning towards a party in pid7 (Lean Democrats / Republicans) as partisans.]",
   "pid7",                "categorical", "Partisan identity (7 point)",   "[Based on branching from Partisan Identity question]",
+  "ideo5",               "categorical", "Ideology (5 point)",            "In general, how would you describe your own political viewpoint?",
   "approval_pres",       "categorical", "President approval",            "Do you approve of the way each is doing their job... [Pipe Incumbent President]",
   "approval_rep",        "categorical", "House Representative approval", "Do you approve of the way each is doing their job... [Pipe Incumbent Representative's Name]",
   "approval_sen1",       "categorical", "Senator 1 approval",            "Do you approve of the way each is doing their job... [Pipe Incumbent Senator 1's Name]",

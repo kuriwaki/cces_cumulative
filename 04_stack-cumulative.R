@@ -602,6 +602,7 @@ pid3_leaner <- pid7 %>%
   mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) %>% 
   select(-pid3_leaner_num)
 
+ideo5 <- findStack(ccs, ideo5)
 
 # demographics ----
 
@@ -764,6 +765,7 @@ ccc <- geo %>%
   left_join(pid3) %>%
   left_join(pid3_leaner) %>%
   left_join(pid7) %>%
+  left_join(ideo5) %>%
   left_join(gend) %>%
   left_join(bryr) %>%
   left_join(age) %>%

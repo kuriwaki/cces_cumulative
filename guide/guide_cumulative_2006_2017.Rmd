@@ -479,6 +479,16 @@ print_tab(pid3_leaner)
 * Years: `r in_years(pid3_leaner)`
 * Limitations: See `pid3`
 
+### `r nam(ideo5)`
+
+`r descrip(ideo5)`
+
+```{r}
+print_tab(ideo5)
+```
+
+* Years: `r in_years(ideo5)`
+
 
 ## Economy
 ### `r nam(economy_retro)`
