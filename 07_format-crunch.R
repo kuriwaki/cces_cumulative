@@ -10,13 +10,14 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+# ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds <- loadDataset("CCES Cumulative Common Dev")
 unlock(ds)
 
 # description for dataset
 description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- "2006-10-06"
-endDate(ds) <- "2017-12-12
+endDate(ds) <- "2017-12-12"
 
 
 # add metadata ---------
@@ -28,16 +29,16 @@ lapply(ds, function(v){
 })
 
 # apply weights ---
-weightVariables(ds) <- list(ds$weight, ds$weight_cumulative, ds$weight_vv, ds$weight_vv_post)
+weightVariables(ds) <- list(ds$weight, ds$weight_cumulative, ds$weight_post)
 weight(ds) <- ds$weight_cumulative
 
 # change look  -----
 type(ds$year) <- "categorical"
-names(categories(ds$year)) <- as.character(2006:2016)
+names(categories(ds$year)) <- as.character(2006:2017)
 
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
-names(categories(ds$cong)) <- c(as.character(109:114), "No Data")
-names(categories(ds$cong_up)) <- c(as.character(110:115), "No Data")
+names(categories(ds$cong)) <- c(as.character(109:115), "No Data")
+names(categories(ds$cong_up)) <- c(as.character(110:116), "No Data")
 
 
 # ordering of categories ----
@@ -51,11 +52,11 @@ categories(ds$state) <- categories(ds$state)[c(st_order)]
 vn <- names(ds)
 
 ind_top <- grep("(year|state)", vn)
-ind_dem <- grep("(gender|birthyr|race|educ|age)", vn)
+ind_dem <- grep("(gender|birthyr|race|hispanic|educ|age|faminc)", vn)
 
 ind_geo <- grep("(cd|zipcode|county_fips)", vn)
 
-ind_pid <- grep("(pid)", vn)
+ind_pid <- grep("(pid|ideo)", vn)
 ind_app <- grep("(approval_.*)", vn)
 ind_econ <- grep("(retro)", vn)
 
