@@ -82,9 +82,9 @@ bind_label <- function(tbl) {
   
   tbl_clps  %>%
     mutate(!! varname := fct_reorder2(.data[[charname]], 
-                                      x = .data[[numname]], 
-                                      y = .data[["year"]], 
-                                      fun = median2,
+                                      .x = .data[[numname]], 
+                                      .y = .data[["year"]], 
+                                      .fun = median2,
                                       .desc = FALSE)) %>%
     select(year, case_id, !! varname)
 }
@@ -190,20 +190,37 @@ ccc_df <- ccc_cand %>%
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
   mutate_at(vars(year, case_id), as.integer)
 
-
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
-ccc_factor <- ccc_df %>% 
+ccc_fac <- ccc_df %>% 
   mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("_icpsr$")), as.character) %>%
   mutate_at(vars(matches("_fec$")), as.character) %>%
-  mutate_at(vars(matches("(^dist|^cd$|^cong|^state$|^st$)")), as.factor)
+  mutate_at(vars(matches("(^cong)")), as.factor)
+
+
+# FIPS-state key 
+fips_key <- counties %>% 
+  distinct(state, state_fips) %>% 
+  tbl_df() %>% 
+  mutate(state_fips = as.integer(as.character(state_fips)), state = as.character(state)) %>%
+  select(st = state, st_fips = state_fips) %>% 
+  select(st, st_fips) %>% 
+  left_join(distinct(ccc_df, state, st)) %>% 
+  na.omit()
+
+ccc_factor <-   ccc_fac %>% 
+  left_join(fips_key) %>%
+  mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
+         st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) %>% 
+  select(-st_fips)
+
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-saveRDS(ccc_df, "data/release/cumulative_2006_2016.Rds")
-saveRDS(ccc_factor, "data/output/cumulative_2006_2016_factor.Rds")
+saveRDS(ccc_df, "data/release/cumulative_2006_2017.Rds")
+saveRDS(ccc_factor, "data/output/cumulative_2006_2017_factor.Rds")
 
-write_sav(ccc_factor, "data/release/cumulative_2006_2016.sav")
+write_sav(ccc_factor, "data/release/cumulative_2006_2017.sav")
 
 if (writeToCrunch) {
   login()
@@ -220,6 +237,6 @@ for (v in colnames(ccc_factor)) {
 ccc_dta <- ccc_dta %>% 
   mutate_at(vars(st), as.character)
 
-write_dta(ccc_dta, "data/release/cumulative_2006_2016.dta", version = 14)
+write_dta(ccc_dta, "data/release/cumulative_2006_2017.dta", version = 14)
 
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")
