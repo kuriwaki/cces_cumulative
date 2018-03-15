@@ -4,7 +4,7 @@ output:
     latex_engine: xelatex
     template: sk_helvet.sty
     keep_tex: TRUE
-title: "CCES Cumulative Common Content (2006 - 2016)"
+title: "CCES Cumulative Common Content (2006 - 2017)"
 author: "Shiro Kuriwaki"
 thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and guidance."
 date: "Guide last updated: `r Sys.Date()`"
@@ -782,7 +782,7 @@ The name and party are those as provided in the CCES datasets (e.g. in the form 
 
 For all three offices, the matching generally occurs by `year`, `st`, `dist_up` (not `dist`, because `dist_up`, refers to the district of the upcoming session) and `party`.  `party` is the party affiliation as indicated in the CCES. For years 2008 and 2010, the first option is automatically labelled as a Democrat and the second option as a Republican, although these may be inaccurate at times. 
 
-The FEC database originates from
+The FEC database runs up until 2014 (thus more recent candidates do _not_ get a FEC ID) originates from
 
 > Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
 

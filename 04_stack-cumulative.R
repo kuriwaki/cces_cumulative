@@ -191,6 +191,7 @@ stdName <- function(tbl) {
   if (identical(cces_year, 2017L)) {
     tbl <- rename(tbl, CC350 = CC17_325) %>%
       rename(
+        weight = weights_common,
         approval_pres = CC17_322a,
         approval_rep = CC17_323a,
         approval_sen1 = CC17_323b,
@@ -332,9 +333,9 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
     
     list_yr <- list_yr %>% 
       mutate(!!var_name := fct_reorder2(.data[[chr_var_name]],
-                                        x = .data[[num_var_name]],
-                                        y = .data[["year"]], 
-                                        fun = median2,
+                                        .x = .data[[num_var_name]],
+                                        .y = .data[["year"]], 
+                                        .fun = median2,
                                         .desc = FALSE)) %>% 
       select(year, case_id, !!var_name)
   }

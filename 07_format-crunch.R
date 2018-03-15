@@ -16,7 +16,7 @@ unlock(ds)
 # description for dataset
 description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- "2006-10-06"
-endDate(ds) <- "2006-11-07"
+endDate(ds) <- "2017-12-12
 
 
 # add metadata ---------

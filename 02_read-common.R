@@ -172,7 +172,7 @@ cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
-cc17 <- std_dv("data/source/cces/2017_ccA.dta")
+cc17 <- std_dv("data/source/cces/2017_cc.dta")
 
 
 # save ----
