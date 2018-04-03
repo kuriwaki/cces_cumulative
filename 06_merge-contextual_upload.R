@@ -2,6 +2,7 @@ library(tidyverse)
 library(haven)
 library(glue)
 library(crunch)
+library(noncensus)
 
 writeToCrunch <- FALSE # to change the crunch dataset
 
@@ -199,6 +200,7 @@ ccc_fac <- ccc_df %>%
 
 
 # FIPS-state key 
+data(counties)
 fips_key <- counties %>% 
   distinct(state, state_fips) %>% 
   tbl_df() %>% 
@@ -221,11 +223,14 @@ saveRDS(ccc_df, "data/release/cumulative_2006_2017.Rds")
 saveRDS(ccc_factor, "data/output/cumulative_2006_2017_factor.Rds")
 
 write_sav(ccc_factor, "data/release/cumulative_2006_2017.sav")
+write_sav(filter(ccc_factor, year == 2017), "data/release/cumulative_2017.sav")
 
 if (writeToCrunch) {
   login()
   # newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common Dev")
   newDataset("https://www.dropbox.com/s/e5dxi6k5uz1pfom/cumulative_2006_2017.sav?dl=0", "CCES Cumulative Common Dev")
+  newDataset("https://www.dropbox.com/s/uxsh6atxt3s158q/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common 2016")
+  newDataset("https://www.dropbox.com/s/lew3y38rfvzena0/cumulative_2017.sav?dl=0", "CCES Cumulative Common 2017")
   logout()  
 }
 
