@@ -11,7 +11,7 @@ login() # you need a login and password to complete this command
 
 # connect to data---------
 # ds <- loadDataset("CCES Cumulative Common", project = "CCES")
-ds <- loadDataset("CCES Cumulative Common Dev")
+ds <- loadDataset("CCES Cumulative Common 2016")
 unlock(ds)
 
 # description for dataset
@@ -23,10 +23,17 @@ endDate(ds) <- "2017-12-12"
 # add metadata ---------
 
 # appply the name and variable
-lapply(ds, function(v){
-  name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
-  description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
-})
+# lapply(ds, function(v){
+#   name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
+#   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
+# })
+
+for (j in 1:ncol(ds)) {
+  if (!names(ds)[j] %in% ccc_meta$alias) next
+  else  
+    name(ds[[j]]) <- ccc_meta$name[which(ccc_meta$alias == names(ds)[j])]
+    description(ds[[j]]) <- ccc_meta$description[which(ccc_meta$alias == names(ds)[j])]
+}
 
 # apply weights ---
 weightVariables(ds) <- list(ds$weight, ds$weight_cumulative, ds$weight_post)
