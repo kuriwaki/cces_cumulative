@@ -119,24 +119,24 @@ consult the Methodology section of the most recent Common Content's codebook: \u
 
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006_2016.Rds")
+df <- readRDS("cumulative_2006_2017.Rds")
 ```
 
 The dataset in R is best viewed in `dplyr`, although it can be analyzed as a standard data frame.
-```{r, echo = TRUE}
+```{r, echo = TRUE, R.options = list(max.print = 20)}
 library(tidyverse)
 df
 ```
 
 
-A Stata dta file is provided as well. `cumulative_2006_2016.dta` can be read by Stata, or in R by the `haven` package 
+A Stata dta file is provided as well. `cumulative_2006_2017.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-df <- read_dta("cumulative_2006_2016.dta")
+df <- read_dta("cumulative_2006_2017.dta")
 ```
 
-# Features of the 2006 - 2016 Cumulative Dataset
+# Features of the 2006 - 2017 Cumulative Dataset
 
 ## Unified Variable Names
 
