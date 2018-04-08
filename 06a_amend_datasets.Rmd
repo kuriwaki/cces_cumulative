@@ -6,156 +6,53 @@ output: html_document
 ---
 
 
-```{tct, eval = FALSE}
-[crunch] > summary(cmp)
-Total variables: 72 
-
-Type mismatch: 3 
-                                              name.A      type.A   alias  type.B
-          Congressional district in current Congress categorical      cd    text
-   Congressional district number in current Congress categorical    dist numeric
- Congressional district number for upcoming Congress categorical dist_up numeric
-                                              name.B
-          Congressional district in current Congress
-   Congressional district number in current Congress
- Congressional district number for upcoming Congress
-
-Matched variables with categories: 35 
-With issues: 4 
-
-$year
-Total categories: 12 
-
-Mismatched ids: 2 
- id.A name id.B
-    1 2006   NA
-   NA 2017    1
-
-$state
-Total categories: 52 
-
-Mismatched ids: 49 
- id.A                 name id.B
-    5           California    6
-   10              Florida   12
-   44                Texas   48
-   33             New York   36
-   39         Pennsylvania   42
-   36                 Ohio   39
-   14             Illinois   17
-   23             Michigan   26
-   11              Georgia   13
-   34       North Carolina   37
-   31           New Jersey   34
-   47             Virginia   51
-   48           Washington   53
-    3              Arizona    4
-   15              Indiana   18
-   26             Missouri   29
-   50            Wisconsin   55
-   22        Massachusetts   25
-   43            Tennessee   47
-   21             Maryland   24
-   24            Minnesota   27
-    6             Colorado    8
-   38               Oregon   41
-   18             Kentucky   21
-   41       South Carolina   45
-    7          Connecticut    9
-   19            Louisiana   22
-   29               Nevada   32
-   17               Kansas   20
-   37             Oklahoma   40
-   16                 Iowa   19
-    4             Arkansas    5
-   45                 Utah   49
-   25          Mississippi   28
-   32           New Mexico   35
-   49        West Virginia   54
-   28             Nebraska   31
-   13                Idaho   16
-   30        New Hampshire   33
-   20                Maine   23
-   27              Montana   30
-   40         Rhode Island   44
-    8             Delaware   10
-   12               Hawaii   15
-   42         South Dakota   46
-   46              Vermont   50
-   35         North Dakota   38
-    9 District of Columbia   11
-   51              Wyoming   56
-
-$voted_pres_16
-Total categories: 15 
-
-Mismatched ids: 10 
- id.A                       name id.B
-    1  Donald Trump (Republican)   NA
-    2 Hillary Clinton (Democrat)   NA
-    3 Gary Johnson (Libertarian)   NA
-    4         Jill Stein (Green)   NA
-    5                      Other   NA
-   NA               Donald Trump    1
-   NA             Hilary Clinton    2
-   NA       Other / Someone Else    3
-   NA               Did Not Vote    4
-   NA    Not Sure / Don't Recall    5
-
-$st
-Total categories: 52 
-
-Mismatched ids: 50 
- id.A name id.B
-    1   AK    2
-    2   AL    1
-    3   AR    5
-    5   CA    6
-    6   CO    8
-    7   CT    9
-    8   DC   11
-    9   DE   10
-   10   FL   12
-   11   GA   13
-   12   HI   15
-   13   IA   19
-   14   ID   16
-   15   IL   17
-   16   IN   18
-   17   KS   20
-   18   KY   21
-   19   LA   22
-   20   MA   25
-   21   MD   24
-   22   ME   23
-   23   MI   26
-   24   MN   27
-   25   MO   29
-   26   MS   28
-   27   MT   30
-   28   NC   37
-   29   ND   38
-   30   NE   31
-   31   NH   33
-   32   NJ   34
-   33   NM   35
-   34   NV   32
-   35   NY   36
-   36   OH   39
-   37   OK   40
-   38   OR   41
-   39   PA   42
-   40   RI   44
-   41   SC   45
-   42   SD   46
-   43   TN   47
-   44   TX   48
-   45   UT   49
-   46   VA   51
-   47   VT   50
-   48   WA   53
-   49   WI   55
-   50   WV   54
-   51   WY   56
+```{r}
+library(stringr)
+library(crunch)
+login()
 ```
+
+
+```{r}
+ds16_17 <- loadDataset("CCES Cumulative Common 2016-2017") # key
+dsnew <- loadDataset("CCES Cumulative Common Dev")
+```
+
+
+```{r, eval = FALSE}
+type(ds17$dist) <- type(ds17$dist_up) <- type(ds17$cd) <-  "categorical"
+
+ds16_17 <- appendDataset(ds16, ds17)
+cmp <- compareDatasets(ds16, ds17)
+```
+
+
+
+```{r}
+covars <- setdiff(names(ds16_17), c("year_caseid"))
+deleteVariables(ds16_17, covars)
+```
+
+
+```{r}
+type(ds16_17$year) <- "text"
+ds16_17$year <- stringr::str_c(ds16_17$year, "-")
+ds16_17$year_caseid <- stringr::str_c(ds16_17$year, ds16_17$case_id)
+
+type(dsnew$year) <- "text"
+dsnew$year <- stringr::str_c(dsnew$year, "-")
+dsnew$year_caseid <- stringr::str_c(dsnew$year, dsnew$case_id)
+```
+
+```{r}
+deleteVariables(ds16_17, c("year", "case_id"))
+ds16_17 <- loadDataset("CCES Cumulative Common 2016-2017")
+```
+
+
+```{r}
+joinDatasets(ds16_17, dsnew)
+```
+
+
 
