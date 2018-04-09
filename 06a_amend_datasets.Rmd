@@ -29,7 +29,7 @@ cmp <- compareDatasets(ds16, ds17)
 
 
 ```{r}
-covars <- setdiff(names(ds16_17), c("year_caseid"))
+covars <- setdiff(names(ds16_17), c("case_id", "year_caseid"))
 deleteVariables(ds16_17, covars)
 ```
 
@@ -38,14 +38,16 @@ deleteVariables(ds16_17, covars)
 type(ds16_17$year) <- "text"
 ds16_17$year <- stringr::str_c(ds16_17$year, "-")
 ds16_17$year_caseid <- stringr::str_c(ds16_17$year, ds16_17$case_id)
-
-type(dsnew$year) <- "text"
-dsnew$year <- stringr::str_c(dsnew$year, "-")
-dsnew$year_caseid <- stringr::str_c(dsnew$year, dsnew$case_id)
+```
+```{r}
+dsnew$year_dash <- dsnew$year
+type(dsnew$year_dash) <- "text"
+dsnew$year_dash <- stringr::str_c(dsnew$year_dash, "-")
+dsnew$year_caseid <- stringr::str_c(dsnew$year_dash, dsnew$case_id)
 ```
 
 ```{r}
-deleteVariables(ds16_17, c("year", "case_id"))
+# deleteVariables(ds16_17, c("year", "case_id"))
 ds16_17 <- loadDataset("CCES Cumulative Common 2016-2017")
 ```
 
