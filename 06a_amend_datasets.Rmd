@@ -63,3 +63,46 @@ ds16_17 <- refresh(ds16_17)
 
 
 
+# On the CCES space
+```{r}
+ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds17 <- loadDataset("CCES Cumulative Common 2017")
+dev <- loadDataset("CCES Cumulative Common Dev")
+```
+
+```{r}
+dsf <- forkDataset(ds, "Fork of CCES Cumulative Common", draft = TRUE)
+dsf <- appendDataset(dsf, ds17)
+```
+
+
+```{r}
+dsf$year_dash <- copyVariable(dsf$year, deep = TRUE)
+type(dsf$year_dash) <- "text"
+dsf$year_dash <- stringr::str_c(dsf$year_dash, "-")
+dsf$year_caseid <- stringr::str_c(dsf$year_dash, dsf$case_id)
+```
+
+
+```{r}
+names(dsf)
+```
+
+
+```{r}
+v0 <- names(dsf)
+replace_vars <- c(str_subset(v0, "vv"), str_subset(v0, "weight"),
+                  "ideo5", "hispanic", "faminc", "voted_pres_16")
+
+dev_keep_vars <- senames(dev)
+```
+
+
+```{r}
+deleteVariables(dsf, replace_vars)
+
+```
+
+
+
+
