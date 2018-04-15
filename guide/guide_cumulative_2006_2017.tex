@@ -1,5 +1,5 @@
 \documentclass[10pt,article,oneside]{memoir}
-\usepackage[top=1.4in, bottom=1.4in, left=1.4in, right=1.4in]{geometry}
+\usepackage[top=1.2in, bottom=1.2in, left=1.4in, right=1.4in]{geometry}
 
 \usepackage{amssymb, amsmath, amsthm, mathtools}
 
@@ -139,13 +139,13 @@
 \title{ \LARGE\textbf{CCES Cumulative Common Content (2006 - 2017)}}
 
 \author{Shiro Kuriwaki\thanks{Department of Government, Harvard University. Email:
-\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve
-Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya
-Komisarchik, Stephen Pettigrew, Joe Williams, and the Crunch Team for
-their contributions and pointing out bugs.}  }
+\url{kuriwaki@g.harvard.edu}. Bug reports welcome. My thanks to
+Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard
+Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe
+Williams, and the Crunch Team for their help.}  }
 
 
-\date{Guide last updated: 2018-04-03}
+\date{Guide last updated: 2018-04-15}
 
 \begin{document}
 
@@ -173,20 +173,20 @@ their contributions and pointing out bugs.}  }
 
 
 \begin{quote}
-Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2016)'',
+Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
 Harvard Dataverse
 \end{quote}
 
-\noindent This dataset combines eleven years (2006 - 2016) of the
+\noindent This dataset combines twelve years (2006 - 2017) of the
 Cooperative Congressional Election Study (Principal Investigators:
 Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
 The Cooperative Congressional Election Study (CCES) is an online survey
 conducted around November of each year, asking a range of questions on
-political behavior and public opinion. While questions can change from
-year to year, some standard questions like the ones this cumulative file
-includes allow for interesting comparisons.
+political behavior and public opinion. Questions can change from year to
+year; this cumulative file includes standard questions asked multiple
+years.
 
 This dataset was constructed based off CCES datasets from each year. A
 set of R scripts formatted, merged, and standardized these datasets to
@@ -209,7 +209,7 @@ guides for each year.
 report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
 
 \tcbsubtitle{To obtain the individual year's CCES datasets,}
-search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}).
+search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
 
 \tcbsubtitle{To examine the survey methodology, }
 consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
@@ -224,7 +224,8 @@ consult the Methodology section of the most recent Common Content's codebook: \u
 
 The \texttt{.Rds} format can be read into R. This format preserves
 dataset properties such as the distinction between integers and doubles,
-and labelled variables.
+and labelled variables. Unlike a \texttt{.Rdata} file, an \texttt{.Rds}
+file must be assigned to an object when loading.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -560,7 +561,7 @@ A series of variables for the respondent's location
 \item
   \texttt{state}: State: {[}State (Imputed from input zipcode){]}
 \item
-  \texttt{st}: State abbreviation: {[}State (Imputed from input
+  \texttt{st}: State abbreviation (FIPS): {[}State (Imputed from input
   zipcode){]}
 \item
   \texttt{dist}: Congressional district number in current Congress:
@@ -768,6 +769,8 @@ Thinking back over the last year, what was your family's annual income?
   were asked in a follow-up question when the respondent initially
   selected ``over 150k''. These are all grouped in this cumulative
   dataset.
+\item
+  The 2009 CCES did not have an option for 60-70k.
 \end{itemize}
 
 \newpage
@@ -1402,6 +1405,11 @@ who do you prefer?
   Limitations: Only available for even years. The third party candidate
   not specified for early years. The fourth candidate and onwards not
   shown for most years. Response options differ by year.
+\item
+  Note that it is not always the case that 1 is a Democrat and 2 is a
+  Republican. When two Democrats are on the general ballot (e.g.~in
+  top-two primary states like California), both candidates are
+  Democrats.
 \item
   Note that for each respondent, a name (and party affiliation) is shown
   in place of the square bracket values. To see the candidate chosen,

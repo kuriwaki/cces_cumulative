@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2017)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe Williams, and the Crunch Team for their contributions and pointing out bugs."
+thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe Williams, and the Crunch Team for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -83,12 +83,12 @@ nam <- function(var, tbl = meta) {
 }
 ```
 
-> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2016)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
+> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
-\noindent This dataset combines eleven years (2006 - 2016) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+\noindent This dataset combines twelve years (2006 - 2017) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
-The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. While questions can change from year to year, some standard questions like the ones this cumulative file includes allow for interesting comparisons. 
+The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes standard questions asked multiple years. 
 
 This dataset was constructed based off CCES datasets from each year. A set of R scripts formatted, merged, and standardized these datasets to generate a `tibble`-style data frame. In addition, the same dataset is available on `Crunch`, an accessible analytics interface optimized for survey datasets.  
 
@@ -104,7 +104,7 @@ Please note that this cumulative dataset makes modifications to the original CCE
 report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
 
 \tcbsubtitle{To obtain the individual year's CCES datasets,}
-search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}).
+search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
 
 \tcbsubtitle{To examine the survey methodology, }
 consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
@@ -117,7 +117,8 @@ consult the Methodology section of the most recent Common Content's codebook: \u
 
 # Getting Started
 
-The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file must be assigned to an object when loading.
+
 ```{r, eval = FALSE, echo = TRUE}
 df <- readRDS("cumulative_2006_2017.Rds")
 ```
@@ -370,6 +371,7 @@ print_tab(faminc)
 
 * Years: `r in_years(faminc)`
 * Limitations: The income brackets provided in the question has changed slightly over time. The brackets in this cumulative dataset coarsens the brackets so that the bracket labeling are all correct, but with loss of some granularity. In particular, the brackets from 2006 - 2010 are different from those before. From 2011-2016, brackets over 150k were asked in a follow-up question when the respondent initially selected "over 150k". These are all grouped in this cumulative dataset.
+* The 2009 CCES did not have an option for 60-70k. 
 
 
 \newpage
@@ -666,6 +668,7 @@ print_tab(intent_rep)
 
 * Years: `r in_years(intent_rep)`
 * Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats.
 * Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
 
