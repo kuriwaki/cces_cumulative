@@ -12,7 +12,7 @@ login() # you need a login and password to complete this command
 # connect to data---------
 # ds <- loadDataset("CCES Cumulative Common", project = "CCES")
 ds <- loadDataset("CCES Cumulative Common Dev")
-ds <- loadDataset("CCES Cumulative Common 2016-2017")
+ds <- loadDataset("Fork of CCES Cumulative Common")
 unlock(ds)
 
 # description for dataset
@@ -42,7 +42,7 @@ weight(ds) <- ds$weight_cumulative
 
 # change look  -----
 type(ds$year) <- "categorical"
-names(categories(ds$year)) <- c(as.character(2006:2017), "No Data")
+names(categories(ds$year)) <- c(as.character(2006:2017))
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
 

@@ -240,9 +240,6 @@ for (v in colnames(ccc_factor)) {
     attributes(ccc_dta[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
-ccc_dta <- ccc_dta %>% 
-  mutate_at(vars(st), as.character)
-
 write_dta(ccc_dta, "data/release/cumulative_2006_2017.dta", version = 14)
 
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")
