@@ -1,7 +1,7 @@
 ---
 title: "Amend Datasets"
 author: "Shiro Kuriwaki"
-date: "4/8/2018"
+date: "2018-04-15"
 output: html_document
 ---
 
@@ -13,66 +13,20 @@ login()
 ```
 
 
-```{r}
-ds16_17 <- loadDataset("CCES Cumulative Common 2016-2017") # key
-dsnew <- loadDataset("CCES Cumulative Common Dev")
-```
-
-
-```{r, eval = FALSE}
-type(ds17$dist) <- type(ds17$dist_up) <- type(ds17$cd) <-  "categorical"
-
-ds16_17 <- appendDataset(ds16, ds17)
-cmp <- compareDatasets(ds16, ds17)
-```
-
-
-```{r}
-ds16_17$year_dash <- ds16_17$year
-type(ds16_17$year_dash) <- "text"
-ds16_17$year_dash <- stringr::str_c(ds16_17$year_dash, "-")
-ds16_17$year_caseid <- stringr::str_c(ds16_17$year_dash, ds16_17$case_id)
-```
-
-
-```{r}
-ds16_17 <- refresh(ds16_17)
-covars <- setdiff(names(ds16_17), c("year_caseid"))
-deleteVariables(ds16_17, covars)
-```
-
-```{r}
-dsnew$year_dash <- copyVariable(dsnew$year, deep = TRUE)
-type(dsnew$year_dash) <- "text"
-dsnew$year_dash <- stringr::str_c(dsnew$year_dash, "-")
-dsnew$year_caseid <- stringr::str_c(dsnew$year_dash, dsnew$case_id)
-deleteVariables(dsnew, "year_dash")
-dsnew <- refresh(dsnew)
-```
-
-```{r}
-# deleteVariables(ds16_17, c("year", "case_id"))
-ds16_17 <- refresh(ds16_17)
-```
-
-
-```{r}
-joinDatasets(ds16_17, dsnew)
-ds16_17 <- refresh(ds16_17)
-```
-
-
 
 # On the CCES space
 ```{r}
-ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+dsf <- loadDataset("Fork of CCES Cumulative Common")
+dvf <- loadDataset("Fork of CCES Cumulative Dev")
 ds17 <- loadDataset("CCES Cumulative Common 2017")
 dev <- loadDataset("CCES Cumulative Common Dev")
 ```
 
 ```{r}
-dsf <- forkDataset(ds, "Fork of CCES Cumulative Common", draft = TRUE)
-dsf <- appendDataset(dsf, ds17)
+# dsf <- forkDataset(ds, "Fork of CCES Cumulative Common", draft = TRUE)
+# dsf <- appendDataset(dsf, ds17)
+# dvf <- forkDataset(dev, "Fork of CCES Cumulative Dev", draft = TRUE)
+
 ```
 
 
@@ -91,18 +45,37 @@ names(dsf)
 
 ```{r}
 v0 <- names(dsf)
-replace_vars <- c(str_subset(v0, "vv"), str_subset(v0, "weight"),
-                  "ideo5", "hispanic", "faminc", "voted_pres_16")
+replace_vars <- unique(c(str_subset(v0, "vv"), str_subset(v0, "weight"), "ideo5", "hispanic", "faminc", "voted_pres_16"))
+dev_drop_vars <- unique(setdiff(v0, c(replace_vars, "year_caseid")))
+dsf <- refresh(dsf)
+dvf <- refresh(dvf)
+```
 
-dev_keep_vars <- senames(dev)
+
+make only year_caseid overlap
+
+```{r}
+deleteVariables(dsf, replace_vars)
+```
+
+```{r}
+deleteVariables(dvf, dev_drop_vars)
 ```
 
 
 ```{r}
-deleteVariables(dsf, replace_vars)
-
+dsf <- refresh(dsf)
+dvf <- refresh(dvf)
 ```
 
+
+```{r}
+dsf <- joinDatasets(dsf, dvf, by = "year_caseid")
+```
+
+```{r}
+crtabs(~ faminc + year, dsf)
+```
 
 
 
