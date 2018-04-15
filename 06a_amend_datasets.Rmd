@@ -77,5 +77,19 @@ dsf <- joinDatasets(dsf, dvf, by = "year_caseid")
 crtabs(~ faminc + year, dsf)
 ```
 
+Delete ones for merge
+```{r}
+deleteVariables(dsf, c("year_dash", "year_caseid"))
+```
+
+
+Merge main.
+```{r}
+ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+dsf <- refresh(dsf)
+mergeFork(dataset = ds, fork = dsf)
+```
+
+
 
 
