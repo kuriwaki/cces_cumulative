@@ -71,7 +71,7 @@ history/*
 past_guides/*
 documents_CQ/*
 tests_old-code/*
-
+crunch_admin/*
 
 
 # Other links
@@ -85,4 +85,4 @@ tests_old-code/*
 Icon?
 .httr-oauth
 .here
-
+*.gif

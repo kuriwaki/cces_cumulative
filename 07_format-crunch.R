@@ -10,8 +10,6 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-# ds <- loadDataset("CCES Cumulative Common Dev")
-# ds <- loadDataset("Fork of CCES Cumulative Common")
 ds <- loadDataset("CCES Cumulative Common", project = "CCES")
 unlock(ds)
 
