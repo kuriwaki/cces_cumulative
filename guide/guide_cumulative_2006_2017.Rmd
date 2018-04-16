@@ -137,6 +137,23 @@ library(haven)
 df <- read_dta("cumulative_2006_2017.dta")
 ```
 
+A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` format. The first three classes are frequently are commonly used, but the `lablelled` format is more recent. Essentially it is similar to a `factor` but more compatible with Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
+
+A labelled variable's labels are not shown immediately in the Console:
+
+```{r, echo = TRUE}
+select(df, year, case_id, pid3)
+```
+
+But labels can be displayed by transforming the labelled vector into a factor.
+```{r, echo = TRUE}
+library(haven)
+select(df, year, case_id, pid3) %>% 
+  mutate(pid3_fct = as_factor(pid3))
+```
+
+\newpage
+
 # Features of the 2006 - 2017 Cumulative Dataset
 
 ## Unified Variable Names

@@ -145,7 +145,7 @@ Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe
 Williams, and the Crunch Team for their help.}  }
 
 
-\date{Guide last updated: 2018-04-15}
+\date{Guide last updated: 2018-04-16}
 
 \begin{document}
 
@@ -288,6 +288,69 @@ A Stata dta file is provided as well.
 \NormalTok{df <-}\StringTok{ }\KeywordTok{read_dta}\NormalTok{(}\StringTok{"cumulative_2006_2017.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+A note on variable types. The R dataset stores variables in
+\texttt{numeric}, \texttt{character}, \texttt{factor}, or
+\texttt{labelled} format. The first three classes are frequently are
+commonly used, but the \texttt{lablelled} format is more recent.
+Essentially it is similar to a \texttt{factor} but more compatible with
+Stata and SPSS. It is built around R's \texttt{haven} package, which
+includes more documentation.
+
+A labelled variable's labels are not shown immediately in the Console:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{select}\NormalTok{(df, year, case_id, pid3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 392,755 x 3
+    year case_id pid3     
+   <int>   <int> <int+lbl>
+ 1  2006  439219 1        
+ 2  2006  439224 4        
+ 3  2006  439228 1        
+ 4  2006  439237 1        
+ 5  2006  439238 1        
+ 6  2006  439242 3        
+ 7  2006  439251 2        
+ 8  2006  439254 1        
+ 9  2006  439255 1        
+10  2006  439263 1        
+# ... with 392,745 more rows
+\end{verbatim}
+
+But labels can be displayed by transforming the labelled vector into a
+factor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(haven)}
+\KeywordTok{select}\NormalTok{(df, year, case_id, pid3) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pid3_fct =} \KeywordTok{as_factor}\NormalTok{(pid3))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 392,755 x 4
+    year case_id pid3      pid3_fct   
+   <int>   <int> <int+lbl> <fct>      
+ 1  2006  439219 1         Democrat   
+ 2  2006  439224 4         Other      
+ 3  2006  439228 1         Democrat   
+ 4  2006  439237 1         Democrat   
+ 5  2006  439238 1         Democrat   
+ 6  2006  439242 3         Independent
+ 7  2006  439251 2         Republican 
+ 8  2006  439254 1         Democrat   
+ 9  2006  439255 1         Democrat   
+10  2006  439263 1         Democrat   
+# ... with 392,745 more rows
+\end{verbatim}
+
+\newpage
 
 \section{Features of the 2006 - 2017 Cumulative
 Dataset}\label{features-of-the-2006---2017-cumulative-dataset}
@@ -559,7 +622,8 @@ A series of variables for the respondent's location
 \begin{itemize}
 \tightlist
 \item
-  \texttt{state}: State: {[}State (Imputed from input zipcode){]}
+  \texttt{state}: State (FIPS)ccc: {[}State (Imputed from input
+  zipcode){]}
 \item
   \texttt{st}: State abbreviation (FIPS): {[}State (Imputed from input
   zipcode){]}
