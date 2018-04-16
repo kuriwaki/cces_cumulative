@@ -2,18 +2,18 @@ Cooperative Congressional Election Study (CCES) cumulative file
 ================
 Shiro Kuriwaki
 
-Source code for building a CCES cumulative file (2006 - 2016). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues).
+Source code for building a CCES cumulative file (2006 - 2017). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues).
 
 Data is currently not tracked due to size constraints, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io).
 
 *Current Dataverse Version*: <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6>
 
-*Current Guide*: <https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf>
+*Current Guide*: <https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf>
 
 Getting Started
 ===============
 
-Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format[1] can be read into R.
+Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format can be read into R. In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 
 ``` r
 df <- readRDS("cumulative_2006_2016.Rds")
@@ -24,38 +24,40 @@ library(tidyverse)
 df
 ```
 
-    ## # A tibble: 374,556 x 68
+    ## # A tibble: 392,755 x 70
     ##     year case_id weight weight_cumulative state  st    cd     dist dist_up
     ##    <int>   <int>  <dbl>             <dbl> <chr>  <chr> <chr> <int>   <int>
-    ##  1  2006  439219  1.85              1.67  North… NC    NC-10    10      10
-    ##  2  2006  439224  0.968             0.872 Ohio   OH    OH-3      3       3
-    ##  3  2006  439228  1.59              1.44  New J… NJ    NJ-1      1       1
-    ##  4  2006  439237  1.40              1.26  Illin… IL    IL-9      9       9
-    ##  5  2006  439238  0.903             0.813 New Y… NY    NY-22    22      22
-    ##  6  2006  439242  0.839             0.756 Texas  TX    TX-11    11      11
-    ##  7  2006  439251  0.777             0.700 Minne… MN    MN-3      3       3
-    ##  8  2006  439254  0.839             0.756 Nevada NV    NV-2      2       2
-    ##  9  2006  439255  0.331             0.299 Texas  TX    TX-24    24      24
-    ## 10  2006  439263  1.10              0.993 Maryl… MD    MD-2      2       2
-    ## # ... with 374,546 more rows, and 59 more variables: cong <int>, cong_up
-    ## #   <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>, weight_vv
-    ## #   <dbl>, weight_vv_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7
-    ## #   <int+lbl>, pid3_leaner <int+lbl>, gender <int+lbl>, birthyr <int>, age
-    ## #   <int>, race <int+lbl>, educ <int+lbl>, economy_retro <int+lbl>,
-    ## #   approval_pres <int+lbl>, approval_rep <fct>, approval_sen1 <fct>,
-    ## #   approval_sen2 <fct>, approval_gov <int+lbl>, intent_pres_08 <fct>,
-    ## #   intent_pres_12 <fct>, intent_pres_16 <fct>, voted_pres_08 <fct>,
-    ## #   voted_pres_12 <fct>, voted_pres_16 <fct>, vv_regstatus <fct>,
-    ## #   vv_party_gen <fct>, vv_party_prm <fct>, vv_turnout_gvm <fct>,
-    ## #   vv_turnout_pvm <fct>, intent_rep <fct>, intent_sen <fct>, intent_gov
-    ## #   <fct>, voted_rep <fct>, voted_sen <fct>, voted_gov <fct>,
-    ## #   intent_rep_chosen <chr>, intent_rep_fec <chr>, intent_sen_chosen
-    ## #   <chr>, intent_sen_fec <chr>, intent_gov_chosen <chr>, intent_gov_fec
-    ## #   <chr>, voted_rep_chosen <chr>, voted_rep_fec <chr>, voted_sen_chosen
-    ## #   <chr>, voted_sen_fec <chr>, voted_gov_chosen <chr>, voted_gov_fec
-    ## #   <chr>, rep_current <chr>, rep_icpsr <int>, sen1_current <chr>,
-    ## #   sen1_icpsr <int>, sen2_current <chr>, sen2_icpsr <int>, gov_current
-    ## #   <chr>, gov_fec <chr>
+    ##  1  2006  439219  1.85              1.35  North… NC    NC-10    10      10
+    ##  2  2006  439224  0.968             0.704 Ohio   OH    OH-3      3       3
+    ##  3  2006  439228  1.59              1.16  New J… NJ    NJ-1      1       1
+    ##  4  2006  439237  1.40              1.02  Illin… IL    IL-9      9       9
+    ##  5  2006  439238  0.903             0.656 New Y… NY    NY-22    22      22
+    ##  6  2006  439242  0.839             0.610 Texas  TX    TX-11    11      11
+    ##  7  2006  439251  0.777             0.565 Minne… MN    MN-3      3       3
+    ##  8  2006  439254  0.839             0.610 Nevada NV    NV-2      2       2
+    ##  9  2006  439255  0.331             0.241 Texas  TX    TX-24    24      24
+    ## 10  2006  439263  1.10              0.802 Maryl… MD    MD-2      2       2
+    ## # ... with 392,745 more rows, and 61 more variables: cong <int>,
+    ## #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
+    ## #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7 <int+lbl>,
+    ## #   pid3_leaner <int+lbl>, ideo5 <fct>, gender <int+lbl>, birthyr <int>,
+    ## #   age <int>, race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>,
+    ## #   faminc <fct>, economy_retro <int+lbl>, approval_pres <int+lbl>,
+    ## #   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
+    ## #   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
+    ## #   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
+    ## #   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
+    ## #   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
+    ## #   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
+    ## #   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
+    ## #   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+    ## #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
+    ## #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
+    ## #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
+    ## #   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>,
+    ## #   sen2_current <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
+
+A Stata `.dta` can also be read in by Stata, or in R through `haven::read_dta()`.
 
 Each row is a respondent, and each variable is information associated with that respondent. Note that this cumulative dataset extracts only a couple of key variables from each year's CCES, which has hundreds of columns.
 
@@ -78,7 +80,7 @@ One addition to this cumulative dataset above the individual years that comprise
 select(df, year, case_id, matches("voted_sen"))
 ```
 
-    ## # A tibble: 374,556 x 5
+    ## # A tibble: 392,755 x 5
     ##     year case_id voted_sen            voted_sen_chosen       voted_sen_fec
     ##    <int>   <int> <fct>                <chr>                  <chr>        
     ##  1  2006  439219 <NA>                 <NA>                   <NA>         
@@ -91,7 +93,7 @@ select(df, year, case_id, matches("voted_sen"))
     ##  8  2006  439254 [Democrat / Candida… Jack Carter (D)        S6NV00150    
     ##  9  2006  439255 [Democrat / Candida… Barbara Ann Radnofsky… S6TX00180    
     ## 10  2006  439263 I Did Not Vote In T… <NA>                   <NA>         
-    ## # ... with 374,546 more rows
+    ## # ... with 392,745 more rows
 
 Crunch
 ------
@@ -132,5 +134,3 @@ R scripts `01` - `06` reproduce the cumulative dataset starting from each year's
 -   `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
 More scripts arein `00_prepare` format other datasets like NOMINATE, CQ, and DIME.
-
-[1] In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.

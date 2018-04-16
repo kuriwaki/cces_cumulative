@@ -10,7 +10,7 @@ library(tidyverse)
 library(rprojroot)
 ```
 
-Source code for building a CCES cumulative file (2006 - 2016). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
+Source code for building a CCES cumulative file (2006 - 2017). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
 Data is currently not tracked due to size constraints, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io). 
 
@@ -18,14 +18,14 @@ Data is currently not tracked due to size constraints, but releases will be made
 https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6
 
 *Current Guide*: 
-https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2016.pdf
+https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf
 
 # Getting Started 
 
-Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format^[In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.] can be read into R.
+Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format can be read into R. In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
 
 ```{r, echo = FALSE, include = FALSE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2016.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
@@ -35,6 +35,8 @@ df <- readRDS("cumulative_2006_2016.Rds")
 library(tidyverse)
 df
 ```
+
+A Stata `.dta` can also be read in by Stata, or in R through `haven::read_dta()`. 
 
 Each row is a respondent, and each variable is information associated with that respondent. Note that this cumulative dataset extracts only a couple of key variables from each year's CCES, which has hundreds of columns. 
 
