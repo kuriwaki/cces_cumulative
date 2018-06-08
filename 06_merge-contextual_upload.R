@@ -140,7 +140,7 @@ load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
-
+panel_ids <- readRDS("data/output/01_responses/panel_2012_ids.Rds")
 
 
 # add on name and fec, standardized option labels -----
@@ -219,11 +219,12 @@ ccc_factor <-   ccc_fac %>%
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-saveRDS(ccc_df, "data/release/cumulative_2006_2017.Rds")
-saveRDS(ccc_factor, "data/output/cumulative_2006_2017_factor.Rds")
+saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2017.Rds")
+saveRDS(ccc_df, "data/release/cumulative_2006_2017_2012panel.Rds")
+saveRDS(anti_join(ccc_factor, mutate_at(panel_ids, vars(case_id), as.character)), "data/output/cumulative_2006_2017_factor.Rds")
 
-write_sav(ccc_factor, "data/release/cumulative_2006_2017.sav")
-write_sav(filter(ccc_factor, year == 2017), "data/release/cumulative_2017.sav")
+write_sav(anti_join(ccc_factor, panel_ids), "data/release/cumulative_2006_2017.sav")
+# write_sav(filter(ccc_factor, year == 2017), "data/release/cumulative_2017.sav")
 
 if (writeToCrunch) {
   login()
@@ -240,6 +241,7 @@ for (v in colnames(ccc_factor)) {
     attributes(ccc_dta[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
-write_dta(ccc_dta, "data/release/cumulative_2006_2017.dta", version = 14)
+
+write_dta(anti_join(ccc_dta, panel_ids), "data/release/cumulative_2006_2017.dta", version = 14)
 
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")

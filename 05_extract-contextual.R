@@ -301,6 +301,7 @@ cclist <- list(`2006` = cc06,
                `2010` = cc10, 
                `2011` = cc11, 
                `2012` = cc12, 
+               `2012p` = panel12,
                `2013` = cc13,
                `2014` = cc14,
                `2015` = cc15, 
@@ -310,8 +311,9 @@ cclist <- list(`2006` = cc06,
 
 # Rename variables ----
 master <- readRDS("data/output/02_questions/variable_std_key.Rds")
+master$`2012p` <- master$`2012`
 
-for (yr in 2006:2017) {
+for (yr in c(2006:2017, "2012p")) {
   for (var in master$name) {
     
     # lookup this var
@@ -368,7 +370,6 @@ sc_key <- melt_cand(df, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
 
 # Lautenberg 2016 NJ sen
-  
   
 # create key of candidates -------
 fec_rep <- filter(feckey, office_sought == "federal:house", cycle %in% 2006:2016)

@@ -9,6 +9,7 @@ library(data.table)
 
 # helper data --
 statecode <- read_csv("data/source/statecode.csv")
+panel_ids <- readRDS("data/output/01_responses/panel_2012_ids.Rds")
 
 # functions -----
 
@@ -834,6 +835,7 @@ stopifnot(nrow(ccc) == nrow(pid3))
 # Common manipulations ----
 # Weight --
 size_year <- ccc %>%
+  anti_join(panel_ids, by = c("year", "case_id")) %>% # don't count panel to get weights
   group_by(year) %>%
   summarize(size = n()) %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
@@ -852,26 +854,13 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 
 # don't use panel rows for now -----
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-panel_std <- semi_join(ccc, panel_id, by = c("year", "case_id"))
-ccc <- anti_join(ccc, panel_id, by = c("year", "case_id"))
-i_rep <- anti_join(i_rep, panel_id, by = c("year", "case_id"))
-i_sen <- anti_join(i_sen, panel_id, by = c("year", "case_id"))
-i_gov <- anti_join(i_gov, panel_id, by = c("year", "case_id"))
-v_rep <- anti_join(v_rep, panel_id, by = c("year", "case_id"))
-v_sen <- anti_join(v_sen, panel_id, by = c("year", "case_id"))
-v_gov <- anti_join(v_gov, panel_id, by = c("year", "case_id"))
-vv_party_gen <- anti_join(vv_party_gen, panel_id, by = c("year", "case_id"))
-vv_party_prm <- anti_join(vv_party_prm, panel_id, by = c("year", "case_id"))
-vv_regstatus <- anti_join(vv_regstatus, panel_id, by = c("year", "case_id"))
-vv_turnout_gvm <- anti_join(vv_turnout_gvm, panel_id, by = c("year", "case_id"))
-vv_turnout_pvm <- anti_join(vv_turnout_pvm, panel_id, by = c("year", "case_id"))
 
 
 # Write ----- 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
-saveRDS(panel_std, "data/output/01_responses/panel_2012_stacked.Rds")
+saveRDS(panel_id, "data/output/01_responses/panel_2012_ids.Rds")
 
 
 cat("Finished stacking vars for cumulative \n")

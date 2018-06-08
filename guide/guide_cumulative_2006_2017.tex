@@ -145,7 +145,7 @@ Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe
 Williams, and the Crunch Team for their help.}  }
 
 
-\date{Guide last updated: 2018-04-16}
+\date{Guide last updated: 2018-06-08}
 
 \begin{document}
 
@@ -259,18 +259,19 @@ analyzed as a standard data frame.
 10  2006  439263  1.10              0.802 Maryl~ MD    MD-2      2       2
 # ... with 392,745 more rows, and 61 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
-#   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>, pid7 <int+lbl>,
-#   pid3_leaner <int+lbl>, ideo5 <fct>, gender <int+lbl>, birthyr <int>,
-#   age <int>, race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>,
-#   faminc <fct>, economy_retro <int+lbl>, approval_pres <int+lbl>,
-#   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
-#   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
-#   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
-#   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
-#   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
-#   intent_rep <fct>, intent_sen <fct>, intent_gov <fct>, voted_rep <fct>,
-#   voted_sen <fct>, voted_gov <fct>, intent_rep_chosen <chr>,
-#   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
+#   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
+#   birthyr <int>, age <int>, race <int+lbl>, hispanic <int+lbl>,
+#   educ <int+lbl>, faminc <fct>, economy_retro <int+lbl>,
+#   approval_pres <int+lbl>, approval_rep <fct>, approval_sen1 <fct>,
+#   approval_sen2 <fct>, approval_gov <int+lbl>, intent_pres_08 <fct>,
+#   intent_pres_12 <fct>, intent_pres_16 <fct>, voted_pres_08 <fct>,
+#   voted_pres_12 <fct>, voted_pres_16 <fct>, vv_regstatus <fct>,
+#   vv_party_gen <fct>, vv_party_prm <fct>, vv_turnout_gvm <fct>,
+#   vv_turnout_pvm <fct>, intent_rep <fct>, intent_sen <fct>,
+#   intent_gov <fct>, voted_rep <fct>, voted_sen <fct>, voted_gov <fct>,
+#   intent_rep_chosen <chr>, intent_rep_fec <chr>,
+#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
 #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
 #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
 #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -622,8 +623,7 @@ A series of variables for the respondent's location
 \begin{itemize}
 \tightlist
 \item
-  \texttt{state}: State (FIPS)ccc: {[}State (Imputed from input
-  zipcode){]}
+  \texttt{state}: State (FIPS): {[}State (Imputed from input zipcode){]}
 \item
   \texttt{st}: State abbreviation (FIPS): {[}State (Imputed from input
   zipcode){]}
