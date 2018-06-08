@@ -13,8 +13,9 @@ statecode <- read_csv("data/source/statecode.csv")
 # functions -----
 
 # name standardization
-stdName <- function(tbl) {
+stdName <- function(tbl, is_panel = FALSE) {
   cces_year <- as.integer(unique(tbl$year))
+  if (is_panel) cces_year <- paste0(cces_year, "_", "panel")
   
   
   if (identical(cces_year, 2006:2011)) {
@@ -82,6 +83,10 @@ stdName <- function(tbl) {
         voted_sen = coalesce(voted_sen, intent_senx),
         voted_gov = coalesce(voted_gov, intent_govx)
       )
+  }
+  
+  if (identical(cces_year, "2012_panel")) {
+    tbl <- tbl
   }
   
   if (identical(cces_year, 2013L)) {
@@ -540,6 +545,7 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 ccs <- list(
   "pettigrew" = stdName(filter(ccp, year != 2012)),
   "2012" = stdName(cc12),
+  "2012panel" = stdName(panel12),
   "2013" = stdName(cc13),
   "2014" = stdName(cc14),
   "2015" = stdName(cc15),

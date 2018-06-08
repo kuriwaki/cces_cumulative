@@ -8,7 +8,7 @@ statecode <- read_csv("data/source/statecode.csv")
 # functions ---
 #' rudimentary standardization for data that comes out of dataverse
 std_dv <- function(path, guess_year = TRUE) {
-  if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_cc.*", "\\1", path))
+  if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_(cc|panel).*", "\\1", path))
   if (!guess_year) guessed_yr <- NA
 
   ## then
@@ -168,6 +168,7 @@ cc09 <- std_dv("data/source/cces/2009_cc.dta")
 cc10 <- std_dv("data/source/cces/2010_cc.dta")
 cc11 <- std_dv("data/source/cces/2011_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
+panel12 <- std_dv("data/source/cces/2012_panel_h.dta")
 cc13 <- std_dv("data/source/cces/2013_cc.dta")
 cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
@@ -177,7 +178,7 @@ cc17 <- std_dv("data/source/cces/2017_cc.dta")
 
 # save ----
 save(
-  ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, cc13, cc14, cc15, cc16, cc17,
+  ccp, cc06, cc07, cc08, cc09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
   file = "data/output/01_responses/common_all.RData"
 )
 
