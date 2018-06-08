@@ -86,7 +86,35 @@ stdName <- function(tbl, is_panel = FALSE) {
   }
   
   if (identical(cces_year, "2012_panel")) {
-    tbl <- tbl
+    tbl <- tbl %>% 
+      rename(
+        approval_pres = CC12_308a,
+        approval_rep = CC12_315a,
+        approval_sen1 = CC12_315b,
+        approval_sen2 = CC12_315c,
+        approval_gov = CC12_308d,
+        economy_retro = CC12_302,
+        intent_pres_12 = CC12_354c,
+        intent_pres_12x = CC12_354b,
+        voted_pres_12 = CC12_410a,
+        voted_pres_08 = CC12_317,
+        voted_rep = CC12_412,
+        voted_sen = CC12_410b,
+        voted_gov = CC12_411,
+        intent_sen = CC12_355b,
+        intent_senx = CC12_355,
+        intent_gov = CC12_356b,
+        intent_govx = CC12_356,
+        intent_rep = CC12_390b,
+        intent_repx = CC12_390,
+        CC350 = CC12_350 # rename later
+      ) %>%
+      mutate(
+        voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
+        voted_rep = coalesce(voted_rep, intent_repx),
+        voted_sen = coalesce(voted_sen, intent_senx),
+        voted_gov = coalesce(voted_gov, intent_govx)
+      )
   }
   
   if (identical(cces_year, 2013L)) {
@@ -212,7 +240,7 @@ stdName <- function(tbl, is_panel = FALSE) {
   
   
   # more standardization for post 2012
-  if (cces_year[1] %in% 2012:2017) {
+  if (cces_year[1] %in% 2012:2017 | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -545,13 +573,15 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 ccs <- list(
   "pettigrew" = stdName(filter(ccp, year != 2012)),
   "2012" = stdName(cc12),
-  "2012panel" = stdName(panel12),
+  "2012panel" = stdName(panel12, is_panel = TRUE),
   "2013" = stdName(cc13),
   "2014" = stdName(cc14),
   "2015" = stdName(cc15),
   "2016" = stdName(cc16),
   "2017" = stdName(cc17)
 )
+
+
 
 # mutations to data -----
 
@@ -577,7 +607,6 @@ tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) 
 time <- findStack(ccs, starttime, type = "datetime") %>%
   filter(year != 2006, year != 2009) %>%
   bind_rows(cc06_time, cc09_time)
-
 
 # pid -------
 pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
@@ -606,7 +635,7 @@ pid3_leaner <- pid7 %>%
                                     "Independent (Excluding Leaners)" = "Independent")) %>% 
   mutate(pid3_leaner_num = recode(pid3_leaner, !!!leaner_lbl_code)) %>% 
   mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) %>% 
-  select(-pid3_leaner_num)
+  select(-pid3_leaner_num, -pid7)
 
 ideo5 <- findStack(ccs, ideo5)
 
@@ -816,11 +845,33 @@ ccc <- ccc %>%
   select(year, case_id, weight, weight_cumulative, everything())
 
 
+# check no accidental duplicate id's within 2012
+foo_12 <- wgt %>% filter(year == 2012)
+stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
+
+
+# don't use panel rows for now -----
+panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+panel_std <- semi_join(ccc, panel_id, by = c("year", "case_id"))
+ccc <- anti_join(ccc, panel_id, by = c("year", "case_id"))
+i_rep <- anti_join(i_rep, panel_id, by = c("year", "case_id"))
+i_sen <- anti_join(i_sen, panel_id, by = c("year", "case_id"))
+i_gov <- anti_join(i_gov, panel_id, by = c("year", "case_id"))
+v_rep <- anti_join(v_rep, panel_id, by = c("year", "case_id"))
+v_sen <- anti_join(v_sen, panel_id, by = c("year", "case_id"))
+v_gov <- anti_join(v_gov, panel_id, by = c("year", "case_id"))
+vv_party_gen <- anti_join(vv_party_gen, panel_id, by = c("year", "case_id"))
+vv_party_prm <- anti_join(vv_party_prm, panel_id, by = c("year", "case_id"))
+vv_regstatus <- anti_join(vv_regstatus, panel_id, by = c("year", "case_id"))
+vv_turnout_gvm <- anti_join(vv_turnout_gvm, panel_id, by = c("year", "case_id"))
+vv_turnout_pvm <- anti_join(vv_turnout_pvm, panel_id, by = c("year", "case_id"))
+
 
 # Write ----- 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
+saveRDS(panel_std, "data/output/01_responses/panel_2012_stacked.Rds")
 
 
 cat("Finished stacking vars for cumulative \n")
