@@ -26,12 +26,6 @@ if(FALSE){
 # upload 2016
 cc16 <- read_dta("~/Dropbox/CCES_SDA/2016/data/Common/CCES16_Common_OUTPUT_Feb2018_VV.dta") %>% 
   select(V101, matches("weight"), matches("^CL"))
-write_sav(cc16, "data/output/01_responses/cc16_temp.sav")
-newDataset("https://www.dropbox.com/s/fnv175o976rzxil/cc16_temp.sav?dl=0", "CCES 2016 Jan 2018")
 
 insert <- loadDataset("CCES 2016 Jan 2018")
-
-
-
-old16 <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
-old16_fork <- forkDataset(old16)
+old16_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated")
