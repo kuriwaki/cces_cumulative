@@ -29,3 +29,7 @@ cc16 <- read_dta("~/Dropbox/CCES_SDA/2016/data/Common/CCES16_Common_OUTPUT_Feb20
 
 insert <- loadDataset("CCES 2016 Jan 2018")
 old16_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated")
+
+vars_to_replace <- setdiff(names(insert), "V101")
+
+deleteVariables(old16_fork, vars_to_replace)
