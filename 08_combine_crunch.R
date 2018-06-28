@@ -53,3 +53,18 @@ weightVariables(ds) <- weight_aliases
 weight(ds) <- ds$commonweight_vv
 
 
+# replace alias-based names with real names
+ccvar <- gs_title("CCES_crunch_variables") 
+v16 <- gs_read_csv(ccvar, ws = "CCES_2016_variables")
+lookup <- v16 %>% select(alias = variable, name) %>% distinct()
+
+# rename
+for (cv in aliases(variables(ds))) {
+  if (cv %in% lookup$alias) {
+    replacement <- lookup$name[which(lookup$alias == cv)]
+    if (!is.na(replacement)) {
+      name(ds[[which(aliases(variables(ds)) == cv)]]) <- replacement
+      print(cv)
+    } else next
+  }
+}
