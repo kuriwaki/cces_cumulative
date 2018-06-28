@@ -31,16 +31,24 @@ if(FALSE){
 
 # upload 2016
 cc16 <- read_dta("~/Dropbox/CCES_SDA/2016/data/Common/CCES16_Common_OUTPUT_Feb2018_VV.dta") %>% 
-  select(V101, matches("weight"), matches("^CL"))
+  select(V101, matches("weight"), matches("^CL")) # vars to replace + ID
 
-insert <- loadDataset("CCES 2016 Jan 2018")
-old16_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated")
+# insert it once
 
-vars_to_replace <- setdiff(names(insert), "V101")
-
-deleteVariables(old16_fork, vars_to_replace)
-
-joined <- extendDataset(old16_fork, insert, by = "V101")
+if (FALSE) { # don't run again
+  insert <- loadDataset("CCES 2016 Jan 2018")
+  old16_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated") # old version (will get overwritten)
+  
+  # insert is the vars to replacement + ID
+  vars_to_replace <- setdiff(names(insert), "V101")
+  
+  # delete the "wrong" variables
+  deleteVariables(old16_fork, vars_to_replace)
+  
+  # immediately add back the "correct" variables in its place
+  joined <- extendDataset(old16_fork, insert, by = "V101")
+  
+}
 
 
 # add to weights 
