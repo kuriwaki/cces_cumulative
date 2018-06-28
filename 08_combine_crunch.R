@@ -2,10 +2,16 @@ library(tidyverse)
 library(crunch)
 library(dplyr)
 library(haven)
+library(googlesheets)
 
 
 login()
+ds <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
+crtabs(~ inputstate + CL_E2016GVM, ds, useNA = "ifany", weight = NULL) # check Northeastern states
 
+login()
+ds <- loadDataset("Fork of CCES 2016 Common Vote Validated")
+crtabs(~ inputstate + CL_E2016GVM, ds, useNA = "ifany", weight = NULL) # check Northeastern states
 
 if(FALSE){
   
@@ -33,3 +39,17 @@ old16_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated")
 vars_to_replace <- setdiff(names(insert), "V101")
 
 deleteVariables(old16_fork, vars_to_replace)
+
+joined <- extendDataset(old16_fork, insert, by = "V101")
+
+
+# add to weights 
+login()
+ds <- loadDataset("Fork of CCES 2016 Common Vote Validated")
+
+# apply weights ---
+weight_aliases <- str_subset(names(ds), "weight")
+weightVariables(ds) <- weight_aliases
+weight(ds) <- ds$commonweight_vv
+
+
