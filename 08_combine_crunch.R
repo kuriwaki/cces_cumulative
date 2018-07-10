@@ -76,3 +76,11 @@ for (cv in aliases(variables(ds))) {
     } else next
   }
 }
+
+
+# merge fork 
+ds_original <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
+ds_fork <- loadDataset("Fork of CCES 2016 Common Vote Validated")
+
+mergeFork(dataset = ds_original, fork = ds_fork)
+crtabs(~ inputstate + CL_E2016GVM, ds_original, useNA = "ifany", weight = NULL) # check Northeastern states
