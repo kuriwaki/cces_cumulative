@@ -137,7 +137,7 @@ library(haven)
 df <- read_dta("cumulative_2006_2017.dta")
 ```
 
-A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` format. The first three classes are frequently are commonly used, but the `lablelled` format is more recent. Essentially it is similar to a `factor` but more compatible with Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
+A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` format. The first three classes are commonly used, but the `lablelled` format is more recent. Essentially it is similar to a `factor` but more compatible with Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
 
 A labelled variable's labels are not shown immediately in the Console:
 
@@ -676,7 +676,7 @@ print_tab(voted_pres_16)
 
 ### `r nam(intent_rep)`
 
-`r descrip(intent_rep)`
+`r descrip(intent_rep)` See `intent_rep_party` for party affiliation.
 
 
 ```{r}
@@ -685,25 +685,25 @@ print_tab(intent_rep)
 
 * Years: `r in_years(intent_rep)`
 * Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
-* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` for party affiliation.
 * Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
 
 
 ### `r nam(intent_sen)`
 
-`r descrip(intent_sen)`
+`r descrip(intent_sen)` See `intent_sen_party` for party affiliation.
 
 ```{r}
 print_tab(intent_sen)
 ```
 
 * Years: `r in_years(intent_sen)`
-* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES.
+* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
 
 ### `r nam(intent_gov)`
 
-`r descrip(intent_gov)`
+`r descrip(intent_gov)` See `intent_gov_party` for party affiliation.
 
 
 ```{r}
@@ -718,7 +718,7 @@ print_tab(intent_gov)
 
 ### `r nam(voted_rep)`
 
-`r descrip(voted_rep)`
+`r descrip(voted_rep)` See `voted_rep_party` for party affiliation.
 
 ```{r}
 print_tab(voted_rep)
@@ -726,10 +726,11 @@ print_tab(voted_rep)
 
 * Years: `r in_years(voted_rep)`
 * This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation.
 
 ### `r nam(voted_sen)`
 
-`r descrip(voted_sen)`
+`r descrip(voted_sen)` See `voted_sen_party` for party affiliation.
 
 
 ```{r}
@@ -741,7 +742,7 @@ print_tab(voted_sen)
 
 ### `r nam(voted_gov)`
 
-`r descrip(voted_gov)`
+`r descrip(voted_gov)` See `voted_gov_party` for party affiliation.
 
 ```{r}
 print_tab(voted_gov)

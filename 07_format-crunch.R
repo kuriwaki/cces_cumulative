@@ -70,9 +70,9 @@ ind_pres_16 <- grep("(intent|voted)_pres_16", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 
-ind_rep <- grep("(intent|voted)_rep$", vn)
-ind_sen <- grep("(intent|voted)_sen$", vn)
-ind_gov <- grep("(intent|voted)_gov$", vn)
+ind_rep <- grep("(intent|voted)_rep($|_party)", vn)
+ind_sen <- grep("(intent|voted)_sen($|_party)", vn)
+ind_gov <- grep("(intent|voted)_gov($|_party)", vn)
 
 ind_candID  <- grep("intent_rep_chosen", vn):grep("voted_gov_fec", vn) 
 ind_incID  <- grep("^rep_current$", vn):grep("^gov_fec$", vn) 
