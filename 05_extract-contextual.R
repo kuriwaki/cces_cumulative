@@ -275,7 +275,11 @@ std_ptylabel <- function(vec) {
                 `Libertarian` = "L",
                 `Independent` = "I",
                 `Green` = "G",
-                `Green Party` = "G")
+                `Green Party` = "G",
+                `Constitution` = "Constitution",
+                `Constitutional` = "Constitution",
+                `Conservative` = "Conservative",
+                `Conservative Party` = "Conservative")
 }
 
 # Variable Key ------

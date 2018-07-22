@@ -17,9 +17,11 @@ writeToCrunch <- FALSE # to change the crunch dataset
 #' for the candidate the respondent chose
 
 num_cand_match <- function(numdf, canddf) {
-  type <- grep("_num", colnames(numdf), value = TRUE)
-  chosen_varname <- glue("{gsub('_num', '', type)}_chosen")
-  abstract_varname <- as.character(glue("{gsub('_num', '', type)}_char"))
+  type <- str_subset(colnames(numdf), "_num") # columns with 
+  no_num <- str_replace(type, '_num', '')
+  chosen_varname <- glue("{no_num}_chosen") # e.g. intent_rep_chosen = Maxine Waters
+  party_varname <-  glue("{no_num}_party") # e.g. intent_rep_party = Democrat
+  abstract_varname <- as.character(glue("{str_replace(type, '_num', '')}_char")) # e.g. intent_rep_char = Democract /Cand 1
   
   canddf <- rename(canddf, !!type := cand)
   
@@ -27,8 +29,9 @@ num_cand_match <- function(numdf, canddf) {
   
   joined %>% 
     mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) %>%
-    mutate(!!chosen_varname := str_c(name, " (", party, ")", sep = "")) %>% 
-    select(!!c(colnames(numdf), chosen_varname), everything())
+    mutate(!!chosen_varname := str_c(name, " (", party, ")", sep = ""),
+           !!party_varname := spell_out_party_abbrv(party)) %>% 
+    select(!!c(colnames(numdf), chosen_varname, party_varname), everything())
 }
 
 #' Standardized the votechoice options for crunch
@@ -64,6 +67,17 @@ std_voteopts <- function(vec,
 }
 
 
+#' Spell out D/Rs
+#' @vec vector of party names that may include abbreviations like 
+#' @examples spell_out_party_abbrv(c("D", "R", "Constitutional"))
+spell_out_party_abbrv <- function (vec) {
+  recode(vec,
+         `D` = "Democratic",
+         `R` = "Republican",                      
+         `I` = "Independent", 
+         `L` = "Libertarian",
+         `G` =   "Green")
+} 
 
 #' combined char to number
 #' change character by re-defining label ordering ordered by the original number and breaking ties with year
@@ -122,15 +136,17 @@ int_vot_manual <- function(tbl, vn, cn, nn) {
 #' Slim out the data for crunch, and preparing for crunch match
 #' 
 #' @tbl The dataset to slim out
-slim <- function(tbl, varmarker = '_chosen', id = "fec") {
+#' @varmaker regexp to capture var of interest
+#' @id  suffix for identifier variable
+slim <- function(tbl, varmarker = '(_chosen|_party)', id = "fec") {
   
-  chosen_var <- grep(varmarker, colnames(tbl), value = TRUE)
-  type <- gsub(varmarker, '', chosen_var)
-  id_rename <- as.character(glue("{type}_{id}"))
+  chosen_var <- str_subset(colnames(tbl), varmarker)
+  type <- str_replace(chosen_var, varmarker, '')
+  id_rename <- unique(glue("{type}_{id}"))
   
   tbl %>% 
     select(!!c("year", "case_id"),
-           matches(as.character(glue("{varmarker}$"))),  
+           matches(as.character(glue("{varmarker}$"))),   # slim part
            !!id_rename := !!id)
 }
 
