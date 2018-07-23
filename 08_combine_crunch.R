@@ -6,6 +6,40 @@ library(googlesheets)
 
 
 login()
+
+# append intent to vote party -----
+
+
+# ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
+# ds_orig$year_caseid <- paste0(as.character(as.vector(ds_orig$year)), "_",  as.vector(ds_orig$case_id))
+# forkDataset(ds_orig, "Fork of CCES Cumulative Common")
+
+ds_fork <- loadDataset("Fork of CCES Cumulative Common")
+
+
+ds_new <- loadDataset("CCES Cumulative Common Dev")
+ds_new$year_caseid <- paste0(as.character(as.vector(ds_new$year)), "_",  as.vector(ds_new$case_id))
+
+
+vn <- names(ds_new)
+vn_replace <- str_subset(vn, "(intent|voted)_(rep|sen|gov).*")
+vn_drop <- setdiff(vn, c("year_caseid", vn_replace))
+
+# drop unnecessary from Dev
+deleteVariables(ds_new, vn_drop)
+deleteVariables(ds_fork, str_subset(vn_replace, ".*(?<!party)$")) # delete the vars to be replaced
+refresh(ds_fork)
+refresh(ds_new)
+saveVersion(ds_fork)
+
+# merge new vars into fork
+extendDataset(ds_fork, ds_new, by = "year_caseid")
+refresh(ds_fork)
+saveVersion(ds_fork, description = "fork merged with new intent/voted")
+
+
+
+# Fix 2016 vote match ----
 ds <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
 crtabs(~ inputstate + CL_E2016GVM, ds, useNA = "ifany", weight = NULL) # check Northeastern states
 
