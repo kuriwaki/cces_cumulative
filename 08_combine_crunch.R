@@ -10,7 +10,7 @@ login()
 # append intent to vote party -----
 
 
-# ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
 # ds_orig$year_caseid <- paste0(as.character(as.vector(ds_orig$year)), "_",  as.vector(ds_orig$case_id))
 # forkDataset(ds_orig, "Fork of CCES Cumulative Common")
 
@@ -37,6 +37,7 @@ extendDataset(ds_fork, ds_new, by = "year_caseid")
 refresh(ds_fork)
 saveVersion(ds_fork, description = "fork merged with new intent/voted")
 
+mergeFork(ds_orig, fork = ds_fork)
 
 
 # Fix 2016 vote match ----

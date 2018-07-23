@@ -11,6 +11,7 @@ login() # you need a login and password to complete this command
 
 # connect to data---------
 ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+
 unlock(ds)
 
 # description for dataset
@@ -20,12 +21,6 @@ endDate(ds) <- as.Date("2017-12-12")
 
 
 # add metadata ---------
-
-# appply the name and variable
-# lapply(ds, function(v){
-#   name(v) <-        ccc_meta$name[ccc_meta$alias == alias(v)]
-#   description(v) <- ccc_meta$description[ccc_meta$alias == alias(v)]
-# })
 
 for (j in 1:ncol(ds)) {
   if (!names(ds)[j] %in% ccc_meta$alias) next
@@ -42,7 +37,6 @@ weight(ds) <- ds$weight_cumulative
 type(ds$year) <- "categorical"
 names(categories(ds$year)) <- c(as.character(2006:2017))
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
-
 
 
 # ordering of categories ----
@@ -70,11 +64,11 @@ ind_pres_16 <- grep("(intent|voted)_pres_16", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 
-ind_rep <- grep("(intent|voted)_rep($|_party)", vn)
-ind_sen <- grep("(intent|voted)_sen($|_party)", vn)
-ind_gov <- grep("(intent|voted)_gov($|_party)", vn)
+ind_rep <- str_which(vn, "(intent|voted)_rep(_party|$)")
+ind_sen <- str_which(vn, "(intent|voted)_sen(_party|$)")
+ind_gov <- str_which(vn, "(intent|voted)_gov(_party|$)")
 
-ind_candID  <- grep("intent_rep_chosen", vn):grep("voted_gov_fec", vn) 
+ind_candID  <- str_which(vn, "(intent|voted)_(rep|gov|sen)_(chosen|fec)")
 ind_incID  <- grep("^rep_current$", vn):grep("^gov_fec$", vn) 
 
 
