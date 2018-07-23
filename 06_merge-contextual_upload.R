@@ -76,16 +76,18 @@ spell_out_party_abbrv <- function (vec) {
          `R` = "Republican",                      
          `I` = "Independent", 
          `L` = "Libertarian",
-         `G` =   "Green")
+         `G` =  "Green") %>% 
+    fct_infreq() %>%  # generally in order
+    fct_relevel(c("Democratic", "Republican")) # set this 
 } 
 
 #' combined char to number
 #' change character by re-defining label ordering ordered by the original number and breaking ties with year
 #' @param tbl A table with columns _char and _num for the labels
 bind_label <- function(tbl) {
-  charname <- grep("_char$", colnames(tbl), value = TRUE)
-  numname <- grep("(intent|voted).*_num$", colnames(tbl), value = TRUE)
-  varname <- gsub("_char", "", charname)
+  charname <- str_subset(colnames(tbl), "_char$")
+  numname <-  str_subset(colnames(tbl), "(intent|voted).*_num$")
+  varname <-  str_replace(charname, "_char", "")
   
 
   tbl_clps <- int_vot_manual(tbl, vn = varname, cn = charname, nn = numname)
@@ -187,6 +189,19 @@ abstract_lbl <- bind_label(i_rep_who) %>%
   left_join(bind_label(v_sen_who), ids) %>%
   left_join(bind_label(v_gov_who), ids)
 
+# pre-merge and order vars 
+# intent_Rep, intent_rep_party, intent_rep_fec
+lbl_party_name_fec <- 
+  left_join(abstract_lbl, chosen_with_fec, by = ids) %>% 
+  select(year, case_id, 
+         matches("intent_rep(_party|$)"),
+         matches("voted_rep(_party|$)"),
+         matches("intent_gov(_party|$)"),
+         matches("voted_gov(_party|$)"),
+         matches("intent_sen(_party|$)"),
+         matches("voted_sen(_party|$)"),
+         everything())
+
 # nice dataset for incumbents ? ----
 incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>% 
   left_join(slim(s1i_mc_match, "_current", "icpsr"), ids) %>% 
@@ -195,8 +210,7 @@ incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>%
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
-  left_join(abstract_lbl, ids) %>% 
-  left_join(chosen_with_fec, ids) %>% 
+  left_join(lbl_party_name_fec, ids) %>% 
   left_join(incumbents_with_ID, ids)
   
 
@@ -237,17 +251,13 @@ ccc_factor <-   ccc_fac %>%
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
 saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2017.Rds")
 saveRDS(ccc_df, "data/release/cumulative_2006_2017_2012panel.Rds")
-saveRDS(anti_join(ccc_factor, mutate_at(panel_ids, vars(case_id), as.character)), "data/output/cumulative_2006_2017_factor.Rds")
-
-write_sav(anti_join(ccc_factor, panel_ids), "data/release/cumulative_2006_2017.sav")
-# write_sav(filter(ccc_factor, year == 2017), "data/release/cumulative_2017.sav")
+panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
+saveRDS(anti_join(ccc_factor, panel_charid), "data/output/cumulative_2006_2017_factor.Rds")
+write_sav(anti_join(ccc_factor, panel_charid), "data/release/cumulative_2006_2017.sav") # for crunch, don't save panel cases
 
 if (writeToCrunch) {
   login()
-  # newDataset("https://www.dropbox.com/s/jy59lc87plnq6zw/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common Dev")
-  newDataset("https://www.dropbox.com/s/e5dxi6k5uz1pfom/cumulative_2006_2017.sav?dl=0", "CCES Cumulative Common Dev")
-  newDataset("https://www.dropbox.com/s/uxsh6atxt3s158q/cumulative_2006_2016.sav?dl=0", "CCES Cumulative Common 2016")
-  newDataset("https://www.dropbox.com/s/lew3y38rfvzena0/cumulative_2017.sav?dl=0", "CCES Cumulative Common 2017")
+  newDataset("https://www.dropbox.com/s/skwamdgkkcv6dbh/cumulative_2006_2017.sav?dl=0", "CCES Cumulative Common Dev")
   logout()  
 }
 
@@ -258,6 +268,6 @@ for (v in colnames(ccc_factor)) {
 }
 
 
-write_dta(anti_join(ccc_dta, panel_ids), "data/release/cumulative_2006_2017.dta", version = 14)
+write_dta(anti_join(ccc_dta, panel_charid), "data/release/cumulative_2006_2017.dta", version = 14)
 
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")

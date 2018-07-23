@@ -270,17 +270,17 @@ analyzed as a standard data frame.
 #   intent_pres_12 <fct>, intent_pres_16 <fct>, voted_pres_08 <fct>,
 #   voted_pres_12 <fct>, voted_pres_16 <fct>, vv_regstatus <fct>,
 #   vv_party_gen <fct>, vv_party_prm <fct>, vv_turnout_gvm <fct>,
-#   vv_turnout_pvm <fct>, intent_rep <fct>, intent_sen <fct>,
-#   intent_gov <fct>, voted_rep <fct>, voted_sen <fct>, voted_gov <fct>,
-#   intent_rep_chosen <chr>, intent_rep_party <chr>, intent_rep_fec <chr>,
-#   intent_sen_chosen <chr>, intent_sen_party <chr>, intent_sen_fec <chr>,
-#   intent_gov_chosen <chr>, intent_gov_party <chr>, intent_gov_fec <chr>,
-#   voted_rep_chosen <chr>, voted_rep_party <chr>, voted_rep_fec <chr>,
-#   voted_sen_chosen <chr>, voted_sen_party <chr>, voted_sen_fec <chr>,
-#   voted_gov_chosen <chr>, voted_gov_party <chr>, voted_gov_fec <chr>,
-#   rep_current <chr>, rep_icpsr <int>, sen1_current <chr>,
-#   sen1_icpsr <int>, sen2_current <chr>, sen2_icpsr <int>,
-#   gov_current <chr>, gov_fec <chr>
+#   vv_turnout_pvm <fct>, intent_rep <fct>, intent_rep_party <fct>,
+#   voted_rep <fct>, voted_rep_party <fct>, intent_gov <fct>,
+#   intent_gov_party <fct>, voted_gov <fct>, voted_gov_party <fct>,
+#   intent_sen <fct>, intent_sen_party <fct>, voted_sen <fct>,
+#   voted_sen_party <fct>, intent_rep_chosen <chr>, intent_rep_fec <chr>,
+#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
+#   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
+#   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
+#   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>,
+#   sen2_current <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
 \end{verbatim}
 
 A Stata dta file is provided as well.
@@ -389,18 +389,18 @@ across individuals.
 
 \begin{verbatim}
 # A tibble: 392,755 x 7
-    year case_id st    voted_sen       voted_sen_chosen    voted_sen_party
-   <int>   <int> <chr> <fct>           <chr>               <chr>          
- 1  2006  439219 NC    <NA>            <NA>                <NA>           
- 2  2006  439224 OH    [Democrat / Ca~ Sherrod C. Brown (~ Democratic     
- 3  2006  439228 NJ    [Democrat / Ca~ Robert Menendez (D) Democratic     
- 4  2006  439237 IL    <NA>            <NA>                <NA>           
- 5  2006  439238 NY    [Democrat / Ca~ Hillary Rodham Cli~ Democratic     
- 6  2006  439242 TX    I Did Not Vote~ <NA>                <NA>           
- 7  2006  439251 MN    [Republican / ~ Mark Kennedy (R)    Republican     
- 8  2006  439254 NV    [Democrat / Ca~ Jack Carter (D)     Democratic     
- 9  2006  439255 TX    [Democrat / Ca~ Barbara Ann Radnof~ Democratic     
-10  2006  439263 MD    I Did Not Vote~ <NA>                <NA>           
+    year case_id st    voted_sen       voted_sen_party voted_sen_chosen   
+   <int>   <int> <chr> <fct>           <fct>           <chr>              
+ 1  2006  439219 NC    <NA>            <NA>            <NA>               
+ 2  2006  439224 OH    [Democrat / Ca~ Democratic      Sherrod C. Brown (~
+ 3  2006  439228 NJ    [Democrat / Ca~ Democratic      Robert Menendez (D)
+ 4  2006  439237 IL    <NA>            <NA>            <NA>               
+ 5  2006  439238 NY    [Democrat / Ca~ Democratic      Hillary Rodham Cli~
+ 6  2006  439242 TX    I Did Not Vote~ <NA>            <NA>               
+ 7  2006  439251 MN    [Republican / ~ Republican      Mark Kennedy (R)   
+ 8  2006  439254 NV    [Democrat / Ca~ Democratic      Jack Carter (D)    
+ 9  2006  439255 TX    [Democrat / Ca~ Democratic      Barbara Ann Radnof~
+10  2006  439263 MD    I Did Not Vote~ <NA>            <NA>               
 # ... with 392,745 more rows, and 1 more variable: voted_sen_fec <chr>
 \end{verbatim}
 
@@ -1763,18 +1763,18 @@ particular respondent, the first option was
 
 \begin{verbatim}
 # A tibble: 91 x 4
-   intent_rep             intent_rep_chos~ intent_rep_party intent_rep_fec
-   <fct>                  <chr>            <chr>            <chr>         
- 1 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
+   intent_rep             intent_rep_party intent_rep_chos~ intent_rep_fec
+   <fct>                  <fct>            <chr>            <chr>         
+ 1 [Democrat / Candidate~ Democratic       Maxine Waters (~ H4CA23011     
  2 I'm Not Sure           <NA>             <NA>             <NA>          
  3 No One                 <NA>             <NA>             <NA>          
- 4 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
- 5 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
+ 4 [Democrat / Candidate~ Democratic       Maxine Waters (~ H4CA23011     
+ 5 [Republican / Candida~ Democratic       Bob Flores (D)   H2CA43385     
  6 I'm Not Sure           <NA>             <NA>             <NA>          
  7 Other                  <NA>             <NA>             <NA>          
- 8 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
- 9 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
-10 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
+ 8 [Republican / Candida~ Democratic       Bob Flores (D)   H2CA43385     
+ 9 [Republican / Candida~ Democratic       Bob Flores (D)   H2CA43385     
+10 [Democrat / Candidate~ Democratic       Maxine Waters (~ H4CA23011     
 # ... with 81 more rows
 \end{verbatim}
 
