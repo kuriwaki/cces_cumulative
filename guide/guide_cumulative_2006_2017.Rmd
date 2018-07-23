@@ -83,6 +83,8 @@ nam <- function(var, tbl = meta) {
 }
 ```
 
+_Please cite dataset as_
+
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 

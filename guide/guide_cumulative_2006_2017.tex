@@ -145,7 +145,7 @@ Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, Joe
 Williams, and the Crunch Team for their help.}  }
 
 
-\date{Guide last updated: 2018-06-08}
+\date{Guide last updated: 2018-07-22}
 
 \begin{document}
 
@@ -171,6 +171,8 @@ Williams, and the Crunch Team for their help.}  }
 
 
 
+
+\emph{Please cite dataset as}
 
 \begin{quote}
 Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
@@ -244,7 +246,7 @@ analyzed as a standard data frame.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 70
+# A tibble: 392,755 x 76
     year case_id weight weight_cumulative state  st    cd     dist dist_up
    <int>   <int>  <dbl>             <dbl> <chr>  <chr> <chr> <int>   <int>
  1  2006  439219  1.85              1.35  North~ NC    NC-10    10      10
@@ -257,7 +259,7 @@ analyzed as a standard data frame.
  8  2006  439254  0.839             0.610 Nevada NV    NV-2      2       2
  9  2006  439255  0.331             0.241 Texas  TX    TX-24    24      24
 10  2006  439263  1.10              0.802 Maryl~ MD    MD-2      2       2
-# ... with 392,745 more rows, and 61 more variables: cong <int>,
+# ... with 392,745 more rows, and 67 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
 #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
 #   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
@@ -270,13 +272,15 @@ analyzed as a standard data frame.
 #   vv_party_gen <fct>, vv_party_prm <fct>, vv_turnout_gvm <fct>,
 #   vv_turnout_pvm <fct>, intent_rep <fct>, intent_sen <fct>,
 #   intent_gov <fct>, voted_rep <fct>, voted_sen <fct>, voted_gov <fct>,
-#   intent_rep_chosen <chr>, intent_rep_fec <chr>,
-#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
-#   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
-#   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
-#   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
-#   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>,
-#   sen2_current <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
+#   intent_rep_chosen <chr>, intent_rep_party <chr>, intent_rep_fec <chr>,
+#   intent_sen_chosen <chr>, intent_sen_party <chr>, intent_sen_fec <chr>,
+#   intent_gov_chosen <chr>, intent_gov_party <chr>, intent_gov_fec <chr>,
+#   voted_rep_chosen <chr>, voted_rep_party <chr>, voted_rep_fec <chr>,
+#   voted_sen_chosen <chr>, voted_sen_party <chr>, voted_sen_fec <chr>,
+#   voted_gov_chosen <chr>, voted_gov_party <chr>, voted_gov_fec <chr>,
+#   rep_current <chr>, rep_icpsr <int>, sen1_current <chr>,
+#   sen1_icpsr <int>, sen2_current <chr>, sen2_icpsr <int>,
+#   gov_current <chr>, gov_fec <chr>
 \end{verbatim}
 
 A Stata dta file is provided as well.
@@ -292,11 +296,11 @@ A Stata dta file is provided as well.
 
 A note on variable types. The R dataset stores variables in
 \texttt{numeric}, \texttt{character}, \texttt{factor}, or
-\texttt{labelled} format. The first three classes are frequently are
-commonly used, but the \texttt{lablelled} format is more recent.
-Essentially it is similar to a \texttt{factor} but more compatible with
-Stata and SPSS. It is built around R's \texttt{haven} package, which
-includes more documentation.
+\texttt{labelled} format. The first three classes are commonly used, but
+the \texttt{lablelled} format is more recent. Essentially it is similar
+to a \texttt{factor} but more compatible with Stata and SPSS. It is
+built around R's \texttt{haven} package, which includes more
+documentation.
 
 A labelled variable's labels are not shown immediately in the Console:
 
@@ -384,20 +388,20 @@ across individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 6
-    year case_id st    voted_sen         voted_sen_chosen    voted_sen_fec
-   <int>   <int> <chr> <fct>             <chr>               <chr>        
- 1  2006  439219 NC    <NA>              <NA>                <NA>         
- 2  2006  439224 OH    [Democrat / Cand~ Sherrod C. Brown (~ S6OH00163    
- 3  2006  439228 NJ    [Democrat / Cand~ Robert Menendez (D) S6NJ00289    
- 4  2006  439237 IL    <NA>              <NA>                <NA>         
- 5  2006  439238 NY    [Democrat / Cand~ Hillary Rodham Cli~ S0NY00188    
- 6  2006  439242 TX    I Did Not Vote I~ <NA>                <NA>         
- 7  2006  439251 MN    [Republican / Ca~ Mark Kennedy (R)    S6MN00275    
- 8  2006  439254 NV    [Democrat / Cand~ Jack Carter (D)     S6NV00150    
- 9  2006  439255 TX    [Democrat / Cand~ Barbara Ann Radnof~ S6TX00180    
-10  2006  439263 MD    I Did Not Vote I~ <NA>                <NA>         
-# ... with 392,745 more rows
+# A tibble: 392,755 x 7
+    year case_id st    voted_sen       voted_sen_chosen    voted_sen_party
+   <int>   <int> <chr> <fct>           <chr>               <chr>          
+ 1  2006  439219 NC    <NA>            <NA>                <NA>           
+ 2  2006  439224 OH    [Democrat / Ca~ Sherrod C. Brown (~ Democratic     
+ 3  2006  439228 NJ    [Democrat / Ca~ Robert Menendez (D) Democratic     
+ 4  2006  439237 IL    <NA>            <NA>                <NA>           
+ 5  2006  439238 NY    [Democrat / Ca~ Hillary Rodham Cli~ Democratic     
+ 6  2006  439242 TX    I Did Not Vote~ <NA>                <NA>           
+ 7  2006  439251 MN    [Republican / ~ Mark Kennedy (R)    Republican     
+ 8  2006  439254 NV    [Democrat / Ca~ Jack Carter (D)     Democratic     
+ 9  2006  439255 TX    [Democrat / Ca~ Barbara Ann Radnof~ Democratic     
+10  2006  439263 MD    I Did Not Vote~ <NA>                <NA>           
+# ... with 392,745 more rows, and 1 more variable: voted_sen_fec <chr>
 \end{verbatim}
 
 \subsection{Crunch}\label{crunch}
@@ -872,7 +876,7 @@ unmatched are labeled as a no record.{]}
 registered
 party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated-registered-party}
 
-{[}Validation results{]}
+{[}Validation results. Only available for some staets and years{]}
 
 \begin{verbatim}
                     vv_party_gen      n
@@ -905,8 +909,7 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 registered Primary
 party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-validated-registered-primary-party}
 
-{[}Validation results. All vote methods (polling, mail, early, unknown,
-etc..) are aggregated as a vote.{]}
+{[}Validation results. Only available for some staets and years{]}
 
 \begin{verbatim}
                     vv_party_prm      n
@@ -1439,7 +1442,8 @@ Voting}\label{house-senate-and-governor-voting}
 voting)}{intent\_rep: House preference (before voting)}}\label{intent_rep-house-preference-before-voting}
 
 In the general election for U.S. House of Representatives in your area,
-who do you prefer?
+who do you prefer? See \texttt{intent\_rep\_party} for party
+affiliation.
 
 \begin{verbatim}
                            intent_rep      n
@@ -1473,7 +1477,7 @@ who do you prefer?
   Note that it is not always the case that 1 is a Democrat and 2 is a
   Republican. When two Democrats are on the general ballot (e.g.~in
   top-two primary states like California), both candidates are
-  Democrats.
+  Democrats. Use \texttt{intent\_rep\_party} for party affiliation.
 \item
   Note that for each respondent, a name (and party affiliation) is shown
   in place of the square bracket values. To see the candidate chosen,
@@ -1487,7 +1491,8 @@ who do you prefer?
 (before
 voting)}{intent\_sen: Senate preference (before voting)}}\label{intent_sen-senate-preference-before-voting}
 
-In the race for U.S. Senator in your state, who do you prefer?
+In the race for U.S. Senator in your state, who do you prefer? See
+\texttt{intent\_sen\_party} for party affiliation.
 
 \begin{verbatim}
                      intent_sen      n
@@ -1517,7 +1522,8 @@ In the race for U.S. Senator in your state, who do you prefer?
 (before
 voting)}{intent\_gov: Governor preference (before voting)}}\label{intent_gov-governor-preference-before-voting}
 
-In the race for Governor in your state, who do you prefer?
+In the race for Governor in your state, who do you prefer? See
+\texttt{intent\_gov\_party} for party affiliation.
 
 \begin{verbatim}
                     intent_gov      n
@@ -1546,7 +1552,8 @@ In the race for Governor in your state, who do you prefer?
 (after
 voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vote-choice-after-voting}
 
-For whom did you vote for U.S. House?
+For whom did you vote for U.S. House? See \texttt{voted\_rep\_party} for
+party affiliation.
 
 \begin{verbatim}
                             voted_rep      n
@@ -1576,13 +1583,19 @@ For whom did you vote for U.S. House?
   onwards: Either the response to the early vote question in the
   pre-election wave if the respondent indicates they have already voted,
   or if not, the response in the post-election wave.
+\item
+  Note that it is not always the case that 1 is a Democrat and 2 is a
+  Republican. When two Democrats are on the general ballot (e.g.~in
+  top-two primary states like California), both candidates are
+  Democrats. Use \texttt{voted\_rep\_party} for party affiliation.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{voted\_sen}: Senate vote choice
 (after
 voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-vote-choice-after-voting}
 
-For whom did you vote for U.S. Senator?
+For whom did you vote for U.S. Senator? See \texttt{voted\_sen\_party}
+for party affiliation.
 
 \begin{verbatim}
                       voted_sen      n
@@ -1611,7 +1624,8 @@ For whom did you vote for U.S. Senator?
 (after
 voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-governor-vote-choice-after-voting}
 
-For whom did you vote for Governor?
+For whom did you vote for Governor? See \texttt{voted\_gov\_party} for
+party affiliation.
 
 \begin{verbatim}
                    voted_gov      n
@@ -1748,19 +1762,19 @@ particular respondent, the first option was
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 91 x 3
-   intent_rep                 intent_rep_chosen intent_rep_fec
-   <fct>                      <chr>             <chr>         
- 1 [Democrat / Candidate 1]   Maxine Waters (D) H4CA23011     
- 2 I'm Not Sure               <NA>              <NA>          
- 3 No One                     <NA>              <NA>          
- 4 [Democrat / Candidate 1]   Maxine Waters (D) H4CA23011     
- 5 [Republican / Candidate 2] Bob Flores (D)    H2CA43385     
- 6 I'm Not Sure               <NA>              <NA>          
- 7 Other                      <NA>              <NA>          
- 8 [Republican / Candidate 2] Bob Flores (D)    H2CA43385     
- 9 [Republican / Candidate 2] Bob Flores (D)    H2CA43385     
-10 [Democrat / Candidate 1]   Maxine Waters (D) H4CA23011     
+# A tibble: 91 x 4
+   intent_rep             intent_rep_chos~ intent_rep_party intent_rep_fec
+   <fct>                  <chr>            <chr>            <chr>         
+ 1 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
+ 2 I'm Not Sure           <NA>             <NA>             <NA>          
+ 3 No One                 <NA>             <NA>             <NA>          
+ 4 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
+ 5 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
+ 6 I'm Not Sure           <NA>             <NA>             <NA>          
+ 7 Other                  <NA>             <NA>             <NA>          
+ 8 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
+ 9 [Republican / Candida~ Bob Flores (D)   Democratic       H2CA43385     
+10 [Democrat / Candidate~ Maxine Waters (~ Democratic       H4CA23011     
 # ... with 81 more rows
 \end{verbatim}
 
