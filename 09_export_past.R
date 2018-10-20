@@ -7,11 +7,9 @@ load("data/output/01_responses/common_all.RData")
 # birth year
 age_16 <- cc16 %>% 
   transmute(case_id, 
-            birthyr = as.character(as_factor(birthyr))) %>% 
-  mutate(birthyr = as.Date(str_c(birthyr, "-01-01"), "%Y-%m-%d"))
+            birthyr = as.integer(as.character(as_factor(birthyr))))
 stopifnot(all(age_16$birthyr <= 1998))
 write_sav(age_16, "data/output/01_responses/cc16_age.sav")
-
 
 newDataset(age_16, name = "CCES 2016 birthyr")
 
@@ -21,9 +19,10 @@ ds16 <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
 # forkDataset(ds16, name = "Fork of CCES 2016")
 
 f16 <- loadDataset("Fork of CCES 2016")
-deleteVariables(f16, "birthyr")
+# deleteVariables(f16, "birthyr")
 
 a16 <- loadDataset("CCES 2016 birthyr")
+a16$V101 <- a16$case_id
 name(a16$V101) <- "Case Identifier 2016"
 type(a16$V101) <- "text"
 name(a16$birthyr) <- "Year of Birth"
@@ -36,7 +35,7 @@ f16 <- refresh(f16)
 # manually edit groupings
 
 # merge
-saveVersion(f16, "merged in birthyr as time variable")
+saveVersion(f16, "merged in birthyr as integer variable")
 mergeFork(ds16, fork = f16)
 
 
