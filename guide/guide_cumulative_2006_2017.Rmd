@@ -523,6 +523,18 @@ print_tab(economy_retro)
 * Years: `r in_years(economy_retro)`
 * Limitations: Response options varies by year. Some are collapsed into one category (e.g. `Gotten Better`, presented in some years, and `Gotten Somewhat Better`, presented in other years, are collapsed into `Gotten Better / Somewhat Better`). Some are left as is. For example, `Not Sure` was not an option in 2009.
 
+## News Interest
+### `r nam(newsint)`
+
+`r descrip(newsint)`
+
+```{r}
+print_tab(newsint)
+```
+
+
+* Years: `r in_years(newsint)`
+* Limitations: Not asked in 2006.
 
 ## Approval
 

@@ -28,6 +28,7 @@ stdName <- function(tbl, is_panel = FALSE) {
         starttime = start_pre,
         reg_self = registered_pre,
         economy_retro = economy_retrospective,
+        newsint = news_interest,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -767,6 +768,10 @@ econ <-  econ_char %>%
   select(year, case_id, economy_retro)
 
 
+# news interest ------
+newsint <- findStack(ccs, newsint, makeLabelled = TRUE) %>% 
+  mutate(newsint = na_if(newsint, 8))
+
 
 # validated vote -----
 vv_regstatus   <- findStack(ccs, vv_regstatus, newReorder = FALSE) # will reorder by frequency later
@@ -810,6 +815,7 @@ ccc <- geo %>%
   left_join(educ) %>%
   left_join(faminc) %>%
   left_join(econ) %>%
+  left_join(newsint) %>%
   left_join(apvpres) %>%
   left_join(apvrep) %>%
   left_join(apvsen1) %>%
