@@ -1,5 +1,5 @@
 ---
-title: "Cooperative Congressional Election Study (CCES) cumulative file"
+title: "CCES Cumulative File"
 author: "Shiro Kuriwaki"
 output: github_document
 ---
@@ -10,19 +10,19 @@ library(tidyverse)
 library(rprojroot)
 ```
 
-Source code for building a CCES cumulative file (2006 - 2017). Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2017). 
 
-Data is currently not tracked due to size constraints, but releases will be made as flat files in the CCES [Dataverse](https://dataverse.harvard.edu/dataverse/cces) and a [Crunch dataset](crunch.io). 
+* [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
+* [*Current Guide*]( 
+https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf)
 
-*Current Dataverse Version*: 
-https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6
+Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
-*Current Guide*: 
-https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf
+
 
 # Getting Started 
 
-Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) (not on this repo) to your computer. The `.Rds` format can be read into R. In contrast to a csv, this R format preserves dataset properties such as the distinction between integers and doubles, and labelled variables.
+Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but please contact  me  for the newest version. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
@@ -31,6 +31,9 @@ df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
 ```{r, eval = FALSE, echo = TRUE}
 df <- readRDS("cumulative_2006_2016.Rds")
 ```
+
+Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
+
 ```{r}
 library(tidyverse)
 df
@@ -46,14 +49,11 @@ Each row is a respondent, and each variable is information associated with that 
 
 ## Unified Variable Names
 
-Most variables in this dataset come straight from each year's CCES. However, it renames and standardizes variable names, making them accessible in one place. 
-
-Please see the guide or the Crunch dataset for a full list and description of variables. 
-
+Most variables in this dataset come straight from each year's CCES. However, it renames and standardizes variable names, making them accessible in one place. Please see the guide or the Crunch dataset for a full list and description of these variables. 
 
 
 ## Candidate Names and Identifiers
-One addition to this cumulative dataset above the individual years that comprise it is the addition of candidate name and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables with those names are appended, requiring users to look-up the relevant candidate for each respondent. The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
+The cumulative file has added candidate name and identifiers that a respondent chose. In the original year-specific datasets, the response values for a vote choice question is usually a generic label, e.g. `Candidate1` and `Candidate2` (with separate look-up variables appended). The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
 
 ```{r, echo = TRUE}
 select(df, year, case_id, matches("voted_sen"))
@@ -79,7 +79,6 @@ A version of the dataset is also included in Crunch, a database platform that ma
 
 For questions and more access, please contact the CCES Team.
 
-
 Crunch datasets can also be manipulated from a R package, `crunch`: <https://github.com/Crunch-io/rcrunch>. 
 
 ```{r, eval = FALSE}
@@ -90,7 +89,8 @@ install.packages("crunch")
 For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a [short vignette in this repo](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/vignette_crunch.md). 
 
 
-# Code Organization
+
+# Organization of Scripts
 
 R scripts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
 
