@@ -158,7 +158,7 @@ load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
-panel_ids <- readRDS("data/output/01_responses/panel_2012_ids.Rds")
+panel_ids <- readRDS("data/output/01_responses/addon_ids.Rds")
 
 
 # add on name and fec, standardized option labels -----
@@ -249,11 +249,14 @@ ccc_factor <-   ccc_fac %>%
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2017.Rds")
-saveRDS(ccc_df, "data/release/cumulative_2006_2017_2012panel.Rds")
+saveRDS(ccc_df, "data/release/cumulative_2006_2017_addon.Rds")
+
+# anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
+
+saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2017.Rds")
 saveRDS(anti_join(ccc_factor, panel_charid), "data/output/cumulative_2006_2017_factor.Rds")
-write_sav(anti_join(ccc_factor, panel_charid), "data/release/cumulative_2006_2017.sav") # for crunch, don't save panel cases
+write_sav(anti_join(ccc_factor, panel_charid), "data/release/cumulative_2006_2017.sav") 
 
 if (writeToCrunch) {
   login()

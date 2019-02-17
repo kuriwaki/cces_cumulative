@@ -146,7 +146,7 @@ contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of
 YouGov and Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-02-12}
+\date{Guide last updated: 2019-02-17}
 
 \begin{document}
 
@@ -235,7 +235,7 @@ analyzed as a standard data frame.
 \begin{verbatim}
 # A tibble: 392,755 x 77
     year case_id weight weight_cumulati~ state st    cd     dist dist_up
-   <int>   <int>  <dbl>            <dbl> <chr> <chr> <S3:> <int>   <int>
+   <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
  1  2006  439219  1.85             1.35  Nort~ NC    NC-10    10      10
  2  2006  439224  0.968            0.704 Ohio  OH    OH-3      3       3
  3  2006  439228  1.59             1.16  New ~ NJ    NJ-1      1       1
@@ -657,7 +657,7 @@ Observations: 392,755
 Variables: 7
 $ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "T...
 $ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "M...
-$ cd          <S3: glue> "CA-2", "PA-5", "TX-16", "TX-19", "TX-6", "NY...
+$ cd          <chr> "CA-2", "PA-5", "TX-16", "TX-19", "TX-6", "NY-28",...
 $ dist        <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1,...
 $ dist_up     <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1,...
 $ zipcode     <chr> "95969", "16255", "79924", "79423", "76123", "1413...

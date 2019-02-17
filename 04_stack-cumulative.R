@@ -7,9 +7,9 @@ library(lubridate)
 library(data.table)
 
 
-# helper data --
+# helper data ----
 statecode <- read_csv("data/source/statecode.csv")
-panel_ids <- readRDS("data/output/01_responses/panel_2012_ids.Rds")
+
 
 # functions -----
 
@@ -574,6 +574,7 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 # in list form
 ccs <- list(
   "pettigrew" = stdName(filter(ccp, year != 2012)),
+  "2009hu" = stdName(hu09),
   "2012" = stdName(cc12),
   "2012panel" = stdName(panel12, is_panel = TRUE),
   "2013" = stdName(cc13),
@@ -789,7 +790,7 @@ stcd <- left_join(state, dist) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(cd = glue("{st}-{dist}")) %>%
+  mutate(cd = as.character(glue("{st}-{dist}"))) %>%
   select(year, case_id, state, st, cd, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
@@ -837,11 +838,24 @@ ccc <- geo %>%
 stopifnot(nrow(ccc) == nrow(pid3))
 
 
+# check no accidental duplicate id's within 2012 or 2009
+foo_09 <- wgt %>% filter(year == 2009)
+stopifnot(nrow(foo_09) == nrow(distinct(foo_09, year, case_id)))
+
+foo_12 <- wgt %>% filter(year == 2012)
+stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
+
+
+# don't use panel rows for now -----
+panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+hurec_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+addon_id <- bind_rows(hurec_id, panel_id)
+
 
 # Common manipulations ----
 # Weight --
 size_year <- ccc %>%
-  anti_join(panel_ids, by = c("year", "case_id")) %>% # don't count panel to get weights
+  anti_join(addon_id, by = c("year", "case_id")) %>% # don't count panel to get weights
   group_by(year) %>%
   summarize(size = n()) %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
@@ -853,20 +867,12 @@ ccc <- ccc %>%
   select(year, case_id, weight, weight_cumulative, everything())
 
 
-# check no accidental duplicate id's within 2012
-foo_12 <- wgt %>% filter(year == 2012)
-stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
-
-
-# don't use panel rows for now -----
-panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-
 
 # Write ----- 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
-saveRDS(panel_id, "data/output/01_responses/panel_2012_ids.Rds")
+saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 
 
 cat("Finished stacking vars for cumulative \n")
