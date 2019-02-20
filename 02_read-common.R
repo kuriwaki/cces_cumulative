@@ -151,13 +151,25 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
   fix_al
 }
 
+# 2006 module (some caseids are not in cc06)
+mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
+mit_fmt <- mit06_raw %>%
+  mutate(year = 2006,
+         cong = 109L,
+         cong_up = 110L,
+         dist = as.integer(district),
+         dist_up = as.integer(district)) %>%
+  rename(case_id = caseid,
+         st  = state,
+         state  = inputstate) %>% 
+  select(year, case_id, state, st, cong, dist, dist_up, everything())
+
 
 
 
 # 2012 and before (compiled by Stephen Pettigrew and others)
 ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
-ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not exist
-
+ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not existreturn(code
 
 
 # individual files versions from 2008, 2010, and 2012
@@ -177,9 +189,12 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
 
 
+mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
+  
+
 # save ----
 save(
-  ccp, cc06, cc07, cc08, cc09, hu09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
+  ccp, mit06_add, cc06, cc07, cc08, cc09, hu09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
   file = "data/output/01_responses/common_all.RData"
 )
 
