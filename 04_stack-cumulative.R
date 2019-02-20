@@ -47,6 +47,32 @@ stdName <- function(tbl, is_panel = FALSE) {
              voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
+  if (identical(cces_year, 2009L)) {
+    tbl <- tbl %>%
+      rename(
+        approval_pres = cc09_43e,
+        approval_rep = cc09_43a,
+        approval_sen1 = cc09_43b,
+        approval_sen2 = cc09_43c,
+        approval_gov = cc09_43f,
+        economy_retro = cc09_20,
+        voted_pres_08 = cc09_31,
+        pid3 = cc423,
+        pid7 = cc424,
+        ideo5 = cc09_42a,
+        weight = v200,
+        educ = v213,
+        newsint = v244,
+        family_income_old = v246,
+        gender = v208,
+        age = v288,
+        birthyr = v207,
+        race = v211,
+        zipcode = v253,
+        county_fips = v269
+      )
+  }
+  
   if (identical(cces_year, 2012L)) {
     tbl <- rename(
       tbl,
@@ -86,6 +112,8 @@ stdName <- function(tbl, is_panel = FALSE) {
         voted_gov = coalesce(voted_gov, intent_govx)
       )
   }
+  
+  
   
   if (identical(cces_year, "2012_panel")) {
     tbl <- tbl %>% 
