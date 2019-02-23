@@ -47,6 +47,25 @@ stdName <- function(tbl, is_panel = FALSE) {
              voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
+  if (identical(cces_year, 2006L)) {
+    tbl <- tbl %>%
+      rename(
+        approval_pres = gwbapp,
+        approval_rep = congmanapp,
+        approval_sen1 = sen1app,
+        approval_sen2 = sen2app,
+        approval_gov = govapp,
+        economy_retro = natleconyear,
+        family_income_old = income,
+        zipcode = inputzip,
+        county_fips = profile_fips,
+        intent_rep = housevote,
+        intent_sen  = senvote,
+        intent_gov  = govvote,
+        vv_turnout_gvm = g2006
+      )
+  }
+  
   if (identical(cces_year, 2009L)) {
     tbl <- tbl %>%
       rename(
@@ -68,9 +87,9 @@ stdName <- function(tbl, is_panel = FALSE) {
         age = v288,
         birthyr = v207,
         race = v211,
-        zipcode = v253,
         county_fips = v269
-      )
+      ) %>% 
+      mutate(zipcode = as.character(as_factor(v253)))
   }
   
   if (identical(cces_year, 2012L)) {
@@ -270,7 +289,7 @@ stdName <- function(tbl, is_panel = FALSE) {
   
   
   # more standardization for post 2012
-  if (cces_year[1] %in% 2012:2017 | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2017) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -602,6 +621,7 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 # in list form
 ccs <- list(
   "pettigrew" = stdName(filter(ccp, year != 2012)),
+  "2006mit" = stdName(mit06_add),
   "2009hu" = stdName(hu09),
   "2012" = stdName(cc12),
   "2012panel" = stdName(panel12, is_panel = TRUE),
@@ -732,7 +752,8 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
 
 # geography ----
 state      <- findStack(ccs, state, "character")
-zipcode    <- findStack(ccs, zipcode, "character")
+zipcode    <- findStack(ccs, zipcode, "character") %>% 
+  mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 county_fips <- findStack(ccs, county_fips, "numeric") %>% 
   filter(year != 2007) %>% 
   bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
@@ -877,7 +898,8 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 # don't use panel rows for now -----
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 hurec_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(hurec_id, panel_id)
+mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+addon_id <- bind_rows(mit06_id, hurec_id, panel_id)
 
 
 # Common manipulations ----

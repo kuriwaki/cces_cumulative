@@ -4,6 +4,8 @@ library(haven)
 load("data/output/01_responses/common_all.RData")
 
 
+
+
 # Retrieve 2007 County -----
 
 
@@ -42,7 +44,8 @@ fmt_date <- function(vec) {
 
 cc06_time <- cc06 %>%
   mutate(starttime = fmt_date(starttime)) %>%
-  select(year, case_id, starttime)
+  select(year, case_id, starttime) %>% 
+  bind_rows(select(mit06_add, year, case_id, starttime))
 
 cc09_time <- cc09 %>%
   mutate(starttime = as.POSIXct(v401)) %>%
