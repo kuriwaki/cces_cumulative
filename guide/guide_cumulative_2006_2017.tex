@@ -146,7 +146,7 @@ contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of
 YouGov and Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-02-18}
+\date{Guide last updated: 2019-02-24}
 
 \begin{document}
 
@@ -596,8 +596,32 @@ year to make years comparable{]}
 \item
   Years: All of 2006-2017
 \item
-  Limitations: Only a simple transformation of \texttt{weight}
+  Limitations: Only a simple transformation of \texttt{weight}.
+  Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
+  by the following factor, for a given year.
 \end{itemize}
+
+\begin{verbatim}
+# A tibble: 12 x 3
+    year  size size_factor
+   <dbl> <int>       <dbl>
+ 1  2006 36421       1.38 
+ 2  2007  9999       0.378
+ 3  2008 32800       1.24 
+ 4  2009 13800       0.521
+ 5  2010 55400       2.09 
+ 6  2011 20150       0.761
+ 7  2012 54535       2.06 
+ 8  2013 16400       0.619
+ 9  2014 56200       2.12 
+10  2015 14250       0.538
+11  2016 64600       2.44 
+12  2017 18200       0.687
+\end{verbatim}
+
+For example, all weights in the 2012 common content are divided by about
+2.06, because it has about twice as many observations as the other
+datasets.
 
 \hypertarget{weight_post-survey-weight-for-post-election-wave}{%
 \subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for

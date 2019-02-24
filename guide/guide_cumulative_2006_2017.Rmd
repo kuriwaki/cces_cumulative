@@ -24,8 +24,8 @@ library(haven)
 library(rprojroot)
 
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
-# saveRDS(sample_frac(df, 0.01), "data/release/temp_sample.Rds")
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
+rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
 
 ```{r}
@@ -268,7 +268,14 @@ print_numeric(weight_cumulative)
 ```
 
 * Years: `r in_years(weight_cumulative)`
-* Limitations: Only a simple transformation of `weight`
+* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the following factor, for a given year. 
+
+```{r}
+rsc
+```
+
+For example, all weights in the 2012 common content are divided by about `r filter(rsc, year == 2012) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
+
 
 
 
