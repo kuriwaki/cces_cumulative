@@ -59,9 +59,9 @@ stdName <- function(tbl, is_panel = FALSE) {
         family_income_old = income,
         zipcode = inputzip,
         county_fips = profile_fips,
-        intent_rep = housevote,
-        intent_sen  = senvote,
-        intent_gov  = govvote,
+        intent_rep = profile_housevote_coded,
+        intent_sen  = profile_senvote_coded,
+        intent_gov  = profile_govvote_coded,
         vv_turnout_gvm = g2006
       )
   }

@@ -299,6 +299,7 @@ suffixes <- "(,?\\sIV|,?\\sI{1,3}|,?\\sM\\.?D\\.?|,?\\sJr\\.|,?\\sSr\\.)$" # rem
 carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "cong_up") # carry these along as id vectors 
 
 cclist <- list(`2006` = cc06, 
+               `2006m` = mit06_add,
                `2007` = cc07, 
                `2008` = cc08, 
                `2009` = cc09, 
@@ -319,7 +320,7 @@ master <- readRDS("data/output/02_questions/variable_std_key.Rds")
 master$`2012p` <- master$`2012`
 master$`2009r` <- master$`2009`
 
-for (yr in c(2006:2017, "2012p", "2009r")) {
+for (yr in c(2006:2017, "2006m", "2012p", "2009r")) {
   for (var in master$name) {
     
     # lookup this var
@@ -378,7 +379,7 @@ gc_key <- melt_cand(df, c("gov_can", "gov_pty"), carry_vars)
 # Lautenberg 2016 NJ sen
   
 # create key of candidates -------
-fec_rep <- filter(feckey, office_sought == "federal:house", cycle %in% 2006:2016)
+fec_rep <- filter(feckey, office_sought == "federal:house",  cycle %in% 2006:2016)
 fec_sen <- filter(feckey, office_sought == "federal:senate", cycle %in% 2006:2016)
 fec_gov <- filter(feckey, office_sought == "state:governor", cycle %in% 2006:2016)
 

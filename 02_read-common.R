@@ -151,22 +151,6 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
   fix_al
 }
 
-# 2006 module addition
-mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
-mit_fmt <- mit06_raw %>%
-  mutate(year = 2006,
-         cong = 109L,
-         cong_up = 110L,
-         dist = as.integer(district),
-         dist_up = as.integer(district),
-         starttime = as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
-         stfips  = as.integer(zap_labels(inputstate)),
-         state = NULL) %>%
-  rename(case_id = caseid) %>% 
-  left_join(transmute(statecode,  stfips = as.integer(fips), state, st), by = c("stfips")) %>% 
-  select(year, case_id, state, st, cong, dist, dist_up, everything())
-mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
-
 
 # 2012 and before (compiled by Stephen Pettigrew and others)
 ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
@@ -190,6 +174,22 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
 
 
+
+# 2006 module addition
+mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
+mit_fmt <- mit06_raw %>%
+  mutate(year = 2006,
+         cong = 109L,
+         cong_up = 110L,
+         dist = as.integer(district),
+         dist_up = as.integer(district),
+         starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
+         stfips  = as.integer(zap_labels(inputstate)),
+         state = NULL) %>%
+  rename(case_id = caseid) %>% 
+  left_join(transmute(statecode,  stfips = as.integer(fips), state, st), by = c("stfips")) %>% 
+  select(year, case_id, state, st, cong, dist, dist_up, everything())
+mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
 
 # save ----
