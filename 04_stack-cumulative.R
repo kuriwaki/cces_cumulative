@@ -47,6 +47,36 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
+  if (identical(cces_year, 2008L)) {
+    tbl <- tbl %>%
+      rename(
+        approval_pres = CC335BUSH,
+        approval_rep = CC335REP,
+        approval_sen1 = CC335SEN1,
+        approval_sen2 = CC335SEN2,
+        approval_gov = CC335GOV,
+        economy_retro = CC302,
+        family_income_old = V246,
+        starttime = V300,
+        intent_rep = CC339,
+        intent_sen  = CC335,
+        intent_gov  = CC336,
+        intent_pres_08 = CC327,
+        voted_pres_08 = CC410,
+        pid3 = CC307,
+        pid7 = CC307A,
+        ideo5 = V243,
+        weight = V201,
+        educ = V213,
+        newsint = V244,
+        gender = V208,
+        birthyr = V207,
+        race = V211,
+        partyreg =  CC402
+      ) %>% 
+      mutate(zipcode = as.character(as_factor(V202)))
+  }
+  
   if (identical(cces_year, 2006L)) {
     tbl <- tbl %>%
       rename(

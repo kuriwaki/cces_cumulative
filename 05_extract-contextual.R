@@ -302,6 +302,7 @@ cclist <- list(`2006` = cc06,
                `2006m` = mit06_add,
                `2007` = cc07, 
                `2008` = cc08, 
+               `2008h` = hu08, 
                `2009` = cc09, 
                `2009r` = hu09,
                `2010` = cc10, 
@@ -317,10 +318,11 @@ cclist <- list(`2006` = cc06,
 
 # Rename variables ----
 master <- readRDS("data/output/02_questions/variable_std_key.Rds")
-master$`2012p` <- master$`2012`
+master$`2008h` <- master$`2008`
 master$`2009r` <- master$`2009`
+master$`2012p` <- master$`2012`
 
-for (yr in c(2006:2017, "2006m", "2012p", "2009r")) {
+for (yr in c(2006:2017, "2006m", "2008h", "2009r","2012p")) {
   for (var in master$name) {
     
     # lookup this var

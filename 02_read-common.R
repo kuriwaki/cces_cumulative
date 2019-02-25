@@ -60,6 +60,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
     if (!guessed_yr %in% c(2006, 2009)) {
       tbl <- tbl %>%
         mutate(state = as.character(as_factor(.data[[statevar]]))) %>%
+        mutate(state = str_replace(str_to_title(state), "\\sOf\\s", " of ")) %>% 
         left_join(select(statecode, state, st), by = "state")
     }
     
@@ -152,6 +153,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
 }
 
 
+# Data -----------
 # 2012 and before (compiled by Stephen Pettigrew and others)
 ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
 ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not existreturn(code
@@ -161,6 +163,7 @@ ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
 cc07 <- std_dv("data/source/cces/2007_cc.dta")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
+hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
 hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
 cc10 <- std_dv("data/source/cces/2010_cc.dta")
@@ -175,6 +178,7 @@ cc17 <- std_dv("data/source/cces/2017_cc.dta")
 
 
 
+# additional moduels ---------
 # 2006 module addition
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
 mit_fmt <- mit06_raw %>%
@@ -191,10 +195,19 @@ mit_fmt <- mit06_raw %>%
   select(year, case_id, state, st, cong, dist, dist_up, everything())
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
+# 2008 addiiton
+# (used above in std_dv, because that only takes a path)
+read_dta("data/source/cces/2008_hum.dta") %>% 
+  rename_all(str_to_upper) %>% 
+  select(-HUM302, -HUM304) %>% # decimal labelled
+  write_dta("data/source/cces/2008_hum_allcapvars.dta")
+
+hu08 <- anti_join(hu08, select(cc08, year, case_id))
+
 
 # save ----
 save(
-  ccp, mit06_add, cc06, cc07, cc08, cc09, hu09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
+  ccp, mit06_add, cc06, cc07, cc08, hu08, cc09, hu09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
   file = "data/output/01_responses/common_all.RData"
 )
 
