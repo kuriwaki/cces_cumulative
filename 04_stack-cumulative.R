@@ -14,7 +14,7 @@ statecode <- read_csv("data/source/statecode.csv")
 # functions -----
 
 # name standardization
-stdName <- function(tbl, is_panel = FALSE) {
+std_name <- function(tbl, is_panel = FALSE) {
   cces_year <- as.integer(unique(tbl$year))
   if (is_panel) cces_year <- paste0(cces_year, "_", "panel")
   
@@ -307,7 +307,7 @@ stdName <- function(tbl, is_panel = FALSE) {
 }
 
 
-# inner extraction function for findStack
+# inner extraction function for find_stack
 #' @param tbl data
 #' @param var NSE variable name to look for
 #' @param var_name in characters
@@ -351,9 +351,9 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
 #' @param type a string, "factor", "numeric", "integer", or "dattetime". If numeric or datetime
 #'  that type is returned. if factor the label and values are returned separately as
 #'  different columns, unless labelled = TRUE
-#' @param makeLabelled to bind the two _char and _num columns to a label. ONLY
+#' @param make_labelled to bind the two _char and _num columns to a label. ONLY
 #'   do this if the numbers and labels match 1:1 across all years
-findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALSE, newReorder = TRUE) {
+find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FALSE, new_reorder = TRUE) {
   var <- enquo(var)
   var_name <- quo_name(var)
   chr_var_name <- paste0(var_name, "_char")
@@ -408,10 +408,10 @@ findStack <- function(dflist = list(), var, type = "factor", makeLabelled = FALS
   
   # fit to labels or factors
   # coerce to labelled? do this if same across year
-  if (type == "factor" & makeLabelled) list_yr <- set_to_label(list_yr, num_var_name, var_name)
+  if (type == "factor" & make_labelled) list_yr <- set_to_label(list_yr, num_var_name, var_name)
   
   # if not labelled, consider reordering rather than keeping them separate
-  if (type == "factor" & newReorder & !makeLabelled) {
+  if (type == "factor" & new_reorder & !make_labelled) {
     
     list_yr <- list_yr %>% 
       mutate(!!var_name := fct_reorder2(.data[[chr_var_name]],
@@ -620,16 +620,17 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 
 # in list form
 ccs <- list(
-  "pettigrew" = stdName(filter(ccp, year != 2012)),
-  "2006mit" = stdName(mit06_add),
-  "2009hu" = stdName(hu09),
-  "2012" = stdName(cc12),
-  "2012panel" = stdName(panel12, is_panel = TRUE),
-  "2013" = stdName(cc13),
-  "2014" = stdName(cc14),
-  "2015" = stdName(cc15),
-  "2016" = stdName(cc16),
-  "2017" = stdName(cc17)
+  "pettigrew" = std_name(filter(ccp, year != 2012)),
+  "2006mit" = std_name(mit06_add),
+  "2008hu" = std_name(hu08),
+  "2009hu" = std_name(hu09),
+  "2012" = std_name(cc12),
+  "2012panel" = std_name(panel12, is_panel = TRUE),
+  "2013" = std_name(cc13),
+  "2014" = std_name(cc14),
+  "2015" = std_name(cc15),
+  "2016" = std_name(cc16),
+  "2017" = std_name(cc17)
 )
 
 
@@ -645,17 +646,17 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 # Extract variable by variable iniitial version -----
 
 # admin ------
-wgt        <- findStack(ccs, weight, "numeric")
-wgt_post <- findStack(ccs, weight_post, "numeric")
+wgt        <- find_stack(ccs, weight, "numeric")
+wgt_post <- find_stack(ccs, weight_post, "numeric")
 
-tookpost <- findStack(ccs, tookpost, makeLabelled =  FALSE, newReorder = FALSE) %>% 
+tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
   mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
                              labels = c("Took Post-Election Survey" = 1,
                                         "Did Not Take Post-Election Survey" = 0))) %>% 
   select(year, case_id, tookpost)
 
 
-time <- findStack(ccs, starttime, type = "datetime") %>%
+time <- find_stack(ccs, starttime, type = "datetime") %>%
   filter(year != 2006, year != 2009) %>%
   bind_rows(cc06_time, cc09_time)
 
@@ -663,7 +664,7 @@ time <- findStack(ccs, starttime, type = "datetime") %>%
 pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
                  "Other" = 4, "Not Sure" = 5)
 
-pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
+pid3 <- find_stack(ccs, pid3, make_labelled = FALSE, new_reorder = FALSE) %>%
   filter(year != 2010) %>% # fix the missing 2010
   bind_rows(cc10_pid3) %>%
   mutate(pid3_num = na_if(pid3_num, 8)) %>%
@@ -671,7 +672,7 @@ pid3 <- findStack(ccs, pid3, makeLabelled = FALSE, newReorder = FALSE) %>%
   mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) %>%
   select(year, case_id, pid3) # manually do only this one
 
-pid7 <- findStack(ccs, pid7, makeLabelled = TRUE)
+pid7 <- find_stack(ccs, pid7, make_labelled = TRUE)
 
 # put leaners into partisans
 leaner_lbl_code <- c(`Democrat (Including Leaners)` = 1L,
@@ -688,19 +689,19 @@ pid3_leaner <- pid7 %>%
   mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) %>% 
   select(-pid3_leaner_num, -pid7)
 
-ideo5 <- findStack(ccs, ideo5)
+ideo5 <- find_stack(ccs, ideo5)
 
 # demographics ----
 
-gend <- findStack(ccs, gender, makeLabelled = TRUE)
-educ <- findStack(ccs, educ, makeLabelled = TRUE)
-race <- findStack(ccs, race, makeLabelled = TRUE)
-hisp <- findStack(ccs, hispanic, makeLabelled = TRUE)
-bryr <- findStack(ccs, birthyr, "integer")
-age <- findStack(ccs, age, "integer")
+gend <- find_stack(ccs, gender, make_labelled = TRUE)
+educ <- find_stack(ccs, educ, make_labelled = TRUE)
+race <- find_stack(ccs, race, make_labelled = TRUE)
+hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
+bryr <- find_stack(ccs, birthyr, "integer")
+age <- find_stack(ccs, age, "integer")
 
 # income wrangling -----
-inc_old <- findStack(ccs, family_income_old, "integer", makeLabelled = FALSE) %>%
+inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) %>%
   mutate(faminc = recode(
     family_income_old,
     `1` = "Less than 10k",
@@ -719,7 +720,7 @@ inc_old <- findStack(ccs, family_income_old, "integer", makeLabelled = FALSE) %>
     `14` = "150k+",
     `15` = "Prefer not to say"))
 
-inc_new <- findStack(ccs, family_income, "integer", makeLabelled = FALSE) %>%
+inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) %>%
   mutate(faminc = recode(
     family_income,
     `1` = "Less than 10k",
@@ -751,27 +752,27 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
 
 
 # geography ----
-state      <- findStack(ccs, state, "character")
-zipcode    <- findStack(ccs, zipcode, "character") %>% 
+state      <- find_stack(ccs, state, "character")
+zipcode    <- find_stack(ccs, zipcode, "character") %>% 
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
-county_fips <- findStack(ccs, county_fips, "numeric") %>% 
+county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
   filter(year != 2007) %>% 
   bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
               mutate_all(zap_labels))
 
-dist       <- findStack(ccs, dist, "integer")
-dist_up    <- findStack(ccs, dist_up, "integer")
-cong       <- findStack(ccs, cong, "integer")
-cong_up    <- findStack(ccs, cong_up, "integer")
+dist       <- find_stack(ccs, dist, "integer")
+dist_up    <- find_stack(ccs, dist_up, "integer")
+cong       <- find_stack(ccs, cong, "integer")
+cong_up    <- find_stack(ccs, cong_up, "integer")
 
 # president -------
-i_pres08 <- findStack(ccs, intent_pres_08)
-i_pres12 <- findStack(ccs, intent_pres_12)
-i_pres16 <- findStack(ccs, intent_pres_16)
+i_pres08 <- find_stack(ccs, intent_pres_08)
+i_pres12 <- find_stack(ccs, intent_pres_12)
+i_pres16 <- find_stack(ccs, intent_pres_16)
 
-v_pres08 <- findStack(ccs, voted_pres_08)
-v_pres12 <- findStack(ccs, voted_pres_12)
-v_pres16 <- findStack(ccs, voted_pres_16)
+v_pres08 <- find_stack(ccs, voted_pres_08)
+v_pres12 <- find_stack(ccs, voted_pres_12)
+v_pres16 <- find_stack(ccs, voted_pres_16)
 
 # quick fixes
 v_pres08 <- mutate(v_pres08, voted_pres_08 = replace(voted_pres_08, year < 2008, NA))
@@ -781,23 +782,23 @@ v_pres16 <- v_pres16 %>%
          voted_pres_16 = clps_pres16(voted_pres_16))
 
 # House, Sen, Gov -----
-i_rep <- findStack(ccs, intent_rep, newReorder = FALSE)
-i_sen <- findStack(ccs, intent_sen, newReorder = FALSE)
-i_gov <- findStack(ccs, intent_gov, newReorder = FALSE)
-v_rep <- findStack(ccs, voted_rep, newReorder = FALSE)
-v_sen <- findStack(ccs, voted_sen, newReorder = FALSE)
-v_gov <- findStack(ccs, voted_gov, newReorder = FALSE)
+i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
+i_sen <- find_stack(ccs, intent_sen, new_reorder = FALSE)
+i_gov <- find_stack(ccs, intent_gov, new_reorder = FALSE)
+v_rep <- find_stack(ccs, voted_rep, new_reorder = FALSE)
+v_sen <- find_stack(ccs, voted_sen, new_reorder = FALSE)
+v_gov <- find_stack(ccs, voted_gov, new_reorder = FALSE)
 
 
 # approval -----
-apvpres <- findStack(ccs, approval_pres, makeLabelled = TRUE)
-apvrep  <- findStack(ccs, approval_rep, makeLabelled = FALSE)
-apvsen1 <- findStack(ccs, approval_sen1, makeLabelled = FALSE)
-apvsen2 <- findStack(ccs, approval_sen2, makeLabelled = FALSE)
-apvgov  <- findStack(ccs, approval_gov, makeLabelled = TRUE) 
+apvpres <- find_stack(ccs, approval_pres, make_labelled = TRUE)
+apvrep  <- find_stack(ccs, approval_rep, make_labelled = FALSE)
+apvsen1 <- find_stack(ccs, approval_sen1, make_labelled = FALSE)
+apvsen2 <- find_stack(ccs, approval_sen2, make_labelled = FALSE)
+apvgov  <- find_stack(ccs, approval_gov, make_labelled = TRUE) 
 
 # economy -----
-econ_char <- findStack(ccs, economy_retro, makeLabelled = FALSE, newReorder = FALSE) %>% 
+econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder = FALSE) %>% 
   mutate(economy_retro_char = recode(economy_retro_char,
                                      `Gotten Worse`           = "Gotten Worse / Somewhat Worse", 
                                      `Gotten Somewhat Worse`  = "Gotten Worse / Somewhat Worse", 
@@ -819,16 +820,16 @@ econ <-  econ_char %>%
 
 
 # news interest ------
-newsint <- findStack(ccs, newsint, makeLabelled = TRUE) %>% 
+newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>% 
   mutate(newsint = na_if(newsint, 8))
 
 
 # validated vote -----
-vv_regstatus   <- findStack(ccs, vv_regstatus, newReorder = FALSE) # will reorder by frequency later
-vv_party_gen   <- findStack(ccs, vv_party_gen, newReorder = FALSE)
-vv_party_prm   <- findStack(ccs, vv_party_prm, newReorder = FALSE)
-vv_turnout_gvm <- findStack(ccs, vv_turnout_gvm, newReorder = FALSE)
-vv_turnout_pvm <- findStack(ccs, vv_turnout_pvm, newReorder = FALSE)
+vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
+vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
+vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
+vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
+vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
 
 
 
@@ -897,9 +898,10 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 
 # don't use panel rows for now -----
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-hurec_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(mit06_id, hurec_id, panel_id)
+hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+addon_id <- bind_rows(mit06_id, hu08_id, hu09_id, panel_id)
 
 
 # Common manipulations ----
