@@ -1,4 +1,5 @@
 library(tidyverse)
+library(rcces)
 library(haven)
 
 # helper data ---
@@ -51,7 +52,7 @@ std_dv <- function(path, guess_year = TRUE) {
 std_state <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     statevar <- case_when(
-      guessed_yr %in% c(2007, 2012:2017) ~ "inputstate",
+      guessed_yr %in% c(2007, 2012:2018) ~ "inputstate",
       guessed_yr %in% c(2008, 2010:2011) ~ "V206",
       guessed_yr %in% 2009 ~ "v259",
       guessed_yr %in% 2006 ~ "v1002"
@@ -90,7 +91,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 std_dist <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     distvar <- case_when(
-      guessed_yr %in% c(2017) ~ "cdid115",
+      guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
       guessed_yr %in% 2006 ~ "v1003",
@@ -104,6 +105,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     distupvar <- distvar
     if (guessed_yr == 2012) distupvar <- "cdid113"
     if (guessed_yr == 2016) distupvar <- "cdid115"
+    if (guessed_yr == 2018) distupvar <- "cdid116"
     
     
     if (!guessed_yr %in% c(2006, 2007)) {
@@ -175,7 +177,7 @@ cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
-
+cc18 <- std_dv("data/source/cces/2018_cc_HUA_OUTPUT.dta")
 
 
 # additional moduels ---------
@@ -207,7 +209,9 @@ hu08 <- anti_join(hu08, select(cc08, year, case_id))
 
 # save ----
 save(
-  ccp, mit06_add, cc06, cc07, cc08, hu08, cc09, hu09, cc10, cc11, cc12, panel12, cc13, cc14, cc15, cc16, cc17,
+  ccp, mit06_add, cc06, cc07, cc08, hu08, cc09, hu09, 
+  cc10, cc11, cc12, panel12, 
+  cc13, cc14, cc15, cc16, cc17, cc18,
   file = "data/output/01_responses/common_all.RData"
 )
 
