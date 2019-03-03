@@ -1,0 +1,2 @@
+Cumulative File for the Common Content. See attached guide for details. 
+This dataset is uploaded on Crunch for quick and sharable analyses. See an example here: https://cces.gov.harvard.edu/explore (2018-04-16)
