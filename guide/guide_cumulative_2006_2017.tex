@@ -146,7 +146,7 @@ contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of
 YouGov and Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-02-24}
+\date{Guide last updated: 2019-03-03}
 
 \begin{document}
 
@@ -233,7 +233,7 @@ analyzed as a standard data frame.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 77
+# A tibble: 393,755 x 77
     year case_id weight weight_cumulati~ state st    cd     dist dist_up
    <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
  1  2006  439219  1.85             1.35  Nort~ NC    NC-10    10      10
@@ -246,7 +246,7 @@ analyzed as a standard data frame.
  8  2006  439254  0.839            0.610 Neva~ NV    NV-2      2       2
  9  2006  439255  0.331            0.241 Texas TX    TX-24    24      24
 10  2006  439263  1.10             0.802 Mary~ MD    MD-2      2       2
-# ... with 392,745 more rows, and 68 more variables: cong <int>,
+# ... with 393,745 more rows, and 68 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
 #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
 #   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
@@ -298,7 +298,7 @@ A labelled variable's labels are not shown immediately in the Console:
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 3
+# A tibble: 393,755 x 3
     year case_id pid3     
    <int>   <int> <int+lbl>
  1  2006  439219 1        
@@ -311,7 +311,7 @@ A labelled variable's labels are not shown immediately in the Console:
  8  2006  439254 1        
  9  2006  439255 1        
 10  2006  439263 1        
-# ... with 392,745 more rows
+# ... with 393,745 more rows
 \end{verbatim}
 
 But labels can be displayed by transforming the labelled vector into a
@@ -326,7 +326,7 @@ factor.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 4
+# A tibble: 393,755 x 4
     year case_id pid3      pid3_fct   
    <int>   <int> <int+lbl> <fct>      
  1  2006  439219 1         Democrat   
@@ -339,7 +339,7 @@ factor.
  8  2006  439254 1         Democrat   
  9  2006  439255 1         Democrat   
 10  2006  439263 1         Democrat   
-# ... with 392,745 more rows
+# ... with 393,745 more rows
 \end{verbatim}
 
 \newpage
@@ -378,7 +378,7 @@ across individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 392,755 x 7
+# A tibble: 393,755 x 7
     year case_id st    voted_sen voted_sen_party voted_sen_chosen
    <int>   <int> <chr> <fct>     <fct>           <chr>           
  1  2006  439219 NC    <NA>      <NA>            <NA>            
@@ -391,7 +391,7 @@ across individuals.
  8  2006  439254 NV    [Democra~ Democratic      Jack Carter (D) 
  9  2006  439255 TX    [Democra~ Democratic      Barbara Ann Rad~
 10  2006  439263 MD    I Did No~ <NA>            <NA>            
-# ... with 392,745 more rows, and 1 more variable: voted_sen_fec <chr>
+# ... with 393,745 more rows, and 1 more variable: voted_sen_fec <chr>
 \end{verbatim}
 
 \hypertarget{crunch}{%
@@ -503,6 +503,7 @@ year}{year: CCES year}}\label{year-cces-year}}
  2015 14250
  2016 64600
  2017 18200
+ 2018  1000
 \end{verbatim}
 
 \hypertarget{starttime-start-time}{%
@@ -513,15 +514,15 @@ time}{starttime: Start time}}\label{starttime-start-time}}
 
 \begin{verbatim}
                  Min.               1st Qu.                Median 
-"2006-10-07 00:02:34" "2010-10-06 15:30:40" "2012-10-10 08:29:31" 
+"2006-10-07 00:02:34" "2010-10-06 16:21:29" "2012-10-10 10:06:07" 
                  Mean               3rd Qu.                  Max. 
-"2012-09-06 15:09:20" "2014-10-27 12:03:25" "2017-12-12 23:16:03" 
+"2012-09-12 07:01:52" "2014-11-02 04:23:51" "2018-11-05 18:21:01" 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{tookpost-took-post-election-wave}{%
@@ -533,16 +534,16 @@ survey (in even years){]}
 
 \begin{verbatim}
                           tookpost      n
- Did Not Take Post-Election Survey  50872
-         Took Post-Election Survey 249084
+ Did Not Take Post-Election Survey  51022
+         Took Post-Election Survey 249934
                               <NA>  92799
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016 (Post-election wave only
-  exists for even years)
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018 (Post-election wave
+  only exists for even years)
 \end{itemize}
 
 \hypertarget{weights}{%
@@ -555,8 +556,8 @@ survey (in even years){]}
 {[}weights from pre-election survey of each year{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.4076  0.7219  1.0000  1.1887 15.0006 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ 0.0000  0.4076  0.7219  1.0000  1.1887 15.0006    1000 
 \end{verbatim}
 
 \begin{itemize}
@@ -587,8 +588,8 @@ weight
 year to make years comparable{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.2464  0.4803  0.8089  0.9657 19.3959 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ 0.0000  0.2464  0.4803  0.8089  0.9657 19.3960    1000 
 \end{verbatim}
 
 \begin{itemize}
@@ -633,7 +634,7 @@ the even years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.43    0.71    1.00    1.13   15.00  294978 
+   0.00    0.43    0.71    1.00    1.13   15.00  295978 
 \end{verbatim}
 
 \begin{itemize}
@@ -677,7 +678,7 @@ A series of variables for the respondent's location
 \end{itemize}
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 7
 $ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "T...
 $ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "M...
@@ -691,7 +692,7 @@ $ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "3606...
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: Some years do not provide the variable relevant to
   \texttt{dist\_up}, in which case the current district (\texttt{dist})
@@ -712,14 +713,14 @@ Are you male or female?
 
 \begin{verbatim}
  gender      n
-   Male 184273
- Female 208482
+   Male 184700
+ Female 209055
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{birthyr-year-of-birth}{%
@@ -730,13 +731,13 @@ In what year were you born?
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1900    1950    1960    1962    1975    1999 
+   1900    1950    1960    1962    1975    2000 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{age-age}{%
@@ -747,8 +748,8 @@ Age}{age: Age}}\label{age-age}}
 Birth{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  18.00   37.00   52.00   49.84   62.00  109.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  18.00   37.00   52.00   49.84   62.00  109.00    1000 
 \end{verbatim}
 
 \begin{itemize}
@@ -765,19 +766,19 @@ What is the highest level of education you have completed?
 
 \begin{verbatim}
                  educ      n
-                No HS  11781
- High School Graduate 108706
-         Some College  99659
-               2-Year  37584
-               4-Year  88755
-            Post-Grad  46203
+                No HS  11813
+ High School Graduate 108993
+         Some College  99866
+               2-Year  37680
+               4-Year  88996
+            Post-Grad  46340
                  <NA>     67
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{race-race}{%
@@ -788,20 +789,20 @@ What racial or ethnic group best describes you?
 
 \begin{verbatim}
             race      n
-           White 292782
-           Black  43531
-        Hispanic  30959
-           Asian   7335
- Native American   3096
-           Mixed   7441
-           Other   7002
-  Middle Eastern    609
+           White 293534
+           Black  43626
+        Hispanic  31037
+           Asian   7366
+ Native American   3102
+           Mixed   7466
+           Other   7011
+  Middle Eastern    613
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: The ``Hispanic'' value may undercount self-identified
   Hispanics. See \texttt{hispanic}
@@ -816,15 +817,15 @@ response to race is not Hispanic{]}
 
 \begin{verbatim}
  hispanic      n
-      Yes   9094
-       No 264014
+      Yes   9130
+       No 264978
      <NA> 119647
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
+  Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
 \item
   In years in which this question was fielded, this question supplements
   the \texttt{race} variable by asking does who did \emph{not} respnd
@@ -854,7 +855,7 @@ Thinking back over the last year, what was your family's annual income?
              150k+ 21259
  Prefer not to say 43063
            Skipped    12
-              <NA>  1216
+              <NA>  2216
 \end{verbatim}
 
 \begin{itemize}
@@ -894,7 +895,7 @@ unmatched are labeled as a no record.{]}
                    Dropped   5294
                   Inactive   3047
       Multiple Appearances   1151
-                      <NA> 129220
+                      <NA> 130220
 \end{verbatim}
 
 \begin{itemize}
@@ -928,7 +929,7 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
                     Reform Party      9
                  Socialist Party      3
                              Cns      1
-                            <NA> 217420
+                            <NA> 218420
 \end{verbatim}
 
 \begin{itemize}
@@ -952,7 +953,7 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
                 Republican Party  10010
                 Democratic Party   8202
                            Other      3
-                            <NA> 217420
+                            <NA> 218420
 \end{verbatim}
 
 \begin{itemize}
@@ -979,7 +980,7 @@ etc..) are aggregated as a vote.{]}
                Voted 169204
  No Record Of Voting 129019
        No Voter File   1733
-                <NA>  92799
+                <NA>  93799
 \end{verbatim}
 
 \begin{itemize}
@@ -1009,7 +1010,7 @@ turnout Primary Election
  No Record Of Voting 185927
                Voted  76245
        No Voter File   1363
-                <NA> 129220
+                <NA> 130220
 \end{verbatim}
 
 \begin{itemize}
@@ -1036,18 +1037,18 @@ Generally speaking, do you think of yourself as a \ldots{}?
 
 \begin{verbatim}
         pid3      n
-    Democrat 139175
-  Republican 102907
- Independent 109594
-       Other  15437
-    Not Sure  16742
+    Democrat 139532
+  Republican 103157
+ Independent 109891
+       Other  15488
+    Not Sure  16787
         <NA>   8900
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: Response options offer slightly by year. For example, the
   \texttt{Not\ Sure} option is not a response option in years 2006 and
@@ -1063,21 +1064,21 @@ point)}{pid7: Partisan identity (7 point)}}\label{pid7-partisan-identity-7-point
 
 \begin{verbatim}
                        pid7     n
-            Strong Democrat 93511
-   Not Very Strong Democrat 47615
-              Lean Democrat 39249
-                Independent 52414
-            Lean Republican 42003
- Not Very Strong Republican 37883
-          Strong Republican 65725
-                   Not Sure 11430
-                       <NA>  2925
+            Strong Democrat 93749
+   Not Very Strong Democrat 47734
+              Lean Democrat 39343
+                Independent 52567
+            Lean Republican 42115
+ Not Very Strong Republican 37975
+          Strong Republican 65884
+                   Not Sure 11462
+                       <NA>  2926
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -1092,17 +1093,17 @@ towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
 
 \begin{verbatim}
                      pid3_leaner      n
-    Democrat (Including Leaners) 180375
-  Republican (Including Leaners) 145611
- Independent (Excluding Leaners)  52414
-                        Not Sure  11430
-                            <NA>   2925
+    Democrat (Including Leaners) 180826
+  Republican (Including Leaners) 145974
+ Independent (Excluding Leaners)  52567
+                        Not Sure  11462
+                            <NA>   2926
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -1115,19 +1116,19 @@ In general, how would you describe your own political viewpoint?
 
 \begin{verbatim}
              ideo5      n
-      Very Liberal  32708
-           Liberal  68662
-          Moderate 124331
-      Conservative  93216
- Very Conservative  45010
-          Not Sure  27473
-              <NA>   1355
+      Very Liberal  32831
+           Liberal  68841
+          Moderate 124613
+      Conservative  93436
+ Very Conservative  45132
+          Not Sure  27543
+              <NA>   1359
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{economy}{%
@@ -1141,19 +1142,19 @@ OVER THE PAST YEAR the nation's economy has \ldots{}?
 
 \begin{verbatim}
                    economy_retro      n
-              Gotten Much Better  17802
- Gotten Better / Somewhat Better  85451
-           Stayed About The Same 101238
-   Gotten Worse / Somewhat Worse 105357
-               Gotten Much Worse  74562
-                        Not Sure   7577
-                            <NA>    768
+              Gotten Much Better  17991
+ Gotten Better / Somewhat Better  85725
+           Stayed About The Same 101541
+   Gotten Worse / Somewhat Worse 105499
+               Gotten Much Worse  74623
+                        Not Sure   7606
+                            <NA>    770
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: Response options varies by year. Some are collapsed into
   one category (e.g. \texttt{Gotten\ Better}, presented in some years,
@@ -1176,19 +1177,19 @@ in government and public affairs ..
 
 \begin{verbatim}
            newsint      n
-  Most Of The Time 195570
-  Some Of The Time  89627
- Only Now And Then  42393
-     Hardly At All  20164
-        Don't Know   8379
-              <NA>  36622
+  Most Of The Time 196050
+  Some Of The Time  89923
+ Only Now And Then  42501
+     Hardly At All  20242
+        Don't Know   8413
+              <NA>  36626
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
   Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017
+  2017, 2018
 \item
   Limitations: Not asked in 2006.
 \end{itemize}
@@ -1205,19 +1206,19 @@ Incumbent President{]}
 
 \begin{verbatim}
                   approval_pres      n
-               Strongly Approve  77853
-               Somewhat Approve  95237
-            Somewhat Disapprove  41782
-            Strongly Disapprove 165996
-                       Not Sure  10742
+               Strongly Approve  78113
+               Somewhat Approve  95402
+            Somewhat Disapprove  41863
+            Strongly Disapprove 166458
+                       Not Sure  10772
  Neither Approve Nor Disapprove    443
-                           <NA>    702
+                           <NA>    704
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -1236,19 +1237,19 @@ Incumbent Representative's Name{]}
 
 \begin{verbatim}
                      approval_rep      n
-                 Strongly Approve  57429
-       Approve / Somewhat Approve 122307
- Disapprove / Somewhat Disapprove  68245
-              Strongly Disapprove  61369
-           Never Heard / Not Sure  75301
+                 Strongly Approve  57563
+       Approve / Somewhat Approve 122628
+ Disapprove / Somewhat Disapprove  68434
+              Strongly Disapprove  61527
+           Never Heard / Not Sure  75480
    Neither Approve Nor Disapprove   1798
-                             <NA>   6306
+                             <NA>   6325
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -1269,19 +1270,19 @@ Incumbent Senator 1's Name{]}
 
 \begin{verbatim}
                     approval_sen1      n
-                 Strongly Approve  51467
-       Approve / Somewhat Approve 124184
- Disapprove / Somewhat Disapprove  78204
-              Strongly Disapprove  76409
-           Never Heard / Not Sure  56753
+                 Strongly Approve  51582
+       Approve / Somewhat Approve 124543
+ Disapprove / Somewhat Disapprove  78398
+              Strongly Disapprove  76646
+           Never Heard / Not Sure  56843
    Neither Approve Nor Disapprove   1413
-                             <NA>   4325
+                             <NA>   4330
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: : Response options varies by year. Some are collapsed
   into one category (e.g. \texttt{Approve}, presented in some years, and
@@ -1302,13 +1303,13 @@ Incumbent Senator 2's Name{]}
 
 \begin{verbatim}
                     approval_sen2      n
-                 Strongly Approve  53919
-       Approve / Somewhat Approve 119806
- Disapprove / Somewhat Disapprove  76720
-              Strongly Disapprove  77082
-           Never Heard / Not Sure  58971
+                 Strongly Approve  54076
+       Approve / Somewhat Approve 120129
+ Disapprove / Somewhat Disapprove  76891
+              Strongly Disapprove  77298
+           Never Heard / Not Sure  59098
    Neither Approve Nor Disapprove   1158
-                             <NA>   5099
+                             <NA>   5105
 \end{verbatim}
 
 \begin{itemize}
@@ -1326,19 +1327,19 @@ Do you approve of the way each is doing their job\ldots{} Governor of
 
 \begin{verbatim}
                    approval_gov      n
-               Strongly Approve  57460
-               Somewhat Approve 121801
-            Somewhat Disapprove  74177
-            Strongly Disapprove 101957
-                       Not Sure  33980
+               Strongly Approve  57618
+               Somewhat Approve 122122
+            Somewhat Disapprove  74337
+            Strongly Disapprove 102209
+                       Not Sure  34085
  Neither Approve Nor Disapprove   1414
-                           <NA>   1966
+                           <NA>   1970
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: See \texttt{approval\_pres}
 \item
@@ -1374,7 +1375,7 @@ For which candidate for President of the United States would you vote?
                          Other    352
  I Won't Vote In This Election    851
                   I'm Not Sure   1697
-                          <NA> 362560
+                          <NA> 363560
 \end{verbatim}
 
 \begin{itemize}
@@ -1397,7 +1398,7 @@ In the race for President of the United States, who do you prefer?
                             Other   1781
  I Will Not Vote In This Election   1467
                      I'm Not Sure   3856
-                             <NA> 340512
+                             <NA> 341512
 \end{verbatim}
 
 \begin{itemize}
@@ -1422,7 +1423,7 @@ Which candidate did you prefer for President of the United States?
                          Other   1880
  I Won't Vote In This Election   3312
                   I'm Not Sure   6536
-                          <NA> 329753
+                          <NA> 330753
 \end{verbatim}
 
 \begin{itemize}
@@ -1446,7 +1447,7 @@ vote? {[}see guide for wording in all years{]}
               Someone Else   4204
               Did Not Vote  18227
               Don't Recall   1787
-                      <NA> 226153
+                      <NA> 227153
 \end{verbatim}
 
 \begin{itemize}
@@ -1475,7 +1476,7 @@ for wording in all years{]}
                 Did Not Vote   2758
      Not Sure / Don't Recall   1990
  I Did Not Vote In This Race     81
-                        <NA> 234399
+                        <NA> 235399
 \end{verbatim}
 
 \begin{itemize}
@@ -1503,18 +1504,18 @@ United States? {[}Post-election{]}
 
 \begin{verbatim}
            voted_pres_16      n
-            Donald Trump  24578
-          Hilary Clinton  29395
-    Other / Someone Else   5473
-            Did Not Vote    229
- Not Sure / Don't Recall    326
-                    <NA> 332754
+            Donald Trump  24898
+          Hilary Clinton  29752
+    Other / Someone Else   5550
+            Did Not Vote    236
+ Not Sure / Don't Recall    329
+                    <NA> 332990
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2016, 2017
+  Years: 2016, 2017, 2018
 \item
   This variable coalesces two variables in the CCES: Either the response
   to the early vote question in the pre-election wave if the respondent
@@ -1540,13 +1541,13 @@ affiliation.
 
 \begin{verbatim}
                            intent_rep      n
-             [Democrat / Candidate 1] 103873
-           [Republican / Candidate 2]  97039
-                [Other / Candidate 3]   4071
+             [Democrat / Candidate 1] 104268
+           [Republican / Candidate 2]  97341
+                [Other / Candidate 3]   4074
    $HouseCand4Name ($HouseCand4Party)     18
-                                Other   1720
-                         I'm Not Sure  60579
-                               No One  15860
+                                Other   1724
+                         I'm Not Sure  60755
+                               No One  15925
    $HouseCand5Name ($HouseCand5Party)     20
         I Won't Vote In This Election   2269
    $HouseCand6Name ($HouseCand6Party)     19
@@ -1555,13 +1556,13 @@ affiliation.
    $HouseCand9Name ($HouseCand9Party)      1
  $HouseCand10Name ($HouseCand10Party)      1
  $HouseCand11Name ($HouseCand11Party)      3
-                                 <NA> 107253
+                                 <NA> 107308
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: Only available for even years. The third party candidate
   not specified for early years. The fourth candidate and onwards not
@@ -1590,21 +1591,21 @@ In the race for U.S. Senator in your state, who do you prefer? See
 
 \begin{verbatim}
                      intent_sen      n
-       [Democrat / Candidate 1]  78318
-     [Republican / Candidate 2]  68733
-          [Other / Candidate 3]   4113
+       [Democrat / Candidate 1]  78631
+     [Republican / Candidate 2]  68958
+          [Other / Candidate 3]   4122
  $SenCand4Name ($SenCand4Party)     19
-                          Other   1188
-                   I'm Not Sure  31681
-                         No One   9493
+                          Other   1203
+                   I'm Not Sure  31786
+                         No One   9543
   I Won't Vote In This Election   1145
-                           <NA> 198065
+                           <NA> 198348
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: See \texttt{intente\_rep}. When both senate seats are up
   for re-election in the same year, only responses to the first senate
@@ -1622,20 +1623,20 @@ In the race for Governor in your state, who do you prefer? See
 
 \begin{verbatim}
                     intent_gov      n
-      [Democrat / Candidate 1]  55600
-    [Republican / Candidate 2]  50244
-         [Other / Candidate 3]   3681
-                         Other    882
-                  I'm Not Sure  18342
-                        No One   5723
+      [Democrat / Candidate 1]  55907
+    [Republican / Candidate 2]  50516
+         [Other / Candidate 3]   3687
+                         Other    891
+                  I'm Not Sure  18432
+                        No One   5764
  I Won't Vote In This Election    466
-                          <NA> 257817
+                          <NA> 258092
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: See \texttt{intente\_rep}. For governor elections in odd
   years, see individual year's CCES.
@@ -1654,27 +1655,27 @@ party affiliation.
 
 \begin{verbatim}
                             voted_rep      n
-             [Democrat / Candidate 1]  94662
-           [Republican / Candidate 2]  94122
-                [Other / Candidate 3]   2571
+             [Democrat / Candidate 1]  95009
+           [Republican / Candidate 2]  94376
+                [Other / Candidate 3]   2574
    $HouseCand4Name ($HouseCand4Party)     15
-                                Other   2434
-          I Did Not Vote In This Race  11591
+                                Other   2448
+          I Did Not Vote In This Race  11613
    $HouseCand5Name ($HouseCand5Party)     22
-                             Not Sure   4020
+                             Not Sure   4024
    $HouseCand6Name ($HouseCand6Party)     15
    $HouseCand7Name ($HouseCand7Party)     13
    $HouseCand8Name ($HouseCand8Party)     16
    $HouseCand9Name ($HouseCand9Party)      2
  $HouseCand10Name ($HouseCand10Party)      2
  $HouseCand11Name ($HouseCand11Party)      3
-                                 <NA> 183267
+                                 <NA> 183623
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
   onwards: Either the response to the early vote question in the
@@ -1697,20 +1698,20 @@ for party affiliation.
 
 \begin{verbatim}
                       voted_sen      n
-       [Democrat / Candidate 1]  68808
-     [Republican / Candidate 2]  63844
-          [Other / Candidate 3]   2743
-                          Other   1624
-                       Not Sure   1849
+       [Democrat / Candidate 1]  69062
+     [Republican / Candidate 2]  64044
+          [Other / Candidate 3]   2749
+                          Other   1633
+                       Not Sure   1850
  $SenCand4Name ($SenCand4Party)     11
-    I Did Not Vote In This Race   4108
-                           <NA> 249768
+    I Did Not Vote In This Race   4123
+                           <NA> 250283
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
   onwards: Either the response to the early vote question in the
@@ -1728,19 +1729,19 @@ party affiliation.
 
 \begin{verbatim}
                    voted_gov      n
-    [Democrat / Candidate 1]  46504
-  [Republican / Candidate 2]  45056
-       [Other / Candidate 3]   2466
-                       Other   1162
- I Did Not Vote In This Race   4509
-                    Not Sure    911
-                        <NA> 292147
+    [Democrat / Candidate 1]  46853
+  [Republican / Candidate 2]  45362
+       [Other / Candidate 3]   2468
+                       Other   1173
+ I Did Not Vote In This Race   4597
+                    Not Sure    914
+                        <NA> 292388
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
   onwards: Either the response to the early vote question in the
@@ -1764,7 +1765,7 @@ YouGov panel respondent with different identifiers; for example the 2007
 CCES draws from the 2006 CCES respondents.
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 2
 $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, ...
 $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251...
@@ -1783,7 +1784,7 @@ abbreviated down to initials (\texttt{D} for Democrat, \texttt{R} for
 Republican, \texttt{I} for Independent) in this dataset.
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)"...
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert ...
@@ -1820,7 +1821,7 @@ district, by district and last name, or both:
 \end{itemize}
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 4
 $ rep_icpsr  <int> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29...
 $ sen1_icpsr <int> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15...
@@ -1925,7 +1926,7 @@ matches with the same minimum string distance, one is randomly chosen.
 \subsubsection{Chosen}\label{chosen}}
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 6
 $ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studeba...
 $ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez...
@@ -1948,7 +1949,7 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
 \subsubsection{Candidate Identifiers}\label{candidate-identifiers}}
 
 \begin{verbatim}
-Observations: 392,755
+Observations: 393,755
 Variables: 6
 $ intent_rep_fec <chr> "H6NC10141", "H6OH03142", "H0NJ01066", "H8IL090...
 $ intent_sen_fec <chr> NA, "S6OH00163", "S6NJ00289", NA, NA, NA, "S6MN...

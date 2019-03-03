@@ -65,6 +65,7 @@ in_years <- function(var, tbl = df) {
   
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
   if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
+  if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
   if (!(identical(yrs_vec, 2006:2016) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
 }
 ```
