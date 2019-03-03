@@ -19,6 +19,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (is_panel) cces_year <- paste0(cces_year, "_", "panel")
   
   
+  # panel ------
   if (identical(cces_year, 2006:2011)) {
     tbl <- tbl %>%
       rename(
@@ -47,6 +48,7 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
+  # 2008 -------
   if (identical(cces_year, 2008L)) {
     tbl <- tbl %>%
       rename(
@@ -77,6 +79,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(zipcode = as.character(as_factor(V202)))
   }
   
+  # 2006 ------
   if (identical(cces_year, 2006L)) {
     tbl <- tbl %>%
       rename(
@@ -96,6 +99,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
+  # 2009 --------
   if (identical(cces_year, 2009L)) {
     tbl <- tbl %>%
       rename(
@@ -108,7 +112,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_08 = cc09_31,
         pid3 = cc423,
         pid7 = cc424,
-        ideo5 = cc09_42a,
+        ideo5 = v261,
         weight = v200,
         educ = v213,
         newsint = v244,
@@ -122,6 +126,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(zipcode = as.character(as_factor(v253)))
   }
   
+  # 2012 ----------
   if (identical(cces_year, 2012L)) {
     tbl <- rename(
       tbl,
@@ -163,7 +168,6 @@ std_name <- function(tbl, is_panel = FALSE) {
   }
   
   
-  
   if (identical(cces_year, "2012_panel")) {
     tbl <- tbl %>% 
       rename(
@@ -196,6 +200,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
+  # 2013 ----------
   if (identical(cces_year, 2013L)) {
     tbl <- tbl %>%
       rename(
@@ -209,6 +214,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
+  # 2014 -2015 -------
   if (identical(cces_year, 2014L)) {
     tbl <- tbl %>% rename(
       approval_pres = CC14_308a,
@@ -255,6 +261,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
+  # 2016 -2017  ----
   if (identical(cces_year, 2016L)) {
     tbl <- tbl %>%
       rename(
@@ -314,6 +321,40 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_16 = CC17_327) %>%
       mutate(
         countyfips = NA
+      )
+  }
+  
+  # 2018
+  if (identical(cces_year, 2018L)) {
+    tbl <- tbl %>%
+      rename(
+        # weight = ,
+        # weight_post = ,
+        # CC350 = ,
+        approval_pres = CC18_308a,
+        approval_rep = CC18_311a,
+        approval_sen1 = CC18_311b,
+        approval_sen2 = CC18_311c,
+        approval_gov = CC18_308d,
+        economy_retro = CC18_301,
+        faminc = faminc_new,
+        intent_trn = CC18_350,
+        intent_rep = CC18_353,
+        intent_repx = CC18_353x,
+        intent_sen = CC18_351,
+        intent_senx = CC18_351x,
+        intent_gov = CC18_352,
+        intent_govx = CC18_352x,
+        voted_trn = CC18_401,
+        voted_pres_16 = CC18_317,
+        voted_rep = CC18_412,
+        voted_sen = CC18_410b,
+        voted_gov = CC18_411
+      ) %>% # combine early vote
+      mutate(
+        voted_rep = coalesce(voted_rep, intent_repx),
+        voted_sen = coalesce(voted_sen, intent_senx),
+        voted_gov = coalesce(voted_gov, intent_gov)
       )
   }
   
@@ -660,7 +701,8 @@ ccs <- list(
   "2014" = std_name(cc14),
   "2015" = std_name(cc15),
   "2016" = std_name(cc16),
-  "2017" = std_name(cc17)
+  "2017" = std_name(cc17),
+  "2018" = std_name(cc18)
 )
 
 
@@ -680,7 +722,7 @@ wgt        <- find_stack(ccs, weight, "numeric")
 wgt_post <- find_stack(ccs, weight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
-  mutate(tookpost = labelled(as.integer(tookpost_num == 1), 
+  mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | tookpost_num == 2 & year == 2018), # diff number in 2018
                              labels = c("Took Post-Election Survey" = 1,
                                         "Did Not Take Post-Election Survey" = 0))) %>% 
   select(year, case_id, tookpost)
@@ -938,6 +980,7 @@ addon_id <- bind_rows(mit06_id, hu08_id, hu09_id, panel_id)
 # Weight --
 size_year <- ccc %>%
   anti_join(addon_id, by = c("year", "case_id")) %>% # don't count panel to get weights
+  filter(year != 2018) %>%  # for now
   group_by(year) %>%
   summarize(size = n()) %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
