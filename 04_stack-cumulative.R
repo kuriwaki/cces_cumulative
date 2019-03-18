@@ -324,7 +324,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
-  # 2018
+  # 2018 ------
   if (identical(cces_year, 2018L)) {
     tbl <- tbl %>%
       rename(
@@ -702,7 +702,8 @@ ccs <- list(
   "2015" = std_name(cc15),
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
-  "2018" = std_name(cc18)
+  "2018a" = std_name(hua18),
+  "2018b" = std_name(hub18)
 )
 
 
