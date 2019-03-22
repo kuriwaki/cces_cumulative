@@ -30,6 +30,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         reg_self = registered_pre,
         economy_retro = economy_retrospective,
         newsint = news_interest,
+        marstat = marriage_status,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -59,6 +60,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC335GOV,
         economy_retro = CC302,
         family_income_old = V246,
+        marstat = V214,
         starttime = V300,
         intent_rep = CC339,
         intent_sen  = CC335,
@@ -96,7 +98,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_sen  = profile_senvote_coded,
         intent_gov  = profile_govvote_coded,
         vv_turnout_gvm = g2006
-      )
+      ) %>% 
+      mutate(marstat = coalesce(profile_marstat, marstat))
   }
   
   # 2009 --------
@@ -116,6 +119,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         weight = v200,
         educ = v213,
         newsint = v244,
+        marstat = v214,
         family_income_old = v246,
         gender = v208,
         age = v288,
@@ -328,8 +332,8 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (identical(cces_year, 2018L)) {
     tbl <- tbl %>%
       rename(
-        # weight = ,
-        # weight_post = ,
+        weight = commonweight,
+        weight_post = commonpostweight,
         # CC350 = ,
         approval_pres = CC18_308a,
         approval_rep = CC18_311a,
@@ -365,7 +369,6 @@ std_name <- function(tbl, is_panel = FALSE) {
       rename(
         reg_self = votereg,
         family_income = faminc,
-        marriage_status = marstat,
         zipcode = lookupzip,
         county_fips = countyfips,
         partyreg = CC350
@@ -702,8 +705,10 @@ ccs <- list(
   "2015" = std_name(cc15),
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
-  "2018a" = std_name(hua18),
-  "2018b" = std_name(hub18)
+  "2018" = std_name(cc18)
+  # ,
+  # "2018a" = std_name(hua18),
+  # "2018b" = std_name(hub18)
 )
 
 
@@ -896,6 +901,8 @@ econ <-  econ_char %>%
 newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>% 
   mutate(newsint = na_if(newsint, 8))
 
+# marriage status -----
+marstat <- find_stack(ccs, marstat, make_labelled = TRUE)
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -938,6 +945,7 @@ ccc <- geo %>%
   left_join(hisp) %>%
   left_join(educ) %>%
   left_join(faminc) %>%
+  left_join(marstat) %>%
   left_join(econ) %>%
   left_join(newsint) %>%
   left_join(apvpres) %>%

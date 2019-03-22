@@ -177,6 +177,7 @@ cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
+cc18 <- std_dv("data/source/cces/2018_cc.dta")
 hua18 <- std_dv("data/source/cces/2018_hua.dta")
 hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
@@ -210,9 +211,14 @@ hu08 <- anti_join(hu08, select(cc08, year, case_id))
 
 # save ----
 save(
-  ccp, mit06_add, cc06, cc07, cc08, hu08, cc09, hu09, 
-  cc10, cc11, cc12, panel12, 
-  cc13, cc14, cc15, cc16, cc17, hua18, hub18,
+  ccp, 
+  cc06, cc07, cc08, cc09, 
+  cc10, cc11, cc12, cc13, 
+  cc14, cc15, cc16, cc17, cc18,
+  panel12, 
+  mit06_add, 
+  hu08,  hu09, 
+  hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
 )
 
