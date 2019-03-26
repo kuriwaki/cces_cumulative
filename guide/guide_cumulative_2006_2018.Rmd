@@ -123,7 +123,7 @@ consult the Methodology section of the most recent Common Content's codebook: \u
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file must be assigned to an object when loading.
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006_2017.Rds")
+df <- readRDS("cumulative_2006_2018.Rds")
 ```
 
 The dataset in R is best viewed in `dplyr`, although it can be analyzed as a standard data frame.
@@ -133,11 +133,11 @@ df
 ```
 
 
-A Stata dta file is provided as well. `cumulative_2006_2017.dta` can be read by Stata, or in R by the `haven` package 
+A Stata dta file is provided as well. `cumulative_2006_2018.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-df <- read_dta("cumulative_2006_2017.dta")
+df <- read_dta("cumulative_2006_2018.dta")
 ```
 
 A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` format. The first three classes are commonly used, but the `lablelled` format is more recent. Essentially it is similar to a `factor` but more compatible with Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
@@ -416,6 +416,9 @@ print_tab(marstat)
 
 
 # Validations 
+
+All even years include indicators for validated voters, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. For more informaation, see [Ansolabehere and Hersh (2012)](
+https://doi.org/10.1093/pan/mps023). Validation is often completed in the summer following the election; 2018 validation data is not available as of March
 
 ### `r nam(vv_regstatus)`
 

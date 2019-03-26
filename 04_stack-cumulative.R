@@ -334,7 +334,6 @@ std_name <- function(tbl, is_panel = FALSE) {
       rename(
         weight = commonweight,
         weight_post = commonpostweight,
-        # CC350 = ,
         approval_pres = CC18_308a,
         approval_rep = CC18_311a,
         approval_sen1 = CC18_311b,
@@ -364,14 +363,13 @@ std_name <- function(tbl, is_panel = FALSE) {
   
   
   # more standardization for post 2012
-  if (cces_year[1] %in% c(2012:2017) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2018) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
         family_income = faminc,
         zipcode = lookupzip,
-        county_fips = countyfips,
-        partyreg = CC350
+        county_fips = countyfips
       ) %>%
       mutate(
         age = year - birthyr)
@@ -706,8 +704,6 @@ ccs <- list(
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
   "2018" = std_name(cc18)
-  # "2018a" = std_name(hua18),
-  # "2018b" = std_name(hub18)
 )
 
 

@@ -218,7 +218,7 @@ file must be assigned to an object when loading.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{df <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative_2006_2017.Rds"}\NormalTok{)}
+\NormalTok{df <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative_2006_2018.Rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -272,13 +272,13 @@ analyzed as a standard data frame.
 \end{verbatim}
 
 A Stata dta file is provided as well.
-\texttt{cumulative\_2006\_2017.dta} can be read by Stata, or in R by the
+\texttt{cumulative\_2006\_2018.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\NormalTok{df <-}\StringTok{ }\KeywordTok{read_dta}\NormalTok{(}\StringTok{"cumulative_2006_2017.dta"}\NormalTok{)}
+\NormalTok{df <-}\StringTok{ }\KeywordTok{read_dta}\NormalTok{(}\StringTok{"cumulative_2006_2018.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -754,14 +754,14 @@ Age}{age: Age}}\label{age-age}}
 Birth{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  18.00   37.00   52.00   49.84   62.00  109.00   60000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  18.00   36.00   51.00   49.61   62.00  109.00 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \end{itemize}
 
 \hypertarget{educ-education}{%
@@ -862,27 +862,27 @@ Warning: Factor `faminc` contains implicit NA, consider using
 
 \begin{verbatim}
             faminc     n
-     Less than 10k 15880
-         10k - 20k 28630
-         20k - 30k 40176
-         30k - 40k 40586
-         40k - 50k 36487
-         50k - 60k 35620
-         60k - 70k 26004
-         70k - 80k 28193
-        80k - 100k 32741
-       100k - 120k 23952
-       120k - 150k 18936
-             150k+ 21259
- Prefer not to say 43063
+     Less than 10k 18780
+         10k - 20k 32995
+         20k - 30k 46019
+         30k - 40k 46728
+         40k - 50k 41768
+         50k - 60k 40863
+         60k - 70k 30063
+         70k - 80k 32459
+        80k - 100k 37809
+       100k - 120k 27566
+       120k - 150k 22108
+             150k+ 25075
+ Prefer not to say 48955
            Skipped    12
-              <NA> 61216
+              <NA>  1555
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   Limitations: The income brackets provided changed slightly over time.
   The brackets in this cumulative dataset coarsens some brackets, with
@@ -926,6 +926,14 @@ Warning: Factor `marstat` contains implicit NA, consider using
 
 \hypertarget{validations}{%
 \section{Validations}\label{validations}}
+
+All even years include indicators for validated voters, which means that
+YouGov has matched survey respondents' personal identifiable information
+to public voter files, which in turn officially record whether a person
+has voted or not. For more informaation, see
+\href{https://doi.org/10.1093/pan/mps023}{Ansolabehere and Hersh
+(2012)}. Validation is often completed in the summer following the
+election; 2018 validation data is not available as of March 2019.
 
 \hypertarget{vv_regstatus-validated-registration-status}{%
 \subsubsection{\texorpdfstring{\texttt{vv\_regstatus}: Validated
