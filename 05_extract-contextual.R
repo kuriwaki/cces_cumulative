@@ -156,8 +156,8 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
   
   
   # stringdistance match within district
-  cells <- group_by(r_exact_unmatched, !!!setdiff(matchvars, "namelast")) %>% 
-    summarize(n = n()) %>% ungroup()
+  gvars <- setdiff(matchvars, "namelast")
+  cells <- count_(r_exact_unmatched, gvars) # {!!!} doesn't work, not sure why
   f_consider <- bind_rows(key_notu, f_exact_unmatched)
   
   r_stringdist <- foreach(index = 1:nrow(cells), .combine = "bind_rows") %do% {
@@ -314,8 +314,9 @@ cclist <- list(`2006` = cc06,
                `2015` = cc15, 
                `2016` = cc16,
                `2017` = cc17,
-               `2018a` = hua18,
-               `2018b` = hub18)
+               `2018` = cc18)
+               # `2018a` = hua18,
+               # `2018b` = hub18)s
 
 
 # Rename variables ----
@@ -326,7 +327,7 @@ master$`2012p` <- master$`2012`
 master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
 
-for (yr in c(2006:2017, "2006m", "2008h", "2009r","2012p", "2018a", "2018b")) {
+for (yr in c(2006:2018, "2006m", "2008h", "2009r","2012p")) {
   for (var in master$name) {
     
     # lookup this var

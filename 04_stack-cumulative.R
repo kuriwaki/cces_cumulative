@@ -706,7 +706,6 @@ ccs <- list(
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
   "2018" = std_name(cc18)
-  # ,
   # "2018a" = std_name(hua18),
   # "2018b" = std_name(hub18)
 )
