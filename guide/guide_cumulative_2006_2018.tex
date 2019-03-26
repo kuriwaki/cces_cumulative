@@ -136,7 +136,7 @@
 
 % Parmaters
 
-\title{ \LARGE\textbf{CCES Cumulative Common Content (2006 - 2017)}}
+\title{ \LARGE\textbf{CCES Cumulative Common Content (2006 - 2018)}}
 
 \author{Shiro Kuriwaki\thanks{Department of Government, Harvard University. Email:
 \url{kuriwaki@g.harvard.edu}. Bug reports welcome. My thanks to
@@ -146,7 +146,7 @@ contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of
 YouGov and Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-03-20}
+\date{Guide last updated: 2019-03-26}
 
 \begin{document}
 
@@ -166,7 +166,7 @@ Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
 Harvard Dataverse
 \end{quote}
 
-\noindent This dataset combines twelve years (2006 - 2017) of the
+\noindent This dataset combines twelve years (2006 - 2018) of the
 Cooperative Congressional Election Study (Principal Investigators:
 Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
@@ -233,7 +233,7 @@ analyzed as a standard data frame.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 394,755 x 77
+# A tibble: 452,755 x 78
     year case_id weight weight_cumulati~ state st    cd     dist dist_up
    <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
  1  2006  439219  1.85             1.35  Nort~ NC    NC-10    10      10
@@ -246,23 +246,24 @@ analyzed as a standard data frame.
  8  2006  439254  0.839            0.610 Neva~ NV    NV-2      2       2
  9  2006  439255  0.331            0.241 Texas TX    TX-24    24      24
 10  2006  439263  1.10             0.802 Mary~ MD    MD-2      2       2
-# ... with 394,745 more rows, and 68 more variables: cong <int>,
+# ... with 452,745 more rows, and 69 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
 #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
 #   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
 #   birthyr <int>, age <int>, race <int+lbl>, hispanic <int+lbl>,
-#   educ <int+lbl>, faminc <fct>, economy_retro <int+lbl>,
-#   newsint <int+lbl>, approval_pres <int+lbl>, approval_rep <fct>,
-#   approval_sen1 <fct>, approval_sen2 <fct>, approval_gov <int+lbl>,
-#   intent_pres_08 <fct>, intent_pres_12 <fct>, intent_pres_16 <fct>,
-#   voted_pres_08 <fct>, voted_pres_12 <fct>, voted_pres_16 <fct>,
-#   vv_regstatus <fct>, vv_party_gen <fct>, vv_party_prm <fct>,
-#   vv_turnout_gvm <fct>, vv_turnout_pvm <fct>, intent_rep <fct>,
-#   intent_rep_party <fct>, voted_rep <fct>, voted_rep_party <fct>,
-#   intent_gov <fct>, intent_gov_party <fct>, voted_gov <fct>,
-#   voted_gov_party <fct>, intent_sen <fct>, intent_sen_party <fct>,
-#   voted_sen <fct>, voted_sen_party <fct>, intent_rep_chosen <chr>,
-#   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   educ <int+lbl>, faminc <fct>, marstat <int+lbl>,
+#   economy_retro <int+lbl>, newsint <int+lbl>, approval_pres <int+lbl>,
+#   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
+#   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
+#   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
+#   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
+#   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
+#   intent_rep <fct>, intent_rep_party <fct>, voted_rep <fct>,
+#   voted_rep_party <fct>, intent_gov <fct>, intent_gov_party <fct>,
+#   voted_gov <fct>, voted_gov_party <fct>, intent_sen <fct>,
+#   intent_sen_party <fct>, voted_sen <fct>, voted_sen_party <fct>,
+#   intent_rep_chosen <chr>, intent_rep_fec <chr>,
+#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
 #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
 #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
 #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -298,7 +299,7 @@ A labelled variable's labels are not shown immediately in the Console:
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 394,755 x 3
+# A tibble: 452,755 x 3
     year case_id pid3     
    <int>   <int> <int+lbl>
  1  2006  439219 1        
@@ -311,7 +312,7 @@ A labelled variable's labels are not shown immediately in the Console:
  8  2006  439254 1        
  9  2006  439255 1        
 10  2006  439263 1        
-# ... with 394,745 more rows
+# ... with 452,745 more rows
 \end{verbatim}
 
 But labels can be displayed by transforming the labelled vector into a
@@ -326,7 +327,7 @@ factor.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 394,755 x 4
+# A tibble: 452,755 x 4
     year case_id pid3      pid3_fct   
    <int>   <int> <int+lbl> <fct>      
  1  2006  439219 1         Democrat   
@@ -339,7 +340,7 @@ factor.
  8  2006  439254 1         Democrat   
  9  2006  439255 1         Democrat   
 10  2006  439263 1         Democrat   
-# ... with 394,745 more rows
+# ... with 452,745 more rows
 \end{verbatim}
 
 \newpage
@@ -378,7 +379,7 @@ across individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 394,755 x 7
+# A tibble: 452,755 x 7
     year case_id st    voted_sen voted_sen_party voted_sen_chosen
    <int>   <int> <chr> <fct>     <fct>           <chr>           
  1  2006  439219 NC    <NA>      <NA>            <NA>            
@@ -391,7 +392,7 @@ across individuals.
  8  2006  439254 NV    [Democra~ Democratic      Jack Carter (D) 
  9  2006  439255 TX    [Democra~ Democratic      Barbara Ann Rad~
 10  2006  439263 MD    I Did No~ <NA>            <NA>            
-# ... with 394,745 more rows, and 1 more variable: voted_sen_fec <chr>
+# ... with 452,745 more rows, and 1 more variable: voted_sen_fec <chr>
 \end{verbatim}
 
 \hypertarget{crunch}{%
@@ -503,7 +504,7 @@ year}{year: CCES year}}\label{year-cces-year}}
  2015 14250
  2016 64600
  2017 18200
- 2018  2000
+ 2018 60000
 \end{verbatim}
 
 \hypertarget{starttime-start-time}{%
@@ -514,9 +515,9 @@ time}{starttime: Start time}}\label{starttime-start-time}}
 
 \begin{verbatim}
                  Min.               1st Qu.                Median 
-"2006-10-07 00:02:34" "2010-10-06 17:21:07" "2012-10-10 11:58:30" 
+"2006-10-07 00:02:34" "2010-10-11 15:40:49" "2013-11-12 10:50:17" 
                  Mean               3rd Qu.                  Max. 
-"2012-09-17 22:09:37" "2015-11-11 02:25:15" "2018-11-05 22:18:53" 
+"2013-06-29 00:06:52" "2016-10-10 09:04:56" "2018-11-05 23:27:49" 
 \end{verbatim}
 
 \begin{itemize}
@@ -539,8 +540,8 @@ Warning: Factor `tookpost` contains implicit NA, consider using
 
 \begin{verbatim}
                           tookpost      n
- Did Not Take Post-Election Survey  51143
-         Took Post-Election Survey 250813
+ Did Not Take Post-Election Survey  59064
+         Took Post-Election Survey 300892
                               <NA>  92799
 \end{verbatim}
 
@@ -561,14 +562,14 @@ Warning: Factor `tookpost` contains implicit NA, consider using
 {[}weights from pre-election survey of each year{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
- 0.0000  0.4076  0.7219  1.0000  1.1887 15.0006    2000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.4259  0.7281  1.0000  1.1741 15.0006 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2017
+  Years: All of 2006-2018
 \item
   In even years, they are re-computed after vote validation has been
   computed and those re-computed weights are taken here when available.
@@ -594,7 +595,7 @@ year to make years comparable{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
- 0.0000  0.2464  0.4803  0.8089  0.9657 19.3960    2000 
+   0.00    0.25    0.48    0.81    0.97   19.40   60000 
 \end{verbatim}
 
 \begin{itemize}
@@ -639,13 +640,13 @@ the even years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.43    0.71    1.00    1.13   15.00  296978 
+   0.00    0.45    0.70    1.00    1.10   15.00  303170 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2016
+  Years: 2012, 2016, 2018
 \item
   Limitations: Only available for some even years.
 \end{itemize}
@@ -683,7 +684,7 @@ A series of variables for the respondent's location
 \end{itemize}
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 7
 $ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "T...
 $ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "M...
@@ -718,8 +719,8 @@ Are you male or female?
 
 \begin{verbatim}
  gender      n
-   Male 185146
- Female 209609
+   Male 210102
+ Female 242653
 \end{verbatim}
 
 \begin{itemize}
@@ -736,7 +737,7 @@ In what year were you born?
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1900    1950    1960    1962    1975    2000 
+   1900    1950    1961    1963    1977    2000 
 \end{verbatim}
 
 \begin{itemize}
@@ -754,7 +755,7 @@ Birth{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  18.00   37.00   52.00   49.84   62.00  109.00    2000 
+  18.00   37.00   52.00   49.84   62.00  109.00   60000 
 \end{verbatim}
 
 \begin{itemize}
@@ -776,12 +777,12 @@ Warning: Factor `educ` contains implicit NA, consider using
 
 \begin{verbatim}
                  educ      n
-                No HS  11846
- High School Graduate 109264
-         Some College 100070
-               2-Year  37777
-               4-Year  89245
-            Post-Grad  46486
+                No HS  13939
+ High School Graduate 125323
+         Some College 112290
+               2-Year  43606
+               4-Year 103011
+            Post-Grad  54519
                  <NA>     67
 \end{verbatim}
 
@@ -799,14 +800,14 @@ What racial or ethnic group best describes you?
 
 \begin{verbatim}
             race      n
-           White 294271
-           Black  43718
-        Hispanic  31123
-           Asian   7394
- Native American   3112
-           Mixed   7498
-           Other   7024
-  Middle Eastern    615
+           White 337793
+           Black  49162
+        Hispanic  35924
+           Asian   9134
+ Native American   3543
+           Mixed   8919
+           Other   7554
+  Middle Eastern    726
 \end{verbatim}
 
 \begin{itemize}
@@ -832,9 +833,9 @@ Warning: Factor `hispanic` contains implicit NA, consider using
 
 \begin{verbatim}
  hispanic      n
-      Yes   9170
-       No 265938
-     <NA> 119647
+      Yes  11113
+       No 321994
+     <NA> 119648
 \end{verbatim}
 
 \begin{itemize}
@@ -875,7 +876,7 @@ Warning: Factor `faminc` contains implicit NA, consider using
              150k+ 21259
  Prefer not to say 43063
            Skipped    12
-              <NA>  3216
+              <NA> 61216
 \end{verbatim}
 
 \begin{itemize}
@@ -891,6 +892,34 @@ Warning: Factor `faminc` contains implicit NA, consider using
   only labelled as ``over 150k.''
 \item
   The 2009 CCES did not have an option for 60-70k.
+\end{itemize}
+
+\hypertarget{marstat-marital-status}{%
+\subsubsection{\texorpdfstring{\texttt{marstat}: Marital
+Status}{marstat: Marital Status}}\label{marstat-marital-status}}
+
+What is your marital status?
+
+\begin{verbatim}
+Warning: Factor `marstat` contains implicit NA, consider using
+`forcats::fct_explicit_na`
+\end{verbatim}
+
+\begin{verbatim}
+              marstat      n
+              Married 250629
+            Separated   7606
+             Divorced  49651
+              Widowed  21287
+               Single 101416
+ Domestic Partnership  20611
+                 <NA>   1555
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2018
 \end{itemize}
 
 \newpage
@@ -920,7 +949,7 @@ Warning: Factor `vv_regstatus` contains implicit NA, consider using
                    Dropped   5294
                   Inactive   3047
       Multiple Appearances   1151
-                      <NA> 131220
+                      <NA> 189220
 \end{verbatim}
 
 \begin{itemize}
@@ -959,7 +988,7 @@ Warning: Factor `vv_party_gen` contains implicit NA, consider using
                     Reform Party      9
                  Socialist Party      3
                              Cns      1
-                            <NA> 219420
+                            <NA> 277420
 \end{verbatim}
 
 \begin{itemize}
@@ -988,7 +1017,7 @@ Warning: Factor `vv_party_prm` contains implicit NA, consider using
                 Republican Party  10010
                 Democratic Party   8202
                            Other      3
-                            <NA> 219420
+                            <NA> 277420
 \end{verbatim}
 
 \begin{itemize}
@@ -1020,7 +1049,7 @@ Warning: Factor `vv_turnout_gvm` contains implicit NA, consider using
                Voted 169204
  No Record Of Voting 129019
        No Voter File   1733
-                <NA>  94799
+                <NA> 152799
 \end{verbatim}
 
 \begin{itemize}
@@ -1055,7 +1084,7 @@ Warning: Factor `vv_turnout_pvm` contains implicit NA, consider using
  No Record Of Voting 185927
                Voted  76245
        No Voter File   1363
-                <NA> 131220
+                <NA> 189220
 \end{verbatim}
 
 \begin{itemize}
@@ -1087,12 +1116,12 @@ Warning: Factor `pid3` contains implicit NA, consider using
 
 \begin{verbatim}
         pid3      n
-    Democrat 139919
-  Republican 103398
- Independent 110162
-       Other  15535
-    Not Sure  16841
-        <NA>   8900
+    Democrat 160637
+  Republican 118907
+ Independent 126270
+       Other  17975
+    Not Sure  20012
+        <NA>   8954
 \end{verbatim}
 
 \begin{itemize}
@@ -1118,16 +1147,16 @@ Warning: Factor `pid7` contains implicit NA, consider using
 \end{verbatim}
 
 \begin{verbatim}
-                       pid7     n
-            Strong Democrat 94021
-   Not Very Strong Democrat 47849
-              Lean Democrat 39451
-                Independent 52706
-            Lean Republican 42211
- Not Very Strong Republican 38070
-          Strong Republican 66030
-                   Not Sure 11491
-                       <NA>  2926
+                       pid7      n
+            Strong Democrat 107733
+   Not Very Strong Democrat  54838
+              Lean Democrat  45411
+                Independent  60946
+            Lean Republican  47739
+ Not Very Strong Republican  43810
+          Strong Republican  75782
+                   Not Sure  13480
+                       <NA>   3016
 \end{verbatim}
 
 \begin{itemize}
@@ -1153,11 +1182,11 @@ Warning: Factor `pid3_leaner` contains implicit NA, consider using
 
 \begin{verbatim}
                      pid3_leaner      n
-    Democrat (Including Leaners) 181321
-  Republican (Including Leaners) 146311
- Independent (Excluding Leaners)  52706
-                        Not Sure  11491
-                            <NA>   2926
+    Democrat (Including Leaners) 207982
+  Republican (Including Leaners) 167331
+ Independent (Excluding Leaners)  60946
+                        Not Sure  13480
+                            <NA>   3016
 \end{verbatim}
 
 \begin{itemize}
@@ -1181,13 +1210,13 @@ Warning: Factor `ideo5` contains implicit NA, consider using
 
 \begin{verbatim}
              ideo5      n
-      Very Liberal  32975
-           Liberal  69032
-          Moderate 124892
-      Conservative  93629
- Very Conservative  45250
-          Not Sure  27609
-              <NA>   1368
+      Very Liberal  40142
+           Liberal  79591
+          Moderate 141633
+      Conservative 105268
+ Very Conservative  52243
+          Not Sure  32104
+              <NA>   1774
 \end{verbatim}
 
 \begin{itemize}
@@ -1212,13 +1241,13 @@ Warning: Factor `economy_retro` contains implicit NA, consider using
 
 \begin{verbatim}
                    economy_retro      n
-              Gotten Much Better  18179
- Gotten Better / Somewhat Better  85983
-           Stayed About The Same 101850
-   Gotten Worse / Somewhat Worse 105662
-               Gotten Much Worse  74666
-                        Not Sure   7644
-                            <NA>    771
+              Gotten Much Better  29702
+ Gotten Better / Somewhat Better 100766
+           Stayed About The Same 118229
+   Gotten Worse / Somewhat Worse 114965
+               Gotten Much Worse  77949
+                        Not Sure  10294
+                            <NA>    850
 \end{verbatim}
 
 \begin{itemize}
@@ -1252,12 +1281,12 @@ Warning: Factor `newsint` contains implicit NA, consider using
 
 \begin{verbatim}
            newsint      n
-  Most Of The Time 196583
-  Some Of The Time  90164
- Only Now And Then  42629
-     Hardly At All  20303
-        Don't Know   8441
-              <NA>  36635
+  Most Of The Time 225200
+  Some Of The Time 105337
+ Only Now And Then  50141
+     Hardly At All  24621
+        Don't Know  10449
+              <NA>  37007
 \end{verbatim}
 
 \begin{itemize}
@@ -1286,13 +1315,13 @@ Warning: Factor `approval_pres` contains implicit NA, consider using
 
 \begin{verbatim}
                   approval_pres      n
-               Strongly Approve  78352
-               Somewhat Approve  95536
-            Somewhat Disapprove  41953
-            Strongly Disapprove 166967
-                       Not Sure  10800
+               Strongly Approve  92872
+               Somewhat Approve 104677
+            Somewhat Disapprove  47005
+            Strongly Disapprove 194516
+                       Not Sure  12507
  Neither Approve Nor Disapprove    443
-                           <NA>    704
+                           <NA>    735
 \end{verbatim}
 
 \begin{itemize}
@@ -1322,13 +1351,13 @@ Warning: Factor `approval_rep` contains implicit NA, consider using
 
 \begin{verbatim}
                      approval_rep      n
-                 Strongly Approve  57686
-       Approve / Somewhat Approve 122975
- Disapprove / Somewhat Disapprove  68619
-              Strongly Disapprove  61684
-           Never Heard / Not Sure  75650
+                 Strongly Approve  65102
+       Approve / Somewhat Approve 142503
+ Disapprove / Somewhat Disapprove  79595
+              Strongly Disapprove  70663
+           Never Heard / Not Sure  85772
    Neither Approve Nor Disapprove   1798
-                             <NA>   6343
+                             <NA>   7322
 \end{verbatim}
 
 \begin{itemize}
@@ -1360,13 +1389,13 @@ Warning: Factor `approval_sen1` contains implicit NA, consider using
 
 \begin{verbatim}
                     approval_sen1      n
-                 Strongly Approve  51711
-       Approve / Somewhat Approve 124869
- Disapprove / Somewhat Disapprove  78618
-              Strongly Disapprove  76862
-           Never Heard / Not Sure  56948
+                 Strongly Approve  58761
+       Approve / Somewhat Approve 144415
+ Disapprove / Somewhat Disapprove  90846
+              Strongly Disapprove  89017
+           Never Heard / Not Sure  63783
    Neither Approve Nor Disapprove   1413
-                             <NA>   4334
+                             <NA>   4520
 \end{verbatim}
 
 \begin{itemize}
@@ -1398,13 +1427,13 @@ Warning: Factor `approval_sen2` contains implicit NA, consider using
 
 \begin{verbatim}
                     approval_sen2      n
-                 Strongly Approve  54229
-       Approve / Somewhat Approve 120459
- Disapprove / Somewhat Disapprove  77087
-              Strongly Disapprove  77507
-           Never Heard / Not Sure  59207
+                 Strongly Approve  63135
+       Approve / Somewhat Approve 139337
+ Disapprove / Somewhat Disapprove  88539
+              Strongly Disapprove  89232
+           Never Heard / Not Sure  66076
    Neither Approve Nor Disapprove   1158
-                             <NA>   5108
+                             <NA>   5278
 \end{verbatim}
 
 \begin{itemize}
@@ -1427,13 +1456,13 @@ Warning: Factor `approval_gov` contains implicit NA, consider using
 
 \begin{verbatim}
                    approval_gov      n
-               Strongly Approve  57801
-               Somewhat Approve 122423
-            Somewhat Disapprove  74506
-            Strongly Disapprove 102470
-                       Not Sure  34168
+               Strongly Approve  67404
+               Somewhat Approve 139940
+            Somewhat Disapprove  84271
+            Strongly Disapprove 117282
+                       Not Sure  40318
  Neither Approve Nor Disapprove   1414
-                           <NA>   1973
+                           <NA>   2126
 \end{verbatim}
 
 \begin{itemize}
@@ -1480,7 +1509,7 @@ Warning: Factor `intent_pres_08` contains implicit NA, consider using
                          Other    352
  I Won't Vote In This Election    851
                   I'm Not Sure   1697
-                          <NA> 364560
+                          <NA> 422560
 \end{verbatim}
 
 \begin{itemize}
@@ -1508,7 +1537,7 @@ Warning: Factor `intent_pres_12` contains implicit NA, consider using
                             Other   1781
  I Will Not Vote In This Election   1467
                      I'm Not Sure   3856
-                             <NA> 342512
+                             <NA> 400512
 \end{verbatim}
 
 \begin{itemize}
@@ -1538,7 +1567,7 @@ Warning: Factor `intent_pres_16` contains implicit NA, consider using
                          Other   1880
  I Won't Vote In This Election   3312
                   I'm Not Sure   6536
-                          <NA> 331753
+                          <NA> 389753
 \end{verbatim}
 
 \begin{itemize}
@@ -1567,7 +1596,7 @@ Warning: Factor `voted_pres_08` contains implicit NA, consider using
               Someone Else   4204
               Did Not Vote  18227
               Don't Recall   1787
-                      <NA> 228153
+                      <NA> 286153
 \end{verbatim}
 
 \begin{itemize}
@@ -1601,7 +1630,7 @@ Warning: Factor `voted_pres_12` contains implicit NA, consider using
                 Did Not Vote   2758
      Not Sure / Don't Recall   1990
  I Did Not Vote In This Race     81
-                        <NA> 236399
+                        <NA> 294399
 \end{verbatim}
 
 \begin{itemize}
@@ -1634,12 +1663,12 @@ Warning: Factor `voted_pres_16` contains implicit NA, consider using
 
 \begin{verbatim}
            voted_pres_16      n
-            Donald Trump  25199
-          Hilary Clinton  30148
-    Other / Someone Else   5630
-            Did Not Vote    241
- Not Sure / Don't Recall    331
-                    <NA> 333206
+            Donald Trump  43891
+          Hilary Clinton  51342
+    Other / Someone Else  10091
+            Did Not Vote    627
+ Not Sure / Don't Recall    527
+                    <NA> 346277
 \end{verbatim}
 
 \begin{itemize}
@@ -1676,22 +1705,22 @@ Warning: Factor `intent_rep` contains implicit NA, consider using
 
 \begin{verbatim}
                            intent_rep      n
-             [Democrat / Candidate 1] 104693
-           [Republican / Candidate 2]  97632
-                [Other / Candidate 3]   4085
-   $HouseCand4Name ($HouseCand4Party)     18
-                                Other   1737
-                         I'm Not Sure  60920
-                               No One  15965
-   $HouseCand5Name ($HouseCand5Party)     20
+             [Democrat / Candidate 1] 128231
+           [Republican / Candidate 2] 115292
+                [Other / Candidate 3]   4401
+   $HouseCand4Name ($HouseCand4Party)     37
+                                Other   2259
+                         I'm Not Sure  70460
+                               No One  19235
+   $HouseCand5Name ($HouseCand5Party)     23
         I Won't Vote In This Election   2269
-   $HouseCand6Name ($HouseCand6Party)     19
-   $HouseCand7Name ($HouseCand7Party)     15
+   $HouseCand6Name ($HouseCand6Party)     41
+   $HouseCand7Name ($HouseCand7Party)     20
    $HouseCand8Name ($HouseCand8Party)     14
    $HouseCand9Name ($HouseCand9Party)      1
  $HouseCand10Name ($HouseCand10Party)      1
  $HouseCand11Name ($HouseCand11Party)      3
-                                 <NA> 107363
+                                 <NA> 110468
 \end{verbatim}
 
 \begin{itemize}
@@ -1731,15 +1760,15 @@ Warning: Factor `intent_sen` contains implicit NA, consider using
 
 \begin{verbatim}
                      intent_sen      n
-       [Democrat / Candidate 1]  78964
-     [Republican / Candidate 2]  69174
-          [Other / Candidate 3]   4131
+       [Democrat / Candidate 1]  97220
+     [Republican / Candidate 2]  82433
+          [Other / Candidate 3]   4477
  $SenCand4Name ($SenCand4Party)     19
-                          Other   1213
-                   I'm Not Sure  31884
-                         No One   9586
+                          Other   1713
+                   I'm Not Sure  38112
+                         No One  12419
   I Won't Vote In This Election   1145
-                           <NA> 198639
+                           <NA> 215217
 \end{verbatim}
 
 \begin{itemize}
@@ -1768,14 +1797,14 @@ Warning: Factor `intent_gov` contains implicit NA, consider using
 
 \begin{verbatim}
                     intent_gov      n
-      [Democrat / Candidate 1]  56231
-    [Republican / Candidate 2]  50783
-         [Other / Candidate 3]   3696
-                         Other    900
-                  I'm Not Sure  18532
-                        No One   5793
+      [Democrat / Candidate 1]  74561
+    [Republican / Candidate 2]  66292
+         [Other / Candidate 3]   4055
+                         Other   1390
+                  I'm Not Sure  24296
+                        No One   7991
  I Won't Vote In This Election    466
-                          <NA> 258354
+                          <NA> 273704
 \end{verbatim}
 
 \begin{itemize}
@@ -1805,21 +1834,21 @@ Warning: Factor `voted_rep` contains implicit NA, consider using
 
 \begin{verbatim}
                             voted_rep      n
-             [Democrat / Candidate 1]  95401
-           [Republican / Candidate 2]  94629
-                [Other / Candidate 3]   2578
-   $HouseCand4Name ($HouseCand4Party)     15
-                                Other   2459
-          I Did Not Vote In This Race  11630
-   $HouseCand5Name ($HouseCand5Party)     22
-                             Not Sure   4032
-   $HouseCand6Name ($HouseCand6Party)     17
-   $HouseCand7Name ($HouseCand7Party)     13
+             [Democrat / Candidate 1] 115799
+           [Republican / Candidate 2] 109342
+                [Other / Candidate 3]   2786
+   $HouseCand4Name ($HouseCand4Party)     27
+                                Other   3124
+          I Did Not Vote In This Race  12539
+   $HouseCand5Name ($HouseCand5Party)     24
+                             Not Sure   4493
+   $HouseCand6Name ($HouseCand6Party)     39
+   $HouseCand7Name ($HouseCand7Party)     15
    $HouseCand8Name ($HouseCand8Party)     16
    $HouseCand9Name ($HouseCand9Party)      2
  $HouseCand10Name ($HouseCand10Party)      2
  $HouseCand11Name ($HouseCand11Party)      3
-                                 <NA> 183936
+                                 <NA> 204544
 \end{verbatim}
 
 \begin{itemize}
@@ -1853,14 +1882,14 @@ Warning: Factor `voted_sen` contains implicit NA, consider using
 
 \begin{verbatim}
                       voted_sen      n
-       [Democrat / Candidate 1]  69365
-     [Republican / Candidate 2]  64243
-          [Other / Candidate 3]   2755
-                          Other   1638
-                       Not Sure   1856
+       [Democrat / Candidate 1]  84885
+     [Republican / Candidate 2]  75584
+          [Other / Candidate 3]   2974
+                          Other   1967
+                       Not Sure   2094
  $SenCand4Name ($SenCand4Party)     11
-    I Did Not Vote In This Race   4133
-                           <NA> 250754
+    I Did Not Vote In This Race   4789
+                           <NA> 280451
 \end{verbatim}
 
 \begin{itemize}
@@ -1889,13 +1918,13 @@ Warning: Factor `voted_gov` contains implicit NA, consider using
 
 \begin{verbatim}
                    voted_gov      n
-    [Democrat / Candidate 1]  47215
-  [Republican / Candidate 2]  45662
-       [Other / Candidate 3]   2478
-                       Other   1181
- I Did Not Vote In This Race   4682
-                    Not Sure    918
-                        <NA> 292619
+    [Democrat / Candidate 1]  67899
+  [Republican / Candidate 2]  62887
+       [Other / Candidate 3]   2805
+                       Other   1820
+ I Did Not Vote In This Race  10290
+                    Not Sure   1091
+                        <NA> 305963
 \end{verbatim}
 
 \begin{itemize}
@@ -1925,7 +1954,7 @@ YouGov panel respondent with different identifiers; for example the 2007
 CCES draws from the 2006 CCES respondents.
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 2
 $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, ...
 $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251...
@@ -1944,7 +1973,7 @@ abbreviated down to initials (\texttt{D} for Democrat, \texttt{R} for
 Republican, \texttt{I} for Independent) in this dataset.
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)"...
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert ...
@@ -1981,7 +2010,7 @@ district, by district and last name, or both:
 \end{itemize}
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 4
 $ rep_icpsr  <int> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29...
 $ sen1_icpsr <int> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15...
@@ -2086,7 +2115,7 @@ matches with the same minimum string distance, one is randomly chosen.
 \subsubsection{Chosen}\label{chosen}}
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 6
 $ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studeba...
 $ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez...
@@ -2109,7 +2138,7 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
 \subsubsection{Candidate Identifiers}\label{candidate-identifiers}}
 
 \begin{verbatim}
-Observations: 394,755
+Observations: 452,755
 Variables: 6
 $ intent_rep_fec <chr> "H6NC10141", "H6OH03142", "H0NJ01066", "H8IL090...
 $ intent_sen_fec <chr> NA, "S6OH00163", "S6NJ00289", NA, NA, NA, "S6MN...

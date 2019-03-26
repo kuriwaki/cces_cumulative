@@ -23,7 +23,7 @@ library(tidyverse)
 library(haven)
 library(rprojroot)
 
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
@@ -89,7 +89,7 @@ _Please cite dataset as_
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
-\noindent This dataset combines twelve years (2006 - 2017) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+\noindent This dataset combines twelve years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
 The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes standard questions asked multiple years. 
 
