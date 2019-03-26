@@ -4,7 +4,7 @@ output:
     latex_engine: xelatex
     template: sk_helvet.sty
     keep_tex: TRUE
-title: "CCES Cumulative Common Content (2006 - 2017)"
+title: "CCES Cumulative Common Content (2006 - 2018)"
 author: "Shiro Kuriwaki"
 thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of YouGov and Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
@@ -400,6 +400,17 @@ print_tab(faminc)
 * Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens some brackets, with loss of some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked in a follow-up question when the respondent initially selected "over 150k". These are top-coded and only labelled as "over 150k."
 * The 2009 CCES did not have an option for 60-70k. 
 
+
+### `r nam(marstat)`
+
+`r descrip(marstat)`
+
+
+```{r}
+print_tab(marstat)
+```
+
+* Years: `r in_years(marstat)`
 
 \newpage
 
