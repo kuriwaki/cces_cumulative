@@ -12,6 +12,8 @@ library(rprojroot)
 
 This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2017). 
 
+2019-03-26 Note: I am actively finalizing the **2006 - 2018** cumulative dataset on this repo. Please contact me for any new additions you might want to see in this next release.
+
 * [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
 * [*Current Guide*]( 
 https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf)
@@ -25,11 +27,11 @@ Please feel free to file any questions or requests about the cumulative file as 
 Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but please contact  me  for the newest version. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2017.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006_2016.Rds")
+df <- readRDS("cumulative_2006_2018.Rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
@@ -102,4 +104,4 @@ R scripts `01` - `06` reproduce the cumulative dataset starting from each year's
 - `06_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
 - `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
-More scripts  arein `00_prepare` format other datasets like NOMINATE, CQ, and DIME. 
+More scripts  are in `00_prepare`, they format other datasets like NOMINATE, CQ, and DIME. 

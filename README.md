@@ -5,6 +5,10 @@ Shiro Kuriwaki
 This repository is R code to build the Cooperative Congressional
 Election Study (CCES) cumulative file (2006 - 2017).
 
+2019-03-26 Note: I am actively finalizing the **2006 - 2018** cumulative
+dataset on this repo. Please contact me for any new additions you might
+want to see in this next release.
+
   - [*Current Dataverse
     Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
   - [*Current
@@ -23,7 +27,7 @@ constraints, but please contact me for the newest version. The `.Rds`
 format can be read into R.
 
 ``` r
-df <- readRDS("cumulative_2006_2016.Rds")
+df <- readRDS("cumulative_2006_2018.Rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be
@@ -35,7 +39,7 @@ library(tidyverse)
 df
 ```
 
-    ## # A tibble: 392,755 x 77
+    ## # A tibble: 452,755 x 78
     ##     year case_id weight weight_cumulati… state st    cd     dist dist_up
     ##    <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
     ##  1  2006  439219  1.85             1.35  Nort… NC    NC-10    10      10
@@ -48,23 +52,24 @@ df
     ##  8  2006  439254  0.839            0.610 Neva… NV    NV-2      2       2
     ##  9  2006  439255  0.331            0.241 Texas TX    TX-24    24      24
     ## 10  2006  439263  1.10             0.802 Mary… MD    MD-2      2       2
-    ## # … with 392,745 more rows, and 68 more variables: cong <int>,
+    ## # … with 452,745 more rows, and 69 more variables: cong <int>,
     ## #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
     ## #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
     ## #   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
     ## #   birthyr <int>, age <int>, race <int+lbl>, hispanic <int+lbl>,
-    ## #   educ <int+lbl>, faminc <fct>, economy_retro <int+lbl>,
-    ## #   newsint <int+lbl>, approval_pres <int+lbl>, approval_rep <fct>,
-    ## #   approval_sen1 <fct>, approval_sen2 <fct>, approval_gov <int+lbl>,
-    ## #   intent_pres_08 <fct>, intent_pres_12 <fct>, intent_pres_16 <fct>,
-    ## #   voted_pres_08 <fct>, voted_pres_12 <fct>, voted_pres_16 <fct>,
-    ## #   vv_regstatus <fct>, vv_party_gen <fct>, vv_party_prm <fct>,
-    ## #   vv_turnout_gvm <fct>, vv_turnout_pvm <fct>, intent_rep <fct>,
-    ## #   intent_rep_party <fct>, voted_rep <fct>, voted_rep_party <fct>,
-    ## #   intent_gov <fct>, intent_gov_party <fct>, voted_gov <fct>,
-    ## #   voted_gov_party <fct>, intent_sen <fct>, intent_sen_party <fct>,
-    ## #   voted_sen <fct>, voted_sen_party <fct>, intent_rep_chosen <chr>,
-    ## #   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
+    ## #   educ <int+lbl>, faminc <fct>, marstat <int+lbl>,
+    ## #   economy_retro <int+lbl>, newsint <int+lbl>, approval_pres <int+lbl>,
+    ## #   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
+    ## #   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
+    ## #   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
+    ## #   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
+    ## #   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
+    ## #   intent_rep <fct>, intent_rep_party <fct>, voted_rep <fct>,
+    ## #   voted_rep_party <fct>, intent_gov <fct>, intent_gov_party <fct>,
+    ## #   voted_gov <fct>, voted_gov_party <fct>, intent_sen <fct>,
+    ## #   intent_sen_party <fct>, voted_sen <fct>, voted_sen_party <fct>,
+    ## #   intent_rep_chosen <chr>, intent_rep_fec <chr>,
+    ## #   intent_sen_chosen <chr>, intent_sen_fec <chr>,
     ## #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
     ## #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
     ## #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -102,7 +107,7 @@ individuals.
 select(df, year, case_id, matches("voted_sen"))
 ```
 
-    ## # A tibble: 392,755 x 6
+    ## # A tibble: 452,755 x 6
     ##     year case_id voted_sen   voted_sen_party voted_sen_chosen voted_sen_fec
     ##    <int>   <int> <fct>       <fct>           <chr>            <chr>        
     ##  1  2006  439219 <NA>        <NA>            <NA>             <NA>         
@@ -115,7 +120,7 @@ select(df, year, case_id, matches("voted_sen"))
     ##  8  2006  439254 [Democrat … Democratic      Jack Carter (D)  S6NV00150    
     ##  9  2006  439255 [Democrat … Democratic      Barbara Ann Rad… S6TX00180    
     ## 10  2006  439263 I Did Not … <NA>            <NA>             <NA>         
-    ## # … with 392,745 more rows
+    ## # … with 452,745 more rows
 
 ## Crunch
 
@@ -177,5 +182,5 @@ each year’s CCES on dataverse.
     descriptions, groupings, and other Crunch attributes to the Crunch
     dataset. It also adds variables and exports a `.dta` version
 
-More scripts arein `00_prepare` format other datasets like NOMINATE, CQ,
-and DIME.
+More scripts are in `00_prepare`, they format other datasets like
+NOMINATE, CQ, and DIME.
