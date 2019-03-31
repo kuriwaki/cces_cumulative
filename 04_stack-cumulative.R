@@ -686,8 +686,9 @@ cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
 cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
-
-
+cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv") %>% 
+  transmute(year = 2017, case_id = V101, countyfips)
+  
 # execute name standardization -----
 
 # in list form
@@ -828,7 +829,11 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
 state      <- find_stack(ccs, state, "character")
 zipcode    <- find_stack(ccs, zipcode, "character") %>% 
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
+
 county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
+  left_join(cc17_county, by = c("year", "case_id")) %>% 
+  mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) %>% 
+  select(-countyfips) %>% 
   filter(year != 2007) %>% 
   bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
               mutate_all(zap_labels))
