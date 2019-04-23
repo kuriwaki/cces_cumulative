@@ -4,6 +4,7 @@ library(haven)
 
 
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
+iss_meta <- readRDS("data/output/02_questions/issuevars_vartable.Rds")
 
 # Start up crunch -------
 login() # you need a login and password to complete this command
@@ -131,5 +132,23 @@ hideVariables(ds, ind_nuisance_num)
 
 lock(ds)
 
+## issue var
+
+login()
+
+ds <- loadDataset("CCES Cumulative Issues")
+
+for (j in 1:ncol(ds)) {
+  if (!names(ds)[j] %in% iss_meta$alias) next
+  else  
+    name(ds[[j]])      <- iss_meta$name[which(iss_meta$alias == names(ds)[j])]
+}
+
+type(ds[["year"]]) <- "categorical"
+
+mv(ds, matches("(banassault|repeal|resent|spend|legal|security|gay|cleanair|renewable)"), "Issues")
+mv(ds, matches("ideo|party$"), "Perception")
+mv(ds, matches("sign|meeting|candidate|donor"), "Participation")
+mv(ds, matches("(church|bornagain|relig|church|prayer)"), "Demographics")
 
 cat("Finished formatting Crunch dataset. ")

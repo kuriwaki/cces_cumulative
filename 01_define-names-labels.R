@@ -127,7 +127,44 @@ ccc_meta <- tribble(
 stopifnot(n_distinct(ccc_meta$alias) == nrow(ccc_meta))
 stopifnot(n_distinct(ccc_meta$name) == nrow(ccc_meta))
 
+iss_meta <- tribble(
+  ~alias, ~name, 
+  "year",  "CCES year",
+  "case_id", "Case identifier",
+  "banassault", "Ban assault rifles",
+  "repealACA", "Repeal the ACA",
+  "ideoself", "Ideology (7-point)",
+  "demparty",  "Perceived ideology of the Democractic Party",
+  "repparty", "Perceived ideology of the Republican Party",
+  "bornagain",  "Born-again Christian",
+  "religimpt", "Importance of religion",
+  "churchatt", "Church attendance", 
+  "prayer", "Frequency of prayer",
+  "religion", "Religion",
+  "renewable", "Renewable fuels requirements",
+  "cleanair", "Clean Air Act enforcement",
+  "meeting", "Attend political meetings",
+  "sign", "Put up a political sign",
+  "candidate",  "Camapign participation",
+  "donor", "Donate money",
+  "resent1", "Racial resentment 1",
+  "resent2", "Racial resentment 2",
+  "spendwelfare", "Welfare spending",
+  "spendhealth", "Health care spending",
+  "spendeduc", "Education spending",
+  "spendpolice", "Law enforcement spending",
+  "spendtransp", "Transportation and infrastructure spending",
+  "legalstatus", "Immigration legal status",
+  "security", "Immigration border patrols",
+  "gaymarriage", "Gay marriage",
+)
+
+stopifnot(n_distinct(iss_meta$alias) == nrow(iss_meta) &&
+            n_distinct(iss_meta$name) == nrow(iss_meta))
+
+
 
 saveRDS(ccc_meta, "data/output/02_questions/cumulative_vartable.Rds")
+saveRDS(iss_meta, "data/output/02_questions/issuevars_vartable.Rds")
 
 cat("Finished naming and describing variables")

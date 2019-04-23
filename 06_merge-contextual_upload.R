@@ -251,28 +251,32 @@ ccc_factor <-   ccc_fac %>%
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-saveRDS(ccc_df, "data/release/cumulative_2006_2018_addon.Rds")
+write_rds(ccc_df, "data/release/cumulative_2006_2018_addon.Rds")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2018.Rds")
 
-saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2018.Rds")
-saveRDS(anti_join(ccc_factor, panel_charid), "data/output/cumulative_2006_2018_factor.Rds")
-write_sav(anti_join(ccc_factor, panel_charid), "data/release/cumulative_2006_2018.sav") 
 
+# remove panel cases
+ccc_common <- anti_join(ccc_factor, panel_charid, by = c("year", "case_id"))
+
+# Write to dta with var labels
+for (v in colnames(ccc_common)) {
+  attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+}
+
+write_rds(ccc_common, "data/output/cumulative_2006_2018_factor.Rds")
+write_sav(ccc_common, "data/release/cumulative_2006_2018.sav") 
+write_dta(ccc_common, "data/release/cumulative_2006_2018.dta", version = 14)
+
+
+# might write to crunch
 if (writeToCrunch) {
   login()
   newDataset("https://www.dropbox.com/s/skwamdgkkcv6dbh/cumulative_2006_2018.sav?dl=0", "CCES Cumulative Common Dev")
   logout()  
 }
 
-# Write to dta with var labels and minor type changes
-ccc_dta <- ccc_factor
-for (v in colnames(ccc_factor)) {
-    attributes(ccc_dta[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
-}
-
-
-write_dta(anti_join(ccc_dta, panel_charid), "data/release/cumulative_2006_2018.dta", version = 14)
 
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")

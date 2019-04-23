@@ -52,8 +52,15 @@ cc09_time <- cc09 %>%
   select(year, case_id, starttime)
 
 
+# recode newsinterest to fit with 2008 - 2018
+cc06_interest <- cc06 %>% 
+  transmute(year, 
+            case_id, 
+            interest = as.integer(v2042))
+
 # save ---------
-saveRDS(pid3_cc10, "data/output/01_responses/cc10_pid3.Rds")
-saveRDS(econ_recoded, "data/output/01_responses/cc09_econ_retro.Rds")
-saveRDS(cc06_time, "data/output/01_responses/cc06_datetime.Rds")
-saveRDS(cc09_time, "data/output/01_responses/cc09_datetime.Rds")
+write_rds(pid3_cc10, "data/output/01_responses/cc10_pid3.Rds")
+write_rds(econ_recoded, "data/output/01_responses/cc09_econ_retro.Rds")
+write_rds(cc06_time, "data/output/01_responses/cc06_datetime.Rds")
+write_rds(cc09_time, "data/output/01_responses/cc09_datetime.Rds")
+write_rds(cc06_interest, "data/output/01_responses/cc06_newsintnum.Rds")
