@@ -141,10 +141,16 @@ ds <- loadDataset("CCES Cumulative Issues")
 for (j in 1:ncol(ds)) {
   if (!names(ds)[j] %in% iss_meta$alias) next
   else  
-    name(ds[[j]])      <- iss_meta$name[which(iss_meta$alias == names(ds)[j])]
+  {
+    name(ds[[j]])        <- iss_meta$name[which(iss_meta$alias == names(ds)[j])]
+    description(ds[[j]]) <- iss_meta$description[which(iss_meta$alias == names(ds)[j])]
+  }
+  
 }
 
 type(ds[["year"]]) <- "categorical"
+ds$year_date5 <- as.Datetime(ds$year_date, format = "%Y-%m-%d", resolution = "D")
+rollupResolution(ds[["year_date"]]) <- "Y"
 
 mv(ds, matches("(banassault|repeal|resent|spend|legal|security|gay|cleanair|renewable)"), "Issues")
 mv(ds, matches("ideo|party$"), "Perception")
