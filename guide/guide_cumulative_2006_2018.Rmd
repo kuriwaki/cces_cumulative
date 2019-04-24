@@ -100,19 +100,15 @@ Please note that this cumulative dataset makes modifications to the original CCE
 
 \bigskip
 
+\begin{itemize}\addtolength{\itemsep}{10pt}
 
-\begin{tcolorbox}[boxrule=0pt,  fonttitle=\bfseries, subtitle style={boxrule=0.4pt, colback=black!75!white}]
+\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
 
-\tcbsubtitle{To see the source code, }
-report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
+\item \textbf{To obtain the individual year's CCES datasets, } search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
 
-\tcbsubtitle{To obtain the individual year's CCES datasets,}
-search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To examine the survey methodology, } consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
+\end{itemize}
 
-\tcbsubtitle{To examine the survey methodology, }
-consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
-
-\end{tcolorbox}
 
 \bigskip
 
@@ -203,8 +199,8 @@ Crunch datasets can also be manipulated from a R package, `crunch` <https://gith
 
 The sections below provide summary more information on each variable. 
 
-* The title shows the name as used in the dataset, suitable for coding ("alias" in Crunch terminology). followed by a more descriptive. name suitable for presentation ("name" in Crunch terminology).
-* Question wordings, where applicable, immediately follow. Otherwise an description is provide in square brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
+* The title shows the name as used in the dataset, suitable for coding ("alias" in Crunch terminology). followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
+* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
 * A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
 * Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
@@ -468,7 +464,7 @@ print_tab(vv_turnout_gvm)
 ```
 
 * Years: `r in_years(vv_turnout_gvm)`
-* Limitations: Collapses most response options. In particular, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting method. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
+* Limitations: Collapses most response options. For example, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting _method_. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
 
 ### `r nam(vv_turnout_pvm)`
 
@@ -556,7 +552,7 @@ print_tab(newsint)
 
 
 * Years: `r in_years(newsint)`
-* Limitations: Not asked in 2006.
+* Limitations: Not asked in 2006. Similar questions about watching TV news was asked in 2006.
 
 ## Approval
 
