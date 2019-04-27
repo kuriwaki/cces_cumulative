@@ -11,14 +11,15 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds <- loadDataset("CCES Cumulative Common Dev")
+# ds <- loadDataset("CCES Cumulative Common", project = "CCES")
 
 unlock(ds)
 
 # description for dataset
 description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- as.Date("2006-10-06")
-endDate(ds) <- as.Date("2017-12-12")
+endDate(ds) <- as.Date("2018-11-05")
 
 
 # add metadata ---------
@@ -36,7 +37,7 @@ weight(ds) <- ds$weight_cumulative
 
 # change look  -----
 type(ds$year) <- "categorical"
-names(categories(ds$year)) <- c(as.character(2006:2017))
+names(categories(ds$year)) <- c(as.character(2006:2018))
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
 
@@ -149,7 +150,7 @@ for (j in 1:ncol(ds)) {
 }
 
 type(ds[["year"]]) <- "categorical"
-ds$year_date5 <- as.Datetime(ds$year_date, format = "%Y-%m-%d", resolution = "D")
+ds$year_date6 <- as.Datetime(ds$year_date, format = "%Y-%m-%d", resolution = "Y", offset = "0000-01-01 00:00:00")
 rollupResolution(ds[["year_date"]]) <- "Y"
 
 mv(ds, matches("(banassault|repeal|resent|spend|legal|security|gay|cleanair|renewable)"), "Issues")
