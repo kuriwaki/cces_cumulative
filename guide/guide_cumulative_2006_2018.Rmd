@@ -35,7 +35,9 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
   var <- enquo(var)
   
   tal <- tbl %>% 
-    mutate_if(is.labelled, as_factor) %>% 
+    select(!!var) %>% 
+    mutate_if(is.labelled, ~as_factor(.x)) %>% 
+    mutate_if(is.factor, ~fct_explicit_na(.x)) %>% 
     group_by(!!var) %>% 
     tally(sort = do_sort)
   
@@ -280,12 +282,13 @@ print_numeric(weight_cumulative)
 ```
 
 * Years: `r in_years(weight_cumulative)`
-* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the following factor, for a given year. 
+* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the  year-specific factors shown in the following table.  For example, all weights in the 2016 common content are divided by about `r filter(rsc, year == 2016) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
+
 
 
 \begin{centering}
 
-```{r}
+```{r, fig.align = 'center'}
 rsc %>% 
   mutate(size  = formatC(size, format = "d", big.mark = ",")) %>% 
   kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
@@ -294,9 +297,7 @@ rsc %>%
 ```
 \end{centering}
 
-\smallskip
 
-For example, all weights in the 2012 common content are divided by about `r filter(rsc, year == 2012) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
 
 
 
@@ -335,7 +336,7 @@ df %>%
 ```
 
 * Years: `r in_years(state)`
-* Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect, for example, district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
+* Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
 
 
 # Demographics
@@ -406,7 +407,7 @@ print_tab(hispanic)
 ```
 
 * Years: `r in_years(hispanic)`
-* In years  in which this question was fielded, this question supplements the `race` variable by asking does who did _not_ respnd "Hipsanic" in the `race` question.
+* In years in which this question was fielded, this question supplements the `race` variable by asking those who did _not_ respond "Hipsanic" in the `race` question.
 
 ### `r nam(faminc)`
 
@@ -418,7 +419,7 @@ print_tab(faminc)
 ```
 
 * Years: `r in_years(faminc)`
-* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens some brackets, with loss of some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked in a follow-up question when the respondent initially selected "over 150k". These are top-coded and only labelled as "over 150k."
+* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
 * The 2009 CCES did not have an option for 60-70k. 
 
 
@@ -577,7 +578,7 @@ print_tab(newsint)
 
 
 * Years: `r in_years(newsint)`
-* Limitations: Not asked in 2006. Similar questions about watching TV news was asked in 2006.
+* Limitations: Not asked in 2006. Similar questions about watching TV news was asked in 2006, but not included in this cumulative file.
 
 ## Approval
 
@@ -733,7 +734,7 @@ print_tab(voted_pres_16)
 
 ### `r nam(intent_rep)`
 
-`r descrip(intent_rep)` See `intent_rep_party` for party affiliation.
+`r descrip(intent_rep)` 
 
 
 ```{r}
@@ -741,15 +742,16 @@ print_tab(intent_rep)
 ```
 
 * Years: `r in_years(intent_rep)`
-* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onward not shown for most years.  Response options differ by year.
-* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` for party affiliation.
-* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
+* Limitations: Only available for even years. The third party candidate is not specified for early years. The fourth candidate and below are not shown for most years.  Response options differ by year.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` to see the party affiliation of the chosen candidate.
+* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the name of the candidate chosen, see `intent_rep_chosen`.
+* `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
 
 
 ### `r nam(intent_sen)`
 
-`r descrip(intent_sen)` See `intent_sen_party` for party affiliation.
+`r descrip(intent_sen)` 
 
 ```{r}
 print_tab(intent_sen)
@@ -757,10 +759,11 @@ print_tab(intent_sen)
 
 * Years: `r in_years(intent_sen)`
 * Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
+* See `intent_sen_party` for the party affiliation of the chosen candidate.
 
 ### `r nam(intent_gov)`
 
-`r descrip(intent_gov)` See `intent_gov_party` for party affiliation.
+`r descrip(intent_gov)` 
 
 
 ```{r}
@@ -769,13 +772,14 @@ print_tab(intent_gov)
 
 * Years: `r in_years(intent_gov)`
 * Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
+* See `intent_gov_party` for the party affiliation of the chosen candidate.
 
 
 ## Vote Choice
 
 ### `r nam(voted_rep)`
 
-`r descrip(voted_rep)` See `voted_rep_party` for party affiliation.
+`r descrip(voted_rep)` 
 
 ```{r}
 print_tab(voted_rep)
@@ -783,11 +787,12 @@ print_tab(voted_rep)
 
 * Years: `r in_years(voted_rep)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
+* See `voted_rep_party` for party affiliation.
 
 ### `r nam(voted_sen)`
 
-`r descrip(voted_sen)` See `voted_sen_party` for party affiliation.
+`r descrip(voted_sen)` 
 
 
 ```{r}
@@ -796,10 +801,11 @@ print_tab(voted_sen)
 
 * Years: `r in_years(voted_sen)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_sen_party` for party affiliation.
 
 ### `r nam(voted_gov)`
 
-`r descrip(voted_gov)` See `voted_gov_party` for party affiliation.
+`r descrip(voted_gov)` 
 
 ```{r}
 print_tab(voted_gov)
@@ -807,13 +813,14 @@ print_tab(voted_gov)
 
 * Years: `r in_years(voted_gov)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_gov_party` for party affiliation.
 
 
 
 \newpage
 
 
-# Text
+# Metadata and Identifiers
 
 
 ## Identifiers
