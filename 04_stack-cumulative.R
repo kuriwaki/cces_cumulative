@@ -989,7 +989,6 @@ addon_id <- bind_rows(mit06_id, hu08_id, hu09_id, panel_id)
 # Weight --
 size_year <- ccc %>%
   anti_join(addon_id, by = c("year", "case_id")) %>% # don't count panel to get weights
-  filter(year != 2018) %>%  # for now
   group_by(year) %>%
   summarize(size = n()) %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
