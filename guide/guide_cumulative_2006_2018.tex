@@ -17,7 +17,7 @@
 \usepackage{xcolor}
 \definecolor{mygray}{gray}{0.5} % define color on gray scale
 \definecolor{lgray}{gray}{0.9} % define color on gray scale
-\definecolor{crimson}{RGB}{204,0,0}
+\definecolor{crimson}{RGB}{153,0,0}
 \definecolor{dgray}{RGB}{125,125,125}
 \newcommand{\crimson}[1]{\textcolor{crimson}{#1}}
   \newcommand{\dgray}[1]{\textcolor{dgray}{#1}}
@@ -146,7 +146,7 @@ contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of
 YouGov and Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-04-24}
+\date{Guide last updated: 2019-04-27}
 
 \begin{document}
 
@@ -166,7 +166,7 @@ Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
 Harvard Dataverse
 \end{quote}
 
-\noindent This dataset combines twelve years (2006 - 2018) of the
+\noindent This dataset combines thirteen years (2006 - 2018) of the
 Cooperative Congressional Election Study (Principal Investigators:
 Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
@@ -176,21 +176,23 @@ political behavior and public opinion. Questions can change from year to
 year; this cumulative file includes standard questions asked multiple
 years.
 
-This dataset was constructed based off CCES datasets from each year. A
-set of R scripts formatted, merged, and standardized these datasets to
-generate a \texttt{tibble}-style data frame. In addition, the same
-dataset is available on \texttt{Crunch}, an accessible analytics
-interface optimized for survey datasets.
+This dataset was constructed from CCES datasets from each year. The
+final product is a \texttt{tibble}-style data frame (built in R) that is
+available as a Stata \texttt{dta} file. In addition, the same dataset is
+available on \texttt{Crunch}, an analytics interface optimized for
+survey datasets.
 
-Please note that this cumulative dataset makes modifications to the
-original CCES datasets for comparability. These modifications are only
-made when differences are deemed sufficiently minor, and are documented
-in source code (see below). However, for details on the survey
-methodology and a list of all questions, readers should consult the
-guides for each year.
+Please note that this cumulative dataset makes some modifications to the
+original CCES datasets for comparability. across years These
+modifications are only made when differences are deemed sufficiently
+minor, and are documented in source code (see below). However, for
+details on the survey methodology and a list of all questions, readers
+should consult the guides for each year.
 
 \bigskip
 
+\noindent\makebox[\textwidth][c]{%
+\begin{minipage}{0.9\linewidth}
 \begin{itemize}\addtolength{\itemsep}{10pt}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
@@ -199,6 +201,8 @@ guides for each year.
 
 \item \textbf{To examine the survey methodology, } consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
 \end{itemize}
+\end{minipage}
+}
 
 \bigskip
 
@@ -210,7 +214,7 @@ guides for each year.
 The \texttt{.Rds} format can be read into R. This format preserves
 dataset properties such as the distinction between integers and doubles,
 and labelled variables. Unlike a \texttt{.Rdata} file, an \texttt{.Rds}
-file must be assigned to an object when loading.
+file is assigned to an object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -280,10 +284,13 @@ A Stata dta file is provided as well.
 
 A note on variable types. The R dataset stores variables in
 \texttt{numeric}, \texttt{character}, \texttt{factor}, or
-\texttt{labelled} format. The first three classes are commonly used, but
-the \texttt{lablelled} format is more recent. Essentially it is similar
-to a \texttt{factor} but more compatible with Stata and SPSS. It is
-built around R's \texttt{haven} package, which includes more
+\texttt{labelled} (technically \texttt{labelled\_haven}) format. The
+first three classes are commonly used, but the \texttt{lablelled} format
+is more novel. \texttt{labelled} classes are numeric integers where each
+integer is associated with a label. This makes it the same as
+\texttt{factor} but alwasys ordered and referenceable by its numeric
+value. It is essentially the same idea as labels in Stata and SPSS. It
+is built around R's \texttt{haven} package, which includes more
 documentation.
 
 A labelled variable's labels are not shown immediately in the Console:
@@ -339,11 +346,31 @@ factor.
 # ... with 452,745 more rows
 \end{verbatim}
 
+and unlike factors, they can be referenced by their underlying numeric
+value.
+
+\begin{verbatim}
+# A tibble: 160,637 x 4
+    year case_id pid3      pid3_fct
+   <int>   <int> <int+lbl> <fct>   
+ 1  2006  439219 1         Democrat
+ 2  2006  439228 1         Democrat
+ 3  2006  439237 1         Democrat
+ 4  2006  439238 1         Democrat
+ 5  2006  439254 1         Democrat
+ 6  2006  439255 1         Democrat
+ 7  2006  439263 1         Democrat
+ 8  2006  439304 1         Democrat
+ 9  2006  439338 1         Democrat
+10  2006  439390 1         Democrat
+# ... with 160,627 more rows
+\end{verbatim}
+
 \newpage
 
-\hypertarget{features-of-the-2006---2017-cumulative-dataset}{%
-\section{Features of the 2006 - 2017 Cumulative
-Dataset}\label{features-of-the-2006---2017-cumulative-dataset}}
+\hypertarget{features-of-the-2006---2018-cumulative-dataset}{%
+\section{Features of the 2006 - 2018 Cumulative
+Dataset}\label{features-of-the-2006---2018-cumulative-dataset}}
 
 \hypertarget{unified-variable-names}{%
 \subsection{Unified Variable Names}\label{unified-variable-names}}
@@ -604,23 +631,26 @@ year to make years comparable{]}
   by the following factor, for a given year.
 \end{itemize}
 
-\begin{verbatim}
-# A tibble: 12 x 3
-    year  size size_factor
-   <dbl> <int>       <dbl>
- 1  2006 36421       1.38 
- 2  2007  9999       0.378
- 3  2008 32800       1.24 
- 4  2009 13800       0.521
- 5  2010 55400       2.09 
- 6  2011 20150       0.761
- 7  2012 54535       2.06 
- 8  2013 16400       0.619
- 9  2014 56200       2.12 
-10  2015 14250       0.538
-11  2016 64600       2.44 
-12  2017 18200       0.687
-\end{verbatim}
+\begin{tabular}{rrr}
+\toprule
+Year & Observations & Factor\\
+\midrule
+2006 & 36,421 & 1.38\\
+2007 & 9,999 & 0.38\\
+2008 & 32,800 & 1.24\\
+2009 & 13,800 & 0.52\\
+2010 & 55,400 & 2.09\\
+\addlinespace
+2011 & 20,150 & 0.76\\
+2012 & 54,535 & 2.06\\
+2013 & 16,400 & 0.62\\
+2014 & 56,200 & 2.12\\
+2015 & 14,250 & 0.54\\
+\addlinespace
+2016 & 64,600 & 2.44\\
+2017 & 18,200 & 0.69\\
+\bottomrule
+\end{tabular}
 
 For example, all weights in the 2012 common content are divided by about
 2.06, because it has about twice as many observations as the other
@@ -923,13 +953,14 @@ Warning: Factor `marstat` contains implicit NA, consider using
 \hypertarget{validations}{%
 \section{Validations}\label{validations}}
 
-All even years include indicators for validated voters, which means that
-YouGov has matched survey respondents' personal identifiable information
-to public voter files, which in turn officially record whether a person
-has voted or not. For more informaation, see
+Observations in even years include (or will include) indicators for
+validated voting, which means that YouGov has matched survey
+respondents' personal identifiable information to public voter files,
+which in turn officially record whether a person has voted or not.
+Validation is often completed in the summer following the election; 2018
+validation data is not available as of March. For more information, see
 \href{https://doi.org/10.1093/pan/mps023}{Ansolabehere and Hersh
-(2012)}. Validation is often completed in the summer following the
-election; 2018 validation data is not available as of March
+(2012)}.
 
 \hypertarget{vv_regstatus-validated-registration-status}{%
 \subsubsection{\texorpdfstring{\texttt{vv\_regstatus}: Validated
@@ -1061,12 +1092,12 @@ Warning: Factor `vv_turnout_gvm` contains implicit NA, consider using
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016
 \item
-  Limitations: Collapses most response options. In particular, the
+  Limitations: Collapses most response options. For example, the
   particular voting method is collapsed into one category, even though
-  \texttt{gvm} stands for General Election voting method. Also, the
-  result of not matching to a voter file is collapsed with the result of
-  matching to a voter file and having no indication of turning out to
-  vote. The distinction is unclear in earlier years, and is thus
+  \texttt{gvm} stands for General Election voting \emph{method}. Also,
+  the result of not matching to a voter file is collapsed with the
+  result of matching to a voter file and having no indication of turning
+  out to vote. The distinction is unclear in earlier years, and is thus
   collapsed for all years here. For finer distinctions, see the
   individual year's CCES.
 \end{itemize}
@@ -1299,7 +1330,8 @@ Warning: Factor `newsint` contains implicit NA, consider using
   Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
   2017, 2018
 \item
-  Limitations: Not asked in 2006.
+  Limitations: Not asked in 2006. Similar questions about watching TV
+  news was asked in 2006.
 \end{itemize}
 
 \hypertarget{approval}{%
@@ -1733,7 +1765,7 @@ Warning: Factor `intent_rep` contains implicit NA, consider using
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: Only available for even years. The third party candidate
-  not specified for early years. The fourth candidate and onwards not
+  not specified for early years. The fourth candidate and onward not
   shown for most years. Response options differ by year.
 \item
   Note that it is not always the case that 1 is a Democrat and 2 is a
@@ -1861,7 +1893,7 @@ Warning: Factor `voted_rep` contains implicit NA, consider using
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
-  onwards: Either the response to the early vote question in the
+  onward: Either the response to the early vote question in the
   pre-election wave if the respondent indicates they have already voted,
   or if not, the response in the post-election wave.
 \item
@@ -1902,7 +1934,7 @@ Warning: Factor `voted_sen` contains implicit NA, consider using
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
-  onwards: Either the response to the early vote question in the
+  onward: Either the response to the early vote question in the
   pre-election wave if the respondent indicates they have already voted,
   or if not, the response in the post-election wave.
 \end{itemize}
@@ -1937,7 +1969,7 @@ Warning: Factor `voted_gov` contains implicit NA, consider using
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   This variable coalesces two variables in the CCES for years 2012 and
-  onwards: Either the response to the early vote question in the
+  onward: Either the response to the early vote question in the
   pre-election wave if the respondent indicates they have already voted,
   or if not, the response in the post-election wave.
 \end{itemize}

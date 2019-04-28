@@ -21,6 +21,8 @@ library(crunch)
 library(glue)
 library(tidyverse)
 library(haven)
+library(knitr)
+library(kableExtra)
 library(rprojroot)
 
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
@@ -66,7 +68,7 @@ in_years <- function(var, tbl = df) {
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
   if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
-  if (!(identical(yrs_vec, 2006:2016) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
+  if (!(identical(yrs_vec, 2006:2018) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
 }
 ```
 
@@ -89,17 +91,19 @@ _Please cite dataset as_
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
-\noindent This dataset combines twelve years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+\noindent This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
 The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes standard questions asked multiple years. 
 
-This dataset was constructed based off CCES datasets from each year. A set of R scripts formatted, merged, and standardized these datasets to generate a `tibble`-style data frame. In addition, the same dataset is available on `Crunch`, an accessible analytics interface optimized for survey datasets.  
+This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
 
-Please note that this cumulative dataset makes modifications to the original CCES datasets for comparability. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. across years These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
 
 \bigskip
 
+\noindent\makebox[\textwidth][c]{%
+\begin{minipage}{0.9\linewidth}
 \begin{itemize}\addtolength{\itemsep}{10pt}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
@@ -108,6 +112,8 @@ Please note that this cumulative dataset makes modifications to the original CCE
 
 \item \textbf{To examine the survey methodology, } consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
 \end{itemize}
+\end{minipage}
+}
 
 
 \bigskip
@@ -116,7 +122,7 @@ Please note that this cumulative dataset makes modifications to the original CCE
 
 # Getting Started
 
-The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file must be assigned to an object when loading.
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
 
 ```{r, eval = FALSE, echo = TRUE}
 df <- readRDS("cumulative_2006_2018.Rds")
@@ -136,7 +142,7 @@ library(haven)
 df <- read_dta("cumulative_2006_2018.dta")
 ```
 
-A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` format. The first three classes are commonly used, but the `lablelled` format is more recent. Essentially it is similar to a `factor` but more compatible with Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
+A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` (technically `labelled_haven`) format. The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label. This makes it the same as `factor` but alwasys ordered and referenceable by its numeric value. It is essentially the same idea as labels in Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
 
 A labelled variable's labels are not shown immediately in the Console:
 
@@ -151,9 +157,18 @@ select(df, year, case_id, pid3) %>%
   mutate(pid3_fct = as_factor(pid3))
 ```
 
+and unlike factors, they can be referenced by their underlying numeric value.
+
+```{r}
+select(df, year, case_id, pid3) %>% 
+  filter(pid3 == 1) %>% 
+  mutate(pid3_fct = as_factor(pid3))
+```
+
+
 \newpage
 
-# Features of the 2006 - 2017 Cumulative Dataset
+# Features of the 2006 - 2018 Cumulative Dataset
 
 ## Unified Variable Names
 
@@ -267,9 +282,19 @@ print_numeric(weight_cumulative)
 * Years: `r in_years(weight_cumulative)`
 * Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the following factor, for a given year. 
 
+
+\begin{centering}
+
 ```{r}
-rsc
+rsc %>% 
+  mutate(size  = formatC(size, format = "d", big.mark = ",")) %>% 
+  kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
+        linesep = rep('', nrow(rsc)))
+  
 ```
+\end{centering}
+
+\smallskip
 
 For example, all weights in the 2012 common content are divided by about `r filter(rsc, year == 2012) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
 
@@ -413,8 +438,8 @@ print_tab(marstat)
 
 # Validations 
 
-All even years include indicators for validated voters, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. For more informaation, see [Ansolabehere and Hersh (2012)](
-https://doi.org/10.1093/pan/mps023). Validation is often completed in the summer following the election; 2018 validation data is not available as of March
+Observations in even years include (or will include) indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election; 2018 validation data is not available as of March. For more information, see [Ansolabehere and Hersh (2012)](
+https://doi.org/10.1093/pan/mps023). 
 
 ### `r nam(vv_regstatus)`
 
@@ -716,7 +741,7 @@ print_tab(intent_rep)
 ```
 
 * Years: `r in_years(intent_rep)`
-* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onwards not shown for most years.  Response options differ by year.
+* Limitations: Only available for even years. The third party candidate not specified for early years. The fourth candidate and onward not shown for most years.  Response options differ by year.
 * Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` for party affiliation.
 * Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the candidate chosen, see `intent_rep_chosen`. `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
@@ -757,7 +782,7 @@ print_tab(voted_rep)
 ```
 
 * Years: `r in_years(voted_rep)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 * Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation.
 
 ### `r nam(voted_sen)`
@@ -770,7 +795,7 @@ print_tab(voted_sen)
 ```
 
 * Years: `r in_years(voted_sen)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 ### `r nam(voted_gov)`
 
@@ -781,7 +806,7 @@ print_tab(voted_gov)
 ```
 
 * Years: `r in_years(voted_gov)`
-* This variable coalesces two variables in the CCES for years 2012 and onwards: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 
 
