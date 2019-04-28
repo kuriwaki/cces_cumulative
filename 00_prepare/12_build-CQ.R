@@ -25,6 +25,9 @@ files114 <- lapply(file_names114, read_xlsx)
 # Metadata for congress 115 was compiled in a different format from congresses 109-114
 df115 <- read_xlsx("data/source/cq/115/cq 115 metadata.xlsx")
 
+df116 <- read_csv("data/source/cq/116/export.csv") %>% 
+  mutate(Congress = "116")
+
 
 # Create and clean dataframes before binding----
 colnames <- c("Last", "First", "Middle", "Suffix", "Nickname", "Born", "Death", "Sex", "Position", "Party", "State", "District", "Start", "End", "Religion", "Race", "JobType1", "JobType2", "JobType3", "JobType4", "JobType5", "Mil1", "Mil2", "Mil3")
@@ -83,12 +86,13 @@ df115 <- cbind(df115a, df115b, df115c, df115d, df115e)
 df115$Congress <- "115"
 
 # Bind dataframes----
-bind109to115 <- bind_rows(df109, df110, df111, df112, df113, df114, df115)
+bind109to116 <- bind_rows(df109, df110, df111, df112, df113, df114, df115, df116) %>% 
+  tbl_df()
 n_pre <- nrow(bind109to115)
 
 
 # format ---------
-df <- bind109to115 %>%
+df <- bind109to116 %>%
   dplyr::rename(
     congress = Congress,
     chamber = Position,
@@ -124,7 +128,7 @@ cat(glue("Dropped {n_pre - nrow(df)} rows when filtering to H and S only"))
 
 
 # save ----
-saveRDS(df, "data/output/03_contextual/cq_profiles.Rds")
+write_rds(df, "data/output/03_contextual/cq_profiles.Rds")
 
 
 
