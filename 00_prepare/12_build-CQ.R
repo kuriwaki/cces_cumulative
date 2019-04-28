@@ -3,6 +3,10 @@ library(readxl)
 library(lubridate)
 library(glue)
 
+# for reference
+
+vv <- readRDS("data/output/03_contextual/voteview_mcs.Rds")
+
 # Reading everything in----
 file_names109 <- list.files("data/source/cq/109", full.names = TRUE)
 files109 <- lapply(file_names109, read_xlsx)
@@ -92,7 +96,7 @@ n_pre <- nrow(bind109to115)
 
 
 # format ---------
-df <- bind109to116 %>%
+cq_df <- bind109to116 %>%
   dplyr::rename(
     congress = Congress,
     chamber = Position,
@@ -124,11 +128,15 @@ df <- bind109to116 %>%
   arrange(congress, chamber, st, dist) %>%
   tbl_df()
 
-cat(glue("Dropped {n_pre - nrow(df)} rows when filtering to H and S only"))
+cat(glue("Dropped {n_pre - nrow(cq_df)} rows when filtering to H and S only"))
+
+
+
+
 
 
 # save ----
-write_rds(df, "data/output/03_contextual/cq_profiles.Rds")
+write_rds(cq_df, "data/output/03_contextual/cq_profiles.Rds")
 
 
 

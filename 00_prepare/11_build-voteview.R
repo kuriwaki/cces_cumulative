@@ -16,7 +16,7 @@ vv_raw <- foreach(p = paths_read, .combine = "bind_rows") %do% {
 
 # pick last name --
 vv_namelast <- vv_raw %>%
-  mutate(namelast = toupper(gsub("^([A-zÁ-]+),.*", "\\1", bioname)))
+  mutate(namelast  = str_to_upper(str_extract(bioname, "([A-z\\sÁ-]+)(?=,)")))
 
 
 # formats ---
