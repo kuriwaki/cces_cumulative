@@ -2,9 +2,10 @@ library(dplyr)
 library(readr)
 library(foreach)
 library(Rvoteview)
+library(fs)
 
 
-path <- list.files("data/source/voteview", full.names = TRUE)
+path <- dir_ls("data/source/voteview", full.names = TRUE)
 paths_read <- grep("/HS.*members.csv$", path, value = TRUE)
 
 # read and bind --
@@ -54,7 +55,7 @@ vv_crunch <- vv %>%
   select(congress:dim2)
 
 ## save ---
-saveRDS(vv, "data/output/03_contextual/voteview_mcs.Rds")
+write_rds(vv, "data/output/03_contextual/voteview_mcs.Rds")
 write_csv(vv_crunch, "data/output/03_contextual/voteview_mcs.csv", na = "")
-saveRDS(vvH_min, "data/output/03_contextual/voteview_H_key.Rds")
-saveRDS(vvS_min, "data/output/03_contextual/voteview_S_key.Rds")
+write_rds(vvH_min, "data/output/03_contextual/voteview_H_key.Rds")
+write_rds(vvS_min, "data/output/03_contextual/voteview_S_key.Rds")
