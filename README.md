@@ -3,16 +3,12 @@ CCES Cumulative File
 Shiro Kuriwaki
 
 This repository is R code to build the Cooperative Congressional
-Election Study (CCES) cumulative file (2006 - 2017).
-
-2019-03-26 Note: I am actively finalizing the **2006 - 2018** cumulative
-dataset on this repo. Please contact me for any new additions you might
-want to see in this next release.
+Election Study (CCES) cumulative file (2006 - 2018).
 
   - [*Current Dataverse
     Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
   - [*Current
-    Guide*](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2017.pdf)
+    Guide*](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2018.pdf)
 
 Please feel free to file any questions or requests about the cumulative
 file as [Github
@@ -42,16 +38,16 @@ df
     ## # A tibble: 452,755 x 78
     ##     year case_id weight weight_cumulati… state st    cd     dist dist_up
     ##    <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
-    ##  1  2006  439219  1.85             1.35  Nort… NC    NC-10    10      10
-    ##  2  2006  439224  0.968            0.704 Ohio  OH    OH-3      3       3
-    ##  3  2006  439228  1.59             1.16  New … NJ    NJ-1      1       1
-    ##  4  2006  439237  1.40             1.02  Illi… IL    IL-9      9       9
-    ##  5  2006  439238  0.903            0.656 New … NY    NY-22    22      22
-    ##  6  2006  439242  0.839            0.610 Texas TX    TX-11    11      11
-    ##  7  2006  439251  0.777            0.565 Minn… MN    MN-3      3       3
-    ##  8  2006  439254  0.839            0.610 Neva… NV    NV-2      2       2
-    ##  9  2006  439255  0.331            0.241 Texas TX    TX-24    24      24
-    ## 10  2006  439263  1.10             0.802 Mary… MD    MD-2      2       2
+    ##  1  2006  439219  1.85             1.67  Nort… NC    NC-10    10      10
+    ##  2  2006  439224  0.968            0.872 Ohio  OH    OH-3      3       3
+    ##  3  2006  439228  1.59             1.44  New … NJ    NJ-1      1       1
+    ##  4  2006  439237  1.40             1.26  Illi… IL    IL-9      9       9
+    ##  5  2006  439238  0.903            0.813 New … NY    NY-22    22      22
+    ##  6  2006  439242  0.839            0.756 Texas TX    TX-11    11      11
+    ##  7  2006  439251  0.777            0.700 Minn… MN    MN-3      3       3
+    ##  8  2006  439254  0.839            0.756 Neva… NV    NV-2      2       2
+    ##  9  2006  439255  0.331            0.299 Texas TX    TX-24    24      24
+    ## 10  2006  439263  1.10             0.993 Mary… MD    MD-2      2       2
     ## # … with 452,745 more rows, and 69 more variables: cong <int>,
     ## #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
     ## #   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
@@ -73,8 +69,8 @@ df
     ## #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
     ## #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
     ## #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
-    ## #   rep_icpsr <int>, sen1_current <chr>, sen1_icpsr <int>,
-    ## #   sen2_current <chr>, sen2_icpsr <int>, gov_current <chr>, gov_fec <chr>
+    ## #   rep_icpsr <dbl>, sen1_current <chr>, sen1_icpsr <dbl>,
+    ## #   sen2_current <chr>, sen2_icpsr <dbl>, gov_current <chr>, gov_fec <chr>
 
 A Stata `.dta` can also be read in by Stata, or in R through
 `haven::read_dta()`.
