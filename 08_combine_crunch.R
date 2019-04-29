@@ -8,23 +8,12 @@ library(lubridate)
 
 login()
 
-writeToCrunch <- FALSE
-
-# Brian upload
-bs_stata <- read_dta("data/source/cces/schaffner_issues.dta")
-bs_df <- bs_stata %>% 
-  mutate(case_id = as.character(case_id),
-         year_date = as.Date(as.character(year), "%Y"),
-         year = factor(as.character(year))) %>%
-  select(year, year_date, case_id, everything())
-
 write_sav(bs_df, "data/release/issues_add-crunch.sav")
 
 if (writeToCrunch) {
-  deleteDataset("CCES Cumulative Issues")
   login()
+  deleteDataset("CCES Cumulative Issues")
   newDataset("https://www.dropbox.com/s/f9ngcutauoqgunb/issues_add-crunch.sav?dl=0", "CCES Cumulative Issues")
-  logout()  
 }
 
 # append intent to vote party -----

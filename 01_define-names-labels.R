@@ -129,8 +129,7 @@ stopifnot(n_distinct(ccc_meta$name) == nrow(ccc_meta))
 
 iss_meta <- tribble(
   ~alias, ~name,  ~description,
-  "year",  "CCES year", "",
-  "case_id", "Case identifier", "", 
+  "year_date",  "Year", "Year of CCES (date)",
   "banassault", "Ban assault rifles", "On the issue of gun regulation, are you for or against each of the following proposals? ... Ban assault rifles", 
   "repealACA",  "Repeal the ACA", "Thinking now about health care policy, would you support or oppose each of the following proposals? ... Repeal the entire Affordable Care Act",
   "ideoself",   "Ideology (7-point)", "How would you rate each of the following individuals and groups? ... Yourself",

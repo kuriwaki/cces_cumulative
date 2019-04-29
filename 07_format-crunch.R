@@ -17,18 +17,19 @@ ds <- loadDataset("CCES Cumulative Common Dev")
 unlock(ds)
 
 # description for dataset
-description(ds) <- "Only a limited set of questions are included for this cumulative file. The cumulative file is a combination of each year's common content and modifies categories; see the codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
+description(ds) <- "Only a limited set of questions are included for this cumulative file, and this crunch datasets has a few more variables on issue questions notin the dataverse version. The cumulative file is a combination of each year's common content; see the dataverse codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- as.Date("2006-10-06")
 endDate(ds) <- as.Date("2018-11-05")
 
 
 # add metadata ---------
 
+mvars <- bind_rows(iss_meta, ccc_meta)
 for (j in 1:ncol(ds)) {
-  if (!names(ds)[j] %in% ccc_meta$alias) next
+  if (!names(ds)[j] %in% mvars$alias) next
   else  
-    name(ds[[j]]) <- ccc_meta$name[which(ccc_meta$alias == names(ds)[j])]
-    description(ds[[j]]) <- ccc_meta$description[which(ccc_meta$alias == names(ds)[j])]
+    name(ds[[j]]) <- mvars$name[which(mvars$alias == names(ds)[j])]
+    description(ds[[j]]) <- mvars$description[which(mvars$alias == names(ds)[j])]
 }
 
 # apply weights ---
@@ -38,6 +39,7 @@ weight(ds) <- ds$weight_cumulative
 # change look  -----
 type(ds$year) <- "categorical"
 names(categories(ds$year)) <- c(as.character(2006:2018))
+rollupResolution(ds$year_date) <- "Y"
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
 
@@ -52,13 +54,17 @@ categories(ds$state) <- categories(ds$state)[c(st_order)]
 vn <- names(ds)
 
 ind_top <- grep("(year|state)", vn)
-ind_dem <- grep("(gender|birthyr|race|hispanic|educ|age|faminc)", vn)
+ind_dem <- grep("(gender|birthyr|race|hispanic|educ|age|faminc|martat|church|bornagain|relig|church|prayer)", vn)
 
 ind_geo <- grep("(cd|zipcode|county_fips)", vn)
 
-ind_pid <- grep("(pid|ideo)", vn)
+ind_pid <- grep("(pid|ideo|demparty|repparty)", vn)
 ind_app <- grep("(approval_.*)", vn)
 ind_econ <- grep("(retro)", vn)
+ind_int <- grep("newsint", vn)
+ind_iss <- grep("(banassault|repeal|resent|spend|legal|security|gay|cleanair|renewable)", vn)
+
+ind_act <- grep("(sign|meeting|candidate|donor)", vn)
 
 ind_pres_08 <- grep("(intent|voted)_pres_08", vn)
 ind_pres_12 <- grep("(intent|voted)_pres_12", vn)
@@ -82,7 +88,7 @@ ind_other <- setdiff(
   c(ind_top, 
     ind_geo, ind_wgt, 
     ind_dem, 
-    ind_econ, ind_pid, ind_app, 
+    ind_econ, ind_pid, ind_app, ind_ss, ind_act, ind_int,
     c(ind_pres_08, ind_pres_12, ind_pres_16),  
     ind_rep, ind_sen, ind_gov, 
     ind_vv,
@@ -93,7 +99,8 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Year and State", ds[ind_top]),
   VariableGroup("Demographics", ds[ind_dem]),
   VariableGroup("Geography", ds[ind_geo]),
-  VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app)]),
+  VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app, ind_iss, ind_int)]),
+  VariableGroup("Political Actions", ds[ind_act]),
   VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
   VariableGroup("Presidential Preference and Vote", ds[c(ind_pres_08, ind_pres_12, ind_pres_16)]),
   VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_rep, ind_sen, ind_gov)]),
@@ -118,8 +125,12 @@ ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrd
 ordering(ds)[["Identity and Attitudes"]] <- VariableOrder(
   VariableGroup("Partisan Identity", ds[ind_pid]),
   VariableGroup("Economy", ds[ind_econ]),
-  VariableGroup("Approval", ds[ind_app])
+  VariableGroup("Approval", ds[ind_app]),
+  VariableGroup("Issues", ds[ind_iss]),
+  VariableGroup("News Interest", ds[ind_int])
 )
+
+
 
 ordering(ds)[["Politician Names and Identifiers"]]  <- VariableOrder(
   VariableGroup("Candidates", ds[ind_candID]),
@@ -131,31 +142,9 @@ ind_nuisance_num <- grep("_num$", vn)
 hideVariables(ds, ind_nuisance_num)
 
 
-lock(ds)
+# lock(ds)
 
-## issue var
 
-login()
 
-ds <- loadDataset("CCES Cumulative Issues")
-
-for (j in 1:ncol(ds)) {
-  if (!names(ds)[j] %in% iss_meta$alias) next
-  else  
-  {
-    name(ds[[j]])        <- iss_meta$name[which(iss_meta$alias == names(ds)[j])]
-    description(ds[[j]]) <- iss_meta$description[which(iss_meta$alias == names(ds)[j])]
-  }
-  
-}
-
-type(ds[["year"]]) <- "categorical"
-ds$year_date6 <- as.Datetime(ds$year_date, format = "%Y-%m-%d", resolution = "Y", offset = "0000-01-01 00:00:00")
-rollupResolution(ds[["year_date"]]) <- "Y"
-
-mv(ds, matches("(banassault|repeal|resent|spend|legal|security|gay|cleanair|renewable)"), "Issues")
-mv(ds, matches("ideo|party$"), "Perception")
-mv(ds, matches("sign|meeting|candidate|donor"), "Participation")
-mv(ds, matches("(church|bornagain|relig|church|prayer)"), "Demographics")
 
 cat("Finished formatting Crunch dataset. ")

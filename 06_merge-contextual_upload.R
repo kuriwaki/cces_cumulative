@@ -161,6 +161,8 @@ load("data/output/01_responses/candidates_key.RData")
 ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
 panel_ids <- readRDS("data/output/01_responses/addon_ids.Rds")
+bs_stata <- read_dta("data/source/cces/schaffner_issues.dta")
+
 
 
 # add on name and fec, standardized option labels -----
@@ -267,14 +269,27 @@ for (v in colnames(ccc_common)) {
 }
 
 write_rds(ccc_common, "data/output/cumulative_2006_2018_factor.Rds")
-write_sav(ccc_common, "data/release/cumulative_2006_2018.sav") 
 write_dta(ccc_common, "data/release/cumulative_2006_2018.dta", version = 14)
 
+
+# crunch var
+bs_df <- bs_stata %>% 
+  mutate(case_id = as.character(case_id),
+         year = as.integer(year)) %>%
+  select(year, case_id, everything())
+
+ccc_crunch <- ccc_common %>% 
+  left_join(bs_df, by = c("year", "case_id")) %>% 
+  mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) %>% 
+  select(year, year_date, everything())
+
+write_sav(ccc_crunch, "data/release/cumulative_2006_2018_crunch.sav") 
 
 # might write to crunch
 if (writeToCrunch) {
   login()
-  newDataset("https://www.dropbox.com/s/44wh521ilq3p7ha/cumulative_2006_2018.sav?dl=0", 
+  deleteDataset("CCES Cumulative Common Dev")
+  newDataset("https://www.dropbox.com/s/p8cx49h82coqfcs/cumulative_2006_2018_crunch.sav?dl=0", 
              "CCES Cumulative Common Dev")
   logout()  
 }
