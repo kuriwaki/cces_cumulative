@@ -204,10 +204,10 @@ minor, and are documented in source code (see below). However, for
 details on the survey methodology and a list of all questions, readers
 should consult the guides for each year.
 
-\bigskip
+\vspace{1cm}
 
 \noindent\makebox[\textwidth][c]{%
-\begin{minipage}{0.9\linewidth}
+\begin{minipage}{0.92\linewidth}
 \begin{itemize}\addtolength{\itemsep}{10pt}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
@@ -625,10 +625,13 @@ year to make years comparable{]}
 \item
   Limitations: Only a simple transformation of \texttt{weight}.
   Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
-  by the following factor, for a given year.
+  by the year-specific factors shown in the following table. For
+  example, all weights in the 2016 common content are divided by about
+  1.97, because it has about twice as many observations as the other
+  datasets.
 \end{itemize}
 
-\begin{centering}
+\begin{center}
 
 
 \begin{tabular}{rrr}
@@ -650,13 +653,7 @@ Year & Observations & Factor\\
 2018 & 60,000 & 1.83\\
 \bottomrule
 \end{tabular}
-\end{centering}
-
-\smallskip
-
-For example, all weights in the 2016 common content are divided by about
-1.97, because it has about twice as many observations as the other
-datasets.
+\end{center}
 
 \subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
 post-election
@@ -1798,11 +1795,15 @@ $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251...
 
 \subsubsection{Name and Party}\label{name-and-party}
 
-The four names in the three offices that represent the respondent
-\emph{at the time of the survey}. Parties are not shown if the
-particular year's CCES did not show party. Party names are also
-abbreviated down to initials (\texttt{D} for Democrat, \texttt{R} for
-Republican, \texttt{I} for Independent) in this dataset.
+The four names in the three offices are representatives of the
+respondent \emph{at the time of the survey}. Names are printed as shown,
+and similarly parties are shown if the particular year's CCES did not
+show party. For example, Senator Shelby is presented as
+\texttt{Richard\ Craig\ Shelby}, \texttt{Richard\ C.\ Shelby\ (R)},
+\texttt{Richard\ Shelby\ (R)}, \texttt{Richard\ C.\ Shelby\ (R)},
+depending on the year. Party names are abbreviated down to initials
+(\texttt{D} for Democrat, \texttt{R} for Republican, \texttt{I} for
+Independent) in this dataset.
 
 \begin{verbatim}
 Observations: 452,755
@@ -1817,7 +1818,8 @@ $ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzin...
 
 Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for
 the current representatives. Identifiers are not part of the individual
-year's CCES but merged on for this cumulative dataset only.
+year's CCES. Instead, I attempt to merge in these identifiers through a
+series of name and district merges.
 
 The matching of identifiers to respondent occurs through matching by
 district, by district and last name, or both:
@@ -1854,7 +1856,9 @@ $ gov_fec    <chr> "NC5998", NA, "NJ6395", "IL7", NA, "TX3156", "MN472...
 \item
   Years: All of 2006-2018
 \item
-  Limitations: Matching procedure may be incomplete or inaccurate.
+  Limitations: Please note there may be some incorrect merges,
+  especially for nontraditional names and representatives who were
+  elected in special elections and may not be in some datasets.
 \end{itemize}
 
 The unique identifiers can be used to join with other databases to

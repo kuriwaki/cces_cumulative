@@ -101,11 +101,10 @@ This dataset was constructed from CCES datasets from each year. The final produc
 
 Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. across years These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
-
-\bigskip
+\vspace{1cm}
 
 \noindent\makebox[\textwidth][c]{%
-\begin{minipage}{0.9\linewidth}
+\begin{minipage}{0.92\linewidth}
 \begin{itemize}\addtolength{\itemsep}{10pt}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
@@ -286,7 +285,7 @@ print_numeric(weight_cumulative)
 
 
 
-\begin{centering}
+\begin{center}
 
 ```{r, fig.align = 'center'}
 rsc %>% 
@@ -295,7 +294,7 @@ rsc %>%
         linesep = rep('', nrow(rsc)))
   
 ```
-\end{centering}
+\end{center}
 
 
 
@@ -835,7 +834,7 @@ glimpse(select(df, matches("year|case_id")))
 
 ### Name and Party
 
-The four names in the three offices that represent the respondent _at the time of the survey_. Parties are not shown if the particular year's CCES did not show party. Party names are also abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset.
+The four names in the three offices are representatives of the respondent _at the time of the survey_. Names are printed as shown, and similarly parties are shown if the particular year's CCES did not show party. For example, Senator Shelby is presented as `Richard Craig Shelby`, `Richard C. Shelby (R)`, `Richard Shelby (R)`, `Richard C. Shelby (R)`, depending on the year. Party names are abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset. 
 
 ```{r}
 glimpse(select(df, matches("(rep|sen1|sen2|gov)_current")))
@@ -843,7 +842,7 @@ glimpse(select(df, matches("(rep|sen1|sen2|gov)_current")))
 
 ### Incumbent Identifiers
 
-Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES but merged on for this cumulative dataset only. 
+Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES. Instead, I attempt to merge in these identifiers through a series of name and district merges.  
 
 The matching of identifiers to respondent occurs through matching by district, by district and last name, or both:
 
@@ -852,12 +851,14 @@ The matching of identifiers to respondent occurs through matching by district, b
 * For Governors, we join only on `st` and last name. In this period, there are no two governors in the same state that share the same last name. 
 
 
+
 ```{r}
 glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*icpsr"), gov_fec))
 ```
 
 * Years: `r in_years(rep_icpsr)`
-* Limitations: Matching procedure may be incomplete or inaccurate.
+* Limitations: Please note there may be some incorrect merges, especially for nontraditional names and representatives who were elected in special elections and may not be in some datasets. 
+
 
 The unique identifiers can be used to join with other databases to append additional information such as committee membership and ideology scores, such as 
 
