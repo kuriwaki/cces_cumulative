@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2018)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Email: \\url{kuriwaki@g.harvard.edu}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of YouGov and Crunch for their help."
+thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of YouGov and Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
