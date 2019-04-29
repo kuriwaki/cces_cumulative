@@ -77,7 +77,11 @@ in_years <- function(var, tbl = df) {
 ```{r}
 descrip <- function(var, tbl = meta) {
   varchar <- quo_name(enquo(var))
-  tbl$description[tbl$alias == varchar]
+  text <- tbl$description[tbl$alias == varchar]
+  if (str_sub(text, 1, 1) != "[") {
+    text <- str_c("\"", text, "\"")
+  }
+  text
 }
 ```
 
@@ -116,8 +120,10 @@ Please note that this cumulative dataset makes some modifications to the origina
 \end{minipage}
 }
 
+\newpage
+\setcounter{tocdepth}{3}
+\tableofcontents*
 
-\bigskip
 
 \newpage
 
