@@ -46,8 +46,30 @@ vv_fec_S <- left_join(
 # join CQ ---
 df_H <- left_join(vv_fec_H, cq_df, by = c("namelast", "chamber", "st", "dist", "congress"))
 df_S <- left_join(vv_fec_S, cq_df, by = c("namelast", "chamber", "st", "congress")) %>% 
-  add_row(congress = 115, chamber = "S", icpsr = 41705, 
-          namelast = "JONES", namefirst = "Doug")
+  add_row(congress = 115, 
+          chamber = "S",
+          icpsr = 41705, 
+          st = "AL",
+          namelast = "JONES",
+          namefirst = "Doug") %>% 
+  add_row(congress =  115,
+          chamber = "S",
+          icpsr = 41706,
+          st = "MN",
+          namelast = "SMITH",
+          namefirst = "Tina") %>% 
+  add_row(congress =  115,
+          chamber = "S",
+          icpsr = 41707,
+          icpsr = "MS",
+          namelast = "HYDE-SMITH",
+          namefirst = "Cindy") %>% 
+  add_row(congress =  115,
+          chamber = "S",
+          icpsr = 15429,
+          st = "AZ",
+          namelast = "KYL",
+          namefirst = "John")
 
 
 

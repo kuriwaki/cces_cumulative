@@ -43,7 +43,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
-  if (var %in% c("sen1", "sen2")) mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
+  if (var %in% c("sen1", "sen2")) {
+    mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
+    tbl <- tbl %>% filter(st != "DC")
+  }
   if (var == "rep") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
   
   key_uniq <- semi_join(key, filter(mc_counts, n == 1))
@@ -63,9 +66,12 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   # for second round, extrat last name
   persn_remain <- persn_unmatch %>% 
     mutate(namelast = gsub(remove_regex, "", .data[[glue("{var}_inc")]]),
-           namelast = word(namelast, -1),
+           namelast = str_remove(namelast, "\\s\\((republican|democrat|independent)\\)"), # cong109 has this laeft
+           namelast = word(namelast, -1), # find lastname
            namelast = toupper(namelast)) %>% 
-    mutate(namelast = replace(namelast, st == "TX" & namelast == "HUTCHINSON", "HUTCHISON"),
+    mutate(namelast = replace(namelast, st == "NV" & namelast == "MASTO", "CORTEZ MASTO"),
+           namelast = replace(namelast, st == "MD" & namelast == "HOLLEN", "VAN HOLLEN"),
+           namelast = replace(namelast, st == "TX" & namelast == "HUTCHINSON", "HUTCHISON"),
            namelast = replace(namelast, st == "NJ" & namelast == "MENÉNDEZ", "MENENDEZ"),
            namelast = replace(namelast, st == "NY" & namelast == "VELAZQUEZ", "VELÁZQUEZ"))
   
@@ -360,13 +366,13 @@ dfcc <- map_dfr(cclist, clean_out, carry_vars, master)
 
 
 
-# standardize party label add D/R if in 2008, 2010 ----- 
+# standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 
 assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
   replace(vec, yrvec %in% c(2008:2011) & !is.na(candvec), pty)
 }
 
-df <- dfcc %>% 
+df_current <- dfcc %>% 
   mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, gov_can1, "D"),
          rep_pty1 = assign_08_10_pty(rep_pty1, year, rep_can1, "D"),
          sen_pty1 = assign_08_10_pty(sen_pty1, year, sen_can1, "D"),
@@ -397,9 +403,9 @@ gc_fec_match <- match_fec(gc_key, fec_gov)
   
 # create key of incumbent MC ----
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
-ri_mc_match  <- match_MC(df, inc_H, "rep", carry_vars)
-s1i_mc_match <- match_MC(df, inc_S, "sen1", carry_vars)
-s2i_mc_match <- match_MC(df, inc_S, "sen2", carry_vars)
+ri_mc_match  <- match_MC(df_current, inc_H, "rep", carry_vars)
+s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars)
+s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars)
 
 
 # create key for Governor separately -------
