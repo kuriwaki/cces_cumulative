@@ -20,36 +20,52 @@ if (writeToCrunch) {
 
 
 ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
-# ds_orig$year_caseid <- paste0(as.character(as.vector(ds_orig$year)), "_",  as.vector(ds_orig$case_id))
-# forkDataset(ds_orig, "Fork of CCES Cumulative Common")
+forkDataset(ds_orig, "Fork of CCES Cumulative Common")
 
 ds_fork <- loadDataset("Fork of CCES Cumulative Common")
-
-
 ds_new <- loadDataset("CCES Cumulative Common Dev")
+
+# identifier
+ds_fork$year_caseid <- paste0(as.character(as.vector(ds_fork$year)), "_",  as.vector(ds_fork$case_id))
 ds_new$year_caseid <- paste0(as.character(as.vector(ds_new$year)), "_",  as.vector(ds_new$case_id))
 
+# compare
+compareDatasets(ds_fork, ds_new)
 
-vn <- names(ds_new)
-vn_replace <- str_subset(vn, "(intent|voted)_(rep|sen|gov).*")
-vn_drop <- setdiff(vn, c("year_caseid", vn_replace))
+vf <- names(ds_fork)
+vf_drop <- setdiff(vf, c("year_caseid"))
+
 
 # drop unnecessary from Dev
-deleteVariables(ds_new, vn_drop)
-deleteVariables(ds_fork, str_subset(vn_replace, ".*(?<!party)$")) # delete the vars to be replaced
+deleteVariables(ds_fork, vf_drop) # delete the vars to be replaced
+saveVersion(ds_fork, "dropped all but year_caseid")
 refresh(ds_fork)
+
+# merge fork on new, dropping 2018 rows
+extendDataset(ds_fork, ds_new, by = "year_caseid", all.x = TRUE, all.y = FALSE)
+refresh(ds_fork)
+saveVersion(ds_fork, description = "fork merged with new 2018")
+
+
+# updte new dataset to be only 2018
+ds_new <- dropRows(ds_new, ds_new$year != 2018)
 refresh(ds_new)
-saveVersion(ds_fork)
+
+# append
+appendDataset(ds_fork, ds_new)
+
+# un 07 format 
+
 
 # merge new vars into fork
-extendDataset(ds_fork, ds_new, by = "year_caseid")
-refresh(ds_fork)
-saveVersion(ds_fork, description = "fork merged with new intent/voted")
-
 mergeFork(ds_orig, fork = ds_fork)
 
 
-# Fix 2016 vote match ----
+
+
+
+
+# Fix 2016 vote match ---------
 ds <- loadDataset("CCES 2016 Common Vote Validated", project = "CCES")
 crtabs(~ inputstate + CL_E2016GVM, ds, useNA = "ifany", weight = NULL) # check Northeastern states
 
@@ -71,7 +87,7 @@ if(FALSE){
   
 }
 
-# fix 2016 cumulative
+# fix 2016 cumulative --------
 
 # upload 2016
 cc16 <- read_dta("~/Dropbox/CCES_SDA/2016/data/Common/CCES16_Common_OUTPUT_Feb2018_VV.dta") %>% 

@@ -11,13 +11,13 @@ login() # you need a login and password to complete this command
 
 
 # connect to data---------
-ds <- loadDataset("CCES Cumulative Common Dev")
-# ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+# ds <- loadDataset("Fork of CCES Cumulative Common")
+ds <- loadDataset("CCES Cumulative Common", project = "CCES")
 
 unlock(ds)
 
 # description for dataset
-description(ds) <- "Only a limited set of questions are included for this cumulative file, and this crunch datasets has a few more variables on issue questions notin the dataverse version. The cumulative file is a combination of each year's common content; see the dataverse codebook for details. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
+description(ds) <- "Only a limited set of questions are included for this cumulative file, and this crunch datasets has a few more variables on issue questions notin the dataverse version. The cumulative file is a combination of each year's common content; see the dataverse codebook for details. Updated and overwritten on 2019-04-29 with 2018 data and more variables. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- as.Date("2006-10-06")
 endDate(ds) <- as.Date("2018-11-05")
 
@@ -38,7 +38,8 @@ weight(ds) <- ds$weight_cumulative
 
 # change look  -----
 type(ds$year) <- "categorical"
-names(categories(ds$year)) <- c(as.character(2006:2018))
+ds <- dropRows(ds, is.na(ds$year) & is.na(ds$case_id))
+names(categories(ds$year)) <- c(as.character(2006:2018)) # did some fixing by hand
 rollupResolution(ds$year_date) <- "Y"
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
@@ -54,7 +55,7 @@ categories(ds$state) <- categories(ds$state)[c(st_order)]
 vn <- names(ds)
 
 ind_top <- grep("(year|state)", vn)
-ind_dem <- grep("(gender|birthyr|race|hispanic|educ|age|faminc|martat|church|bornagain|relig|church|prayer)", vn)
+ind_dem <- grep("(gender|birthyr|race|hispanic|educ|age|faminc|marstat|church|bornagain|relig|church|prayer)", vn)
 
 ind_geo <- grep("(cd|zipcode|county_fips)", vn)
 
@@ -88,7 +89,7 @@ ind_other <- setdiff(
   c(ind_top, 
     ind_geo, ind_wgt, 
     ind_dem, 
-    ind_econ, ind_pid, ind_app, ind_ss, ind_act, ind_int,
+    ind_econ, ind_pid, ind_app, ind_iss, ind_act, ind_int,
     c(ind_pres_08, ind_pres_12, ind_pres_16),  
     ind_rep, ind_sen, ind_gov, 
     ind_vv,
