@@ -194,6 +194,8 @@ mit_fmt <- mit06_raw %>%
          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
          stfips  = as.integer(zap_labels(inputstate)),
          state = NULL) %>%
+  mutate_at(dist = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
+            dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) %>% 
   rename(case_id = caseid) %>% 
   left_join(transmute(statecode,  stfips = as.integer(fips), state, st), by = c("stfips")) %>% 
   select(year, case_id, state, st, cong, dist, dist_up, everything())
