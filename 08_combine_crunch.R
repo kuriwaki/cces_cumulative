@@ -8,8 +8,6 @@ library(lubridate)
 
 login()
 
-write_sav(bs_df, "data/release/issues_add-crunch.sav")
-
 if (writeToCrunch) {
   login()
   deleteDataset("CCES Cumulative Issues")
