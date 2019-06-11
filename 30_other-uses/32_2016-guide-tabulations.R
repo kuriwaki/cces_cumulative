@@ -7,7 +7,11 @@ library(xtable)
 
 
 # Specify target directories ---
+
+# guide where individual variable tables will be printed
 dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
+
+# main guidebook directory
 dir_for_codebook <- file.path("~/Dropbox/CCES_SDA/2016/Guide/")
 writeToFile <- TRUE
 
