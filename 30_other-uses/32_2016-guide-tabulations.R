@@ -7,7 +7,11 @@ library(xtable)
 
 
 # Specify target directories ---
+
+# guide where individual variable tables will be printed
 dir_to_print <- file.path("~/Dropbox/CCES_SDA/2016/Guide/Tabulations/")
+
+# main guidebook directory
 dir_for_codebook <- file.path("~/Dropbox/CCES_SDA/2016/Guide/")
 writeToFile <- TRUE
 
@@ -150,7 +154,7 @@ tableToSection <- distinct(cq, rowID, section14) %>%
 
 
 
-# gen latex ----
+# Generate the entire Latex document for content ----
 # LaTeX code to have these input at once (but in order)?
 
 texfiles <- list.files(dir_to_print) # sorted
