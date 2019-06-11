@@ -64,6 +64,7 @@ data/source/cq/*
 data/source/dime/*
 data/source/fec/*
 data/output/*
+!data/output/meta/
 data/release/*
 pettigrew_code/*
 figures/*
