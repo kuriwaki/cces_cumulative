@@ -1,12 +1,9 @@
-rm(list = ls())
 library(dplyr)
 library(haven)
 library(readxl)
 library(readr)
-library(here)
 library(foreach)
 library(xtable)
-library(data.table)
 
 
 # Specify target directories ---

@@ -1,7 +1,3 @@
-rm(list = ls())
-# Test crunch.io
-
-# devtools::install_github("Crunch-io/rcrunch", build_vignettes=TRUE)
 library(crunch)
 library(ggplot2)
 library(dplyr)
