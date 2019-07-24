@@ -473,8 +473,8 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
   }
   
   # specific recoding
-  if (grepl("approval_(rep|sen)", chr_var_name)) {
-    list_yr <- recode_congapv(list_yr, chr_var_name)
+  if (grepl("approval_(rep|sen|pres|gov)", chr_var_name)) {
+    list_yr <- recode_apv(list_yr, chr_var_name)
   }
 
   
@@ -527,7 +527,7 @@ median2 <- function(x, y) {
 #' recode approval
 #' 
 #' 
-recode_congapv <- function(tbl, char_name) {
+recode_apv <- function(tbl, char_name) {
   tbl %>% 
   mutate(!!char_name := recode(.data[[char_name]],
                               `Approve`              = "Approve / Somewhat Approve", 
@@ -535,6 +535,7 @@ recode_congapv <- function(tbl, char_name) {
                               `Disapprove`           = "Disapprove / Somewhat Disapprove", 
                               `Somewhat Disapprove`  = "Disapprove / Somewhat Disapprove", 
                               `Never Heard`          = "Never Heard / Not Sure",
+                              `Never Heard Of`       = "Never Heard / Not Sure",
                               `Not Sure`             = "Never Heard / Not Sure"))
 }
 
