@@ -437,6 +437,8 @@ print_tab(marstat)
 ```
 
 * Years: `r in_years(marstat)`
+* The option "Single" was used till 2016, which was then replaced by "Never Married" in 2017 and 2018.
+* The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
 
 \newpage
 

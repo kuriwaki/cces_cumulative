@@ -100,7 +100,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_gov  = profile_govvote_coded,
         vv_turnout_gvm = g2006
       ) %>% 
-      mutate(marstat = coalesce(profile_marstat, marstat))
+      mutate(marstat = coalesce(profile_marstat, marstat)) %>% 
+      add_value_labels(race = c("Other" = 7)) %>% 
+      add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
+                                "Not Very Strong Republican" = 6))
   }
   
   # 2009 --------
@@ -326,7 +329,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_16 = CC17_327) %>%
       mutate(
         countyfips = NA
-      )
+      ) %>% 
+      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   # 2018 ------
@@ -359,7 +363,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_rep = coalesce(voted_rep, intent_repx),
         voted_sen = coalesce(voted_sen, intent_senx),
         voted_gov = coalesce(voted_gov, intent_gov)
-      )
+      ) %>% 
+      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   
@@ -900,12 +905,15 @@ econ <-  econ_char %>%
 
 
 # news interest ------
-newsint <- find_stack(ccs[c(1:8,  10, 11, 12)], newsint, make_labelled = TRUE) %>% 
-  labelled::remove_value_labels(newsint = 8) %>% 
+newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>% 
+  remove_value_labels(newsint = 8) %>% 
   mutate(newsint = na_if(newsint, 8))
 
 # marriage status -----
-marstat <- find_stack(ccs, marstat, make_labelled = TRUE)
+marstat <- find_stack(ccs, marstat, make_labelled = TRUE) %>% 
+  remove_value_labels(marstat = 8) %>% 
+  mutate(marstat = na_if(marstat, 8)) %>% 
+  add_value_labels(marstat = c(`Single / Never Married` = 5))
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
