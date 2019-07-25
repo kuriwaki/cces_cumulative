@@ -1,5 +1,6 @@
 library(tidyverse)
 library(haven)
+library(labelled)
 library(foreach)
 library(stringr)
 library(glue)
@@ -891,7 +892,7 @@ econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder =
 # check all categories are aligned
 stopifnot(nrow(dcast(econ_char, economy_retro_char + economy_retro_num ~ year, value.var = "case_id")) == n_distinct(econ_char$economy_retro_num))
 
-# coercet to labelled
+# correct to labelled
 econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
 econ <-  econ_char %>% 
   mutate(economy_retro = labelled(economy_retro_num, labels = econ_key)) %>% 
@@ -899,7 +900,8 @@ econ <-  econ_char %>%
 
 
 # news interest ------
-newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>% 
+newsint <- find_stack(ccs[c(1:8,  10, 11, 12)], newsint, make_labelled = TRUE) %>% 
+  labelled::remove_value_labels(newsint = 8) %>% 
   mutate(newsint = na_if(newsint, 8))
 
 # marriage status -----
