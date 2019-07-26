@@ -148,15 +148,16 @@ library(haven)
 df <- read_dta("cumulative_2006_2018.dta")
 ```
 
-A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` (technically `labelled_haven`) format. The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label. This makes it the same as `factor` but alwasys ordered and referenceable by its numeric value. It is essentially the same idea as labels in Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
+A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` class.^[Technically, this is now called a `labelled_haven` class, to disambiguate from an unrelated but older use of `labelled` in the Hmisc package.] The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label (See vignette [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)). This makes it the same as `factor` but alwasys ordered and referenceable by its numeric value. It is essentially the same idea as labels in Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
 
-A labelled variable's labels are not shown immediately in the Console:
+A labelled variable's labels are not usually shown. Recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within a tibble (a dataframe in tidyverse). This makes it immediately obvious which value is associated with which label.
 
 ```{r, echo = TRUE}
 select(df, year, case_id, pid3)
 ```
 
-But labels can be displayed by transforming the labelled vector into a factor.
+But labels can be made explicit transforming the labelled vector into a factor. On the other hand, removes the numerical ordering and value codes in the labelled class. 
+
 ```{r, echo = TRUE}
 library(haven)
 select(df, year, case_id, pid3) %>% 
@@ -808,6 +809,7 @@ print_tab(voted_sen)
 * Years: `r in_years(voted_sen)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 * See `voted_sen_party` for party affiliation.
+* Senate Special elections where both senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
 
 ### `r nam(voted_gov)`
 
