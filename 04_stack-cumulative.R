@@ -335,6 +335,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   
   # 2018 ------
   if (identical(cces_year, 2018L)) {
+    
     tbl <- tbl %>%
       rename(
         weight = commonweight,
@@ -363,7 +364,16 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_rep = coalesce(voted_rep, intent_repx),
         voted_sen = coalesce(voted_sen, intent_senx),
         voted_gov = coalesce(voted_gov, intent_gov)
-      ) %>% 
+      ) %>%  # replace straight ticket
+      mutate(voted_rep = replace(voted_rep, CC18_409 == 1, 1),
+             voted_rep = replace(voted_rep, CC18_409 == 2, 2),
+             # we found that only in US House, sometimes party 2 was not a Republican.
+             voted_rep = replace(voted_rep, CC18_409 == 2 & HouseCand2Party_post != "Republican", NA),
+             voted_sen = replace(voted_sen, CC18_409 == 1, 1),
+             voted_sen = replace(voted_sen, CC18_409 == 2, 2),
+             voted_gov = replace(voted_gov, CC18_409 == 1, 1),
+             voted_gov = replace(voted_gov, CC18_409 == 2, 2),
+             ) %>%
       add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
