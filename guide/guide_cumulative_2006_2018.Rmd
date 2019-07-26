@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2018)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams, Jon Keane and Gordon Shotwell of YouGov and Crunch for their help."
+thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell atCrunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -35,7 +35,7 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
   
   tal <- tbl %>% 
     select(!!var) %>% 
-    mutate_if(is.labelled, ~as_factor(.x)) %>% 
+    mutate_if(is.labelled, as_factor) %>% 
     mutate_if(is.factor, ~fct_explicit_na(.x)) %>% 
     group_by(!!var) %>% 
     tally(sort = do_sort)
@@ -96,11 +96,19 @@ _Please cite dataset as_
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
-\noindent This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+
+\smallskip
 
 The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes standard questions asked multiple years. 
 
-This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
+\smallskip
+
+
+This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
+
+\smallskip
+
 
 Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. across years These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
@@ -114,7 +122,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 \item \textbf{To obtain the individual year's CCES datasets, } search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To examine the survey methodology, } consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
+\item \textbf{To examine the survey methodology, } consult the Frequentl y Asked Questions Page (\url{https://cces.gov.harvard.edu/frequently-asked-questions}) or the  Methodology section of a recent Common Content's codebook (\url{https://doi.org/10.7910/DVN/GDF6Z0}).
 \end{itemize}
 \end{minipage}
 }
@@ -164,13 +172,15 @@ select(df, year, case_id, pid3) %>%
   mutate(pid3_fct = as_factor(pid3))
 ```
 
-and unlike factors, they can be referenced by their underlying numeric value.
+and unlike factors, they can be referenced by their underlying numeric value. In short, it is sometimes useful to treat survey values as numbers rather than raw text, and the labelled calss allows you to do that.
 
-```{r}
+```{r, echo = TRUE}
 select(df, year, case_id, pid3) %>% 
-  filter(pid3 == 1) %>% 
-  mutate(pid3_fct = as_factor(pid3))
+  filter(pid3 == 1)
 ```
+
+Some variables are stored as labelled values, and some are not and stored as factors. Most of this is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
+
 
 
 \newpage

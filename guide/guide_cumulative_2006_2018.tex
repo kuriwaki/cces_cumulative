@@ -85,6 +85,7 @@
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
 \makeatother
+
 % Scale images if necessary, so that they will not overflow the page
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
@@ -142,11 +143,11 @@
 \url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome. My
 thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro,
 Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew
-for their contributions. Thanks to Joe Williams, Jon Keane and Gordon
-Shotwell of YouGov and Crunch for their help.}  }
+for their contributions. Thanks to Joe Williams at YouGov, and Jon
+Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
 
 
-\date{Guide last updated: 2019-04-29}
+\date{Guide last updated: 2019-07-26}
 
 \begin{document}
 
@@ -166,9 +167,11 @@ Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
 Harvard Dataverse
 \end{quote}
 
-\noindent This dataset combines thirteen years (2006 - 2018) of the
-Cooperative Congressional Election Study (Principal Investigators:
-Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+This dataset combines thirteen years (2006 - 2018) of the Cooperative
+Congressional Election Study (Principal Investigators: Stephen
+Ansolabehere, Sam Luks, Brian Schaffner).
+
+\smallskip
 
 The Cooperative Congressional Election Study (CCES) is an online survey
 conducted around November of each year, asking a range of questions on
@@ -176,11 +179,15 @@ political behavior and public opinion. Questions can change from year to
 year; this cumulative file includes standard questions asked multiple
 years.
 
+\smallskip
+
 This dataset was constructed from CCES datasets from each year. The
 final product is a \texttt{tibble}-style data frame (built in R) that is
 available as a Stata \texttt{dta} file. In addition, the same dataset is
 available on \texttt{Crunch}, an analytics interface optimized for
 survey datasets.
+
+\smallskip
 
 Please note that this cumulative dataset makes some modifications to the
 original CCES datasets for comparability. across years These
@@ -199,7 +206,7 @@ should consult the guides for each year.
 
 \item \textbf{To obtain the individual year's CCES datasets, } search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To examine the survey methodology, } consult the Methodology section of the most recent Common Content's codebook: \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/GDF6Z0}.
+\item \textbf{To examine the survey methodology, } consult the Frequentl y Asked Questions Page (\url{https://cces.gov.harvard.edu/frequently-asked-questions}) or the  Methodology section of a recent Common Content's codebook (\url{https://doi.org/10.7910/DVN/GDF6Z0}).
 \end{itemize}
 \end{minipage}
 }
@@ -286,16 +293,23 @@ A Stata dta file is provided as well.
 
 A note on variable types. The R dataset stores variables in
 \texttt{numeric}, \texttt{character}, \texttt{factor}, or
-\texttt{labelled} (technically \texttt{labelled\_haven}) format. The
-first three classes are commonly used, but the \texttt{lablelled} format
-is more novel. \texttt{labelled} classes are numeric integers where each
-integer is associated with a label. This makes it the same as
-\texttt{factor} but alwasys ordered and referenceable by its numeric
-value. It is essentially the same idea as labels in Stata and SPSS. It
-is built around R's \texttt{haven} package, which includes more
-documentation.
+\texttt{labelled} class.\footnote{Technically, this is now called a
+  \texttt{labelled\_haven} class, to disambiguate from an unrelated but
+  older use of \texttt{labelled} in the Hmisc package.} The first three
+classes are commonly used, but the \texttt{lablelled} format is more
+novel. \texttt{labelled} classes are numeric integers where each integer
+is associated with a label (See vignette
+\href{https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html}{here}).
+This makes it the same as \texttt{factor} but alwasys ordered and
+referenceable by its numeric value. It is essentially the same idea as
+labels in Stata and SPSS. It is built around R's \texttt{haven} package,
+which includes more documentation.
 
-A labelled variable's labels are not shown immediately in the Console:
+A labelled variable's labels are not usually shown. Recent versions of
+the \texttt{haven} package (version 2.1.0 or above) will display the
+associated labels in the Console if selected within a tibble (a
+dataframe in tidyverse). This makes it immediately obvious which value
+is associated with which label.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -305,23 +319,24 @@ A labelled variable's labels are not shown immediately in the Console:
 
 \begin{verbatim}
 # A tibble: 452,755 x 3
-    year case_id pid3     
-   <int>   <int> <int+lbl>
- 1  2006  439219 1        
- 2  2006  439224 4        
- 3  2006  439228 1        
- 4  2006  439237 1        
- 5  2006  439238 1        
- 6  2006  439242 3        
- 7  2006  439251 2        
- 8  2006  439254 1        
- 9  2006  439255 1        
-10  2006  439263 1        
+    year case_id            pid3
+   <int>   <int>       <int+lbl>
+ 1  2006  439219 1 [Democrat]   
+ 2  2006  439224 4 [Other]      
+ 3  2006  439228 1 [Democrat]   
+ 4  2006  439237 1 [Democrat]   
+ 5  2006  439238 1 [Democrat]   
+ 6  2006  439242 3 [Independent]
+ 7  2006  439251 2 [Republican] 
+ 8  2006  439254 1 [Democrat]   
+ 9  2006  439255 1 [Democrat]   
+10  2006  439263 1 [Democrat]   
 # ... with 452,745 more rows
 \end{verbatim}
 
-But labels can be displayed by transforming the labelled vector into a
-factor.
+But labels can be made explicit transforming the labelled vector into a
+factor. On the other hand, removes the numerical ordering and value
+codes in the labelled class.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -333,40 +348,54 @@ factor.
 
 \begin{verbatim}
 # A tibble: 452,755 x 4
-    year case_id pid3      pid3_fct   
-   <int>   <int> <int+lbl> <fct>      
- 1  2006  439219 1         Democrat   
- 2  2006  439224 4         Other      
- 3  2006  439228 1         Democrat   
- 4  2006  439237 1         Democrat   
- 5  2006  439238 1         Democrat   
- 6  2006  439242 3         Independent
- 7  2006  439251 2         Republican 
- 8  2006  439254 1         Democrat   
- 9  2006  439255 1         Democrat   
-10  2006  439263 1         Democrat   
+    year case_id            pid3 pid3_fct   
+   <int>   <int>       <int+lbl> <fct>      
+ 1  2006  439219 1 [Democrat]    Democrat   
+ 2  2006  439224 4 [Other]       Other      
+ 3  2006  439228 1 [Democrat]    Democrat   
+ 4  2006  439237 1 [Democrat]    Democrat   
+ 5  2006  439238 1 [Democrat]    Democrat   
+ 6  2006  439242 3 [Independent] Independent
+ 7  2006  439251 2 [Republican]  Republican 
+ 8  2006  439254 1 [Democrat]    Democrat   
+ 9  2006  439255 1 [Democrat]    Democrat   
+10  2006  439263 1 [Democrat]    Democrat   
 # ... with 452,745 more rows
 \end{verbatim}
 
 and unlike factors, they can be referenced by their underlying numeric
-value.
+value. In short, it is sometimes useful to treat survey values as
+numbers rather than raw text, and the labelled calss allows you to do
+that.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{select}\NormalTok{(df, year, case_id, pid3) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(pid3 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
-# A tibble: 160,637 x 4
-    year case_id pid3      pid3_fct
-   <int>   <int> <int+lbl> <fct>   
- 1  2006  439219 1         Democrat
- 2  2006  439228 1         Democrat
- 3  2006  439237 1         Democrat
- 4  2006  439238 1         Democrat
- 5  2006  439254 1         Democrat
- 6  2006  439255 1         Democrat
- 7  2006  439263 1         Democrat
- 8  2006  439304 1         Democrat
- 9  2006  439338 1         Democrat
-10  2006  439390 1         Democrat
+# A tibble: 160,637 x 3
+    year case_id         pid3
+   <int>   <int>    <int+lbl>
+ 1  2006  439219 1 [Democrat]
+ 2  2006  439228 1 [Democrat]
+ 3  2006  439237 1 [Democrat]
+ 4  2006  439238 1 [Democrat]
+ 5  2006  439254 1 [Democrat]
+ 6  2006  439255 1 [Democrat]
+ 7  2006  439263 1 [Democrat]
+ 8  2006  439304 1 [Democrat]
+ 9  2006  439338 1 [Democrat]
+10  2006  439390 1 [Democrat]
 # ... with 160,627 more rows
 \end{verbatim}
+
+Some variables are stored as labelled values, and some are not and
+stored as factors. Most of this is because the latter variables were
+different enough in their value codings across years that summarizing
+them into a single numeric value was difficult.
 
 \newpage
 
@@ -911,20 +940,26 @@ Status}{marstat: Marital Status}}\label{marstat-marital-status}}
 ``What is your marital status?''
 
 \begin{verbatim}
-              marstat      n
-              Married 250629
-            Separated   7606
-             Divorced  49651
-              Widowed  21287
-               Single 101416
- Domestic Partnership  20611
-            (Missing)   1555
+                marstat      n
+                Married 250629
+              Separated   7606
+               Divorced  49651
+                Widowed  21287
+ Single / Never Married 101416
+   Domestic Partnership  20611
+              (Missing)   1555
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
   Years: All of 2006-2018
+\item
+  The option ``Single'' was used till 2016, which was then replaced by
+  ``Never Married'' in 2017 and 2018.
+\item
+  The option ``Domestic Partnership'' was used till 2016, which was then
+  replaced by ``Domestic / Civl Partnership'' in 2017 and 2018.
 \end{itemize}
 
 \newpage
@@ -1269,14 +1304,14 @@ approval}{approval\_pres: President approval}}\label{approval_pres-president-app
 Incumbent President{]}''
 
 \begin{verbatim}
-                  approval_pres      n
-               Strongly Approve  92872
-               Somewhat Approve 104677
-            Somewhat Disapprove  47005
-            Strongly Disapprove 194516
-                       Not Sure  12507
- Neither Approve Nor Disapprove    443
-                      (Missing)    735
+                    approval_pres      n
+                 Strongly Approve  92872
+       Approve / Somewhat Approve 104677
+ Disapprove / Somewhat Disapprove  47005
+              Strongly Disapprove 194516
+           Never Heard / Not Sure  12507
+   Neither Approve Nor Disapprove    443
+                        (Missing)    735
 \end{verbatim}
 
 \begin{itemize}
@@ -1390,14 +1425,14 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 {[}Pipe State{]}''
 
 \begin{verbatim}
-                   approval_gov      n
-               Strongly Approve  67404
-               Somewhat Approve 139940
-            Somewhat Disapprove  84271
-            Strongly Disapprove 117282
-                       Not Sure  40318
- Neither Approve Nor Disapprove   1414
-                      (Missing)   2126
+                     approval_gov      n
+                 Strongly Approve  67404
+       Approve / Somewhat Approve 139940
+ Disapprove / Somewhat Disapprove  84271
+              Strongly Disapprove 117282
+           Never Heard / Not Sure  40318
+   Neither Approve Nor Disapprove   1414
+                        (Missing)   2126
 \end{verbatim}
 
 \begin{itemize}
@@ -1724,12 +1759,12 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
 
 \begin{verbatim}
                             voted_rep      n
-             [Democrat / Candidate 1] 115799
-           [Republican / Candidate 2] 109342
+             [Democrat / Candidate 1] 117581
+           [Republican / Candidate 2] 111255
                 [Other / Candidate 3]   2786
    $HouseCand4Name ($HouseCand4Party)     27
-                                Other   3124
-          I Did Not Vote In This Race  12539
+                                Other   3120
+          I Did Not Vote In This Race  12535
    $HouseCand5Name ($HouseCand5Party)     24
                              Not Sure   4493
    $HouseCand6Name ($HouseCand6Party)     39
@@ -1738,7 +1773,7 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
    $HouseCand9Name ($HouseCand9Party)      2
  $HouseCand10Name ($HouseCand10Party)      2
  $HouseCand11Name ($HouseCand11Party)      3
-                            (Missing) 204544
+                            (Missing) 200857
 \end{verbatim}
 
 \begin{itemize}
@@ -1768,14 +1803,14 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
 
 \begin{verbatim}
                       voted_sen      n
-       [Democrat / Candidate 1]  84885
-     [Republican / Candidate 2]  75584
+       [Democrat / Candidate 1]  86668
+     [Republican / Candidate 2]  77569
           [Other / Candidate 3]   2974
                           Other   1967
                        Not Sure   2094
  $SenCand4Name ($SenCand4Party)     11
     I Did Not Vote In This Race   4789
-                      (Missing) 280451
+                      (Missing) 276683
 \end{verbatim}
 
 \begin{itemize}
@@ -1789,6 +1824,10 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
   or if not, the response in the post-election wave.
 \item
   See \texttt{voted\_sen\_party} for party affiliation.
+\item
+  Senate Special elections where both senate seats are up for election
+  is often recorded as different columns in the year-specific CCES, but
+  these are not collected in the cumulative.
 \end{itemize}
 
 \hypertarget{voted_gov-governor-vote-choice-after-voting}{%
@@ -1800,13 +1839,13 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 
 \begin{verbatim}
                    voted_gov      n
-    [Democrat / Candidate 1]  67899
-  [Republican / Candidate 2]  62887
-       [Other / Candidate 3]   2805
-                       Other   1820
- I Did Not Vote In This Race  10290
+    [Democrat / Candidate 1]  68445
+  [Republican / Candidate 2]  63434
+       [Other / Candidate 3]   2800
+                       Other   1817
+ I Did Not Vote In This Race  10116
                     Not Sure   1091
-                   (Missing) 305963
+                   (Missing) 305052
 \end{verbatim}
 
 \begin{itemize}
