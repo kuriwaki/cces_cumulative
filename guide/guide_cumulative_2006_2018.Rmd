@@ -16,7 +16,7 @@ date: "Guide last updated: `r Sys.Date()`"
 knitr::opts_chunk$set(echo = FALSE, comment = "")
 ```
 
-```{r, include = FALSE}
+```{r, include = FALSE, cache = TRUE}
 library(glue)
 library(tidyverse)
 library(haven)
