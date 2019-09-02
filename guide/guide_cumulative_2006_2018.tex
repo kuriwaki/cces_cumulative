@@ -59,8 +59,6 @@
 % Sectioing
 \setcounter{secnumdepth}{0} % fix starting with "0.1"
 
-
-
 % Theorems
 \usepackage{etoolbox}
 \renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
@@ -147,7 +145,7 @@ for their contributions. Thanks to Joe Williams at YouGov, and Jon
 Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
 
 
-\date{Guide last updated: 2019-07-26}
+\date{Guide last updated: 2019-09-01}
 
 \begin{document}
 
@@ -159,7 +157,7 @@ Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
 
 \renewcommand\UrlFont{\color{crimson}\ttfamily}
 
-\emph{Please cite dataset as}
+\emph{To cite the dataset:}
 
 \begin{quote}
 Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2017)'',
@@ -183,9 +181,9 @@ years.
 
 This dataset was constructed from CCES datasets from each year. The
 final product is a \texttt{tibble}-style data frame (built in R) that is
-available as a Stata \texttt{dta} file. In addition, the same dataset is
-available on \texttt{Crunch}, an analytics interface optimized for
-survey datasets.
+also available as a Stata \texttt{dta} file. In addition, the same
+dataset is available on \texttt{Crunch}, an analytics interface
+optimized for survey datasets.
 
 \smallskip
 
@@ -242,7 +240,7 @@ analyzed as a standard data frame.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 452,755 x 78
+# A tibble: 452,755 x 80
     year case_id weight weight_cumulati~ state st    cd     dist dist_up
    <int>   <int>  <dbl>            <dbl> <chr> <chr> <chr> <int>   <int>
  1  2006  439219  1.85             1.67  Nort~ NC    NC-10    10      10
@@ -255,24 +253,24 @@ analyzed as a standard data frame.
  8  2006  439254  0.839            0.756 Neva~ NV    NV-2      2       2
  9  2006  439255  0.331            0.299 Texas TX    TX-24    24      24
 10  2006  439263  1.10             0.993 Mary~ MD    MD-2      2       2
-# ... with 452,745 more rows, and 69 more variables: cong <int>,
+# ... with 452,745 more rows, and 71 more variables: cong <int>,
 #   cong_up <int>, zipcode <chr>, county_fips <chr>, tookpost <int+lbl>,
-#   weight_post <dbl>, starttime <dttm>, pid3 <int+lbl>,
-#   pid3_leaner <int+lbl>, pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>,
-#   birthyr <int>, age <int>, race <int+lbl>, hispanic <int+lbl>,
-#   educ <int+lbl>, faminc <fct>, marstat <int+lbl>,
-#   economy_retro <int+lbl>, newsint <int+lbl>, approval_pres <int+lbl>,
-#   approval_rep <fct>, approval_sen1 <fct>, approval_sen2 <fct>,
-#   approval_gov <int+lbl>, intent_pres_08 <fct>, intent_pres_12 <fct>,
-#   intent_pres_16 <fct>, voted_pres_08 <fct>, voted_pres_12 <fct>,
-#   voted_pres_16 <fct>, vv_regstatus <fct>, vv_party_gen <fct>,
-#   vv_party_prm <fct>, vv_turnout_gvm <fct>, vv_turnout_pvm <fct>,
-#   intent_rep <fct>, intent_rep_party <fct>, voted_rep <fct>,
-#   voted_rep_party <fct>, intent_gov <fct>, intent_gov_party <fct>,
-#   voted_gov <fct>, voted_gov_party <fct>, intent_sen <fct>,
-#   intent_sen_party <fct>, voted_sen <fct>, voted_sen_party <fct>,
-#   intent_rep_chosen <chr>, intent_rep_fec <chr>,
-#   intent_sen_chosen <chr>, intent_sen_fec <chr>,
+#   weight_post <dbl>, rvweight <dbl>, rvweight_post <dbl>,
+#   starttime <dttm>, pid3 <int+lbl>, pid3_leaner <int+lbl>,
+#   pid7 <int+lbl>, ideo5 <fct>, gender <int+lbl>, birthyr <int>,
+#   age <int>, race <int+lbl>, hispanic <int+lbl>, educ <int+lbl>,
+#   faminc <fct>, marstat <int+lbl>, economy_retro <int+lbl>,
+#   newsint <int+lbl>, approval_pres <int+lbl>, approval_rep <fct>,
+#   approval_sen1 <fct>, approval_sen2 <fct>, approval_gov <int+lbl>,
+#   intent_pres_08 <fct>, intent_pres_12 <fct>, intent_pres_16 <fct>,
+#   voted_pres_08 <fct>, voted_pres_12 <fct>, voted_pres_16 <fct>,
+#   vv_regstatus <fct>, vv_party_gen <fct>, vv_party_prm <fct>,
+#   vv_turnout_gvm <fct>, vv_turnout_pvm <fct>, intent_rep <fct>,
+#   intent_rep_party <fct>, voted_rep <fct>, voted_rep_party <fct>,
+#   intent_gov <fct>, intent_gov_party <fct>, voted_gov <fct>,
+#   voted_gov_party <fct>, intent_sen <fct>, intent_sen_party <fct>,
+#   voted_sen <fct>, voted_sen_party <fct>, intent_rep_chosen <chr>,
+#   intent_rep_fec <chr>, intent_sen_chosen <chr>, intent_sen_fec <chr>,
 #   intent_gov_chosen <chr>, intent_gov_fec <chr>, voted_rep_chosen <chr>,
 #   voted_rep_fec <chr>, voted_sen_chosen <chr>, voted_sen_fec <chr>,
 #   voted_gov_chosen <chr>, voted_gov_fec <chr>, rep_current <chr>,
@@ -290,6 +288,10 @@ A Stata dta file is provided as well.
 \NormalTok{df <-}\StringTok{ }\KeywordTok{read_dta}\NormalTok{(}\StringTok{"cumulative_2006_2018.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\hypertarget{labelled-variables-for-analysis-in-r}{%
+\subsection{Labelled variables (for analysis in
+R)}\label{labelled-variables-for-analysis-in-r}}
 
 A note on variable types. The R dataset stores variables in
 \texttt{numeric}, \texttt{character}, \texttt{factor}, or
@@ -396,6 +398,19 @@ Some variables are stored as labelled values, and some are not and
 stored as factors. Most of this is because the latter variables were
 different enough in their value codings across years that summarizing
 them into a single numeric value was difficult.
+
+\hypertarget{adding-more-variables}{%
+\subsection{Adding more variables}\label{adding-more-variables}}
+
+As noted, the cumulative dataset only uses key variables from each
+year's common content. However,common content variables can be merged
+in.
+
+In R, one could use the \texttt{merge} or \texttt{left\_join} functions.
+Here is sample code for merging with the latter. In Stata, users can use
+\texttt{merge\ 1:1}. In all cases, \texttt{year} and \texttt{case\_id}
+uniquely identify every row in the common content, so merges should
+merge on year and the case identifier.
 
 \newpage
 
@@ -515,7 +530,7 @@ The sections below provide summary more information on each variable.
 \item
   Question wordings, where applicable, immediately follow. Otherwise a
   description is provided in square brackets (\texttt{{[}\ \ {]}}). All
-  square brackets, both in the description and the response options,
+  square or brackets, both in the description and the response options,
   indicate descriptions that are summaries of what the respondent saw
   rather than the question verbatim.
 \item
@@ -544,22 +559,26 @@ year}{year: CCES year}}\label{year-cces-year}}
 
 {[}Year of CCES Common Content{]}
 
-\begin{verbatim}
- year     n
- 2006 36421
- 2007  9999
- 2008 32800
- 2009 13800
- 2010 55400
- 2011 20150
- 2012 54535
- 2013 16400
- 2014 56200
- 2015 14250
- 2016 64600
- 2017 18200
- 2018 60000
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+2,006 & 36,421\\
+2,007 & 9,999\\
+2,008 & 32,800\\
+2,009 & 13,800\\
+2,010 & 55,400\\
+2,011 & 20,150\\
+2,012 & 54,535\\
+2,013 & 16,400\\
+2,014 & 56,200\\
+2,015 & 14,250\\
+2,016 & 64,600\\
+2,017 & 18,200\\
+2,018 & 60,000\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \hypertarget{starttime-start-time}{%
 \subsubsection{\texorpdfstring{\texttt{starttime}: Start
@@ -568,17 +587,13 @@ time}{starttime: Start time}}\label{starttime-start-time}}
 {[}Pre-election wave start time (up to second){]}
 
 \begin{verbatim}
-                 Min.               1st Qu.                Median 
-"2006-10-07 00:02:34" "2010-10-11 15:40:49" "2013-11-12 10:50:17" 
-                 Mean               3rd Qu.                  Max. 
-"2013-06-29 00:06:52" "2016-10-10 09:04:56" "2018-11-05 23:27:49" 
+             Min.               1st Qu.                Median 
 \end{verbatim}
 
-\begin{itemize}
-\tightlist
-\item
-  Years: All of 2006-2018
-\end{itemize}
+``2006-10-07 00:02:34'' ``2012-10-12 14:48:08'' ``2014-10-20 15:49:08''
+Mean 3rd Qu. Max. ``2014-08-30 23:43:39'' ``2016-10-21 08:26:27''
+``2018-11-05 23:27:49'' NA's ``118349'' * Years: 2006, 2009, 2012, 2013,
+2014, 2015, 2016, 2017, 2018
 
 \hypertarget{tookpost-took-post-election-wave}{%
 \subsubsection{\texorpdfstring{\texttt{tookpost}: Took post-election
@@ -587,12 +602,16 @@ wave}{tookpost: Took post-election wave}}\label{tookpost-took-post-election-wave
 {[}Whether or not the respondent took the post-election wave of the
 survey (in even years){]}
 
-\begin{verbatim}
-                          tookpost      n
- Did Not Take Post-Election Survey  59064
-         Took Post-Election Survey 300892
-                         (Missing)  92799
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Did Not Take Post-Election Survey & 59,064\\
+Took Post-Election Survey & 300,892\\
+(Missing) & 92,799\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -608,12 +627,10 @@ survey (in even years){]}
 \subsubsection{\texorpdfstring{\texttt{weight}: Survey weight
 (Year-Specific)}{weight: Survey weight (Year-Specific)}}\label{weight-survey-weight-year-specific}}
 
-{[}weights from pre-election survey of each year{]}
+{[}weights for pre-election survey of each year{]}
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.4259  0.7281  1.0000  1.1741 15.0006 
-\end{verbatim}
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.0000 0.4259 0.7281 1.0000 1.1741
+15.0006
 
 \begin{itemize}
 \tightlist
@@ -642,10 +659,8 @@ weight
 {[}weight variable with simple adjustment: multiplied a constant within
 year to make years comparable{]}
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.2989  0.5562  0.9418  1.0754 24.0297 
-\end{verbatim}
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.0000 0.2989 0.5562 0.9418 1.0754
+24.0297
 
 \begin{itemize}
 \tightlist
@@ -683,6 +698,54 @@ Year & Observations & Factor\\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\hypertarget{rvweight-survey-weights-to-validated-registered-voters}{%
+\subsubsection{\texorpdfstring{\texttt{rvweight}: Survey weights to
+validated registered
+voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight-survey-weights-to-validated-registered-voters}}
+
+{[}weights to validated registered voter population{]}
+
+\begin{verbatim}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    0.0     0.6     0.8     1.0     1.2    15.0  412738 
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2018
+\item
+  In 2018, YouGov computed weights after vote validation to weight to
+  the target population of registered voters. See the methodology
+  section of the \href{https://doi.org/10.7910/DVN/ZSBZ7K}{2018 Guide}
+  for details.
+\item
+  Limitations: Only specific to each year. Built off of the entire
+  pre-election wave sample, but not necessarily to adjust post-election
+  wave respondents. See \texttt{rvweight\_post}
+\end{itemize}
+
+\hypertarget{rvweight_post-survey-weights-to-validated-registered-voters-post-election-wave}{%
+\subsubsection{\texorpdfstring{\texttt{rvweight\_post}: Survey weights
+to validated registered voters, post-election
+wave}{rvweight\_post: Survey weights to validated registered voters, post-election wave}}\label{rvweight_post-survey-weights-to-validated-registered-voters-post-election-wave}}
+
+{[}weights to validated registered voter population, post-election
+wave{]}
+
+\begin{verbatim}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    0.0     0.5     0.8     1.0     1.2    15.0  415806 
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2018
+\item
+  Limitations: Only available for some even years.
+\end{itemize}
 
 \hypertarget{weight_post-survey-weight-for-post-election-wave}{%
 \subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
@@ -771,11 +834,15 @@ Gender}{gender: Gender}}\label{gender-gender}}
 
 ``Are you male or female?''
 
-\begin{verbatim}
- gender      n
-   Male 210102
- Female 242653
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Male & 210,102\\
+Female & 242,653\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -789,10 +856,7 @@ birth}{birthyr: Year of birth}}\label{birthyr-year-of-birth}}
 
 ``In what year were you born?''
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1900    1950    1961    1963    1977    2000 
-\end{verbatim}
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1900 1950 1961 1963 1977 2000
 
 \begin{itemize}
 \tightlist
@@ -807,10 +871,8 @@ Age}{age: Age}}\label{age-age}}
 {[}Approximate age computed from the year of survey minus Year of
 Birth{]}
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  18.00   36.00   51.00   49.61   62.00  109.00 
-\end{verbatim}
+Min. 1st Qu. Median Mean 3rd Qu. Max. 18.00 36.00 51.00 49.61 62.00
+109.00
 
 \begin{itemize}
 \tightlist
@@ -824,16 +886,20 @@ Education}{educ: Education}}\label{educ-education}}
 
 ``What is the highest level of education you have completed?''
 
-\begin{verbatim}
-                 educ      n
-                No HS  13939
- High School Graduate 125323
-         Some College 112290
-               2-Year  43606
-               4-Year 103011
-            Post-Grad  54519
-            (Missing)     67
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+No HS & 13,939\\
+High School Graduate & 125,323\\
+Some College & 112,290\\
+2-Year & 43,606\\
+4-Year & 103,011\\
+Post-Grad & 54,519\\
+(Missing) & 67\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -847,17 +913,21 @@ Race}{race: Race}}\label{race-race}}
 
 ``What racial or ethnic group best describes you?''
 
-\begin{verbatim}
-            race      n
-           White 337793
-           Black  49162
-        Hispanic  35924
-           Asian   9134
- Native American   3543
-           Mixed   8919
-           Other   7554
-  Middle Eastern    726
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+White & 337,793\\
+Black & 49,162\\
+Hispanic & 35,924\\
+Asian & 9,134\\
+Native American & 3,543\\
+Mixed & 8,919\\
+Other & 7,554\\
+Middle Eastern & 726\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -875,12 +945,16 @@ Hispanic}{hispanic: Hispanic}}\label{hispanic-hispanic}}
 ``Are you of Spanish, Latino, or Hispanic origin or descent? {[}Asked if
 response to race is not Hispanic{]}''
 
-\begin{verbatim}
-  hispanic      n
-       Yes  11113
-        No 321994
- (Missing) 119648
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Yes & 11,113\\
+No & 321,994\\
+(Missing) & 119,648\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -899,24 +973,28 @@ Income}{faminc: Family Income}}\label{faminc-family-income}}
 ``Thinking back over the last year, what was your family's annual
 income? {[}Brackets coarsened{]}''
 
-\begin{verbatim}
-            faminc     n
-     Less than 10k 18780
-         10k - 20k 32995
-         20k - 30k 46019
-         30k - 40k 46728
-         40k - 50k 41768
-         50k - 60k 40863
-         60k - 70k 30063
-         70k - 80k 32459
-        80k - 100k 37809
-       100k - 120k 27566
-       120k - 150k 22108
-             150k+ 25075
- Prefer not to say 48955
-           Skipped    12
-         (Missing)  1555
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Less than 10k & 18,780\\
+10k - 20k & 32,995\\
+20k - 30k & 46,019\\
+30k - 40k & 46,728\\
+40k - 50k & 41,768\\
+50k - 60k & 40,863\\
+60k - 70k & 30,063\\
+70k - 80k & 32,459\\
+80k - 100k & 37,809\\
+100k - 120k & 27,566\\
+120k - 150k & 22,108\\
+150k+ & 25,075\\
+Prefer not to say & 48,955\\
+Skipped & 12\\
+(Missing) & 1,555\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -939,16 +1017,20 @@ Status}{marstat: Marital Status}}\label{marstat-marital-status}}
 
 ``What is your marital status?''
 
-\begin{verbatim}
-                marstat      n
-                Married 250629
-              Separated   7606
-               Divorced  49651
-                Widowed  21287
- Single / Never Married 101416
-   Domestic Partnership  20611
-              (Missing)   1555
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Married & 250,629\\
+Separated & 7,606\\
+Divorced & 49,651\\
+Widowed & 21,287\\
+Single / Never Married & 101,416\\
+Domestic Partnership & 20,611\\
+(Missing) & 1,555\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -985,21 +1067,25 @@ status}{vv\_regstatus: Validated registration status}}\label{vv_regstatus-valida
 year. Categories are aggregated. Both Matched-not registered and
 unmatched are labeled as a no record.{]}
 
-\begin{verbatim}
-              vv_regstatus      n
-                    Active 178356
- No Record Of Registration  61861
-              Unregistered  13826
-                   Dropped   5294
-                  Inactive   3047
-      Multiple Appearances   1151
-                 (Missing) 189220
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Active & 218,373\\
+No Record Of Registration & 61,861\\
+Unregistered & 15,869\\
+Dropped & 6,607\\
+Inactive & 3,565\\
+Multiple Appearances & 1,600\\
+(Missing) & 144,880\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2010, 2012, 2014, 2016
+  Years: 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: Collapses some response options
 \end{itemize}
@@ -1011,29 +1097,34 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 
 {[}Validation results. Only available for some staets and years{]}
 
-\begin{verbatim}
-                    vv_party_gen      n
- No Record Of Party Registration  60890
-                         Unknown  51379
-                Democratic Party  27058
-                Republican Party  21522
-            No Party Affiliation   9835
-               Declined To State   1579
-                           Other   1286
-               Independent Party   1176
-              Liberatarian Party    376
-                     Green Party    194
-              Constitution Party     27
-                    Reform Party      9
-                 Socialist Party      3
-                             Cns      1
-                       (Missing) 277420
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Unknown & 68,895\\
+No Record Of Party Registration & 60,890\\
+Democratic Party & 37,600\\
+Republican Party & 29,494\\
+No Party Affiliation & 13,874\\
+Declined To State & 2,376\\
+Other & 1,635\\
+Independent Party & 1,511\\
+Liberatarian Party & 537\\
+Green Party & 265\\
+Cns & 44\\
+Constitution Party & 38\\
+Reform Party & 11\\
+Wor & 9\\
+Socialist Party & 5\\
+(Missing) & 235,571\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016
+  Years: 2012, 2014, 2016, 2018
 \item
   Limitations: Not available for some even years
 \end{itemize}
@@ -1045,19 +1136,26 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
 
 {[}Validation results. Only available for some staets and years{]}
 
-\begin{verbatim}
-                    vv_party_prm      n
- No Record Of Party Registration 157120
-                Republican Party  10010
-                Democratic Party   8202
-                           Other      3
-                       (Missing) 277420
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+No Record Of Party Registration & 157,120\\
+Republican Party & 14,486\\
+Democratic Party & 12,783\\
+No Party Affiliation & 16\\
+Liberatarian Party & 11\\
+Other & 8\\
+Green Party & 4\\
+(Missing) & 268,327\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016
+  Years: 2012, 2014, 2016, 2018
 \item
   Limitations: Not available for some even years
 \end{itemize}
@@ -1073,18 +1171,22 @@ Election}{vv\_turnout\_gvm: Validated turnout General Election}}\label{vv_turnou
 {[}Validation results. All vote methods (polling, mail, early, unknown,
 etc..) are aggregated as a vote.{]}
 
-\begin{verbatim}
-      vv_turnout_gvm      n
-               Voted 169204
- No Record Of Voting 129019
-       No Voter File   1733
-           (Missing) 152799
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Voted & 202,966\\
+No Record Of Voting & 129,019\\
+No Voter File & 1,733\\
+(Missing) & 119,037\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: Collapses most response options. For example, the
   particular voting method is collapsed into one category, even though
@@ -1103,18 +1205,22 @@ turnout Primary Election
 
 {[}Validation results{]}
 
-\begin{verbatim}
-      vv_turnout_pvm      n
- No Record Of Voting 185927
-               Voted  76245
-       No Voter File   1363
-           (Missing) 189220
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+No Record Of Voting & 185,927\\
+Voted & 96,435\\
+No Voter File & 1,363\\
+(Missing) & 169,030\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2010, 2012, 2014, 2016
+  Years: 2008, 2010, 2012, 2014, 2016, 2018
 \item
   Limitations: See \texttt{vv\_turnout\_gvm}
 \end{itemize}
@@ -1133,15 +1239,19 @@ point)}{pid3: Partisan identity (3 point)}}\label{pid3-partisan-identity-3-point
 
 ``Generally speaking, do you think of yourself as a \ldots{}?''
 
-\begin{verbatim}
-        pid3      n
-    Democrat 160637
-  Republican 118907
- Independent 126270
-       Other  17975
-    Not Sure  20012
-   (Missing)   8954
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Democrat & 160,637\\
+Republican & 118,907\\
+Independent & 126,270\\
+Other & 17,975\\
+Not Sure & 20,012\\
+(Missing) & 8,954\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1160,18 +1270,22 @@ point)}{pid7: Partisan identity (7 point)}}\label{pid7-partisan-identity-7-point
 
 {[}Based on branching from Partisan Identity question{]}
 
-\begin{verbatim}
-                       pid7      n
-            Strong Democrat 107733
-   Not Very Strong Democrat  54838
-              Lean Democrat  45411
-                Independent  60946
-            Lean Republican  47739
- Not Very Strong Republican  43810
-          Strong Republican  75782
-                   Not Sure  13480
-                  (Missing)   3016
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strong Democrat & 107,733\\
+Not Very Strong Democrat & 54,838\\
+Lean Democrat & 45,411\\
+Independent & 60,946\\
+Lean Republican & 47,739\\
+Not Very Strong Republican & 43,810\\
+Strong Republican & 75,782\\
+Not Sure & 13,480\\
+(Missing) & 3,016\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1189,14 +1303,18 @@ leaners)}{pid3\_leaner: Partisan identity (including leaners)}}\label{pid3_leane
 {[}Codes self-identified Independents in pid3 who expressed leaning
 towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
 
-\begin{verbatim}
-                     pid3_leaner      n
-    Democrat (Including Leaners) 207982
-  Republican (Including Leaners) 167331
- Independent (Excluding Leaners)  60946
-                        Not Sure  13480
-                       (Missing)   3016
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Democrat (Including Leaners) & 207,982\\
+Republican (Including Leaners) & 167,331\\
+Independent (Excluding Leaners) & 60,946\\
+Not Sure & 13,480\\
+(Missing) & 3,016\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1212,16 +1330,20 @@ point)}{ideo5: Ideology (5 point)}}\label{ideo5-ideology-5-point}}
 
 ``In general, how would you describe your own political viewpoint?''
 
-\begin{verbatim}
-             ideo5      n
-      Very Liberal  40142
-           Liberal  79591
-          Moderate 141633
-      Conservative 105268
- Very Conservative  52243
-          Not Sure  32104
-         (Missing)   1774
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Very Liberal & 40,142\\
+Liberal & 79,591\\
+Moderate & 141,633\\
+Conservative & 105,268\\
+Very Conservative & 52,243\\
+Not Sure & 32,104\\
+(Missing) & 1,774\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1238,16 +1360,20 @@ economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospecti
 
 ``OVER THE PAST YEAR the nation's economy has \ldots{}?''
 
-\begin{verbatim}
-                   economy_retro      n
-              Gotten Much Better  29702
- Gotten Better / Somewhat Better 100766
-           Stayed About The Same 118229
-   Gotten Worse / Somewhat Worse 114965
-               Gotten Much Worse  77949
-                        Not Sure  10294
-                       (Missing)    850
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Gotten Much Better & 29,702\\
+Gotten Better / Somewhat Better & 100,766\\
+Stayed About The Same & 118,229\\
+Gotten Worse / Somewhat Worse & 114,965\\
+Gotten Much Worse & 77,949\\
+Not Sure & 10,294\\
+(Missing) & 850\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1273,15 +1399,19 @@ affairs most of the time, whether there's an election going on or not.
 Others aren't that interested. Would you say you follow what's going on
 in government and public affairs ..''
 
-\begin{verbatim}
-           newsint      n
-  Most Of The Time 225200
-  Some Of The Time 105337
- Only Now And Then  50141
-     Hardly At All  24621
-        Don't Know  10449
-         (Missing)  37007
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Most Of The Time & 225,200\\
+Some Of The Time & 105,337\\
+Only Now And Then & 50,141\\
+Hardly At All & 24,621\\
+Don't Know & 10,449\\
+(Missing) & 37,007\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1303,16 +1433,20 @@ approval}{approval\_pres: President approval}}\label{approval_pres-president-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent President{]}''
 
-\begin{verbatim}
-                    approval_pres      n
-                 Strongly Approve  92872
-       Approve / Somewhat Approve 104677
- Disapprove / Somewhat Disapprove  47005
-              Strongly Disapprove 194516
-           Never Heard / Not Sure  12507
-   Neither Approve Nor Disapprove    443
-                        (Missing)    735
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strongly Approve & 92,872\\
+Approve / Somewhat Approve & 104,677\\
+Disapprove / Somewhat Disapprove & 47,005\\
+Strongly Disapprove & 194,516\\
+Never Heard / Not Sure & 12,507\\
+Neither Approve Nor Disapprove & 443\\
+(Missing) & 735\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1334,16 +1468,20 @@ approval}{approval\_rep: House Representative approval}}\label{approval_rep-hous
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Representative's Name{]}''
 
-\begin{verbatim}
-                     approval_rep      n
-                 Strongly Approve  65102
-       Approve / Somewhat Approve 142503
- Disapprove / Somewhat Disapprove  79595
-              Strongly Disapprove  70663
-           Never Heard / Not Sure  85772
-   Neither Approve Nor Disapprove   1798
-                        (Missing)   7322
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strongly Approve & 65,102\\
+Approve / Somewhat Approve & 142,503\\
+Disapprove / Somewhat Disapprove & 79,595\\
+Strongly Disapprove & 70,663\\
+Never Heard / Not Sure & 85,772\\
+Neither Approve Nor Disapprove & 1,798\\
+(Missing) & 7,322\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1367,16 +1505,20 @@ approval}{approval\_sen1: Senator 1 approval}}\label{approval_sen1-senator-1-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Senator 1's Name{]}''
 
-\begin{verbatim}
-                    approval_sen1      n
-                 Strongly Approve  58761
-       Approve / Somewhat Approve 144415
- Disapprove / Somewhat Disapprove  90846
-              Strongly Disapprove  89017
-           Never Heard / Not Sure  63783
-   Neither Approve Nor Disapprove   1413
-                        (Missing)   4520
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strongly Approve & 58,761\\
+Approve / Somewhat Approve & 144,415\\
+Disapprove / Somewhat Disapprove & 90,846\\
+Strongly Disapprove & 89,017\\
+Never Heard / Not Sure & 63,783\\
+Neither Approve Nor Disapprove & 1,413\\
+(Missing) & 4,520\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1400,16 +1542,20 @@ approval}{approval\_sen2: Senator 2 approval}}\label{approval_sen2-senator-2-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Senator 2's Name{]}''
 
-\begin{verbatim}
-                    approval_sen2      n
-                 Strongly Approve  63135
-       Approve / Somewhat Approve 139337
- Disapprove / Somewhat Disapprove  88539
-              Strongly Disapprove  89232
-           Never Heard / Not Sure  66076
-   Neither Approve Nor Disapprove   1158
-                        (Missing)   5278
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strongly Approve & 63,135\\
+Approve / Somewhat Approve & 139,337\\
+Disapprove / Somewhat Disapprove & 88,539\\
+Strongly Disapprove & 89,232\\
+Never Heard / Not Sure & 66,076\\
+Neither Approve Nor Disapprove & 1,158\\
+(Missing) & 5,278\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1424,16 +1570,20 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 ``Do you approve of the way each is doing their job\ldots{} Governor of
 {[}Pipe State{]}''
 
-\begin{verbatim}
-                     approval_gov      n
-                 Strongly Approve  67404
-       Approve / Somewhat Approve 139940
- Disapprove / Somewhat Disapprove  84271
-              Strongly Disapprove 117282
-           Never Heard / Not Sure  40318
-   Neither Approve Nor Disapprove   1414
-                        (Missing)   2126
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Strongly Approve & 67,404\\
+Approve / Somewhat Approve & 139,940\\
+Disapprove / Somewhat Disapprove & 84,271\\
+Strongly Disapprove & 117,282\\
+Never Heard / Not Sure & 40,318\\
+Neither Approve Nor Disapprove & 1,414\\
+(Missing) & 2,126\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1452,9 +1602,17 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 \hypertarget{presidential-vote}{%
 \section{Presidential Vote}\label{presidential-vote}}
 
-\begin{tcolorbox}[title={A note on \texttt{intent} and \texttt{voted}}]
-In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. 
-\end{tcolorbox}
+\paragraph{A note on \texttt{intent} and \texttt{voted}}
+
+In this dataset we make the distinction between ``intent'' /
+``preference'' vs. ``voted'' / ``vote choice''. ``Intent'' (or
+``preference'') refers to the response to the prospective question of
+the sort ``who would you vote for?'' in the \emph{pre-election} wave.
+``Vote choice'' refers to the response to the retrospective question of
+the sort ``in the election this November, who did you vote for?''
+Response to the vote choice questions coalesces both
+\emph{post-election} wave responses (the bulk of the responses) and
+pre-election respondents who reported having already voted early.
 
 \hypertarget{intent_pres_08-2008-president-preference-before-voting}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_pres\_08}: 2008 President
@@ -1464,19 +1622,23 @@ voting)}{intent\_pres\_08: 2008 President preference (before voting)}}\label{int
 ``For which candidate for President of the United States would you
 vote?''
 
-\begin{verbatim}
-                intent_pres_08      n
-                   John McCain  13322
-                  Barack Obama  12897
-                      Ron Paul    535
-                   Ralph Nader    209
-                      Bob Barr    258
-              Cynthia McKinney     74
-                         Other    352
- I Won't Vote In This Election    851
-                  I'm Not Sure   1697
-                     (Missing) 422560
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+John McCain & 13,322\\
+Barack Obama & 12,897\\
+Ron Paul & 535\\
+Ralph Nader & 209\\
+Bob Barr & 258\\
+Cynthia McKinney & 74\\
+Other & 352\\
+I Won't Vote In This Election & 851\\
+I'm Not Sure & 1,697\\
+(Missing) & 422,560\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1491,15 +1653,19 @@ voting)}{intent\_pres\_12: 2012 President preference (before voting)}}\label{int
 
 ``In the race for President of the United States, who do you prefer?''
 
-\begin{verbatim}
-                   intent_pres_12      n
-         Mitt Romney (Republican)  20738
-        Barack Obama (Democratic)  24401
-                            Other   1781
- I Will Not Vote In This Election   1467
-                     I'm Not Sure   3856
-                        (Missing) 400512
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Mitt Romney (Republican) & 20,738\\
+Barack Obama (Democratic) & 24,401\\
+Other & 1,781\\
+I Will Not Vote In This Election & 1,467\\
+I'm Not Sure & 3,856\\
+(Missing) & 400,512\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1514,17 +1680,21 @@ voting)}{intent\_pres\_16: 2016 President preference (before voting)}}\label{int
 
 ``Which candidate did you prefer for President of the United States?''
 
-\begin{verbatim}
-                intent_pres_16      n
-     Donald Trump (Republican)  19227
-    Hillary Clinton (Democrat)  27502
-    Gary Johnson (Libertarian)   3145
-            Jill Stein (Green)   1400
-                         Other   1880
- I Won't Vote In This Election   3312
-                  I'm Not Sure   6536
-                     (Missing) 389753
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Donald Trump (Republican) & 19,227\\
+Hillary Clinton (Democrat) & 27,502\\
+Gary Johnson (Libertarian) & 3,145\\
+Jill Stein (Green) & 1,400\\
+Other & 1,880\\
+I Won't Vote In This Election & 3,312\\
+I'm Not Sure & 6,536\\
+(Missing) & 389,753\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1540,15 +1710,19 @@ voting)}{voted\_pres\_08: 2008 President vote choice (after voting)}}\label{vote
 ``2008: For which candidate for President of the United States did you
 vote? {[}see guide for wording in all years{]}''
 
-\begin{verbatim}
-             voted_pres_08      n
- Barack Obama (Democratic)  73986
-  John McCain (Republican)  68398
-              Someone Else   4204
-              Did Not Vote  18227
-              Don't Recall   1787
-                 (Missing) 286153
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Barack Obama (Democratic) & 73,986\\
+John McCain (Republican) & 68,398\\
+Someone Else & 4,204\\
+Did Not Vote & 18,227\\
+Don't Recall & 1,787\\
+(Missing) & 286,153\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1568,16 +1742,20 @@ voting)}{voted\_pres\_12: 2012 President vote choice (after voting)}}\label{vote
 In 2012, who did you vote for in the election for President? {[}see
 guide for wording in all years{]}''
 
-\begin{verbatim}
-               voted_pres_12      n
-                Barack Obama  82681
-                 Mitt Romney  64956
-        Other / Someone Else   5890
-                Did Not Vote   2758
-     Not Sure / Don't Recall   1990
- I Did Not Vote In This Race     81
-                   (Missing) 294399
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Barack Obama & 82,681\\
+Mitt Romney & 64,956\\
+Other / Someone Else & 5,890\\
+Did Not Vote & 2,758\\
+Not Sure / Don't Recall & 1,990\\
+I Did Not Vote In This Race & 81\\
+(Missing) & 294,399\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1602,15 +1780,19 @@ voting)}{voted\_pres\_16: 2016 President vote choice (after voting)}}\label{vote
 reported voting{]} 2016: For whom did you vote for President of the
 United States? {[}Post-election{]}''
 
-\begin{verbatim}
-           voted_pres_16      n
-            Donald Trump  43891
-          Hilary Clinton  51342
-    Other / Someone Else  10091
-            Did Not Vote    627
- Not Sure / Don't Recall    527
-               (Missing) 346277
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+Donald Trump & 43,891\\
+Hilary Clinton & 51,342\\
+Other / Someone Else & 10,091\\
+Did Not Vote & 627\\
+Not Sure / Don't Recall & 527\\
+(Missing) & 346,277\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1638,25 +1820,29 @@ voting)}{intent\_rep: House preference (before voting)}}\label{intent_rep-house-
 ``In the general election for U.S. House of Representatives in your
 area, who do you prefer?''
 
-\begin{verbatim}
-                           intent_rep      n
-             [Democrat / Candidate 1] 128231
-           [Republican / Candidate 2] 115292
-                [Other / Candidate 3]   4401
-   $HouseCand4Name ($HouseCand4Party)     37
-                                Other   2259
-                         I'm Not Sure  70460
-                               No One  19235
-   $HouseCand5Name ($HouseCand5Party)     23
-        I Won't Vote In This Election   2269
-   $HouseCand6Name ($HouseCand6Party)     41
-   $HouseCand7Name ($HouseCand7Party)     20
-   $HouseCand8Name ($HouseCand8Party)     14
-   $HouseCand9Name ($HouseCand9Party)      1
- $HouseCand10Name ($HouseCand10Party)      1
- $HouseCand11Name ($HouseCand11Party)      3
-                            (Missing) 110468
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 128,231\\
+{[Republican / Candidate 2]} & 115,292\\
+{[Other / Candidate 3]} & 4,401\\
+\$HouseCand4Name (\$HouseCand4Party) & 37\\
+Other & 2,259\\
+I'm Not Sure & 70,460\\
+No One & 19,235\\
+\$HouseCand5Name (\$HouseCand5Party) & 23\\
+I Won't Vote In This Election & 2,269\\
+\$HouseCand6Name (\$HouseCand6Party) & 41\\
+\$HouseCand7Name (\$HouseCand7Party) & 20\\
+\$HouseCand8Name (\$HouseCand8Party) & 14\\
+\$HouseCand9Name (\$HouseCand9Party) & 1\\
+\$HouseCand10Name (\$HouseCand10Party) & 1\\
+\$HouseCand11Name (\$HouseCand11Party) & 3\\
+(Missing) & 110,468\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1689,18 +1875,22 @@ voting)}{intent\_sen: Senate preference (before voting)}}\label{intent_sen-senat
 
 ``In the race for U.S. Senator in your state, who do you prefer?''
 
-\begin{verbatim}
-                     intent_sen      n
-       [Democrat / Candidate 1]  97220
-     [Republican / Candidate 2]  82433
-          [Other / Candidate 3]   4477
- $SenCand4Name ($SenCand4Party)     19
-                          Other   1713
-                   I'm Not Sure  38112
-                         No One  12419
-  I Won't Vote In This Election   1145
-                      (Missing) 215217
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 97,220\\
+{[Republican / Candidate 2]} & 82,433\\
+{[Other / Candidate 3]} & 4,477\\
+\$SenCand4Name (\$SenCand4Party) & 19\\
+Other & 1,713\\
+I'm Not Sure & 38,112\\
+No One & 12,419\\
+I Won't Vote In This Election & 1,145\\
+(Missing) & 215,217\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1723,17 +1913,21 @@ voting)}{intent\_gov: Governor preference (before voting)}}\label{intent_gov-gov
 
 ``In the race for Governor in your state, who do you prefer?''
 
-\begin{verbatim}
-                    intent_gov      n
-      [Democrat / Candidate 1]  74561
-    [Republican / Candidate 2]  66292
-         [Other / Candidate 3]   4055
-                         Other   1390
-                  I'm Not Sure  24296
-                        No One   7991
- I Won't Vote In This Election    466
-                     (Missing) 273704
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 74,561\\
+{[Republican / Candidate 2]} & 66,292\\
+{[Other / Candidate 3]} & 4,055\\
+Other & 1,390\\
+I'm Not Sure & 24,296\\
+No One & 7,991\\
+I Won't Vote In This Election & 466\\
+(Missing) & 273,704\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1757,24 +1951,28 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
 
 ``For whom did you vote for U.S. House?''
 
-\begin{verbatim}
-                            voted_rep      n
-             [Democrat / Candidate 1] 117581
-           [Republican / Candidate 2] 111255
-                [Other / Candidate 3]   2786
-   $HouseCand4Name ($HouseCand4Party)     27
-                                Other   3120
-          I Did Not Vote In This Race  12535
-   $HouseCand5Name ($HouseCand5Party)     24
-                             Not Sure   4493
-   $HouseCand6Name ($HouseCand6Party)     39
-   $HouseCand7Name ($HouseCand7Party)     15
-   $HouseCand8Name ($HouseCand8Party)     16
-   $HouseCand9Name ($HouseCand9Party)      2
- $HouseCand10Name ($HouseCand10Party)      2
- $HouseCand11Name ($HouseCand11Party)      3
-                            (Missing) 200857
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 117,581\\
+{[Republican / Candidate 2]} & 111,255\\
+{[Other / Candidate 3]} & 2,786\\
+\$HouseCand4Name (\$HouseCand4Party) & 27\\
+Other & 3,120\\
+I Did Not Vote In This Race & 12,535\\
+\$HouseCand5Name (\$HouseCand5Party) & 24\\
+Not Sure & 4,493\\
+\$HouseCand6Name (\$HouseCand6Party) & 39\\
+\$HouseCand7Name (\$HouseCand7Party) & 15\\
+\$HouseCand8Name (\$HouseCand8Party) & 16\\
+\$HouseCand9Name (\$HouseCand9Party) & 2\\
+\$HouseCand10Name (\$HouseCand10Party) & 2\\
+\$HouseCand11Name (\$HouseCand11Party) & 3\\
+(Missing) & 200,857\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1801,17 +1999,21 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
 
 ``For whom did you vote for U.S. Senator?''
 
-\begin{verbatim}
-                      voted_sen      n
-       [Democrat / Candidate 1]  86668
-     [Republican / Candidate 2]  77569
-          [Other / Candidate 3]   2974
-                          Other   1967
-                       Not Sure   2094
- $SenCand4Name ($SenCand4Party)     11
-    I Did Not Vote In This Race   4789
-                      (Missing) 276683
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 86,668\\
+{[Republican / Candidate 2]} & 77,569\\
+{[Other / Candidate 3]} & 2,974\\
+Other & 1,967\\
+Not Sure & 2,094\\
+\$SenCand4Name (\$SenCand4Party) & 11\\
+I Did Not Vote In This Race & 4,789\\
+(Missing) & 276,683\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -1837,16 +2039,20 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 
 ``For whom did you vote for Governor?''
 
-\begin{verbatim}
-                   voted_gov      n
-    [Democrat / Candidate 1]  68445
-  [Republican / Candidate 2]  63434
-       [Other / Candidate 3]   2800
-                       Other   1817
- I Did Not Vote In This Race  10116
-                    Not Sure   1091
-                   (Missing) 305052
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{rr}
+\toprule
+{[Democrat / Candidate 1]} & 68,445\\
+{[Republican / Candidate 2]} & 63,434\\
+{[Other / Candidate 3]} & 2,800\\
+Other & 1,817\\
+I Did Not Vote In This Race & 10,116\\
+Not Sure & 1,091\\
+(Missing) & 305,052\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist

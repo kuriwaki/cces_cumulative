@@ -16,14 +16,17 @@ date: "Guide last updated: `r Sys.Date()`"
 knitr::opts_chunk$set(echo = FALSE, comment = "")
 ```
 
-```{r, include = FALSE, cache = TRUE}
+```{r, include = FALSE}
 library(glue)
 library(tidyverse)
 library(haven)
 library(knitr)
 library(kableExtra)
 library(rprojroot)
+```
 
+
+```{r, include = FALSE, cache = TRUE}
 df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
@@ -42,8 +45,17 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
   
   dframe <- as.data.frame(tal)
   
-  print(dframe, row.names = FALSE)
-  cat("\n\n")
+  kable(dframe, 
+        format = "latex", 
+        align = c("r", "r"),
+        col.names = NULL, 
+        format.args = list(big.mark = ','),
+        linesep = c(rep('', nrow(dframe))),
+        booktabs = TRUE) %>% 
+    kable_styling(full_width = FALSE) %>% 
+    str_replace_all("\\[(?=(D|R|O))", "{[") %>% 
+    str_replace_all("(?<=[1-4])\\]", "]}") %>% 
+    cat()
 }
 ```
 
@@ -87,11 +99,11 @@ descrip <- function(var, tbl = meta) {
 ```{r}
 nam <- function(var, tbl = meta) {
   varchar <- quo_name(enquo(var))
-  glue("`{varchar}`: {tbl$name[tbl$alias == varchar]}")
+  glue::glue("`{varchar}`: {tbl$name[tbl$alias == varchar]}")
 }
 ```
 
-_Please cite dataset as_
+_To cite the dataset:_
 
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
@@ -156,6 +168,9 @@ library(haven)
 df <- read_dta("cumulative_2006_2018.dta")
 ```
 
+
+## Labelled variables (for analysis in R)
+
 A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` class.^[Technically, this is now called a `labelled_haven` class, to disambiguate from an unrelated but older use of `labelled` in the Hmisc package.] The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label (See vignette [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)). This makes it the same as `factor` but alwasys ordered and referenceable by its numeric value. It is essentially the same idea as labels in Stata and SPSS. It is built around R's `haven` package, which includes more documentation. 
 
 A labelled variable's labels are not usually shown. Recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within a tibble (a dataframe in tidyverse). This makes it immediately obvious which value is associated with which label.
@@ -180,6 +195,13 @@ select(df, year, case_id, pid3) %>%
 ```
 
 Some variables are stored as labelled values, and some are not and stored as factors. Most of this is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
+
+
+## Adding more variables
+
+As noted, the cumulative dataset only uses key variables from each year's common content. However,common content variables can be merged in.
+
+In R, one could use the `merge` or `left_join` functions. Here is sample code for merging with the latter. In Stata, users can use `merge 1:1`. In all cases, `year` and `case_id` uniquely identify every row in the common content, so merges should merge on year and the case identifier. 
 
 
 
@@ -232,7 +254,7 @@ Crunch datasets can also be manipulated from a R package, `crunch` <https://gith
 The sections below provide summary more information on each variable. 
 
 * The title shows the name as used in the dataset, suitable for coding ("alias" in Crunch terminology). followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
-* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
+* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square or brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
 * A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
 * Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
@@ -246,7 +268,7 @@ The sections below provide summary more information on each variable.
 
 `r descrip(year)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(year)
 ```
 
@@ -254,7 +276,7 @@ print_tab(year)
 
 `r descrip(starttime)`
 
-```{r}
+```{r, results = "asis"}
 print_numeric(starttime)
 ```
 * Years: `r in_years(starttime)`
@@ -264,7 +286,7 @@ print_numeric(starttime)
 
 `r descrip(tookpost)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(tookpost)
 ```
 
@@ -278,7 +300,7 @@ print_tab(tookpost)
 
 `r descrip(weight)`
 
-```{r}
+```{r, results = "asis"}
 print_numeric(weight)
 ```
 
@@ -292,7 +314,7 @@ print_numeric(weight)
 `r descrip(weight_cumulative)`
 
 
-```{r}
+```{r, results = "asis"}
 print_numeric(weight_cumulative)
 ```
 
@@ -313,8 +335,31 @@ rsc %>%
 \end{center}
 
 
+### `r nam(rvweight)`
+
+`r descrip(rvweight)`
+
+```{r}
+print_numeric(rvweight)
+```
+
+* Years: `r in_years(rvweight)`
+* In 2018, YouGov computed weights after vote validation to weight to the target population of registered voters. See the methodology section of the [2018 Guide](https://doi.org/10.7910/DVN/ZSBZ7K) for details. 
+* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `rvweight_post` 
 
 
+
+
+### `r nam(rvweight_post)`
+
+`r descrip(rvweight_post)`
+
+```{r}
+print_numeric(rvweight_post)
+```
+
+* Years: `r in_years(rvweight_post)`
+* Limitations: Only available for some even years.
 
 
 ### `r nam(weight_post)`
@@ -327,7 +372,6 @@ print_numeric(weight_post)
 
 * Years: `r in_years(weight_post)`
 * Limitations: Only available for some even years.
-
 
 
 # Geography
@@ -361,7 +405,7 @@ df %>%
 `r descrip(gender)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(gender)
 ```
 
@@ -372,7 +416,7 @@ print_tab(gender)
 `r descrip(birthyr)`
 
 
-```{r}
+```{r, results = "asis"}
 print_numeric(birthyr)
 ```
 
@@ -383,7 +427,7 @@ print_numeric(birthyr)
 `r descrip(age)`
 
 
-```{r}
+```{r, results = "asis"}
 print_numeric(age)
 ```
 
@@ -394,7 +438,7 @@ print_numeric(age)
 `r descrip(educ)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(educ)
 ```
 
@@ -405,7 +449,7 @@ print_tab(educ)
 `r descrip(race)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(race)
 ```
 
@@ -417,7 +461,7 @@ print_tab(race)
 `r descrip(hispanic)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(hispanic)
 ```
 
@@ -429,7 +473,7 @@ print_tab(hispanic)
 `r descrip(faminc)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(faminc)
 ```
 
@@ -443,7 +487,7 @@ print_tab(faminc)
 `r descrip(marstat)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(marstat)
 ```
 
@@ -463,7 +507,7 @@ https://doi.org/10.1093/pan/mps023).
 
 `r descrip(vv_regstatus)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(vv_regstatus)
 ```
 
@@ -475,7 +519,7 @@ print_tab(vv_regstatus)
 
 `r descrip(vv_party_gen)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(vv_party_gen)
 ```
 
@@ -488,7 +532,7 @@ print_tab(vv_party_gen)
 `r descrip(vv_party_prm)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(vv_party_prm)
 ```
 
@@ -502,7 +546,7 @@ print_tab(vv_party_prm)
 `r descrip(vv_turnout_gvm)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(vv_turnout_gvm)
 ```
 
@@ -514,7 +558,7 @@ print_tab(vv_turnout_gvm)
 `r descrip(vv_turnout_pvm)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(vv_turnout_pvm)
 ```
 
@@ -531,7 +575,7 @@ print_tab(vv_turnout_pvm)
 
 `r descrip(pid3)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(pid3)
 ```
 
@@ -543,7 +587,7 @@ print_tab(pid3)
 
 `r descrip(pid7)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(pid7)
 ```
 
@@ -554,7 +598,7 @@ print_tab(pid7)
 
 `r descrip(pid3_leaner)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(pid3_leaner)
 ```
 
@@ -565,7 +609,7 @@ print_tab(pid3_leaner)
 
 `r descrip(ideo5)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(ideo5)
 ```
 
@@ -577,7 +621,7 @@ print_tab(ideo5)
 
 `r descrip(economy_retro)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(economy_retro)
 ```
 
@@ -589,7 +633,7 @@ print_tab(economy_retro)
 
 `r descrip(newsint)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(newsint)
 ```
 
@@ -604,7 +648,7 @@ print_tab(newsint)
 `r descrip(approval_pres)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(approval_pres)
 ```
 
@@ -617,7 +661,7 @@ print_tab(approval_pres)
 `r descrip(approval_rep)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(approval_rep)
 ```
 
@@ -631,7 +675,7 @@ print_tab(approval_rep)
 `r descrip(approval_sen1)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(approval_sen1)
 ```
 
@@ -644,7 +688,7 @@ print_tab(approval_sen1)
 `r descrip(approval_sen2)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(approval_sen2)
 ```
 
@@ -655,7 +699,7 @@ print_tab(approval_sen2)
 `r descrip(approval_gov)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(approval_gov)
 ```
 
@@ -669,9 +713,7 @@ print_tab(approval_gov)
 
 # Presidential Vote
 
-\begin{tcolorbox}[title={A note on \texttt{intent} and \texttt{voted}}]
-In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. 
-\end{tcolorbox}
+\paragraph{A note on \texttt{intent} and \texttt{voted}} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. 
 
 
 ### `r nam(intent_pres_08)`
@@ -679,7 +721,7 @@ In this dataset we make the distinction between "intent" / "preference" vs. "vot
 `r descrip(intent_pres_08)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_pres_08)
 ```
 
@@ -691,7 +733,7 @@ print_tab(intent_pres_08)
 `r descrip(intent_pres_12)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_pres_12)
 ```
 
@@ -702,7 +744,7 @@ print_tab(intent_pres_12)
 `r descrip(intent_pres_16)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_pres_16)
 ```
 
@@ -714,7 +756,7 @@ print_tab(intent_pres_16)
 `r descrip(voted_pres_08)`
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_pres_08)
 ```
 
@@ -725,7 +767,7 @@ print_tab(voted_pres_08)
 
 `r descrip(voted_pres_12)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_pres_12)
 ```
 
@@ -737,7 +779,7 @@ print_tab(voted_pres_12)
 
 `r descrip(voted_pres_16)`
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_pres_16)
 ```
 
@@ -754,7 +796,7 @@ print_tab(voted_pres_16)
 `r descrip(intent_rep)` 
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_rep)
 ```
 
@@ -770,7 +812,7 @@ print_tab(intent_rep)
 
 `r descrip(intent_sen)` 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_sen)
 ```
 
@@ -783,7 +825,7 @@ print_tab(intent_sen)
 `r descrip(intent_gov)` 
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(intent_gov)
 ```
 
@@ -798,7 +840,7 @@ print_tab(intent_gov)
 
 `r descrip(voted_rep)` 
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_rep)
 ```
 
@@ -812,7 +854,7 @@ print_tab(voted_rep)
 `r descrip(voted_sen)` 
 
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_sen)
 ```
 
@@ -825,7 +867,7 @@ print_tab(voted_sen)
 
 `r descrip(voted_gov)` 
 
-```{r}
+```{r, results = "asis"}
 print_tab(voted_gov)
 ```
 
