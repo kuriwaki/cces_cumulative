@@ -339,6 +339,8 @@ std_name <- function(tbl, is_panel = FALSE) {
     tbl <- tbl %>%
       rename(
         weight = commonweight,
+        rvweight = vvweight,
+        rvweight_post = vvweight_post,
         weight_post = commonpostweight,
         approval_pres = CC18_308a,
         approval_rep = CC18_311a,
@@ -358,7 +360,13 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_16 = CC18_317,
         voted_rep = CC18_412,
         voted_sen = CC18_410b,
-        voted_gov = CC18_411
+        voted_gov = CC18_411,
+        vv_turnout_gvm = CL_2018gvm,
+        vv_turnout_pvm = CL_2018pvm,
+        vv_regstatus = CL_voter_status,
+        vv_party_gen = CL_party,
+        vv_party_prm = CL_2018pep,
+        vv_st = CL_state
       ) %>% # combine early vote
       mutate(
         voted_rep = coalesce(voted_rep, intent_repx),
@@ -711,7 +719,7 @@ cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv") %>%
 # in list form
 ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
-  "2006mit" = std_name(mit06_add),
+  # "2006mit" = std_name(mit06_add),
   "2008hu" = std_name(hu08),
   "2009hu" = std_name(hu09),
   "2012" = std_name(cc12),
@@ -739,6 +747,9 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 # admin ------
 wgt        <- find_stack(ccs, weight, "numeric")
 wgt_post <- find_stack(ccs, weight_post, "numeric")
+
+vwgt        <- find_stack(ccs, rvweight, "numeric")
+vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
   mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | tookpost_num == 2 & year == 2018), # diff number in 2018
@@ -954,6 +965,8 @@ ccc <- geo %>%
   left_join(tookpost) %>%
   left_join(wgt) %>%
   left_join(wgt_post) %>%
+  left_join(vwgt) %>%
+  left_join(vwgt_post) %>%
   left_join(time) %>%
   left_join(pid3) %>%
   left_join(pid3_leaner) %>%
@@ -1000,10 +1013,10 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 
 # don't use panel rows for now -----
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+# mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(mit06_id, hu08_id, hu09_id, panel_id)
+addon_id <- bind_rows(hu08_id, hu09_id, panel_id)
 
 
 # Common manipulations ----
