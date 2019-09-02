@@ -27,13 +27,13 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = TRUE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
 
 ```{r}
-print_tab <- function(var, do_sort = FALSE, tbl = df) {
+print_tab <- function(var, do_sort = FALSE, tbl = cc) {
   var <- enquo(var)
   
   tal <- tbl %>% 
@@ -41,14 +41,15 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
     mutate_if(is.labelled, as_factor) %>% 
     mutate_if(is.factor, ~fct_explicit_na(.x)) %>% 
     group_by(!!var) %>% 
-    tally(sort = do_sort)
+    tally(sort = do_sort) %>% 
+    mutate_at(vars(1), as.character)
   
   dframe <- as.data.frame(tal)
   
   kable(dframe, 
         format = "latex", 
-        align = c("r", "r"),
-        col.names = NULL, 
+        align = c("l", "r"),
+        col.names = c("", "n"), 
         format.args = list(big.mark = ','),
         linesep = c(rep('', nrow(dframe))),
         booktabs = TRUE) %>% 
@@ -60,16 +61,16 @@ print_tab <- function(var, do_sort = FALSE, tbl = df) {
 ```
 
 ```{r}
-print_numeric <- function(var, tbl = df) {
+print_numeric <- function(var, tbl = cc) {
   var <- enquo(var)
   
-  summary(pull(df, !!var))
+  summary(pull(cc, !!var))
 }
 ```
 
 
 ```{r}
-in_years <- function(var, tbl = df) {
+in_years <- function(var, tbl = cc) {
   var <- enquo(var)
   
   yrs_vec <- tbl %>% 
@@ -105,7 +106,7 @@ nam <- function(var, tbl = meta) {
 
 _To cite the dataset:_
 
-> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2017)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
+> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2018)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
 
 This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
@@ -151,13 +152,13 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006_2018.Rds")
+cc <- readRDS("cumulative_2006_2018.Rds")
 ```
 
-The dataset in R is best viewed in `dplyr`, although it can be analyzed as a standard data frame.
-```{r, echo = TRUE, R.options = list(max.print = 20)}
+The dataset in R is best viewed in `dplyr`, although it can also be analyzed as a standard data frame.
+```{r, echo = TRUE, eval = FALSE}
 library(tidyverse)
-df
+cc
 ```
 
 
@@ -165,7 +166,7 @@ A Stata dta file is provided as well. `cumulative_2006_2018.dta` can be read by 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-df <- read_dta("cumulative_2006_2018.dta")
+cc <- read_dta("cumulative_2006_2018.dta")
 ```
 
 
@@ -176,21 +177,21 @@ A note on variable types. The R dataset stores variables in `numeric`, `characte
 A labelled variable's labels are not usually shown. Recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within a tibble (a dataframe in tidyverse). This makes it immediately obvious which value is associated with which label.
 
 ```{r, echo = TRUE}
-select(df, year, case_id, pid3)
+select(cc, year, case_id, pid3)
 ```
 
 But labels can be made explicit transforming the labelled vector into a factor. On the other hand, removes the numerical ordering and value codes in the labelled class. 
 
 ```{r, echo = TRUE}
 library(haven)
-select(df, year, case_id, pid3) %>% 
+select(cc, year, case_id, pid3) %>% 
   mutate(pid3_fct = as_factor(pid3))
 ```
 
 and unlike factors, they can be referenced by their underlying numeric value. In short, it is sometimes useful to treat survey values as numbers rather than raw text, and the labelled calss allows you to do that.
 
 ```{r, echo = TRUE}
-select(df, year, case_id, pid3) %>% 
+select(cc, year, case_id, pid3) %>% 
   filter(pid3 == 1)
 ```
 
@@ -220,7 +221,7 @@ One addition to this cumulative dataset are variables of candidate names and ide
 Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
 
 ```{r, echo = TRUE}
-select(df, year, case_id, st, matches("voted_sen"))
+select(cc, year, case_id, st, matches("voted_sen"))
 ```
 
 
@@ -276,7 +277,7 @@ print_tab(year)
 
 `r descrip(starttime)`
 
-```{r, results = "asis"}
+```{r}
 print_numeric(starttime)
 ```
 * Years: `r in_years(starttime)`
@@ -300,7 +301,7 @@ print_tab(tookpost)
 
 `r descrip(weight)`
 
-```{r, results = "asis"}
+```{r}
 print_numeric(weight)
 ```
 
@@ -314,7 +315,7 @@ print_numeric(weight)
 `r descrip(weight_cumulative)`
 
 
-```{r, results = "asis"}
+```{r}
 print_numeric(weight_cumulative)
 ```
 
@@ -387,7 +388,7 @@ A series of variables for the respondent's location
 * `r nam(county_fips)`: `r descrip(county_fips)`
 
 ```{r}
-df %>%
+cc %>%
   mutate(is_2012 = year == 2012) %>%
   arrange(desc(is_2012)) %>%
   select(matches("(state|^st$|dist|cd|zipcode|county_fips)")) %>% 
@@ -416,7 +417,7 @@ print_tab(gender)
 `r descrip(birthyr)`
 
 
-```{r, results = "asis"}
+```{r}
 print_numeric(birthyr)
 ```
 
@@ -427,7 +428,7 @@ print_numeric(birthyr)
 `r descrip(age)`
 
 
-```{r, results = "asis"}
+```{r}
 print_numeric(age)
 ```
 
@@ -888,7 +889,7 @@ print_tab(voted_gov)
 The case identifier `case_id` is unique within the year and is identical to the case identifiers in the individual year's CCES. It should be used in conjunction with `year` for a unique identifier for the whole dataset. Some individuals across years may be the same YouGov panel respondent with different identifiers; for example the 2007 CCES draws from the 2006 CCES respondents.  
 
 ```{r}
-glimpse(select(df, matches("year|case_id")))
+glimpse(select(cc, matches("year|case_id")))
 ```
 
 ## Current Representatives
@@ -898,7 +899,7 @@ glimpse(select(df, matches("year|case_id")))
 The four names in the three offices are representatives of the respondent _at the time of the survey_. Names are printed as shown, and similarly parties are shown if the particular year's CCES did not show party. For example, Senator Shelby is presented as `Richard Craig Shelby`, `Richard C. Shelby (R)`, `Richard Shelby (R)`, `Richard C. Shelby (R)`, depending on the year. Party names are abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset. 
 
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_current")))
+glimpse(select(cc, matches("(rep|sen1|sen2|gov)_current")))
 ```
 
 ### Incumbent Identifiers
@@ -914,7 +915,7 @@ The matching of identifiers to respondent occurs through matching by district, b
 
 
 ```{r}
-glimpse(select(df, matches("(rep|sen1|sen2|gov)_.*icpsr"), gov_fec))
+glimpse(select(cc, matches("(rep|sen1|sen2|gov)_.*icpsr"), gov_fec))
 ```
 
 * Years: `r in_years(rep_icpsr)`
@@ -930,7 +931,7 @@ The unique identifiers can be used to join with other databases to append additi
 The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that for this particular respondent, the first option was `Maxine Waters (Democrat)` who has a FEC Identifier of `H4CA23011`.
 
 ```{r, echo = TRUE}
-df %>% 
+cc %>% 
   filter(year == 2012, st == "CA", dist_up == 43) %>% 
   select(matches("intent_rep")) 
 ```
@@ -951,7 +952,7 @@ Only candidates who are unique within the district and party are considered for 
 
 ### Chosen
 ```{r}
-glimpse(select(df, matches("(intent|voted)_.*chosen")))
+glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 ```
 
 * Years: `r in_years(intent_rep_chosen)`
@@ -959,7 +960,7 @@ glimpse(select(df, matches("(intent|voted)_.*chosen")))
 
 ### Candidate Identifiers
 ```{r}
-glimpse(select(df, matches("(intent|voted)_.*fec")))
+glimpse(select(cc, matches("(intent|voted)_.*fec")))
 ```
 
 * Years: `r in_years(intent_rep_fec)`
