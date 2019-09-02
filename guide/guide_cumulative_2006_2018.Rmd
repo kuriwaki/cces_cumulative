@@ -2,7 +2,7 @@
 output:
   pdf_document:
     latex_engine: xelatex
-    template: sk_helvet.sty
+    template: guide_helvet.sty
     keep_tex: TRUE
 title: "CCES Cumulative Common Content (2006 - 2018)"
 author: "Shiro Kuriwaki"
