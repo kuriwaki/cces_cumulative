@@ -382,6 +382,7 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_gov = replace(voted_gov, CC18_409 == 1, 1),
              voted_gov = replace(voted_gov, CC18_409 == 2, 2),
              ) %>%
+      mutate_at(vars(matches("^vv")), ~replace_na(.x, "")) %>% 
       add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
