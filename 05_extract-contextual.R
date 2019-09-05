@@ -17,12 +17,16 @@ library(foreach)
 #' @return a dataset with usually 2 x nrow(tbl) rows, or 3 if we record 3 options for office
 melt_cand <- function(tbl, measure_regex, ids = carry_vars, 
            remove_regex = suffixes) {
-  melt(as.data.table(tbl),
-       id.vars = ids,
-       measure.vars = patterns(measure_regex),
-       variable.name = "cand",
-       value.name = c("name", "party"),
-       variable.factor = FALSE) %>%
+  office <- unique(str_extract(measure_regex, "(rep|sen|gov)"))
+  
+  tbl %>% 
+    select(!!ids, matches(measure_regex[1]), matches(measure_regex[2])) %>% 
+    pivot_longer(
+      cols = -c(ids),
+      names_to = c(".value", "cand"),
+      names_pattern = glue("{office}_(pty|can)([1-9])")
+    ) %>% 
+    rename(name = can, party = pty) %>%
     filter(cand != "") %>%
     mutate(cand = as.integer(cand)) %>%
     mutate(name_caps = str_to_upper(gsub(remove_regex , "", name)),
@@ -30,6 +34,7 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
            namefirstm = word(name_caps, start = 1, end = -2)) %>%
     tbl_df()
 }
+
 
 #' unique incumbent match
 #' 
@@ -131,7 +136,7 @@ concatenate_current <- function(namevec, partyvec) {
 #' @param stringdist_thresh the maximum distance for which a pair is a match. 
 #' We use JW distance for lastname and firstm, so total distance ranges 0 - 2
 #' @return A df with same number of rows as `res`, with FEC info appended.
-match_fec <- function(res, fec, stringdist_thresh = 0.2) {
+match_fec <- function(res, fec, stringdist_thresh = 0.25) {
   
   type <- unique(fec$office_sought)
   
@@ -198,7 +203,7 @@ match_fec <- function(res, fec, stringdist_thresh = 0.2) {
   n_string_matched <- nrow(filter(r_stringdist, !is.na(fec)))
   cat(glue("out of {n_try_string} rows that didn't match on first try,",
            "we merged {n_string_matched} (match rate up to ", 
-           "{round(100*(n_string_matched + n_matched)/n_with_info)}",
+           "{round(100*(n_string_matched + n_matched)/n_with_info)} ",
            "percent) to a FEC key. "), "\n")
   
   
@@ -267,12 +272,14 @@ stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh
     if (is_match) {
       r_result <- bind_cols(slice(r_i_uniq, i_r),
                             slice(f_i_shuffled, sort_dists[1]) %>% 
-                              select(-year, -st, -dist_up, -party, -namelast))
+                              select(-year, -st, -dist_up, -party, -namelast, -namefirstm))
     }
     r_result
   }
   
-  left_join(r_consider_i, match_result, by = c("year", "st", "dist_up", "party", "namelast", "namefirstm"))
+  left_join(r_consider_i, 
+            match_result, 
+            by = c("year", "st", "dist_up", "party", "namelast", "namefirstm"))
 }
 
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
@@ -314,7 +321,6 @@ std_ptylabel <- function(vec) {
 
 # Data ------
 load("data/output/01_responses/common_all.RData")
-feckey <- readRDS("data/output/03_contextual/fec_fmt.Rds")
 inc_H <- readRDS("data/output/03_contextual/incumbents_H.Rds")
 inc_S <- readRDS("data/output/03_contextual/incumbents_S.Rds")
 statecode <- read_csv("data/source/statecode.csv")
@@ -326,7 +332,7 @@ suffixes <- "(,?\\sIV|,?\\sI{1,3}|,?\\sM\\.?D\\.?|,?\\sJr\\.|,?\\sSr\\.)$"
 carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "cong_up") 
 
 cclist <- list(`2006` = cc06, 
-               `2006m` = mit06_add,
+               # `2006m` = mit06_add,
                `2007` = cc07, 
                `2008` = cc08, 
                `2008h` = hu08, 
@@ -354,7 +360,7 @@ master$`2012p` <- master$`2012`
 master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
 
-for (yr in c(2006:2018, "2006m", "2008h", "2009r","2012p")) {
+for (yr in c(2006:2018,  "2008h", "2009r","2012p")) { # "2006m",
   for (var in master$name) {
     
     # lookup this var
@@ -404,24 +410,12 @@ df_current <- dfcc %>%
   mutate_at(vars(matches("(_pty|_ipt)")), std_ptylabel)
 
 
-
 # wide to long cand-party df -----
 rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), carry_vars)
 sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), carry_vars)
 gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), carry_vars)
 
-# Lautenberg 2016 NJ sen
-  
-# create key of candidates -------
-fec_rep <- filter(feckey, office_sought == "federal:house",  cycle %in% 2006:2016)
-fec_sen <- filter(feckey, office_sought == "federal:senate", cycle %in% 2006:2016)
-fec_gov <- filter(feckey, office_sought == "state:governor", cycle %in% 2006:2016)
 
-# do the match
-rc_fec_match <- match_fec(rc_key, fec_rep)
-sc_fec_match <- match_fec(sc_key, fec_sen)
-gc_fec_match <- match_fec(gc_key, fec_gov)
-  
 # create key of incumbent MC ----
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
 ri_mc_match  <- match_MC(df_current, inc_H, "rep", carry_vars)
@@ -429,48 +423,12 @@ s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars)
 s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars)
 
 
-# create key for Governor separately -------
-# use FEC for governor?
-fec_govincs <- fec_gov %>% 
-  filter(incumb == "I")
-
-# determine right key for  Governor -- is lastname good enough
-dupes <-  fec_govincs %>%
-  group_by(st, namelast) %>%
-  summarize(nnames =  n_distinct(name)) %>%
-  arrange(-nnames) %>% 
-  ungroup() %>%
-  filter(nnames > 1)
-
-# check to see if IDs are the same, if so we can merge by last name
-fec_govinc_key <- fec_govincs %>% 
-  filter(name != "SCHWARZENEGGER, ARNOLD (COMMITTEE 1)") %>%
-  distinct(st, namelast, fec)
-
-# text to keep
-r_govinc <- df_current %>%
-  select(!!carry_vars, gov_inc, gov_ipt) %>% 
-  mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
-
-# merge, then create "current"
-gov_inc_match <- left_join(r_govinc, fec_govinc_key) %>% 
-  mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) %>%
-  arrange(year, case_id) %>% 
-  select(!!carry_vars,
-         matches("_current"),
-         fec)
-stopifnot(nrow(gov_inc_match) == nrow(r_govinc))
-cat(glue("Out of {nrow(r_govinc)} governor-rows, we matched",
-         "{sum(!is.na(gov_inc_match$fec))}",
-         "({round(100*sum(!is.na(gov_inc_match$fec)) /nrow(r_govinc))} percent)
-         to a FEC key"), "\n")
-
 
 
 # Save ---------
-save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match, 
+save(ri_mc_match, s1i_mc_match, s2i_mc_match, 
      file = "data/output/01_responses/incumbents_key.RData")
-save(rc_fec_match, sc_fec_match, gc_fec_match, 
+save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 
