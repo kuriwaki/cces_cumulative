@@ -514,7 +514,7 @@ print_tab(marstat)
 
 # Validations 
 
-Observations in even years include (or will include) indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election; 2018 validation data is not available as of March. For more information, see [Ansolabehere and Hersh (2012)](
+Observations in even years include (or will include) indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election. For more information, see [Ansolabehere and Hersh (2012)](
 https://doi.org/10.1093/pan/mps023). 
 
 ### `r nam(vv_regstatus)`
