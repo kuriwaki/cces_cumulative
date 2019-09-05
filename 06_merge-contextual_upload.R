@@ -142,16 +142,19 @@ int_vot_manual <- function(tbl, vn, cn, nn) {
 #' @tbl The dataset to slim out
 #' @varmaker regexp to capture var of interest
 #' @id  suffix for identifier variable
-slim <- function(tbl, varmarker = '(_chosen|_party)', id = "fec") {
+slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL) {
   
   chosen_var <- str_subset(colnames(tbl), varmarker)
   type <- str_replace(chosen_var, varmarker, '')
-  id_rename <- unique(glue("{type}_{id}"))
-  
-  tbl %>% 
-    select(!!c("year", "case_id"),
-           matches(as.character(glue("{varmarker}$"))),   # slim part
-           !!id_rename := !!id)
+  if (!is.null(id)) {
+    id_rename <- unique(glue("{type}_{id}"))
+    select(tbl, !!c("year", "case_id"), 
+           matches(as.character(glue("{varmarker}$"))),
+           !!id_rename := !!id) %>% 
+      return()
+  }
+  select(tbl, !!c("year", "case_id"), 
+         matches(as.character(glue("{varmarker}$"))))
 }
 
 # Data -------------
@@ -166,19 +169,19 @@ bs_stata <- read_dta("data/source/cces/schaffner_issues.dta")
 
 
 # add on name and fec, standardized option labels -----
-i_rep_who <- num_cand_match(i_rep, rc_fec_match)
-i_sen_who <- num_cand_match(i_sen, sc_fec_match)
-i_gov_who <- num_cand_match(i_gov, gc_fec_match)
+i_rep_who <- num_cand_match(i_rep, rc_key)
+i_sen_who <- num_cand_match(i_sen, sc_key)
+i_gov_who <- num_cand_match(i_gov, gc_key)
 
-v_rep_who <- num_cand_match(v_rep, rc_fec_match)
-v_sen_who <- num_cand_match(v_sen, sc_fec_match)
-v_gov_who <- num_cand_match(v_gov, gc_fec_match)
+v_rep_who <- num_cand_match(v_rep, rc_key)
+v_sen_who <- num_cand_match(v_sen, sc_key)
+v_gov_who <- num_cand_match(v_gov, gc_key)
 
 
 # create a separate dataset for chosen vars ------ 
 ids <- c("year", "case_id")
 
-chosen_with_fec <-  slim(i_rep_who) %>% 
+chosen_with_party <-  slim(i_rep_who) %>% 
   left_join(slim(i_sen_who), ids) %>% 
   left_join(slim(i_gov_who), ids) %>% 
   left_join(slim(v_rep_who), ids) %>% 
@@ -194,9 +197,9 @@ abstract_lbl <- bind_label(i_rep_who) %>%
   left_join(bind_label(v_gov_who), ids)
 
 # pre-merge and order vars 
-# intent_Rep, intent_rep_party, intent_rep_fec
-lbl_party_name_fec <- 
-  left_join(abstract_lbl, chosen_with_fec, by = ids) %>% 
+# intent_Rep, intent_rep_party, intent_rep
+lbl_party_name <- 
+  left_join(abstract_lbl, chosen_with_party, by = ids) %>% 
   select(year, case_id, 
          matches("intent_rep(_party|$)"),
          matches("voted_rep(_party|$)"),
@@ -209,12 +212,11 @@ lbl_party_name_fec <-
 # nice dataset for incumbents ? ----
 incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>% 
   left_join(slim(s1i_mc_match, "_current", "icpsr"), ids) %>% 
-  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids) %>% 
-  left_join(slim(gov_inc_match, "_current"), ids)
+  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids)
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
-  left_join(lbl_party_name_fec, ids) %>% 
+  left_join(lbl_party_name, ids) %>% 
   left_join(incumbents_with_ID, ids)
   
 
@@ -229,7 +231,6 @@ ccc_df <- ccc_cand %>%
 ccc_fac <- ccc_df %>% 
   mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
   mutate_at(vars(matches("_icpsr$")), as.character) %>%
-  mutate_at(vars(matches("_fec$")), as.character) %>%
   mutate_at(vars(matches("(^cong)")), as.factor)
 
 
