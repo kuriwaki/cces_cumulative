@@ -185,6 +185,7 @@ hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
 # additional moduels ---------
 # 2006 module addition
+if (FALSE) { # give up for CCES release
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
 mit_fmt <- mit06_raw %>%
   mutate(year = 2006,
@@ -201,6 +202,8 @@ mit_fmt <- mit06_raw %>%
   left_join(transmute(statecode,  stfips = as.integer(fips), state, st), by = c("stfips")) %>% 
   select(year, case_id, state, st, cong, dist, dist_up, everything())
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
+}
+
 
 # 2008 addiiton
 # (used above in std_dv, because that only takes a path)
@@ -219,7 +222,7 @@ save(
   cc10, cc11, cc12, cc13, 
   cc14, cc15, cc16, cc17, cc18,
   panel12, 
-  mit06_add, 
+  # mit06_add, 
   hu08,  hu09, 
   hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
@@ -227,3 +230,12 @@ save(
 
 
 cat("Finished standardizing input\n")
+
+# test
+left_join(select(cc18, case_id, commonweight, vvweight),
+          select(cc18_novv, case_id, commonweight),
+          by = "case_id") %>% 
+  sample_n(10)
+
+
+          
