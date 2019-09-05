@@ -218,7 +218,7 @@ Most variables in this dataset come straight from each year's CCES. However, it 
 ## Chosen Candidate Names and Identifiers
 One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
 
-Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
+Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name and party, which will vary across individuals. 
 
 ```{r, echo = TRUE}
 select(cc, year, case_id, st, matches("voted_sen"))
@@ -227,7 +227,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 ## Crunch
 
-A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. Crunch is in beta at the time of writing.
+A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
 
 1. Obtain Access: For View access to the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. For questions and more access, please contact the CCES Team.
 
@@ -246,7 +246,7 @@ A version of the dataset is also included in Crunch, a database platform that ma
 \centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
 \end{figure}
 
-Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. 
+Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. To learn more about the features, please take a look at their homepage <crunch.io> or their [5-minute demo video](https://www.youtube.com/watch?v=zA7N_Q1EpSs).
 
 \newpage
 
@@ -254,8 +254,8 @@ Crunch datasets can also be manipulated from a R package, `crunch` <https://gith
 
 The sections below provide summary more information on each variable. 
 
-* The title shows the name as used in the dataset, suitable for coding ("alias" in Crunch terminology). followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
-* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square or brackets, both in the description and the response options, indicate descriptions that are summaries of what the respondent saw rather than the question verbatim. 
+* The title shows the name of the variable as it appears in the dataset ("alias" in Crunch terminology), followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
+* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries rather than the question verbatim. 
 * A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
 * Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
@@ -706,7 +706,7 @@ print_tab(approval_gov)
 
 * Years: `r in_years(approval_gov)`
 * Limitations: See `approval_pres`
-* To see who the Governor refers to for a particular respondent, see `gov_inc` (incumbent identifier in `gov_fec`, if applicable).
+* To see who the Governor refers to for a particular respondent, see `gov_inc`.
 
 
 
@@ -910,12 +910,11 @@ The matching of identifiers to respondent occurs through matching by district, b
 
 * For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g. in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
 * For Senators, we join entirely on `cong`, `st`, and last name
-* For Governors, we join only on `st` and last name. In this period, there are no two governors in the same state that share the same last name. 
 
 
 
 ```{r}
-glimpse(select(cc, matches("(rep|sen1|sen2|gov)_.*icpsr"), gov_fec))
+glimpse(select(cc, matches("(rep|sen1|sen2|gov)_.*icpsr")))
 ```
 
 * Years: `r in_years(rep_icpsr)`
@@ -926,9 +925,8 @@ The unique identifiers can be used to join with other databases to append additi
 
 > Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). Voteview: Congressional Roll-Call Votes Database. <https://voteview.com/>
 
-## Candidates
 
-The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that for this particular respondent, the first option was `Maxine Waters (Democrat)` who has a FEC Identifier of `H4CA23011`.
+The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that this particular respondent preferred voting for Maxine Waters, one of the two Democrats in the race.
 
 ```{r, echo = TRUE}
 cc %>% 
@@ -936,19 +934,7 @@ cc %>%
   select(matches("intent_rep")) 
 ```
 
-The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). The FEC ID is not part of the CCES but joined in this dataset. 
-
-For all three offices, the matching generally occurs by `year`, `st`, `dist_up` (not `dist`, because `dist_up`, refers to the district of the upcoming session) and `party`.  `party` is the party affiliation as indicated in the CCES. For years 2008 and 2010, the first option is automatically labelled as a Democrat and the second option as a Republican, although these may be inaccurate at times. 
-
-The FEC database runs up until 2014 (thus more recent candidates do _not_ get a FEC ID) originates from
-
-> Bonica, Adam , 2015, "Database on Ideology, Money in Politics, and Elections (DIME)", <doi:10.7910/DVN/O5PX0B>, Harvard Dataverse, V2
-
-
-which helpfully includes candidates office sought, district (for House members), party affiliation, and cycle in which the candidate filed. The variable `cycle` in Bonica's data is used to join on the CCES dataset's `year` variable. 
-
-Only candidates who are unique within the district and party are considered for the first join. However, many candidates are not unique within the district-party, as many co-partisans may file in the same district. The second matching process thus considers the full name of the candidate listed in the CCES and the candidates in the FEC database. _Within_ the subset of year, district, and party, a Jaro-Winker string distance (that ranges from 0 to 1) is computed for both last name and the first name - middle name. If the sum of the two string distances are more than 0.2 for all possible combinations, no match is returned. If there is a unique combination that achieves a unique minimum that is below 0.2, that combination is declared a match. If there are multiple matches with the same minimum string distance, one is randomly chosen. 
-
+The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). 
 
 ### Chosen
 ```{r}
@@ -957,11 +943,3 @@ glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 
 * Years: `r in_years(intent_rep_chosen)`
 * Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
-
-### Candidate Identifiers
-```{r}
-glimpse(select(cc, matches("(intent|voted)_.*fec")))
-```
-
-* Years: `r in_years(intent_rep_fec)`
-* Limitations: Matching may be inaccurate (see previous section on matching methodology). In particular, a lack of a FEC ID may either indicate a failure of the matching procedure, or that the candidate in question did not file under the FEC.  The match rate in the current procedure is upwards of 80 percent in the current procedure. 
