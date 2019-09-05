@@ -146,6 +146,4 @@ hideVariables(ds, ind_nuisance_num)
 # lock(ds)
 
 
-
-
 cat("Finished formatting Crunch dataset. ")

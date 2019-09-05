@@ -424,7 +424,6 @@ s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars)
 
 
 
-
 # Save ---------
 save(ri_mc_match, s1i_mc_match, s2i_mc_match, 
      file = "data/output/01_responses/incumbents_key.RData")
