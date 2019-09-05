@@ -146,15 +146,21 @@ slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL) {
   
   chosen_var <- str_subset(colnames(tbl), varmarker)
   type <- str_replace(chosen_var, varmarker, '')
+  
   if (!is.null(id)) {
     id_rename <- unique(glue("{type}_{id}"))
-    select(tbl, !!c("year", "case_id"), 
+    
+    tbl_fmt <- select(tbl, !!c("year", "case_id"), 
            matches(as.character(glue("{varmarker}$"))),
-           !!id_rename := !!id) %>% 
-      return()
+           !!id_rename := !!id)
+    
+    return(tbl_fmt)
   }
-  select(tbl, !!c("year", "case_id"), 
-         matches(as.character(glue("{varmarker}$"))))
+  
+  if (is.null(id))  {
+    select(tbl, !!c("year", "case_id"), 
+           matches(as.character(glue("{varmarker}$"))))
+  }
 }
 
 # Data -------------
