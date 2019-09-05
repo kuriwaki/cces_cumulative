@@ -27,8 +27,9 @@
 % Hyperref
 \usepackage[pdfencoding = auto, 
             hidelinks = true, 
-            urlcolor = MidnightBlue, 
-            linkcolor = MidnighBlue]{hyperref}
+            urlcolor = crimson, 
+            linkcolor = black,
+            colorlinks = true]{hyperref}
 
 
 % Parameters
@@ -138,7 +139,7 @@
 
 % Parmaters
 
-\title{ \LARGE\textbf{CCES Cumulative Common Content (2006 - 2018)}}
+\title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006 - 2018)}}
 
 \author{Shiro Kuriwaki\thanks{Department of Government, Harvard University. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome. My
@@ -163,7 +164,7 @@ Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
 \emph{To cite the dataset:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2018)'',
+Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2019)'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
 Harvard Dataverse
 \end{quote}
@@ -232,8 +233,8 @@ file is assigned to an object.
 \end{Highlighting}
 \end{Shaded}
 
-The dataset in R is best viewed in \texttt{dplyr}, although it can also
-be analyzed as a standard data frame.
+\noindent The dataset in R is best viewed with \texttt{dplyr}, although
+it can also be used without tidyverse.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -242,7 +243,7 @@ be analyzed as a standard data frame.
 \end{Highlighting}
 \end{Shaded}
 
-A Stata dta file is provided as well.
+\noindent  A Stata dta file is provided as well.
 \texttt{cumulative\_2006\_2018.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
@@ -266,10 +267,8 @@ classes are commonly used, but the \texttt{lablelled} format is more
 novel. \texttt{labelled} classes are numeric integers where each integer
 is associated with a label (See vignette
 \href{https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html}{here}).
-This makes it the same as \texttt{factor} but alwasys ordered and
-referenceable by its numeric value. It is essentially the same idea as
-labels in Stata and SPSS. It is built around R's \texttt{haven} package,
-which includes more documentation.
+This makes it equivalent to a \texttt{factor} but referenceable by its
+numeric value. It is essentially the labels in Stata and SPSS.
 
 A labelled variable's labels are not usually shown. Recent versions of
 the \texttt{haven} package (version 2.1.0 or above) will display the
@@ -314,19 +313,14 @@ codes in the labelled class.
 
 \begin{verbatim}
 # A tibble: 452,755 x 4
-    year case_id            pid3 pid3_fct   
-   <int>   <int>       <int+lbl> <fct>      
- 1  2006  439219 1 [Democrat]    Democrat   
- 2  2006  439224 4 [Other]       Other      
- 3  2006  439228 1 [Democrat]    Democrat   
- 4  2006  439237 1 [Democrat]    Democrat   
- 5  2006  439238 1 [Democrat]    Democrat   
- 6  2006  439242 3 [Independent] Independent
- 7  2006  439251 2 [Republican]  Republican 
- 8  2006  439254 1 [Democrat]    Democrat   
- 9  2006  439255 1 [Democrat]    Democrat   
-10  2006  439263 1 [Democrat]    Democrat   
-# ... with 452,745 more rows
+   year case_id         pid3 pid3_fct
+  <int>   <int>    <int+lbl> <fct>   
+1  2006  439219 1 [Democrat] Democrat
+2  2006  439224 4 [Other]    Other   
+3  2006  439228 1 [Democrat] Democrat
+4  2006  439237 1 [Democrat] Democrat
+5  2006  439238 1 [Democrat] Democrat
+# ... with 4.528e+05 more rows
 \end{verbatim}
 
 and unlike factors, they can be referenced by their underlying numeric
@@ -343,19 +337,14 @@ that.
 
 \begin{verbatim}
 # A tibble: 160,637 x 3
-    year case_id         pid3
-   <int>   <int>    <int+lbl>
- 1  2006  439219 1 [Democrat]
- 2  2006  439228 1 [Democrat]
- 3  2006  439237 1 [Democrat]
- 4  2006  439238 1 [Democrat]
- 5  2006  439254 1 [Democrat]
- 6  2006  439255 1 [Democrat]
- 7  2006  439263 1 [Democrat]
- 8  2006  439304 1 [Democrat]
- 9  2006  439338 1 [Democrat]
-10  2006  439390 1 [Democrat]
-# ... with 160,627 more rows
+   year case_id         pid3
+  <int>   <int>    <int+lbl>
+1  2006  439219 1 [Democrat]
+2  2006  439228 1 [Democrat]
+3  2006  439237 1 [Democrat]
+4  2006  439238 1 [Democrat]
+5  2006  439254 1 [Democrat]
+# ... with 1.606e+05 more rows
 \end{verbatim}
 
 Some variables are stored as labelled values, and some are not and
@@ -412,20 +401,20 @@ individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 452,755 x 7
-    year case_id st    voted_sen voted_sen_party voted_sen_chosen
-   <int>   <int> <chr> <fct>     <fct>           <chr>           
- 1  2006  439219 NC    <NA>      <NA>            <NA>            
- 2  2006  439224 OH    [Democra~ Democratic      Sherrod C. Brow~
- 3  2006  439228 NJ    [Democra~ Democratic      Robert Menendez~
- 4  2006  439237 IL    <NA>      <NA>            <NA>            
- 5  2006  439238 NY    [Democra~ Democratic      Hillary Rodham ~
- 6  2006  439242 TX    I Did No~ <NA>            <NA>            
- 7  2006  439251 MN    [Republi~ Republican      Mark Kennedy (R)
- 8  2006  439254 NV    [Democra~ Democratic      Jack Carter (D) 
- 9  2006  439255 TX    [Democra~ Democratic      Barbara Ann Rad~
-10  2006  439263 MD    I Did No~ <NA>            <NA>            
-# ... with 452,745 more rows, and 1 more variable: voted_sen_fec <chr>
+# A tibble: 452,755 x 6
+    year case_id st    voted_sen        voted_sen_party voted_sen_chosen   
+   <int>   <int> <chr> <fct>            <fct>           <chr>              
+ 1  2006  439219 NC    <NA>             <NA>            <NA>               
+ 2  2006  439224 OH    [Democrat / Can~ Democratic      Sherrod C. Brown (~
+ 3  2006  439228 NJ    [Democrat / Can~ Democratic      Robert Menendez (D)
+ 4  2006  439237 IL    <NA>             <NA>            <NA>               
+ 5  2006  439238 NY    [Democrat / Can~ Democratic      Hillary Rodham Cli~
+ 6  2006  439242 TX    I Did Not Vote ~ <NA>            <NA>               
+ 7  2006  439251 MN    [Republican / C~ Republican      Mark Kennedy (R)   
+ 8  2006  439254 NV    [Democrat / Can~ Democratic      Jack Carter (D)    
+ 9  2006  439255 TX    [Democrat / Can~ Democratic      Barbara Ann Radnof~
+10  2006  439263 MD    I Did Not Vote ~ <NA>            <NA>               
+# ... with 452,745 more rows
 \end{verbatim}
 
 \hypertarget{crunch}{%
@@ -477,7 +466,7 @@ without any programming experience.
 Crunch datasets can also be manipulated from a R package,
 \texttt{crunch} \url{https://github.com/Crunch-io/rcrunch}. To learn
 more about the features, please take a look at their homepage
-\textless{}crunch.io\textgreater{} or their
+\href{https://crunch.io}{crunch.io} or their
 \href{https://www.youtube.com/watch?v=zA7N_Q1EpSs}{5-minute demo video}.
 
 \newpage
@@ -805,6 +794,8 @@ $ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "3606...
   registration geographies.
 \end{itemize}
 
+\newpage
+
 \hypertarget{demographics}{%
 \section{Demographics}\label{demographics}}
 
@@ -1071,12 +1062,12 @@ unmatched are labeled as a no record.{]}
  & n\\
 \midrule
 Active & 218,373\\
-No Record Of Registration & 61,861\\
+No Record Of Registration & 77,521\\
 Unregistered & 15,869\\
 Dropped & 6,607\\
 Inactive & 3,565\\
 Multiple Appearances & 1,600\\
-(Missing) & 144,880\\
+(Missing) & 129,220\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1102,8 +1093,8 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 \toprule
  & n\\
 \midrule
+No Record Of Party Registration & 79,041\\
 Unknown & 68,895\\
-No Record Of Party Registration & 60,890\\
 Democratic Party & 37,600\\
 Republican Party & 29,494\\
 No Party Affiliation & 13,874\\
@@ -1117,7 +1108,7 @@ Constitution Party & 38\\
 Reform Party & 11\\
 Wor & 9\\
 Socialist Party & 5\\
-(Missing) & 235,571\\
+(Missing) & 217,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1143,14 +1134,14 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
 \toprule
  & n\\
 \midrule
-No Record Of Party Registration & 157,120\\
+No Record Of Party Registration & 208,027\\
 Republican Party & 14,486\\
 Democratic Party & 12,783\\
 No Party Affiliation & 16\\
 Liberatarian Party & 11\\
 Other & 8\\
 Green Party & 4\\
-(Missing) & 268,327\\
+(Missing) & 217,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1181,9 +1172,9 @@ etc..) are aggregated as a vote.{]}
  & n\\
 \midrule
 Voted & 202,966\\
-No Record Of Voting & 129,019\\
+No Record Of Voting & 155,257\\
 No Voter File & 1,733\\
-(Missing) & 119,037\\
+(Missing) & 92,799\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1216,10 +1207,10 @@ turnout Primary Election
 \toprule
  & n\\
 \midrule
-No Record Of Voting & 185,927\\
+No Record Of Voting & 225,737\\
 Voted & 96,435\\
 No Voter File & 1,363\\
-(Missing) & 169,030\\
+(Missing) & 129,220\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1638,9 +1629,15 @@ In this dataset we make the distinction between ``intent'' /
 the sort ``who would you vote for?'' in the \emph{pre-election} wave.
 ``Vote choice'' refers to the response to the retrospective question of
 the sort ``in the election this November, who did you vote for?''
+
 Response to the vote choice questions coalesces both
 \emph{post-election} wave responses (the bulk of the responses) and
-pre-election respondents who reported having already voted early.
+pre-election respondents who reported having already voted early. In
+2018, it also coalesces the responses to the straight ticket party
+option, so that those who selected the Republican straight party ticket
+in the applicable states will appear to have voted for the Republican
+candidate in all offices. The straight ticket party option was not asked
+in other years.
 
 \hypertarget{intent_pres_08-2008-president-preference-before-voting}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_pres\_08}: 2008 President
@@ -1802,11 +1799,6 @@ I Did Not Vote In This Race & 81\\
 \item
   Limitations: Response options offer slightly by year; some are
   collapsed into one.
-\item
-  This variable coalesces two variables: Either the response to the
-  early vote question in the pre-election wave if the respondent
-  indicates they have already voted, or if not, the response in the
-  post-election wave.
 \end{itemize}
 
 \hypertarget{voted_pres_16-2016-president-vote-choice-after-voting}{%
@@ -2159,11 +2151,10 @@ Independent) in this dataset.
 
 \begin{verbatim}
 Observations: 452,755
-Variables: 4
+Variables: 3
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)"...
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert ...
 $ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "F...
-$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzin...
 \end{verbatim}
 
 \hypertarget{incumbent-identifiers}{%
@@ -2236,19 +2227,19 @@ Democrats in the race.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 91 x 4
-   intent_rep              intent_rep_party intent_rep_chos~ intent_rep_fec
-   <fct>                   <fct>            <chr>            <chr>         
- 1 [Democrat / Candidate ~ Democratic       Maxine Waters (~ H4CA23011     
- 2 I'm Not Sure            <NA>             <NA>             <NA>          
- 3 No One                  <NA>             <NA>             <NA>          
- 4 [Democrat / Candidate ~ Democratic       Maxine Waters (~ H4CA23011     
- 5 [Republican / Candidat~ Democratic       Bob Flores (D)   H2CA43385     
- 6 I'm Not Sure            <NA>             <NA>             <NA>          
- 7 Other                   <NA>             <NA>             <NA>          
- 8 [Republican / Candidat~ Democratic       Bob Flores (D)   H2CA43385     
- 9 [Republican / Candidat~ Democratic       Bob Flores (D)   H2CA43385     
-10 [Democrat / Candidate ~ Democratic       Maxine Waters (~ H4CA23011     
+# A tibble: 91 x 3
+   intent_rep                 intent_rep_party intent_rep_chosen
+   <fct>                      <fct>            <chr>            
+ 1 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
+ 2 I'm Not Sure               <NA>             <NA>             
+ 3 No One                     <NA>             <NA>             
+ 4 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
+ 5 [Republican / Candidate 2] Democratic       Bob Flores (D)   
+ 6 I'm Not Sure               <NA>             <NA>             
+ 7 Other                      <NA>             <NA>             
+ 8 [Republican / Candidate 2] Democratic       Bob Flores (D)   
+ 9 [Republican / Candidate 2] Democratic       Bob Flores (D)   
+10 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
 # ... with 81 more rows
 \end{verbatim}
 
