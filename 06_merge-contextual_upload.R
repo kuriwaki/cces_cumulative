@@ -218,7 +218,8 @@ lbl_party_name <-
 # nice dataset for incumbents ? ----
 incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>% 
   left_join(slim(s1i_mc_match, "_current", "icpsr"), ids) %>% 
-  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids)
+  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids) %>% 
+  left_join(slim(gov_inc_match, "_current"), ids)
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
@@ -275,7 +276,7 @@ for (v in colnames(ccc_common)) {
   attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
-write_rds(ccc_common, "data/output/cumulative_2006_2018_factor.Rds")
+saveRDS(ccc_common, "data/output/cumulative_2006_2018_factor.Rds")
 write_dta(ccc_common, "data/release/cumulative_2006_2018.dta", version = 14)
 
 
