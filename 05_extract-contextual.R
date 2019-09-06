@@ -422,10 +422,20 @@ ri_mc_match  <- match_MC(df_current, inc_H, "rep", carry_vars)
 s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars)
 s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars)
 
+# a bit more work for governors
+r_govinc <- df_current %>%
+  select(!!carry_vars, gov_inc, gov_ipt) %>% 
+  mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
 
+gov_inc_match <- r_govinc %>% 
+  mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) %>%
+  arrange(year, case_id) %>% 
+  select(!!carry_vars,
+         matches("_current"))
+  
 
 # Save ---------
-save(ri_mc_match, s1i_mc_match, s2i_mc_match, 
+save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
      file = "data/output/01_responses/incumbents_key.RData")
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
