@@ -265,7 +265,7 @@ write_rds(ccc_df, "data/release/cumulative_2006_2018_addon.Rds")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2018.Rds")
+saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2018.Rds")
 
 
 # remove panel cases
