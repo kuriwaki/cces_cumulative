@@ -110,14 +110,13 @@ nam <- function(var, tbl = meta) {
 
 \bigskip
 
-This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
+This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
-The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes only standard questions asked multiple years. 
-
+CCES questions change from year to year, so this cumulative file only includes a subset of those questions that are standard. Users can still merge in year-specific questions easily into this cumulative file and take advantage of its harmonized variables. 
+ 
 \bigskip
-
 
 This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
 
@@ -136,7 +135,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 \item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To examine the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
+\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
