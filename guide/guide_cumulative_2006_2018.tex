@@ -56,9 +56,10 @@
 % Spacing
 \usepackage{setspace}
 
-
 % Sectioing
 \setcounter{secnumdepth}{0} % fix starting with "0.1"
+\usepackage{titlesec}
+\titleformat*{\section}{\Huge\bfseries}
 
 % Dash 
 \renewcommand\labelitemi{--}
@@ -146,7 +147,7 @@
 thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro,
 Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew
 for their contributions. Thanks to Joe Williams at YouGov, and Jon
-Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
+Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
 \date{Guide last updated: 2019-09-05}
@@ -161,7 +162,7 @@ Keane, Mike Malecki, and Gordon Shotwell atCrunch for their help.}  }
 
 \renewcommand\UrlFont{\color{crimson}\ttfamily}
 
-\emph{To cite the dataset:}
+\noindent \emph{Cite this dataset as:}
 
 \begin{quote}
 Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2019)'',
@@ -169,11 +170,13 @@ Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2019)'',
 Harvard Dataverse
 \end{quote}
 
+\bigskip
+
 This dataset combines thirteen years (2006 - 2018) of the Cooperative
 Congressional Election Study (Principal Investigators: Stephen
 Ansolabehere, Sam Luks, Brian Schaffner).
 
-\smallskip
+\bigskip
 
 The Cooperative Congressional Election Study (CCES) is an online survey
 conducted around November of each year, asking a range of questions on
@@ -181,7 +184,7 @@ political behavior and public opinion. Questions can change from year to
 year; this cumulative file includes only standard questions asked
 multiple years.
 
-\smallskip
+\bigskip
 
 This dataset was constructed from CCES datasets from each year. The
 final product is a \texttt{tibble}-style data frame (built in R) that is
@@ -189,7 +192,7 @@ also available as a Stata \texttt{dta} file. In addition, the same
 dataset is available on \texttt{Crunch}, an analytics interface
 optimized for survey datasets.
 
-\smallskip
+\bigskip
 
 Please note that this cumulative dataset makes some modifications to the
 original CCES datasets for comparability. These modifications are only
@@ -202,13 +205,13 @@ guides for each year.
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
-\begin{itemize}\addtolength{\itemsep}{10pt}
+\begin{itemize}\addtolength{\itemsep}{7pt}
 
-\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
+\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES datasets, } search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To examine the survey methodology, } consult the Frequently Asked Questions page (\url{https://cces.gov.harvard.edu/frequently-asked-questions}) or the  Methodology section of a recent Common Content's codebook (\url{https://doi.org/10.7910/DVN/GDF6Z0}).
+\item \textbf{To examine the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -216,7 +219,6 @@ guides for each year.
 \newpage
 \setcounter{tocdepth}{3}
 \tableofcontents*
-
 \newpage
 
 \hypertarget{getting-started}{%
@@ -243,7 +245,7 @@ it can also be used without tidyverse.
 \end{Highlighting}
 \end{Shaded}
 
-\noindent  A Stata dta file is provided as well.
+\noindent  A Stata dta version is provided as well.
 \texttt{cumulative\_2006\_2018.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
@@ -270,11 +272,10 @@ is associated with a label (See vignette
 This makes it equivalent to a \texttt{factor} but referenceable by its
 numeric value. It is essentially the labels in Stata and SPSS.
 
-A labelled variable's labels are not usually shown. Recent versions of
-the \texttt{haven} package (version 2.1.0 or above) will display the
-associated labels in the Console if selected within a tibble (a
-dataframe in tidyverse). This makes it immediately obvious which value
-is associated with which label.
+A labelled variable's labels are usually not shown. But recent versions
+of the \texttt{haven} package (version 2.1.0 or above) will display the
+associated labels in the Console if selected within tidyverse. This
+makes it immediately obvious which value is associated with which label:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -299,9 +300,9 @@ is associated with which label.
 # ... with 452,745 more rows
 \end{verbatim}
 
-But labels can be made explicit transforming the labelled vector into a
-factor. On the other hand, removes the numerical ordering and value
-codes in the labelled class.
+\noindent Labels can be made explicit by coercing the labelled vector
+into a factor. However, this removes the numerical value codes of the
+labelled class.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -323,10 +324,10 @@ codes in the labelled class.
 # ... with 4.528e+05 more rows
 \end{verbatim}
 
-and unlike factors, they can be referenced by their underlying numeric
-value. In short, it is sometimes useful to treat survey values as
-numbers rather than raw text, and the labelled calss allows you to do
-that.
+\noindent Unlike factors, labelled variables can be referenced by their
+underlying numeric value. It is sometimes useful to treat survey values
+as numbers rather than as raw text, and the labelled calss allows you to
+do that.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -347,10 +348,10 @@ that.
 # ... with 1.606e+05 more rows
 \end{verbatim}
 
-Some variables are stored as labelled values, and some are not and
-stored as factors. Most of this is because the latter variables were
-different enough in their value codings across years that summarizing
-them into a single numeric value was difficult.
+\indent In this cumulative (R) dataset, some variables are of class
+labelled, and some are of factor class. This is because the latter
+variables were different enough in their value codings across years that
+summarizing them into a single numeric value was difficult.
 
 \hypertarget{adding-more-variables}{%
 \subsection{Adding more variables}\label{adding-more-variables}}
@@ -360,16 +361,19 @@ year's common content. However,common content variables can be merged
 in.
 
 In R, one could use the \texttt{merge} or \texttt{left\_join} functions.
-Here is sample code for merging with the latter. In Stata, users can use
+Here is sample code for merging with the latter. In Stata, one could use
 \texttt{merge\ 1:1}. In all cases, \texttt{year} and \texttt{case\_id}
-uniquely identify every row in the common content, so merges should
-merge on year and the case identifier.
+\textbf{uniquely identifies each row} in the cumulative common content,
+so merges should merge on year and the case identifier.
 
 \newpage
 
-\hypertarget{features-of-the-2006---2018-cumulative-dataset}{%
-\section{Features of the 2006 - 2018 Cumulative
-Dataset}\label{features-of-the-2006---2018-cumulative-dataset}}
+\hypertarget{features-of-the-cumulative-dataset}{%
+\section{Features of the Cumulative
+Dataset}\label{features-of-the-cumulative-dataset}}
+
+Beyond stacking together each year's common content, the cumulative
+dataset provides several additional features to facilitate analysis.
 
 \hypertarget{unified-variable-names}{%
 \subsection{Unified Variable Names}\label{unified-variable-names}}
@@ -428,10 +432,9 @@ without any programming experience.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Obtain Access: For View access to the dataset (free), please sign up
-  here:
-  \url{https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap}.
-  For questions and more access, please contact the CCES Team.
+  Obtain Access: For View access to the dataset (free), please
+  \href{https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap}{sign
+  up here}. For questions and more access, please contact the CCES Team.
 \end{enumerate}
 
 \newpage
@@ -464,9 +467,8 @@ without any programming experience.
 \end{enumerate}
 
 Crunch datasets can also be manipulated from a R package,
-\texttt{crunch} \url{https://github.com/Crunch-io/rcrunch}. To learn
-more about the features, please take a look at their homepage
-\href{https://crunch.io}{crunch.io} or their
+\texttt{crunch}. To learn more about the features, please take a look at
+their homepage \href{https://crunch.io}{crunch.io} or their
 \href{https://www.youtube.com/watch?v=zA7N_Q1EpSs}{5-minute demo video}.
 
 \newpage
@@ -474,7 +476,8 @@ more about the features, please take a look at their homepage
 \hypertarget{variables}{%
 \section{Variables}\label{variables}}
 
-The sections below provide summary more information on each variable.
+The sections below provide summary statistics and more information on
+each variable.
 
 \begin{itemize}
 \tightlist
@@ -506,7 +509,7 @@ The sections below provide summary more information on each variable.
 \end{itemize}
 
 \hypertarget{administration}{%
-\section{Administration}\label{administration}}
+\subsection{Administration}\label{administration}}
 
 \hypertarget{year-cces-year}{%
 \subsubsection{\texorpdfstring{\texttt{year}: CCES
@@ -586,7 +589,7 @@ Took Post-Election Survey & 300,892\\
 \end{itemize}
 
 \hypertarget{weights}{%
-\section{Weights}\label{weights}}
+\subsection{Weights}\label{weights}}
 
 \hypertarget{weight-survey-weight-year-specific}{%
 \subsubsection{\texorpdfstring{\texttt{weight}: Survey weight
@@ -688,7 +691,9 @@ voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight
   In 2018, YouGov computed weights after vote validation to weight to
   the target population of registered voters. See the methodology
   section of the \href{https://doi.org/10.7910/DVN/ZSBZ7K}{2018 Guide}
-  for details.
+  for details. For this reason, and to distinguish it from previous
+  year's post-validation weights, the cumulative renames the 2018
+  \texttt{vvweight} into \texttt{rvweight}.
 \item
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
@@ -738,7 +743,7 @@ the even years.{]}
 \end{itemize}
 
 \hypertarget{geography}{%
-\section{Geography}\label{geography}}
+\subsection{Geography}\label{geography}}
 
 A series of variables for the respondent's location
 
@@ -797,7 +802,7 @@ $ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "3606...
 \newpage
 
 \hypertarget{demographics}{%
-\section{Demographics}\label{demographics}}
+\subsection{Demographics}\label{demographics}}
 
 \hypertarget{gender-gender}{%
 \subsubsection{\texorpdfstring{\texttt{gender}:
@@ -1035,14 +1040,13 @@ Domestic Partnership & 20,611\\
 \newpage
 
 \hypertarget{validations}{%
-\section{Validations}\label{validations}}
+\subsection{Validations}\label{validations}}
 
-Observations in even years include (or will include) indicators for
-validated voting, which means that YouGov has matched survey
-respondents' personal identifiable information to public voter files,
-which in turn officially record whether a person has voted or not.
-Validation is often completed in the summer following the election; 2018
-validation data is not available as of March. For more information, see
+Observations in even years include indicators for validated voting,
+which means that YouGov has matched survey respondents' personal
+identifiable information to public voter files, which in turn officially
+record whether a person has voted or not. Validation is often completed
+in the summer following the election. For more information, see
 \href{https://doi.org/10.1093/pan/mps023}{Ansolabehere and Hersh
 (2012)}.
 
@@ -1224,9 +1228,6 @@ No Voter File & 1,363\\
 \end{itemize}
 
 \newpage
-
-\hypertarget{identity-and-attitudes}{%
-\section{Identity and Attitudes}\label{identity-and-attitudes}}
 
 \hypertarget{partisan-identity}{%
 \subsection{Partisan Identity}\label{partisan-identity}}
@@ -1619,9 +1620,9 @@ Neither Approve Nor Disapprove & 1,414\\
 \newpage
 
 \hypertarget{presidential-vote}{%
-\section{Presidential Vote}\label{presidential-vote}}
+\subsection{Presidential Vote}\label{presidential-vote}}
 
-\paragraph{A note on \texttt{intent} and \texttt{voted}}
+\paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":}
 
 In this dataset we make the distinction between ``intent'' /
 ``preference'' vs. ``voted'' / ``vote choice''. ``Intent'' (or
@@ -1837,12 +1838,9 @@ Not Sure / Don't Recall & 527\\
   post-election wave.
 \end{itemize}
 
-\hypertarget{house-senate-and-governor-voting}{%
-\section{House, Senate and Governor
-Voting}\label{house-senate-and-governor-voting}}
-
-\hypertarget{preference}{%
-\subsection{Preference}\label{preference}}
+\hypertarget{house-senate-and-governor-vote}{%
+\subsection{House, Senate and Governor
+Vote}\label{house-senate-and-governor-vote}}
 
 \hypertarget{intent_rep-house-preference-before-voting}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_rep}: House preference
@@ -1978,9 +1976,6 @@ I Won't Vote In This Election & 466\\
   See \texttt{intent\_gov\_party} for the party affiliation of the
   chosen candidate.
 \end{itemize}
-
-\hypertarget{vote-choice}{%
-\subsection{Vote Choice}\label{vote-choice}}
 
 \hypertarget{voted_rep-house-vote-choice-after-voting}{%
 \subsubsection{\texorpdfstring{\texttt{voted\_rep}: House vote choice
@@ -2133,11 +2128,9 @@ $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, ...
 $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251...
 \end{verbatim}
 
-\hypertarget{current-representatives}{%
-\subsection{Current Representatives}\label{current-representatives}}
-
-\hypertarget{name-and-party}{%
-\subsubsection{Name and Party}\label{name-and-party}}
+\hypertarget{current-representatives-name-and-party}{%
+\subsection{Current Representatives' Name and
+Party}\label{current-representatives-name-and-party}}
 
 The four names in the three offices are representatives of the
 respondent \emph{at the time of the survey}. Names are printed as shown,
@@ -2151,14 +2144,15 @@ Independent) in this dataset.
 
 \begin{verbatim}
 Observations: 452,755
-Variables: 3
+Variables: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)"...
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert ...
 $ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "F...
+$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzin...
 \end{verbatim}
 
-\hypertarget{incumbent-identifiers}{%
-\subsubsection{Incumbent Identifiers}\label{incumbent-identifiers}}
+\hypertarget{icpsr-identifiers}{%
+\subsection{ICPSR Identifiers}\label{icpsr-identifiers}}
 
 Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for
 the current representatives. Identifiers are not part of the individual
@@ -2246,8 +2240,8 @@ Democrats in the race.
 The name and party are those as provided in the CCES datasets (e.g.~in
 the form \texttt{HouseCand1Name}).
 
-\hypertarget{chosen}{%
-\subsubsection{Chosen}\label{chosen}}
+\hypertarget{name-of-chosen-candidate}{%
+\subsection{Name of Chosen Candidate}\label{name-of-chosen-candidate}}
 
 \begin{verbatim}
 Observations: 452,755
@@ -2267,6 +2261,94 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
 \item
   Early years may mislabel the candidate's party, especially when the
   two candidates are of the same party (as in top-two primary states)
+\end{itemize}
+
+\hypertarget{party-of-chosen-candidate}{%
+\subsection{Party of Chosen Candidate}\label{party-of-chosen-candidate}}
+
+\begin{verbatim}
+Observations: 452,755
+Variables: 6
+$ intent_rep_party <fct> Democratic, Democratic, Democratic, Democrati...
+$ voted_rep_party  <fct> Democratic, Democratic, Democratic, Democrati...
+$ intent_gov_party <fct> NA, Democratic, NA, Democratic, Democratic, N...
+$ voted_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, N...
+$ intent_sen_party <fct> NA, Democratic, Democratic, NA, NA, NA, Repub...
+$ voted_sen_party  <fct> NA, Democratic, Democratic, NA, Democratic, N...
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: varies by office
+\item
+  Early years may mislabel the candidate's party, especially when the
+  two candidates are of the same party (as in top-two primary states)
+\end{itemize}
+
+\newpage
+
+\hypertarget{version-history-of-dataverse-releases}{%
+\section{Version History of Dataverse
+Releases}\label{version-history-of-dataverse-releases}}
+
+Dataverse assigns version numbers by incremeting a full number if any of
+the datasets change, and an incrementing decimal when the description
+changes.
+
+\hypertarget{version-4.0}{%
+\subsubsection{Version 4.0}\label{version-4.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2019-09-06}
+\item
+  Enter 2018 vote validation
+\item
+  Coalesce straight party ticket vote into vote choice entries
+\item
+  Remove FEC identifiers
+\end{itemize}
+
+\hypertarget{version-3.0}{%
+\subsubsection{Version 3.0}\label{version-3.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2019-04-29}
+\item
+  Add 2018 Common Content before vote validation (up to n = 452,755)
+\end{itemize}
+
+\hypertarget{version-2.0}{%
+\subsubsection{Version 2.0}\label{version-2.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2018-04-16}
+\item
+  Add 2017 Common Content (up to n = 392,755)
+\item
+  Corrects 2016 validated vote entries inherited from Common Content.
+\item
+  Consolidates weights to a single column, using post-vote validation
+  weights for even years.
+\item
+  Adds \texttt{hispanic} and \texttt{faminc} variables
+\end{itemize}
+
+\hypertarget{version-1.0}{%
+\subsubsection{Version 1.0}\label{version-1.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2018-01-24}
+\item
+  First upload, covering 2006 - 2016 (n = 374,556)
 \end{itemize}
 \end{document}
 

@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "Guide to the CCES Cumulative Common Content (2006 - 2018)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell atCrunch for their help."
+thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, and Stephen Pettigrew for their contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -104,23 +104,24 @@ nam <- function(var, tbl = meta) {
 }
 ```
 
-_To cite the dataset:_
+\noindent _Cite this dataset as:_
 
 > Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
 
+\bigskip
 
 This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (Principal Investigators: Stephen Ansolabehere, Sam Luks, Brian Schaffner).
 
-\smallskip
+\bigskip
 
 The Cooperative Congressional Election Study (CCES) is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Questions can change from year to year; this cumulative file includes only standard questions asked multiple years. 
 
-\smallskip
+\bigskip
 
 
 This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
 
-\smallskip
+\bigskip
 
 
 Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
@@ -129,13 +130,13 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
-\begin{itemize}\addtolength{\itemsep}{10pt}
+\begin{itemize}\addtolength{\itemsep}{7pt}
 
-\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the source code page:  \url{https://github.com/kuriwaki/cces_cumulative}. Alternatively, please contact me by email.
+\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES datasets, } search the CCES dataverse (\url{https://dataverse.harvard.edu/dataverse/cces}) or access the CCES homepage (\url{https://cces.gov.harvard.edu/}). Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To examine the survey methodology, } consult the Frequently Asked Questions page (\url{https://cces.gov.harvard.edu/frequently-asked-questions}) or the  Methodology section of a recent Common Content's codebook (\url{https://doi.org/10.7910/DVN/GDF6Z0}).
+\item \textbf{To examine the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -143,8 +144,6 @@ Please note that this cumulative dataset makes some modifications to the origina
 \newpage
 \setcounter{tocdepth}{3}
 \tableofcontents*
-
-
 \newpage
 
 # Getting Started
@@ -162,7 +161,7 @@ cc
 ```
 
 
-\noindent  A Stata dta file is provided as well. `cumulative_2006_2018.dta` can be read by Stata, or in R by the `haven` package 
+\noindent  A Stata dta version is provided as well. `cumulative_2006_2018.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
@@ -174,13 +173,13 @@ cc <- read_dta("cumulative_2006_2018.dta")
 
 A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` class.^[Technically, this is now called a `labelled_haven` class, to disambiguate from an unrelated but older use of `labelled` in the Hmisc package.] The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label (See vignette [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)). This makes it equivalent to a `factor` but referenceable by its numeric value. It is essentially the labels in Stata and SPSS. 
 
-A labelled variable's labels are not usually shown. Recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within a tibble (a dataframe in tidyverse). This makes it immediately obvious which value is associated with which label.
+A labelled variable's labels are usually not shown. But recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within tidyverse. This makes it immediately obvious which value is associated with which label:
 
 ```{r, echo = TRUE}
 select(cc, year, case_id, pid3)
 ```
 
-But labels can be made explicit transforming the labelled vector into a factor. On the other hand, removes the numerical ordering and value codes in the labelled class. 
+\noindent Labels can be made explicit by coercing the labelled vector into a factor. However, this removes the numerical value codes of the labelled class. 
 
 ```{r, echo = TRUE, eval = FALSE}
 library(haven)
@@ -195,7 +194,7 @@ select(cc, year, case_id, pid3) %>%
 ```
 
 
-and unlike factors, they can be referenced by their underlying numeric value. In short, it is sometimes useful to treat survey values as numbers rather than raw text, and the labelled calss allows you to do that.
+\noindent Unlike factors, labelled variables can be referenced by their underlying numeric value. It is sometimes useful to treat survey values as numbers rather than as raw text, and the labelled calss allows you to do that.
 
 ```{r, echo = TRUE,  eval = FALSE}
 select(cc, year, case_id, pid3) %>% 
@@ -207,20 +206,22 @@ select(cc, year, case_id, pid3) %>%
   print(n = 5)
 ```
 
-Some variables are stored as labelled values, and some are not and stored as factors. Most of this is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
+\indent In this cumulative (R) dataset, some variables are of class labelled, and some are of factor class. This is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
 
 
 ## Adding more variables
 
 As noted, the cumulative dataset only uses key variables from each year's common content. However,common content variables can be merged in.
 
-In R, one could use the `merge` or `left_join` functions. Here is sample code for merging with the latter. In Stata, users can use `merge 1:1`. In all cases, `year` and `case_id` uniquely identify every row in the common content, so merges should merge on year and the case identifier. 
+In R, one could use the `merge` or `left_join` functions. Here is sample code for merging with the latter. In Stata, one could use `merge 1:1`. In all cases, `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so merges should merge on year and the case identifier. 
 
 
 
 \newpage
 
-# Features of the 2006 - 2018 Cumulative Dataset
+# Features of the Cumulative Dataset
+
+Beyond stacking together each year's common content, the cumulative dataset provides several additional features to facilitate analysis.
 
 ## Unified Variable Names
 
@@ -241,7 +242,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
 
-1. Obtain Access: For View access to the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. For questions and more access, please contact the CCES Team.
+1. Obtain Access: For View access to the dataset (free), please [sign up here](https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap). For questions and more access, please contact the CCES Team.
 
 \newpage
 
@@ -258,13 +259,13 @@ A version of the dataset is also included in Crunch, a database platform that ma
 \centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
 \end{figure}
 
-Crunch datasets can also be manipulated from a R package, `crunch` <https://github.com/Crunch-io/rcrunch>. To learn more about the features, please take a look at their homepage [crunch.io](https://crunch.io) or their [5-minute demo video](https://www.youtube.com/watch?v=zA7N_Q1EpSs).
+Crunch datasets can also be manipulated from a R package, `crunch`. To learn more about the features, please take a look at their homepage [crunch.io](https://crunch.io) or their [5-minute demo video](https://www.youtube.com/watch?v=zA7N_Q1EpSs).
 
 \newpage
 
 # Variables
 
-The sections below provide summary more information on each variable. 
+The sections below provide summary statistics and more information on each variable. 
 
 * The title shows the name of the variable as it appears in the dataset ("alias" in Crunch terminology), followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
 * Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries rather than the question verbatim. 
@@ -274,7 +275,7 @@ The sections below provide summary more information on each variable.
 
  
  
-# Administration
+## Administration
 
 
 ### `r nam(year)`
@@ -308,7 +309,7 @@ print_tab(tookpost)
 
 
 
-# Weights 
+## Weights 
 ### `r nam(weight)`
 
 `r descrip(weight)`
@@ -357,7 +358,7 @@ print_numeric(rvweight)
 ```
 
 * Years: `r in_years(rvweight)`
-* In 2018, YouGov computed weights after vote validation to weight to the target population of registered voters. See the methodology section of the [2018 Guide](https://doi.org/10.7910/DVN/ZSBZ7K) for details. 
+* In 2018, YouGov computed weights after vote validation to weight to the target population of registered voters. See the methodology section of the [2018 Guide](https://doi.org/10.7910/DVN/ZSBZ7K) for details. For this reason, and to distinguish it from previous year's post-validation weights, the cumulative renames the 2018 `vvweight` into `rvweight`.
 * Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `rvweight_post` 
 
 
@@ -387,7 +388,7 @@ print_numeric(weight_post)
 * Limitations: Only available for some even years.
 
 
-# Geography
+## Geography
 
 A series of variables for the respondent's location
 
@@ -412,7 +413,7 @@ cc %>%
 
 \newpage
 
-# Demographics
+## Demographics
 
 ### `r nam(gender)`
 
@@ -512,9 +513,9 @@ print_tab(marstat)
 \newpage
 
 
-# Validations 
+## Validations 
 
-Observations in even years include (or will include) indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election. For more information, see [Ansolabehere and Hersh (2012)](
+Observations in even years include indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election. For more information, see [Ansolabehere and Hersh (2012)](
 https://doi.org/10.1093/pan/mps023). 
 
 ### `r nam(vv_regstatus)`
@@ -581,7 +582,6 @@ print_tab(vv_turnout_pvm)
 
 \newpage
 
-# Identity and Attitudes
 
 ## Partisan Identity
 
@@ -725,9 +725,9 @@ print_tab(approval_gov)
 
 \newpage
 
-# Presidential Vote
+## Presidential Vote
 
-\paragraph{A note on \texttt{intent} and \texttt{voted}} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
+\paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
 
 Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option, so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years. 
 
@@ -803,9 +803,7 @@ print_tab(voted_pres_16)
 * This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 
 
-# House, Senate and Governor Voting
-
-## Preference
+## House, Senate and Governor Vote
 
 ### `r nam(intent_rep)`
 
@@ -849,8 +847,6 @@ print_tab(intent_gov)
 * Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
 * See `intent_gov_party` for the party affiliation of the chosen candidate.
 
-
-## Vote Choice
 
 ### `r nam(voted_rep)`
 
@@ -907,9 +903,7 @@ The case identifier `case_id` is unique within the year and is identical to the 
 glimpse(select(cc, matches("year|case_id")))
 ```
 
-## Current Representatives
-
-### Name and Party
+## Current Representatives' Name and Party
 
 The four names in the three offices are representatives of the respondent _at the time of the survey_. Names are printed as shown, and similarly parties are shown if the particular year's CCES did not show party. For example, Senator Shelby is presented as `Richard Craig Shelby`, `Richard C. Shelby (R)`, `Richard Shelby (R)`, `Richard C. Shelby (R)`, depending on the year. Party names are abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset. 
 
@@ -917,7 +911,7 @@ The four names in the three offices are representatives of the respondent _at th
 glimpse(select(cc, matches("(rep|sen1|sen2|gov)_current")))
 ```
 
-### Incumbent Identifiers
+## ICPSR Identifiers
 
 Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES. Instead, I attempt to merge in these identifiers through a series of name and district merges.  
 
@@ -951,10 +945,48 @@ cc %>%
 
 The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). 
 
-### Chosen
+## Name of Chosen Candidate
+
 ```{r}
 glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 ```
 
 * Years: `r in_years(intent_rep_chosen)`
 * Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
+
+## Party of Chosen Candidate
+
+
+```{r}
+glimpse(select(cc, matches("_party$")))
+```
+
+* Years: varies by office
+* Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
+
+\newpage
+
+# Version History of Dataverse Releases
+
+Dataverse assigns version numbers by incremeting a full number if any of the datasets change, and an incrementing decimal when the description changes.
+
+### Version 4.0 
+- Released `2019-09-06`
+- Enter 2018 vote validation
+- Coalesce straight party ticket vote into vote choice entries
+- Remove FEC identifiers
+
+### Version 3.0
+- Released `2019-04-29`
+- Add 2018 Common Content before vote validation (up to n = 452,755)
+
+### Version 2.0 
+- Released `2018-04-16`
+- Add 2017 Common Content (up to n = 392,755)
+- Corrects 2016 validated vote entries inherited from Common Content.
+- Consolidates weights to a single column, using post-vote validation weights for even years.
+- Adds `hispanic` and `faminc` variables
+
+### Version 1.0
+- Released `2018-01-24`
+- First upload, covering 2006 - 2016 (n = 374,556)
