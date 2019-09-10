@@ -106,7 +106,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2018, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse
+> Kuriwaki, Shiro, 2019, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V4. 
 
 \bigskip
 
@@ -212,7 +212,7 @@ select(cc, year, case_id, pid3) %>%
 
 As noted, the cumulative dataset only uses key variables from each year's common content. However,common content variables can be merged in.
 
-In R, one could use the `merge` or `left_join` functions. Here is sample code for merging with the latter. In Stata, one could use `merge 1:1`. In all cases, `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so merges should merge on year and the case identifier. 
+In R, we recommend using the `left_join` or `inner_join` functions (or the base-R `merge` function). In Stata, use `merge 1:1`. In all cases, the combination of `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so any merges should merge on year and the case identifier. 
 
 
 
@@ -728,7 +728,7 @@ print_tab(approval_gov)
 
 \paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
 
-Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option, so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years. 
+Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years. 
 
 
 
@@ -830,7 +830,7 @@ print_tab(intent_sen)
 ```
 
 * Years: `r in_years(intent_sen)`
-* Limitations: See `intente_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
+* Limitations: See `intent_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
 * See `intent_sen_party` for the party affiliation of the chosen candidate.
 
 ### `r nam(intent_gov)`
@@ -843,7 +843,7 @@ print_tab(intent_gov)
 ```
 
 * Years: `r in_years(intent_gov)`
-* Limitations: See `intente_rep`. For governor elections in odd years, see individual year's CCES.
+* Limitations: See `intent_rep`. For governor elections in odd years, see individual year's CCES.
 * See `intent_gov_party` for the party affiliation of the chosen candidate.
 
 
@@ -970,7 +970,7 @@ glimpse(select(cc, matches("_party$")))
 Dataverse assigns version numbers by incremeting a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
 ### Version 4.0 
-- Released `2019-09-06`
+- Released `2019-09-09`
 - Enter 2018 vote validation
 - Coalesce straight party ticket vote into vote choice entries
 - Remove FEC identifiers

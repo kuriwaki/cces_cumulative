@@ -151,7 +151,7 @@ Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at
 Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-09-06}
+\date{Guide last updated: 2019-09-09}
 
 \begin{document}
 
@@ -166,9 +166,9 @@ Crunch for their help.}  }
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2018, ``Cumulative CCES Common Content (2006-2019)'',
+Kuriwaki, Shiro, 2019, ``Cumulative CCES Common Content (2006-2019)'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
-Harvard Dataverse
+Harvard Dataverse, V4.
 \end{quote}
 
 \bigskip
@@ -362,11 +362,12 @@ As noted, the cumulative dataset only uses key variables from each
 year's common content. However,common content variables can be merged
 in.
 
-In R, one could use the \texttt{merge} or \texttt{left\_join} functions.
-Here is sample code for merging with the latter. In Stata, one could use
-\texttt{merge\ 1:1}. In all cases, \texttt{year} and \texttt{case\_id}
-\textbf{uniquely identifies each row} in the cumulative common content,
-so merges should merge on year and the case identifier.
+In R, we recommend using the \texttt{left\_join} or \texttt{inner\_join}
+functions (or the base-R \texttt{merge} function). In Stata, use
+\texttt{merge\ 1:1}. In all cases, the combination of \texttt{year} and
+\texttt{case\_id} \textbf{uniquely identifies each row} in the
+cumulative common content, so any merges should merge on year and the
+case identifier.
 
 \newpage
 
@@ -1637,10 +1638,10 @@ Response to the vote choice questions coalesces both
 \emph{post-election} wave responses (the bulk of the responses) and
 pre-election respondents who reported having already voted early. In
 2018, it also coalesces the responses to the straight ticket party
-option, so that those who selected the Republican straight party ticket
-in the applicable states will appear to have voted for the Republican
-candidate in all offices. The straight ticket party option was not asked
-in other years.
+option (\texttt{CC18\_409}), so that those who selected the Republican
+straight party ticket in the applicable states will appear to have voted
+for the Republican candidate in all offices. The straight ticket party
+option was not asked in other years.
 
 \hypertarget{intent_pres_08-2008-president-preference-before-voting}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_pres\_08}: 2008 President
@@ -1933,7 +1934,7 @@ I Won't Vote In This Election & 1,145\\
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
-  Limitations: See \texttt{intente\_rep}. When both senate seats are up
+  Limitations: See \texttt{intent\_rep}. When both senate seats are up
   for re-election in the same year, only responses to the first senate
   seat is incorporated. For the second senate seat, see individual
   year's CCES.
@@ -1972,7 +1973,7 @@ I Won't Vote In This Election & 466\\
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018
 \item
-  Limitations: See \texttt{intente\_rep}. For governor elections in odd
+  Limitations: See \texttt{intent\_rep}. For governor elections in odd
   years, see individual year's CCES.
 \item
   See \texttt{intent\_gov\_party} for the party affiliation of the
@@ -2304,7 +2305,7 @@ changes.
 \begin{itemize}
 \tightlist
 \item
-  Released \texttt{2019-09-06}
+  Released \texttt{2019-09-09}
 \item
   Enter 2018 vote validation
 \item
