@@ -11,7 +11,8 @@ login()
 if (writeToCrunch) {
   login()
   deleteDataset("CCES Cumulative Issues")
-  newDataset("https://www.dropbox.com/s/f9ngcutauoqgunb/issues_add-crunch.sav?dl=0", "CCES Cumulative Issues")
+  newDataset("https://www.dropbox.com/s/p8cx49h82coqfcs/cumulative_2006_2018_crunch.sav?dl=0",
+             "CCES Cumulative v4.0")
 }
 
 # append intent to vote party -----
@@ -21,26 +22,33 @@ ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
 forkDataset(ds_orig, "Fork of CCES Cumulative Common")
 
 ds_fork <- loadDataset("Fork of CCES Cumulative Common")
-ds_new <- loadDataset("CCES Cumulative Common Dev")
+ds_new <- loadDataset("CCES Cumulative v4.0")
 
 # identifier
 ds_fork$year_caseid <- paste0(as.character(as.vector(ds_fork$year)), "_",  as.vector(ds_fork$case_id))
 ds_new$year_caseid <- paste0(as.character(as.vector(ds_new$year)), "_",  as.vector(ds_new$case_id))
 
 # compare
-compareDatasets(ds_fork, ds_new)
+vars_to_replace <- c(str_subset(names(ds_new), "vv"),
+                     str_subset(names(ds_new), "voted_(rep|gov|sen)"))
 
-vf <- names(ds_fork)
-vf_drop <- setdiff(vf, c("year_caseid"))
+# A - for the new variables dataset
+# keep only variables to merge
+# delete everything BUT the key and the to be replaced
+deleteVariables(ds_new, 
+                setdiff(names(ds_new), c("year_caseid", vars_to_replace)))
+saveVersion(ds_new, "dropped all but the vote validation and post-elec vote")
 
-
-# drop unnecessary from Dev
-deleteVariables(ds_fork, vf_drop) # delete the vars to be replaced
+# B- drop the to-be overwritten variables fromfork
+deleteVariables(ds_fork, 
+                vars_to_replace) # delete the vars to be replaced
 saveVersion(ds_fork, "dropped all but year_caseid")
+
 refresh(ds_fork)
+refresh(ds_new)
 
 # merge fork on new, dropping 2018 rows
-extendDataset(ds_fork, ds_new, by = "year_caseid", all.x = TRUE, all.y = FALSE)
+extendDataset(ds_fork, ds_new, by = "year_caseid")
 refresh(ds_fork)
 saveVersion(ds_fork, description = "fork merged with new 2018")
 
