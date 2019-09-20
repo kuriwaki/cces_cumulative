@@ -44,6 +44,62 @@ rollupResolution(ds$year_date) <- "Y"
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
 
+# create filters ------
+newFilter("Male", ds$gender == "Male", is_public = TRUE)
+newFilter("Female", ds$gender == "Female", is_public = TRUE)
+
+newFilter("White", ds$race == "White", is_public = TRUE)
+newFilter("Black", ds$race == "Black", is_public = TRUE)
+newFilter("Hispanic", ds$race == "Hispanic", is_public = TRUE)
+newFilter("Asian", ds$race == "Asian", is_public = TRUE)
+newFilter("Mixed Race", ds$race == "Mixed", is_public = TRUE)
+newFilter("Other Race", 
+          !(ds$race %in% c("White", "Black", "Hispanic", "Asian", "Mixed")),
+          is_public = TRUE)
+
+newFilter("High school or less", 
+          ds$educ %in% c("High School Graduate", "No HS"),
+          is_public = TRUE)
+newFilter("Some college/assoc. degree", 
+          ds$educ %in% c("Some College", "2-Year"),
+          is_public = TRUE)
+newFilter("College Graduate", 
+          ds$educ %in% c("4-Year"),
+          is_public = TRUE)
+newFilter("Postgraduate study", 
+          ds$educ %in% c("Post-Grad"),
+          is_public = TRUE)
+
+newFilter("Under $30,000", ds$faminc %in% c("10k - 20k", "20k - 30k", "Less than 10k"), is_public = TRUE)
+newFilter("$30,000-$49,999", ds$faminc %in% c("30k - 40k", "40k - 50k"), is_public = TRUE)
+newFilter("$50,000-$99,999", ds$faminc %in% c("50k - 60k", "60k - 70k","70k - 80k", "80k - 100k"), is_public = TRUE)
+newFilter("$100,000-$149,999", ds$faminc %in% c("100k - 120k", "120k - 150k"), is_public = TRUE)
+newFilter("$150,000 or more", ds$faminc %in% c("150k+"), is_public = TRUE)
+
+
+newFilter("White Non-College", ds$race == "White" & ds$educ %in% c("High School Graduate", "No HS"), is_public = TRUE)
+newFilter("White Non-College Men", ds$race == "White" & ds$educ %in% c("High School Graduate", "No HS") & ds$gender == "Male", is_public = TRUE)
+newFilter("White Non-College Women", ds$race == "White" & ds$educ %in% c("High School Graduate", "No HS") & ds$gender == "Female", is_public = TRUE)
+
+newFilter("Democrat", ds$pid3 == "Democrat", is_public = TRUE)
+newFilter("Independent", ds$pid3 == "Independent", is_public = TRUE)
+newFilter("Republican", ds$pid3 == "Republican", is_public = TRUE)
+newFilter("Democrat (Including Leaners)", ds$pid3 == "Democrat (Including Leaners)", is_public = TRUE)
+newFilter("Republican (Including Leaners)", ds$pid3 == "Republican (Including Leaners)", is_public = TRUE)
+newFilter("Independent (Excluding Leaners)", ds$pid3 == "Independent (Excluding Leaners)", is_public = TRUE)
+
+newFilter("Liberal", ds$ideo5 %in% c("Liberal", "Very Liberal"), is_public = TRUE)
+newFilter("Conservative", ds$ideo5 %in% c("Conservative", "Very Conservative"), is_public = TRUE)
+newFilter("Moderate", ds$ideo5 %in% c("Moderate", "Not Sure"), is_public = TRUE)
+
+newFilter("2012", ds$year == "2012", is_public = TRUE)
+newFilter("2016", ds$year == "2016", is_public = TRUE)
+newFilter("2018", ds$year == "2018", is_public = TRUE)
+
+
+
+
+
 # ordering of categories ----
 st_order <- c(order(table(ds$state, useNA = "ifany"), decreasing = TRUE),
               which(ids(categories(ds$state)) < 0)) # missings
