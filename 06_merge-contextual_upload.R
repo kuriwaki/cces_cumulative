@@ -292,6 +292,7 @@ ccc_crunch <- ccc_common %>%
   select(year, year_date, everything())
 
 write_sav(ccc_crunch, "data/release/cumulative_2006_2018_crunch.sav") 
+R.utils::gzip("data/release/cumulative_2006_2018_crunch.sav")
 
 # might write to crunch
 if (writeToCrunch) {
