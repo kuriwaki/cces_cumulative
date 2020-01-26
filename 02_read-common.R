@@ -52,7 +52,7 @@ std_dv <- function(path, guess_year = TRUE) {
 std_state <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     statevar <- case_when(
-      guessed_yr %in% c(2007, 2012:2018) ~ "inputstate",
+      guessed_yr %in% c(2007, 2012:2019) ~ "inputstate",
       guessed_yr %in% c(2008, 2010:2011) ~ "V206",
       guessed_yr %in% 2009 ~ "v259",
       guessed_yr %in% 2006 ~ "v1002"
@@ -91,6 +91,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 std_dist <- function(tbl, guess_year, guessed_yr) {
   if (guess_year) {
     distvar <- case_when(
+      guessed_yr %in% c(2019) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
@@ -179,13 +180,14 @@ cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
 cc18_novv <- std_dv("data/source/cces/2018_cc_novv.dta")
 cc18 <- std_dv("data/source/cces/2018_cc.dta")
+cc19 <- std_dv("data/source/cces/2019_cc.dta")
 hua18 <- std_dv("data/source/cces/2018_hua.dta")
 hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
 
 # additional moduels ---------
 # 2006 module addition
-if (FALSE) { # give up for CCES release
+# need for accountability paper 
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
 mit_fmt <- mit06_raw %>%
   mutate(year = 2006,
@@ -194,15 +196,14 @@ mit_fmt <- mit06_raw %>%
          dist = as.integer(district),
          dist_up = as.integer(district),
          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
-         stfips  = as.integer(zap_labels(inputstate)),
+         fips  = zap_labels(inputstate),
          state = NULL) %>%
-  mutate_at(dist = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
-            dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) %>% 
+  left_join(select(statecode, fips, state, st)) %>% 
+  mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
+         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) %>% 
   rename(case_id = caseid) %>% 
-  left_join(transmute(statecode,  stfips = as.integer(fips), state, st), by = c("stfips")) %>% 
   select(year, case_id, state, st, cong, dist, dist_up, everything())
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
-}
 
 
 # 2008 addiiton
@@ -220,9 +221,10 @@ save(
   ccp, 
   cc06, cc07, cc08, cc09, 
   cc10, cc11, cc12, cc13, 
-  cc14, cc15, cc16, cc17, cc18,
+  cc14, cc15, cc16, cc17, 
+  cc18, cc19, 
   panel12, 
-  # mit06_add, 
+  mit06_add,
   hu08,  hu09, 
   hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
@@ -230,12 +232,3 @@ save(
 
 
 cat("Finished standardizing input\n")
-
-# test
-left_join(select(cc18, case_id, commonweight, vvweight),
-          select(cc18_novv, case_id, commonweight),
-          by = "case_id") %>% 
-  sample_n(10)
-
-
-          
