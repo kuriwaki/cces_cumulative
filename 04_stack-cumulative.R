@@ -970,7 +970,7 @@ stcd <- left_join(state, dist) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(cd = as.character(glue("{st}-{dist}"))) %>%
+  mutate(cd = as.character(glue("{st}-{str_pad(dist, width = 2, pad = '0')}"))) %>%
   select(year, case_id, state, st, cd, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
