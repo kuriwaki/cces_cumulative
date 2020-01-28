@@ -333,7 +333,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2018 ------
+  # 2018, 2019 ------
   if (identical(cces_year, 2018L)) {
     
     tbl <- tbl %>%
@@ -386,9 +386,25 @@ std_name <- function(tbl, is_panel = FALSE) {
       add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  if (identical(cces_year, 2019L)) {
+    tbl <- cc19 %>%
+      rename(
+        weight = commonweight,
+        approval_pres = CC19_308a,
+        approval_rep = CC19_311a,
+        approval_sen1 = CC19_311b,
+        approval_sen2 = CC19_311c,
+        approval_gov = CC19_308e,
+        economy_retro = CC19_301,
+        faminc = faminc_new,
+        voted_pres_16 = presvote16post
+        ) %>%
+      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
   
   # more standardization for post 2012
-  if (cces_year[1] %in% c(2012:2018) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2019) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -730,7 +746,8 @@ ccs <- list(
   "2015" = std_name(cc15),
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
-  "2018" = std_name(cc18)
+  "2018" = std_name(cc18),
+  "2019" = std_name(cc19)
 )
 
 
