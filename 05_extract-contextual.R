@@ -347,7 +347,8 @@ cclist <- list(`2006` = cc06,
                `2015` = cc15, 
                `2016` = cc16,
                `2017` = cc17,
-               `2018` = cc18)
+               `2018` = cc18,
+               `2019` = cc19)
                # `2018a` = hua18,
                # `2018b` = hub18)s
 
@@ -360,7 +361,7 @@ master$`2012p` <- master$`2012`
 master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
 
-for (yr in c(2006:2018,  "2008h", "2009r","2012p")) { # "2006m",
+for (yr in c(2006:2019)) { # "2006m", ,  "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -439,7 +440,6 @@ save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
      file = "data/output/01_responses/incumbents_key.RData")
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
-saveRDS(df, "data/output/01_responses/repsondent_contextual.Rds")
 
 
 cat("Finished matching candidate info to identifiers\n")

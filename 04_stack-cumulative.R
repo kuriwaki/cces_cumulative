@@ -894,6 +894,7 @@ i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
 
+
 v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
