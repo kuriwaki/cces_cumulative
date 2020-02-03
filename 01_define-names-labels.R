@@ -4,37 +4,70 @@ library(tibble)
 
 
 # each row is a variable for the standardized data, each column is for the cces year0
-master <- tribble(
-    ~name,      ~`2006`, ~`2006m`,      ~`2007`,     ~`2008`, ~`2009`, ~`2010`, ~`2011`, ~`2012`,            ~`2013`,            ~`2014`,            ~`2015`,            ~`2016`,             ~`2017`,
-    "rep_inc",  "v5013", "rep",         "repname",    "V527",  "v627",  "V501",  "V501", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName",  "CurrentHouseName", 
-    "rep_ipt",  "v5014", "reppid",      NA,           "V535",  NA,      "V502",  NA,     "CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty", "CurrentHouseParty",
-    "sen1_inc", "v5015", "sen1",        "sen1name",   "V551",  "v651",  "V513",  "V513", "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",   "CurrentSen1Name",
-    "sen1_ipt", "v5016", "sen1pid",     NA,           "V544",  NA,      "V514",  NA,     "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party",  "CurrentSen1Party",
-    "sen2_inc", "v5017", "sen2",        "sen2name",   "V552",  "v652",  "V521",  "V521", "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",   "CurrentSen2Name",
-    "sen2_ipt", "v5018", "sen2pid",     NA,           "V548",  NA,      "V522",  NA,     "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party",  "CurrentSen2Party",
-    "gov_inc",  "v5019", "gov",         "govname",    "V508",  "v608",  "V529",  "V529", "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",    "CurrentGovName",
-    "gov_ipt",  "v5020", "govpid",      NA,           "V513",  NA,      "V530",  NA,     "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",   "CurrentGovParty",
-    "rep_can1", "v5001", "repcand1",    NA,           "V518",  NA,      "V533",  NA,     "HouseCand1Name",   NA,                 "HouseCand1Name",   NA,                 "HouseCand1Name",    NA,
-    "rep_pty1", "v5002", "repcand1pid", NA,            NA,     NA,      NA,      NA,     "HouseCand1Party",  NA,                 "HouseCand1Party",  NA,                 "HouseCand1Party",   NA,
-    "rep_can2", "v5003", "repcand2",    NA,           "V519",  NA,      "V536",  NA,     "HouseCand2Name",   NA,                 "HouseCand2Name",   NA,                 "HouseCand2Name",    NA,
-    "rep_pty2", "v5004", "repcand2pid", NA,            NA,     NA,      NA,      NA,     "HouseCand2Party",  NA,                 "HouseCand2Party",  NA,                 "HouseCand2Party",   NA,
-    "rep_can3",  NA,     NA,            NA,           "V520",  NA,      "V539",  NA,     "HouseCand3Name",   NA,                 "HouseCand3Name",   NA,                 "HouseCand3Name",    NA,
-    "rep_pty3",  NA,     NA,            NA,           "V533",  NA,      "V542",  NA,     "HouseCand3Party",  NA,                 "HouseCand3Party",  NA,                 "HouseCand3Party",   NA,
-    "sen_can1", "v5005", "sencand1",    NA,           "V553",  NA,      "V548",  NA,     "SenCand1Name",     NA,                 "SenCand1Name",     NA,                 "SenCand1Name",      NA,
-    "sen_pty1", "v5006", "sencand1pid", NA,            NA,     NA,      NA,      NA,     "SenCand1Party",    NA,                 "SenCand1Party",    NA,                 "SenCand1Party",     NA,
-    "sen_can2", "v5007", "sencand2",    NA,           "V555",  NA,      "V551",  NA,     "SenCand2Name",     NA,                 "SenCand2Name",     NA,                 "SenCand2Name",      NA,
-    "sen_pty2", "v5008", "sencand2pid", NA,            NA,     NA,      NA,      NA,     "SenCand2Party",    NA,                 "SenCand2Party",    NA,                 "SenCand2Party",     NA,
-    "sen_can3", NA,      NA,            NA,           "V556",  NA,      "V554",  NA,     "SenCand3Name",     NA,                 "SenCand3Name",     NA,                 "SenCand3Name",      NA,
-    "sen_pty3", NA,      NA,            NA,           "V572",  NA,      "V556",  NA,     "SenCand3Party",    NA,                 "SenCand3Party",    NA,                 "SenCand3Party",     NA,
-    "gov_can1", "v5009", "govcand1",    NA,           "V501",  NA,      "V564",  NA,     "GovCand1Name",     NA,                 "GovCand1Name",     NA,                 "GovCand1Name",      NA,
-    "gov_pty1", "v5010", "govcand1pid", NA,            NA,     NA,      NA,      NA,     "GovCand1Party",    NA,                 "GovCand1Party",    NA,                 "GovCand1Party",     NA,
-    "gov_can2", "v5011", "govcand2",    NA,           "V502",  NA,      "V567",  NA,     "GovCand2Name",     NA,                 "GovCand2Name",     NA,                 "GovCand2Name",      NA,
-    "gov_pty2", "v5012", "govcand2pid", NA,            NA,     NA,      NA,      NA,     "GovCand2Party",    NA,                 "GovCand2Party",    NA,                 "GovCand2Party",     NA,
-    "gov_can3", NA,      NA,            NA,           "V503",  NA,      "V570",  NA,     NA,                 NA,                 NA,                 NA,                 "GovCand3Name",      NA,
-    "gov_pty3", NA,      NA,            NA,           "V512",  NA,      "V572",  NA,     NA,                 NA,                 NA,                 NA,                 "GovCand3Party",    NA
+master_11 <- tribble(
+    ~name,      ~`2006`, ~`2006m`,      ~`2007`,     ~`2008`, ~`2009`, ~`2010`, ~`2011`,
+    "rep_inc",  "v5013", "rep",         "repname",    "V527",  "v627",  "V501",  "V501",
+    "rep_ipt",  "v5014", "reppid",      NA,           "V535",  NA,      "V502",  NA,     
+    "sen1_inc", "v5015", "sen1",        "sen1name",   "V551",  "v651",  "V513",  "V513",
+    "sen1_ipt", "v5016", "sen1pid",     NA,           "V544",  NA,      "V514",  NA,     
+    "sen2_inc", "v5017", "sen2",        "sen2name",   "V552",  "v652",  "V521",  "V521",
+    "sen2_ipt", "v5018", "sen2pid",     NA,           "V548",  NA,      "V522",  NA,     
+    "gov_inc",  "v5019", "gov",         "govname",    "V508",  "v608",  "V529",  "V529",
+    "gov_ipt",  "v5020", "govpid",      NA,           "V513",  NA,      "V530",  NA,     
+    "rep_can1", "v5001", "repcand1",    NA,           "V518",  NA,      "V533",  NA,     
+    "rep_pty1", "v5002", "repcand1pid", NA,            NA,     NA,      NA,      NA,     
+    "rep_can2", "v5003", "repcand2",    NA,           "V519",  NA,      "V536",  NA,     
+    "rep_pty2", "v5004", "repcand2pid", NA,            NA,     NA,      NA,      NA,     
+    "rep_can3",  NA,     NA,            NA,           "V520",  NA,      "V539",  NA,     
+    "rep_pty3",  NA,     NA,            NA,           "V533",  NA,      "V542",  NA,     
+    "sen_can1", "v5005", "sencand1",    NA,           "V553",  NA,      "V548",  NA,     
+    "sen_pty1", "v5006", "sencand1pid", NA,            NA,     NA,      NA,      NA,     
+    "sen_can2", "v5007", "sencand2",    NA,           "V555",  NA,      "V551",  NA,     
+    "sen_pty2", "v5008", "sencand2pid", NA,            NA,     NA,      NA,      NA,     
+    "sen_can3", NA,      NA,            NA,           "V556",  NA,      "V554",  NA,     
+    "sen_pty3", NA,      NA,            NA,           "V572",  NA,      "V556",  NA,     
+    "gov_can1", "v5009", "govcand1",    NA,           "V501",  NA,      "V564",  NA,     
+    "gov_pty1", "v5010", "govcand1pid", NA,            NA,     NA,      NA,      NA,     
+    "gov_can2", "v5011", "govcand2",    NA,           "V502",  NA,      "V567",  NA,     
+    "gov_pty2", "v5012", "govcand2pid", NA,            NA,     NA,      NA,      NA,     
+    "gov_can3", NA,      NA,            NA,           "V503",  NA,      "V570",  NA,     
+    "gov_pty3", NA,      NA,            NA,           "V512",  NA,      "V572",  NA,     
   )
 
+master_17 <- tribble(
+  ~name,      ~`2012`,            ~`2013`,            ~`2014`,            ~`2015`,            ~`2016`,             ~`2017`,
+  "rep_inc",  "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName", "CurrentHouseName",  "CurrentHouseName", 
+  "rep_ipt",  "CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty","CurrentHouseParty", "CurrentHouseParty",
+  "sen1_inc", "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",  "CurrentSen1Name",   "CurrentSen1Name",
+  "sen1_ipt", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party", "CurrentSen1Party",  "CurrentSen1Party",
+  "sen2_inc", "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",  "CurrentSen2Name",   "CurrentSen2Name",
+  "sen2_ipt", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party", "CurrentSen2Party",  "CurrentSen2Party",
+  "gov_inc",  "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",   "CurrentGovName",    "CurrentGovName",
+  "gov_ipt",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",  "CurrentGovParty",   "CurrentGovParty",
+  "rep_can1", "HouseCand1Name",   NA,                 "HouseCand1Name",   NA,                 "HouseCand1Name",    NA,
+  "rep_pty1", "HouseCand1Party",  NA,                 "HouseCand1Party",  NA,                 "HouseCand1Party",   NA,
+  "rep_can2", "HouseCand2Name",   NA,                 "HouseCand2Name",   NA,                 "HouseCand2Name",    NA,
+  "rep_pty2", "HouseCand2Party",  NA,                 "HouseCand2Party",  NA,                 "HouseCand2Party",   NA,
+  "rep_can3", "HouseCand3Name",   NA,                 "HouseCand3Name",   NA,                 "HouseCand3Name",    NA,
+  "rep_pty3", "HouseCand3Party",  NA,                 "HouseCand3Party",  NA,                 "HouseCand3Party",   NA,
+  "sen_can1", "SenCand1Name",     NA,                 "SenCand1Name",     NA,                 "SenCand1Name",      NA,
+  "sen_pty1", "SenCand1Party",    NA,                 "SenCand1Party",    NA,                 "SenCand1Party",     NA,
+  "sen_can2", "SenCand2Name",     NA,                 "SenCand2Name",     NA,                 "SenCand2Name",      NA,
+  "sen_pty2", "SenCand2Party",    NA,                 "SenCand2Party",    NA,                 "SenCand2Party",     NA,
+  "sen_can3", "SenCand3Name",     NA,                 "SenCand3Name",     NA,                 "SenCand3Name",      NA,
+  "sen_pty3", "SenCand3Party",    NA,                 "SenCand3Party",    NA,                 "SenCand3Party",     NA,
+  "gov_can1", "GovCand1Name",     NA,                 "GovCand1Name",     NA,                 "GovCand1Name",      NA,
+  "gov_pty1", "GovCand1Party",    NA,                 "GovCand1Party",    NA,                 "GovCand1Party",     NA,
+  "gov_can2", "GovCand2Name",     NA,                 "GovCand2Name",     NA,                 "GovCand2Name",      NA,
+  "gov_pty2", "GovCand2Party",    NA,                 "GovCand2Party",    NA,                 "GovCand2Party",     NA,
+  "gov_can3", NA,                 NA,                 NA,                 NA,                 "GovCand3Name",      NA,
+  "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",    NA
+)
+
+master <- bind_cols(master_11, master_17)
+
 master$`2018` <- master$`2016`
+master$`2019` <- master$`2017`
 
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
