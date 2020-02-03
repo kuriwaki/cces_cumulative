@@ -7,7 +7,6 @@ vvH <- readRDS("data/output/03_contextual/voteview_H_key.Rds")
 vvS <- readRDS("data/output/03_contextual/voteview_S_key.Rds")
 
 cq <- readRDS("data/output/03_contextual/cq_profiles.Rds")
-
 fec <- readRDS("data/output/03_contextual/fec_fmt.Rds")
 
 
@@ -61,7 +60,7 @@ df_S <- left_join(vv_fec_S, cq_df, by = c("namelast", "chamber", "st", "congress
   add_row(congress =  115,
           chamber = "S",
           icpsr = 41707,
-          icpsr = "MS",
+          st = "MS",
           namelast = "HYDE-SMITH",
           namefirst = "Cindy") %>% 
   add_row(congress =  115,
