@@ -163,6 +163,7 @@ slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL) {
   }
 }
 
+
 # Data -------------
 load("data/output/01_responses/vote_responses.RData")
 load("data/output/01_responses/incumbents_key.RData")
@@ -203,7 +204,6 @@ abstract_lbl <- bind_label(i_rep_who) %>%
   left_join(bind_label(v_gov_who), ids)
 
 # pre-merge and order vars 
-# intent_Rep, intent_rep_party, intent_rep
 lbl_party_name <- 
   left_join(abstract_lbl, chosen_with_party, by = ids) %>% 
   select(year, case_id, 
@@ -225,11 +225,12 @@ incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>%
 ccc_cand <- ccc %>% 
   left_join(lbl_party_name, ids) %>% 
   left_join(incumbents_with_ID, ids)
-  
+
 
 # Format for output  --------
 # for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
 ccc_df <- ccc_cand %>%
+  left_join(incumbents_with_ID, ids) %>% 
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
   mutate_at(vars(year, case_id), as.integer)

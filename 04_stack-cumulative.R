@@ -5,7 +5,6 @@ library(foreach)
 library(stringr)
 library(glue)
 library(lubridate)
-library(data.table)
 
 
 # helper data ----
@@ -721,6 +720,14 @@ clps_pres16 <- function(vec) {
   )
 }
 
+#' give pres party from chars of pres names
+pres_names <- function(vec) {
+  case_when(
+    str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
+    str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
+    TRUE ~ NA_character_) %>% 
+    factor(levels = c("Democratic", "Republican"))
+}
 
 # READ ------
 load("data/output/01_responses/common_all.RData")
@@ -894,7 +901,6 @@ i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
 
-
 v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
@@ -905,6 +911,22 @@ v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- v_pres16 %>%
   mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
          voted_pres_16 = clps_pres16(voted_pres_16))
+
+# coalesce
+pres_party <- i_pres08 %>% 
+  left_join(i_pres12, by = c("year", "case_id")) %>% 
+  left_join(i_pres16, by = c("year", "case_id")) %>% 
+  left_join(v_pres08, by = c("year", "case_id")) %>% 
+  left_join(v_pres12, by = c("year", "case_id")) %>% 
+  left_join(v_pres16, by = c("year", "case_id")) %>% 
+  mutate_if(is.factor, as.character) %>% 
+  transmute(year, case_id,
+            intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
+            voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
+
+round(prop.table(xtabs(~ voted_pres_party + year,  pres_party, addNA = TRUE), margin = 2), 2)
+round(prop.table(xtabs(~ intent_pres_party + year, pres_party, addNA = TRUE), margin = 2), 2)
+
 
 # House, Sen, Gov -----
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
@@ -935,7 +957,7 @@ econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder =
   bind_rows(cc09_econ)
 
 # check all categories are aligned
-stopifnot(nrow(dcast(econ_char, economy_retro_char + economy_retro_num ~ year, value.var = "case_id")) == n_distinct(econ_char$economy_retro_num))
+stopifnot(nrow(xtabs(economy_retro_char + economy_retro_num ~ year, econ_char)) == n_distinct(econ_char$economy_retro_num))
 
 # correct to labelled
 econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
