@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rcces)
 library(haven)
+library(lubridate)
 
 # helper data ---
 statecode <- read_csv("data/source/statecode.csv")
@@ -213,7 +214,8 @@ read_dta("data/source/cces/2008_hum.dta") %>%
   select(-HUM302, -HUM304) %>% # decimal labelled
   write_dta("data/source/cces/2008_hum_allcapvars.dta")
 
-hu08 <- anti_join(hu08, select(cc08, year, case_id))
+hu08 <- anti_join(hu08, select(cc08, year, case_id)) %>% 
+  mutate(V300 = as_datetime(V300))
 
 
 # save ----
