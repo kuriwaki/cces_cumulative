@@ -140,18 +140,20 @@
 
 % Parmaters
 
-\title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006 - 2018)}}
+\title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006
+- 2019)}}
+ 
 
-\author{Shiro Kuriwaki\thanks{Department of Government, Harvard University. ORCID:
-\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome. My
-thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro,
-Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and
-Boris Shor for their suggestions and contributions. Thanks to Joe
-Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at
-Crunch for their help.}  }
+\author{Shiro Kuriwaki\thanks{Department of Government, Harvard
+University. ORCID: \url{https://orcid.org/0000-0002-5687-2647}. Bug
+reports welcome. My thanks to Alexander Agadjanian, Steve Ansolabehere,
+Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik,
+Stephen Pettigrew, and Boris Shor for their suggestions and
+contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
+Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2019-09-09}
+\date{Guide last updated: 2020-02-11}
 
 \begin{document}
 
@@ -233,7 +235,7 @@ file is assigned to an object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative_2006_2018.Rds"}\NormalTok{)}
+\NormalTok{cc <{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006\_2018.Rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -254,7 +256,7 @@ it can also be used without tidyverse.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\NormalTok{cc <-}\StringTok{ }\KeywordTok{read_dta}\NormalTok{(}\StringTok{"cumulative_2006_2018.dta"}\NormalTok{)}
+\NormalTok{cc <{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006\_2018.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -281,7 +283,7 @@ makes it immediately obvious which value is associated with which label:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case_id, pid3)}
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -309,8 +311,8 @@ labelled class.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\KeywordTok{select}\NormalTok{(cc, year, case_id, pid3) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pid3_fct =} \KeywordTok{as_factor}\NormalTok{(pid3))}
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%>\%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pid3\_fct =} \KeywordTok{as\_factor}\NormalTok{(pid3))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -333,7 +335,7 @@ do that.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case_id, pid3) }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%>\%}\StringTok{ }
 \StringTok{  }\KeywordTok{filter}\NormalTok{(pid3 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -393,7 +395,7 @@ Identifiers}\label{chosen-candidate-names-and-identifiers}}
 One addition to this cumulative dataset are variables of candidate names
 and identifiers that a respondent chose. In the individual year's CCES
 datasets, typically the response values for a vote choice question is a
-generic label, e.g. \texttt{Candidate1} and \texttt{Candidate2}. Then,
+generic label, e.g.~\texttt{Candidate1} and \texttt{Candidate2}. Then,
 separate variables of names and parties correspond to each
 \texttt{Candidate1} and \texttt{Candidate2}.
 
@@ -403,24 +405,24 @@ individuals.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case_id, st, }\KeywordTok{matches}\NormalTok{(}\StringTok{"voted_sen"}\NormalTok{))}
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, st, }\KeywordTok{matches}\NormalTok{(}\StringTok{"voted\_sen"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 # A tibble: 452,755 x 6
-    year case_id st    voted_sen        voted_sen_party voted_sen_chosen   
-   <int>   <int> <chr> <fct>            <fct>           <chr>              
- 1  2006  439219 NC    <NA>             <NA>            <NA>               
- 2  2006  439224 OH    [Democrat / Can~ Democratic      Sherrod C. Brown (~
- 3  2006  439228 NJ    [Democrat / Can~ Democratic      Robert Menendez (D)
- 4  2006  439237 IL    <NA>             <NA>            <NA>               
- 5  2006  439238 NY    [Democrat / Can~ Democratic      Hillary Rodham Cli~
- 6  2006  439242 TX    I Did Not Vote ~ <NA>            <NA>               
- 7  2006  439251 MN    [Republican / C~ Republican      Mark Kennedy (R)   
- 8  2006  439254 NV    [Democrat / Can~ Democratic      Jack Carter (D)    
- 9  2006  439255 TX    [Democrat / Can~ Democratic      Barbara Ann Radnof~
-10  2006  439263 MD    I Did Not Vote ~ <NA>            <NA>               
+    year case_id st    voted_sen           voted_sen_party voted_sen_chosen     
+   <int>   <int> <chr> <fct>               <fct>           <chr>                
+ 1  2006  439219 NC    <NA>                <NA>            <NA>                 
+ 2  2006  439224 OH    [Democrat / Candid~ Democratic      Sherrod C. Brown (D) 
+ 3  2006  439228 NJ    [Democrat / Candid~ Democratic      Robert Menendez (D)  
+ 4  2006  439237 IL    <NA>                <NA>            <NA>                 
+ 5  2006  439238 NY    [Democrat / Candid~ Democratic      Hillary Rodham Clint~
+ 6  2006  439242 TX    I Did Not Vote In ~ <NA>            <NA>                 
+ 7  2006  439251 MN    [Republican / Cand~ Republican      Mark Kennedy (R)     
+ 8  2006  439254 NV    [Democrat / Candid~ Democratic      Jack Carter (D)      
+ 9  2006  439255 TX    [Democrat / Candid~ Democratic      Barbara Ann Radnofsk~
+10  2006  439263 MD    I Did Not Vote In ~ <NA>            <NA>                 
 # ... with 452,745 more rows
 \end{verbatim}
 
@@ -646,7 +648,7 @@ year to make years comparable{]}
   Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
   by the year-specific factors shown in the following table. For
   example, all weights in the 2016 common content are divided by about
-  1.97, because it has about twice as many observations as the other
+  2.44, because it has about twice as many observations as the other
   datasets.
 \end{itemize}
 
@@ -657,19 +659,20 @@ year to make years comparable{]}
 \toprule
 Year & Observations & Factor\\
 \midrule
-2006 & 36,421 & 1.11\\
-2007 & 9,999 & 0.30\\
-2008 & 32,800 & 1.00\\
-2009 & 13,800 & 0.42\\
-2010 & 55,400 & 1.69\\
-2011 & 20,150 & 0.61\\
-2012 & 54,535 & 1.66\\
-2013 & 16,400 & 0.50\\
-2014 & 56,200 & 1.71\\
-2015 & 14,250 & 0.43\\
-2016 & 64,600 & 1.97\\
-2017 & 18,200 & 0.55\\
-2018 & 60,000 & 1.83\\
+2006 & 36,421 & 1.38\\
+2007 & 9,999 & 0.38\\
+2008 & 32,800 & 1.24\\
+2009 & 13,800 & 0.52\\
+2010 & 55,400 & 2.09\\
+2011 & 20,150 & 0.76\\
+2012 & 54,535 & 2.06\\
+2013 & 16,400 & 0.62\\
+2014 & 56,200 & 2.12\\
+2015 & 14,250 & 0.54\\
+2016 & 64,600 & 2.44\\
+2017 & 18,200 & 0.69\\
+2018 & 60,000 & 2.27\\
+2019 & 18,000 & 0.68\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -780,13 +783,13 @@ A series of variables for the respondent's location
 \begin{verbatim}
 Observations: 452,755
 Variables: 7
-$ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "T...
-$ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "M...
-$ cd          <chr> "CA-2", "PA-5", "TX-16", "TX-19", "TX-6", "NY-28",...
-$ dist        <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1,...
-$ dist_up     <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1,...
-$ zipcode     <chr> "95969", "16255", "79924", "79423", "76123", "1413...
-$ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "3606...
+$ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas"...
+$ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "...
+$ cd          <chr> "CA-2", "PA-5", "TX-16", "TX-19", "TX-6", "NY-28", "NC-...
+$ dist        <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, 1...
+$ dist_up     <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, 1...
+$ zipcode     <chr> "95969", "16255", "79924", "79423", "76123", "14131", "...
+$ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "36063", "...
 \end{verbatim}
 
 \begin{itemize}
@@ -1092,7 +1095,7 @@ Multiple Appearances & 1,600\\
 registered
 party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated-registered-party}}
 
-{[}Validation results. Only available for some staets and years{]}
+{[}Validation results. Only available for some states and years{]}
 
 \begin{table}[H]
 \centering
@@ -1133,7 +1136,7 @@ Socialist Party & 5\\
 registered Primary
 party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-validated-registered-primary-party}}
 
-{[}Validation results. Only available for some staets and years{]}
+{[}Validation results. Only available for some states and years{]}
 
 \begin{table}[H]
 \centering
@@ -1206,7 +1209,7 @@ No Voter File & 1,733\\
 turnout Primary Election
 (Congressional)}{vv\_turnout\_pvm: Validated turnout Primary Election (Congressional)}}\label{vv_turnout_pvm-validated-turnout-primary-election-congressional}}
 
-{[}Validation results{]}
+{[}Validation results. Congressional primaries.{]}
 
 \begin{table}[H]
 \centering
@@ -1239,7 +1242,7 @@ No Voter File & 1,363\\
 \subsubsection{\texorpdfstring{\texttt{pid3}: Partisan identity (3
 point)}{pid3: Partisan identity (3 point)}}\label{pid3-partisan-identity-3-point}}
 
-``Generally speaking, do you think of yourself as a \ldots{}?''
+``Generally speaking, do you think of yourself as a \ldots?''
 
 \begin{table}[H]
 \centering
@@ -1368,7 +1371,7 @@ Not Sure & 32,104\\
 \subsubsection{\texorpdfstring{\texttt{economy\_retro}: Retrospective
 economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospective-economy}}
 
-``OVER THE PAST YEAR the nation's economy has \ldots{}?''
+``OVER THE PAST YEAR the nation's economy has \ldots?''
 
 \begin{table}[H]
 \centering
@@ -1393,7 +1396,7 @@ Not Sure & 10,294\\
   Years: All of 2006-2018
 \item
   Limitations: Response options varies by year. Some are collapsed into
-  one category (e.g. \texttt{Gotten\ Better}, presented in some years,
+  one category (e.g.~\texttt{Gotten\ Better}, presented in some years,
   and \texttt{Gotten\ Somewhat\ Better}, presented in other years, are
   collapsed into \texttt{Gotten\ Better\ /\ Somewhat\ Better}). Some are
   left as is. For example, \texttt{Not\ Sure} was not an option in 2009.
@@ -1546,7 +1549,7 @@ Neither Approve Nor Disapprove & 1,413\\
   Years: All of 2006-2018
 \item
   Limitations: : Response options varies by year. Some are collapsed
-  into one category (e.g. \texttt{Approve}, presented in some years, and
+  into one category (e.g.~\texttt{Approve}, presented in some years, and
   \texttt{Somewhat\ Approve}, presented in other years, are collapsed
   into \texttt{Approve\ /\ Somewhat\ Approve}).
   \texttt{Neither\ approve\ nor\ disapprove} only included in 2007.
@@ -1628,7 +1631,7 @@ Neither Approve Nor Disapprove & 1,414\\
 \paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":}
 
 In this dataset we make the distinction between ``intent'' /
-``preference'' vs. ``voted'' / ``vote choice''. ``Intent'' (or
+``preference'' vs.~``voted'' / ``vote choice''. ``Intent'' (or
 ``preference'') refers to the response to the prospective question of
 the sort ``who would you vote for?'' in the \emph{pre-election} wave.
 ``Vote choice'' refers to the response to the retrospective question of
@@ -2127,8 +2130,8 @@ CCES draws from the 2006 CCES respondents.
 \begin{verbatim}
 Observations: 452,755
 Variables: 2
-$ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, ...
-$ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251...
+$ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006,...
+$ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439...
 \end{verbatim}
 
 \hypertarget{current-representatives-name-and-party}{%
@@ -2148,10 +2151,10 @@ Independent) in this dataset.
 \begin{verbatim}
 Observations: 452,755
 Variables: 4
-$ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)"...
-$ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert ...
-$ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "F...
-$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzin...
+$ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Ro...
+$ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menen...
+$ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "Frank ...
+$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzine (D)...
 \end{verbatim}
 
 \hypertarget{icpsr-identifiers}{%
@@ -2182,9 +2185,9 @@ district, by district and last name, or both:
 \begin{verbatim}
 Observations: 452,755
 Variables: 3
-$ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29...
-$ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15...
-$ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29...
+$ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, ...
+$ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, ...
+$ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, ...
 \end{verbatim}
 
 \begin{itemize}
@@ -2217,9 +2220,9 @@ Democrats in the race.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2012}\NormalTok{, st }\OperatorTok{==}\StringTok{ "CA"}\NormalTok{, dist_up }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{matches}\NormalTok{(}\StringTok{"intent_rep"}\NormalTok{)) }
+\NormalTok{cc }\OperatorTok{\%>\%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2012}\NormalTok{, st }\OperatorTok{==}\StringTok{ "CA"}\NormalTok{, dist\_up }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{) }\OperatorTok{\%>\%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -2249,12 +2252,12 @@ the form \texttt{HouseCand1Name}).
 \begin{verbatim}
 Observations: 452,755
 Variables: 6
-$ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studeba...
-$ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez...
-$ intent_gov_chosen <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
-$ voted_rep_chosen  <chr> "Richard C. Carsner (D)", "Stephanie Studeba...
-$ voted_sen_chosen  <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez...
-$ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
+$ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (...
+$ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)"...
+$ intent_gov_chosen <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
+$ voted_rep_chosen  <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (...
+$ voted_sen_chosen  <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)"...
+$ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
 \end{verbatim}
 
 \begin{itemize}
@@ -2272,12 +2275,12 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevi...
 \begin{verbatim}
 Observations: 452,755
 Variables: 6
-$ intent_rep_party <fct> Democratic, Democratic, Democratic, Democrati...
-$ voted_rep_party  <fct> Democratic, Democratic, Democratic, Democrati...
-$ intent_gov_party <fct> NA, Democratic, NA, Democratic, Democratic, N...
-$ voted_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, N...
-$ intent_sen_party <fct> NA, Democratic, Democratic, NA, NA, NA, Repub...
-$ voted_sen_party  <fct> NA, Democratic, Democratic, NA, Democratic, N...
+$ intent_rep_party <fct> Democratic, Democratic, Democratic, Democratic, De...
+$ voted_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, De...
+$ intent_gov_party <fct> NA, Democratic, NA, Democratic, Democratic, NA, Re...
+$ voted_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, NA, Re...
+$ intent_sen_party <fct> NA, Democratic, Democratic, NA, NA, NA, Republican...
+$ voted_sen_party  <fct> NA, Democratic, Democratic, NA, Democratic, NA, Re...
 \end{verbatim}
 
 \begin{itemize}
@@ -2354,4 +2357,3 @@ changes.
   First upload, covering 2006 - 2016 (n = 374,556)
 \end{itemize}
 \end{document}
-

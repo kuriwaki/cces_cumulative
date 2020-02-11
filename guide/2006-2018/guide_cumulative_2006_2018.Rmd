@@ -1,0 +1,991 @@
+---
+output:
+  pdf_document:
+    latex_engine: xelatex
+    template: guide_helvet.sty
+    keep_tex: TRUE
+title: "Guide to the CCES Cumulative Common Content (2006 - 2018)"
+author: "Shiro Kuriwaki"
+thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+date: "Guide last updated: `r Sys.Date()`"
+---
+
+\renewcommand\UrlFont{\color{crimson}\ttfamily}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, comment = "")
+```
+
+```{r, include = FALSE}
+library(glue)
+library(tidyverse)
+library(haven)
+library(knitr)
+library(kableExtra)
+library(rprojroot)
+```
+
+
+```{r, include = FALSE}
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
+meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
+rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
+```
+
+```{r}
+print_tab <- function(var, do_sort = FALSE, tbl = cc) {
+  var <- enquo(var)
+  
+  tal <- tbl %>% 
+    select(!!var) %>% 
+    mutate_if(is.labelled, as_factor) %>% 
+    mutate_if(is.factor, ~fct_explicit_na(.x)) %>% 
+    group_by(!!var) %>% 
+    tally(sort = do_sort) %>% 
+    mutate_at(vars(1), as.character)
+  
+  dframe <- as.data.frame(tal)
+  
+  kable(dframe, 
+        format = "latex", 
+        align = c("l", "r"),
+        col.names = c("", "n"), 
+        format.args = list(big.mark = ','),
+        linesep = c(rep('', nrow(dframe))),
+        booktabs = TRUE) %>% 
+    kable_styling(full_width = FALSE) %>% 
+    str_replace_all("\\[(?=(D|R|O))", "{[") %>% 
+    str_replace_all("(?<=[1-4])\\]", "]}") %>% 
+    cat()
+}
+```
+
+```{r}
+print_numeric <- function(var, tbl = cc) {
+  var <- enquo(var)
+  
+  summary(pull(cc, !!var))
+}
+```
+
+
+```{r}
+in_years <- function(var, tbl = cc) {
+  var <- enquo(var)
+  
+  yrs_vec <- tbl %>% 
+    filter(!is.na(!!var)) %>% 
+    distinct(year) %>% 
+    arrange(year) %>%
+    pull() 
+  
+  if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
+  if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
+  if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
+  if (!(identical(yrs_vec, 2006:2018) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
+}
+```
+
+```{r}
+descrip <- function(var, tbl = meta) {
+  varchar <- quo_name(enquo(var))
+  text <- tbl$description[tbl$alias == varchar]
+  if (str_sub(text, 1, 1) != "[") {
+    text <- str_c("\"", text, "\"")
+  }
+  text
+}
+```
+
+```{r}
+nam <- function(var, tbl = meta) {
+  varchar <- quo_name(enquo(var))
+  glue::glue("`{varchar}`: {tbl$name[tbl$alias == varchar]}")
+}
+```
+
+\noindent _Cite this dataset as:_
+
+> Kuriwaki, Shiro, 2019, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V4. 
+
+\bigskip
+
+This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+
+\bigskip
+
+CCES questions change from year to year, so this cumulative file only includes a subset of those questions that are standard. Users can still merge in year-specific questions easily into this cumulative file and take advantage of its harmonized variables. 
+ 
+\bigskip
+
+This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
+
+\bigskip
+
+
+Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+
+\vspace{1cm}
+
+\noindent\makebox[\textwidth][c]{%
+\begin{minipage}{0.92\linewidth}
+\begin{itemize}\addtolength{\itemsep}{7pt}
+
+\item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
+
+\item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
+
+\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
+\end{itemize}
+\end{minipage}
+}
+
+\newpage
+\setcounter{tocdepth}{3}
+\tableofcontents*
+\newpage
+
+# Getting Started
+
+The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
+
+```{r, eval = FALSE, echo = TRUE}
+cc <- readRDS("cumulative_2006_2018.Rds")
+```
+
+\noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
+```{r, echo = TRUE, eval = FALSE}
+library(tidyverse)
+cc
+```
+
+
+\noindent  A Stata dta version is provided as well. `cumulative_2006_2018.dta` can be read by Stata, or in R by the `haven` package 
+
+```{r, eval = FALSE, echo = TRUE}
+library(haven)
+cc <- read_dta("cumulative_2006_2018.dta")
+```
+
+
+## Labelled variables (for analysis in R)
+
+A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` class.^[Technically, this is now called a `labelled_haven` class, to disambiguate from an unrelated but older use of `labelled` in the Hmisc package.] The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label (See vignette [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)). This makes it equivalent to a `factor` but referenceable by its numeric value. It is essentially the labels in Stata and SPSS. 
+
+A labelled variable's labels are usually not shown. But recent versions of the `haven` package (version 2.1.0 or above) will display the associated labels in the Console if selected within tidyverse. This makes it immediately obvious which value is associated with which label:
+
+```{r, echo = TRUE}
+select(cc, year, case_id, pid3)
+```
+
+\noindent Labels can be made explicit by coercing the labelled vector into a factor. However, this removes the numerical value codes of the labelled class. 
+
+```{r, echo = TRUE, eval = FALSE}
+library(haven)
+select(cc, year, case_id, pid3) %>% 
+  mutate(pid3_fct = as_factor(pid3))
+```
+```{r, echo = FALSE, eval = TRUE}
+library(haven)
+select(cc, year, case_id, pid3) %>% 
+  mutate(pid3_fct = as_factor(pid3)) %>% 
+  print(n = 5)
+```
+
+
+\noindent Unlike factors, labelled variables can be referenced by their underlying numeric value. It is sometimes useful to treat survey values as numbers rather than as raw text, and the labelled calss allows you to do that.
+
+```{r, echo = TRUE,  eval = FALSE}
+select(cc, year, case_id, pid3) %>% 
+  filter(pid3 == 1)
+```
+```{r, echo = FALSE,  eval = TRUE}
+select(cc, year, case_id, pid3) %>% 
+  filter(pid3 == 1) %>% 
+  print(n = 5)
+```
+
+\indent In this cumulative (R) dataset, some variables are of class labelled, and some are of factor class. This is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
+
+
+## Adding more variables
+
+As noted, the cumulative dataset only uses key variables from each year's common content. However,common content variables can be merged in.
+
+In R, we recommend using the `left_join` or `inner_join` functions (or the base-R `merge` function). In Stata, use `merge 1:1`. In all cases, the combination of `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so any merges should merge on year and the case identifier. 
+
+
+
+\newpage
+
+# Features of the Cumulative Dataset
+
+Beyond stacking together each year's common content, the cumulative dataset provides several additional features to facilitate analysis.
+
+## Unified Variable Names
+
+Most variables in this dataset come straight from each year's CCES. However, it renames and standardizes variable names, making them accessible in one place.  Please see the rest of this guide or the Crunch dataset for a full list and description of variables. 
+
+
+## Chosen Candidate Names and Identifiers
+One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
+
+Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name and party, which will vary across individuals. 
+
+```{r, echo = TRUE}
+select(cc, year, case_id, st, matches("voted_sen"))
+```
+
+
+## Crunch
+
+A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
+
+1. Obtain Access: For View access to the dataset (free), please [sign up here](https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap). For questions and more access, please contact the CCES Team.
+
+\newpage
+
+2. Browse: Crunch offers a web GUI for quickly browsing variables:
+
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.05\linewidth]{01_crunch_browse.png}}
+\end{figure}
+
+3. Analyze: The crunch interface allows Viewers to make cross-tabs and bar graphs quickly.  
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
+\end{figure}
+
+Crunch datasets can also be manipulated from a R package, `crunch`. To learn more about the features, please take a look at their homepage [crunch.io](https://crunch.io) or their [5-minute demo video](https://www.youtube.com/watch?v=zA7N_Q1EpSs).
+
+\newpage
+
+# Variables
+
+The sections below provide summary statistics and more information on each variable. 
+
+* The title shows the name of the variable as it appears in the dataset ("alias" in Crunch terminology), followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
+* Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries rather than the question verbatim. 
+* A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
+* The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
+* Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
+
+ 
+ 
+## Administration
+
+
+### `r nam(year)`
+
+`r descrip(year)`
+
+```{r, results = "asis"}
+print_tab(year)
+```
+
+### `r nam(starttime)`
+
+`r descrip(starttime)`
+
+```{r}
+print_numeric(starttime)
+```
+* Years: `r in_years(starttime)`
+
+
+### `r nam(tookpost)`
+
+`r descrip(tookpost)`
+
+```{r, results = "asis"}
+print_tab(tookpost)
+```
+
+* Years: `r in_years(tookpost)` (Post-election wave only exists for even years)
+
+
+
+
+## Weights 
+### `r nam(weight)`
+
+`r descrip(weight)`
+
+```{r}
+print_numeric(weight)
+```
+
+* Years: `r in_years(weight)`
+* In even years, they are re-computed after vote validation has been computed and those re-computed weights are taken here when available. The weights applied to the sample (which is originally drawn from a matched sample) are constructed to make each year's respondents' pool representative of the national adult population. See the methodology section of the [2016 Guide](https://dataverse.harvard.edu/api/access/datafile/3047286) for details. 
+* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `weight_post` 
+
+
+### `r nam(weight_cumulative)`
+
+`r descrip(weight_cumulative)`
+
+
+```{r}
+print_numeric(weight_cumulative)
+```
+
+* Years: `r in_years(weight_cumulative)`
+* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the  year-specific factors shown in the following table.  For example, all weights in the 2016 common content are divided by about `r filter(rsc, year == 2016) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
+
+
+
+\begin{center}
+
+```{r, fig.align = 'center'}
+rsc %>% 
+  mutate(size  = formatC(size, format = "d", big.mark = ",")) %>% 
+  kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
+        linesep = rep('', nrow(rsc)))
+  
+```
+\end{center}
+
+
+### `r nam(rvweight)`
+
+`r descrip(rvweight)`
+
+```{r}
+print_numeric(rvweight)
+```
+
+* Years: `r in_years(rvweight)`
+* In 2018, YouGov computed weights after vote validation to weight to the target population of registered voters. See the methodology section of the [2018 Guide](https://doi.org/10.7910/DVN/ZSBZ7K) for details. For this reason, and to distinguish it from previous year's post-validation weights, the cumulative renames the 2018 `vvweight` into `rvweight`.
+* Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `rvweight_post` 
+
+
+
+
+### `r nam(rvweight_post)`
+
+`r descrip(rvweight_post)`
+
+```{r}
+print_numeric(rvweight_post)
+```
+
+* Years: `r in_years(rvweight_post)`
+* Limitations: Only available for some even years.
+
+
+### `r nam(weight_post)`
+
+`r descrip(weight_post)`
+
+```{r}
+print_numeric(weight_post)
+```
+
+* Years: `r in_years(weight_post)`
+* Limitations: Only available for some even years.
+
+
+## Geography
+
+A series of variables for the respondent's location
+
+* `r nam(state)`: `r descrip(state)`
+* `r nam(st)`: `r descrip(st)`
+* `r nam(dist)`: `r descrip(dist)`
+* `r nam(dist_up)`: `r descrip(dist_up)`
+* `r nam(cd)`: `r descrip(cd)`
+* `r nam(zipcode)`: `r descrip(zipcode)`
+* `r nam(county_fips)`: `r descrip(county_fips)`
+
+```{r}
+cc %>%
+  mutate(is_2012 = year == 2012) %>%
+  arrange(desc(is_2012)) %>%
+  select(matches("(state|^st$|dist|cd|zipcode|county_fips)")) %>% 
+  glimpse()
+```
+
+* Years: `r in_years(state)`
+* Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
+
+\newpage
+
+## Demographics
+
+### `r nam(gender)`
+
+`r descrip(gender)`
+
+
+```{r, results = "asis"}
+print_tab(gender)
+```
+
+* Years: `r in_years(gender)`
+
+### `r nam(birthyr)`
+
+`r descrip(birthyr)`
+
+
+```{r}
+print_numeric(birthyr)
+```
+
+* Years: `r in_years(birthyr)`
+
+### `r nam(age)`
+
+`r descrip(age)`
+
+
+```{r}
+print_numeric(age)
+```
+
+* Years: `r in_years(age)`
+
+### `r nam(educ)`
+
+`r descrip(educ)`
+
+
+```{r, results = "asis"}
+print_tab(educ)
+```
+
+* Years: `r in_years(educ)`
+
+### `r nam(race)`
+
+`r descrip(race)`
+
+
+```{r, results = "asis"}
+print_tab(race)
+```
+
+* Years: `r in_years(race)`
+* Limitations: The "Hispanic" value may undercount self-identified Hispanics. See `hispanic`
+
+### `r nam(hispanic)`
+
+`r descrip(hispanic)`
+
+
+```{r, results = "asis"}
+print_tab(hispanic)
+```
+
+* Years: `r in_years(hispanic)`
+* In years in which this question was fielded, this question supplements the `race` variable by asking those who did _not_ respond "Hipsanic" in the `race` question.
+
+### `r nam(faminc)`
+
+`r descrip(faminc)`
+
+
+```{r, results = "asis"}
+print_tab(faminc)
+```
+
+* Years: `r in_years(faminc)`
+* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
+* The 2009 CCES did not have an option for 60-70k. 
+
+
+### `r nam(marstat)`
+
+`r descrip(marstat)`
+
+
+```{r, results = "asis"}
+print_tab(marstat)
+```
+
+* Years: `r in_years(marstat)`
+* The option "Single" was used till 2016, which was then replaced by "Never Married" in 2017 and 2018.
+* The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
+
+\newpage
+
+
+## Validations 
+
+Observations in even years include indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election. For more information, see [Ansolabehere and Hersh (2012)](
+https://doi.org/10.1093/pan/mps023). 
+
+### `r nam(vv_regstatus)`
+
+`r descrip(vv_regstatus)`
+
+```{r, results = "asis"}
+print_tab(vv_regstatus)
+```
+
+* Years: `r in_years(vv_regstatus)`
+* Limitations: Collapses some response options
+
+
+### `r nam(vv_party_gen)`
+
+`r descrip(vv_party_gen)`
+
+```{r, results = "asis"}
+print_tab(vv_party_gen)
+```
+
+* Years: `r in_years(vv_party_gen)`
+* Limitations: Not available for some even years
+
+
+### `r nam(vv_party_prm)`
+
+`r descrip(vv_party_prm)`
+
+
+```{r, results = "asis"}
+print_tab(vv_party_prm)
+```
+
+* Years: `r in_years(vv_party_prm)`
+* Limitations: Not available for some even years
+
+## Turnout 
+
+### `r nam(vv_turnout_gvm)`
+
+`r descrip(vv_turnout_gvm)`
+
+
+```{r, results = "asis"}
+print_tab(vv_turnout_gvm)
+```
+
+* Years: `r in_years(vv_turnout_gvm)`
+* Limitations: Collapses most response options. For example, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting _method_. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
+
+### `r nam(vv_turnout_pvm)`
+
+`r descrip(vv_turnout_pvm)`
+
+
+```{r, results = "asis"}
+print_tab(vv_turnout_pvm)
+```
+
+* Years: `r in_years(vv_turnout_pvm)`
+* Limitations: See `vv_turnout_gvm`
+
+\newpage
+
+
+## Partisan Identity
+
+### `r nam(pid3)`
+
+`r descrip(pid3)`
+
+```{r, results = "asis"}
+print_tab(pid3)
+```
+
+* Years: `r in_years(pid3)`
+* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 2010 values are from the post-election wave. 
+
+
+### `r nam(pid7)`
+
+`r descrip(pid7)`
+
+```{r, results = "asis"}
+print_tab(pid7)
+```
+
+* Years: `r in_years(pid7)`
+* Limitations: See `pid3` 
+
+### `r nam(pid3_leaner)`
+
+`r descrip(pid3_leaner)`
+
+```{r, results = "asis"}
+print_tab(pid3_leaner)
+```
+
+* Years: `r in_years(pid3_leaner)`
+* Limitations: See `pid3`
+
+### `r nam(ideo5)`
+
+`r descrip(ideo5)`
+
+```{r, results = "asis"}
+print_tab(ideo5)
+```
+
+* Years: `r in_years(ideo5)`
+
+
+## Economy
+### `r nam(economy_retro)`
+
+`r descrip(economy_retro)`
+
+```{r, results = "asis"}
+print_tab(economy_retro)
+```
+
+* Years: `r in_years(economy_retro)`
+* Limitations: Response options varies by year. Some are collapsed into one category (e.g. `Gotten Better`, presented in some years, and `Gotten Somewhat Better`, presented in other years, are collapsed into `Gotten Better / Somewhat Better`). Some are left as is. For example, `Not Sure` was not an option in 2009.
+
+## News Interest
+### `r nam(newsint)`
+
+`r descrip(newsint)`
+
+```{r, results = "asis"}
+print_tab(newsint)
+```
+
+
+* Years: `r in_years(newsint)`
+* Limitations: Not asked in 2006. Similar questions about watching TV news was asked in 2006, but not included in this cumulative file.
+
+## Approval
+
+### `r nam(approval_pres)`
+
+`r descrip(approval_pres)`
+
+
+```{r, results = "asis"}
+print_tab(approval_pres)
+```
+
+* Years: `r in_years(approval_pres)`
+* Limitations: `Neither approve nor disapprove` only included in 2007.
+* This question is asked in a grid format, along with Governors, Congress, and Courts. 
+
+### `r nam(approval_rep)`
+
+`r descrip(approval_rep)`
+
+
+```{r, results = "asis"}
+print_tab(approval_rep)
+```
+
+* Years: `r in_years(approval_rep)`
+* Limitations: `Neither approve nor disapprove` only included in 2007.
+* This question is asked in a grid format, along with Senators (`approval_sen1`, `approval_sen2`). 
+* To see who [Representative] refers to for a particular respondent, see `rep_inc` (incumbent identifier in `rep_icpsr`)
+
+### `r nam(approval_sen1)`
+
+`r descrip(approval_sen1)`
+
+
+```{r, results = "asis"}
+print_tab(approval_sen1)
+```
+
+* Years: `r in_years(approval_sen1)`
+* Limitations: : Response options varies by year. Some are collapsed into one category (e.g. `Approve`, presented in some years, and `Somewhat Approve`, presented in other years, are collapsed into `Approve / Somewhat Approve`). `Neither approve nor disapprove` only included in 2007.
+* To see who [Senator 1] refers to for a particular respondent, see `sen1_inc` (incumbent identifier in `sen1_icpsr`)
+
+### `r nam(approval_sen2)`
+
+`r descrip(approval_sen2)`
+
+
+```{r, results = "asis"}
+print_tab(approval_sen2)
+```
+
+* See `approval_sen2`
+
+### `r nam(approval_gov)`
+
+`r descrip(approval_gov)`
+
+
+```{r, results = "asis"}
+print_tab(approval_gov)
+```
+
+* Years: `r in_years(approval_gov)`
+* Limitations: See `approval_pres`
+* To see who the Governor refers to for a particular respondent, see `gov_inc`.
+
+
+
+\newpage
+
+## Presidential Vote
+
+\paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
+
+Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years. 
+
+
+
+### `r nam(intent_pres_08)`
+
+`r descrip(intent_pres_08)`
+
+
+```{r, results = "asis"}
+print_tab(intent_pres_08)
+```
+
+* Years: `r in_years(intent_pres_08)`
+
+
+### `r nam(intent_pres_12)`
+
+`r descrip(intent_pres_12)`
+
+
+```{r, results = "asis"}
+print_tab(intent_pres_12)
+```
+
+* Years: `r in_years(intent_pres_12)`
+
+### `r nam(intent_pres_16)`
+
+`r descrip(intent_pres_16)`
+
+
+```{r, results = "asis"}
+print_tab(intent_pres_16)
+```
+
+* Years: `r in_years(intent_pres_16)`
+
+
+### `r nam(voted_pres_08)`
+
+`r descrip(voted_pres_08)`
+
+
+```{r, results = "asis"}
+print_tab(voted_pres_08)
+```
+
+* Years: `r in_years(voted_pres_08)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
+
+### `r nam(voted_pres_12)`
+
+`r descrip(voted_pres_12)`
+
+```{r, results = "asis"}
+print_tab(voted_pres_12)
+```
+
+* Years: `r in_years(voted_pres_12)`
+* Limitations: Response options offer slightly by year; some are collapsed into one. 
+
+### `r nam(voted_pres_16)`
+
+`r descrip(voted_pres_16)`
+
+```{r, results = "asis"}
+print_tab(voted_pres_16)
+```
+
+* Years: `r in_years(voted_pres_16)`
+* This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+
+
+## House, Senate and Governor Vote
+
+### `r nam(intent_rep)`
+
+`r descrip(intent_rep)` 
+
+
+```{r, results = "asis"}
+print_tab(intent_rep)
+```
+
+* Years: `r in_years(intent_rep)`
+* Limitations: Only available for even years. The third party candidate is not specified for early years. The fourth candidate and below are not shown for most years.  Response options differ by year.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` to see the party affiliation of the chosen candidate.
+* Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the name of the candidate chosen, see `intent_rep_chosen`.
+* `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
+
+
+
+### `r nam(intent_sen)`
+
+`r descrip(intent_sen)` 
+
+```{r, results = "asis"}
+print_tab(intent_sen)
+```
+
+* Years: `r in_years(intent_sen)`
+* Limitations: See `intent_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
+* See `intent_sen_party` for the party affiliation of the chosen candidate.
+
+### `r nam(intent_gov)`
+
+`r descrip(intent_gov)` 
+
+
+```{r, results = "asis"}
+print_tab(intent_gov)
+```
+
+* Years: `r in_years(intent_gov)`
+* Limitations: See `intent_rep`. For governor elections in odd years, see individual year's CCES.
+* See `intent_gov_party` for the party affiliation of the chosen candidate.
+
+
+### `r nam(voted_rep)`
+
+`r descrip(voted_rep)` 
+
+```{r, results = "asis"}
+print_tab(voted_rep)
+```
+
+* Years: `r in_years(voted_rep)`
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
+* See `voted_rep_party` for party affiliation.
+
+### `r nam(voted_sen)`
+
+`r descrip(voted_sen)` 
+
+
+```{r, results = "asis"}
+print_tab(voted_sen)
+```
+
+* Years: `r in_years(voted_sen)`
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_sen_party` for party affiliation.
+* Senate Special elections where both senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
+
+### `r nam(voted_gov)`
+
+`r descrip(voted_gov)` 
+
+```{r, results = "asis"}
+print_tab(voted_gov)
+```
+
+* Years: `r in_years(voted_gov)`
+* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_gov_party` for party affiliation.
+
+
+
+\newpage
+
+
+# Metadata and Identifiers
+
+
+## Identifiers
+
+The case identifier `case_id` is unique within the year and is identical to the case identifiers in the individual year's CCES. It should be used in conjunction with `year` for a unique identifier for the whole dataset. Some individuals across years may be the same YouGov panel respondent with different identifiers; for example the 2007 CCES draws from the 2006 CCES respondents.  
+
+```{r}
+glimpse(select(cc, matches("year|case_id")))
+```
+
+## Current Representatives' Name and Party
+
+The four names in the three offices are representatives of the respondent _at the time of the survey_. Names are printed as shown, and similarly parties are shown if the particular year's CCES did not show party. For example, Senator Shelby is presented as `Richard Craig Shelby`, `Richard C. Shelby (R)`, `Richard Shelby (R)`, `Richard C. Shelby (R)`, depending on the year. Party names are abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset. 
+
+```{r}
+glimpse(select(cc, matches("(rep|sen1|sen2|gov)_current")))
+```
+
+## ICPSR Identifiers
+
+Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES. Instead, I attempt to merge in these identifiers through a series of name and district merges.  
+
+The matching of identifiers to respondent occurs through matching by district, by district and last name, or both:
+
+* For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g. in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
+* For Senators, we join entirely on `cong`, `st`, and last name
+
+
+
+```{r}
+glimpse(select(cc, matches("(rep|sen1|sen2|gov)_.*icpsr")))
+```
+
+* Years: `r in_years(rep_icpsr)`
+* Limitations: Please note there may be some incorrect merges, especially for nontraditional names and representatives who were elected in special elections and may not be in some datasets. 
+
+
+The unique identifiers can be used to join with other databases to append additional information such as committee membership and ideology scores, such as 
+
+> Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2017). Voteview: Congressional Roll-Call Votes Database. <https://voteview.com/>
+
+
+The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that this particular respondent preferred voting for Maxine Waters, one of the two Democrats in the race.
+
+```{r, echo = TRUE}
+cc %>% 
+  filter(year == 2012, st == "CA", dist_up == 43) %>% 
+  select(matches("intent_rep")) 
+```
+
+The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). 
+
+## Name of Chosen Candidate
+
+```{r}
+glimpse(select(cc, matches("(intent|voted)_.*chosen")))
+```
+
+* Years: `r in_years(intent_rep_chosen)`
+* Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
+
+## Party of Chosen Candidate
+
+
+```{r}
+glimpse(select(cc, matches("_party$")))
+```
+
+* Years: varies by office
+* Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
+
+\newpage
+
+# Version History of Dataverse Releases
+
+Dataverse assigns version numbers by incremeting a full number if any of the datasets change, and an incrementing decimal when the description changes.
+
+### Version 4.0 
+- Released `2019-09-09`
+- Enter 2018 vote validation
+- Coalesce straight party ticket vote into vote choice entries
+- Remove FEC identifiers
+
+### Version 3.0
+- Released `2019-04-29`
+- Add 2018 Common Content before vote validation (up to n = 452,755)
+
+### Version 2.0 
+- Released `2018-04-16`
+- Add 2017 Common Content (up to n = 392,755)
+- Corrects 2016 validated vote entries inherited from Common Content.
+- Consolidates weights to a single column, using post-vote validation weights for even years.
+- Adds `hispanic` and `faminc` variables
+
+### Version 1.0
+- Released `2018-01-24`
+- First upload, covering 2006 - 2016 (n = 374,556)
