@@ -230,7 +230,6 @@ ccc_cand <- ccc %>%
 # Format for output  --------
 # for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
 ccc_df <- ccc_cand %>%
-  left_join(incumbents_with_ID, ids) %>% 
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
   mutate_at(vars(year, case_id), as.integer)
@@ -253,6 +252,7 @@ fips_key <- counties %>%
   left_join(distinct(ccc_df, state, st)) %>% 
   na.omit()
 
+# Error: Evaluation error: vector memory exhausted (limit reached?).
 ccc_factor <-   ccc_fac %>% 
   left_join(fips_key) %>%
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
@@ -293,7 +293,11 @@ ccc_crunch <- ccc_common %>%
   select(year, year_date, everything())
 
 write_sav(ccc_crunch, "data/release/cumulative_2006_2018_crunch.sav") 
-R.utils::gzip("data/release/cumulative_2006_2018_crunch.sav")
+
+if (file.exists("data/release/cumulative_2006_2018_crunch.sav.gz")) {
+  file.remove("data/release/cumulative_2006_2018_crunch.sav.gz")
+}
+  R.utils::gzip("data/release/cumulative_2006_2018_crunch.sav")
 
 # might write to crunch
 if (writeToCrunch) {

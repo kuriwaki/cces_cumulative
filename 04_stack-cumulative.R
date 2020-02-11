@@ -766,7 +766,7 @@ cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv") %>%
 ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
   # "2006mit" = std_name(mit06_add),
-  "2008hu" = std_name(hu08),
+  # "2008hu" = std_name(hu08),
   "2009hu" = std_name(hu09),
   "2012" = std_name(cc12),
   "2012panel" = std_name(panel12, is_panel = TRUE),
@@ -1074,9 +1074,9 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 # don't use panel rows for now -----
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+# hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(hu08_id, hu09_id, panel_id)
+addon_id <- bind_rows(hu09_id, panel_id) # hu08_id, 
 
 
 # Common manipulations ----
