@@ -10,13 +10,13 @@ library(tidyverse)
 library(rprojroot)
 ```
 
-This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2018). 
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2019). 
 
 
 
 * [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
 * [*Current Guide*]( 
-https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2018.pdf)
+https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2019.pdf)
 
 Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 

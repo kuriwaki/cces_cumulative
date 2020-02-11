@@ -26,8 +26,8 @@ library(rprojroot)
 ```
 
 
-```{r, include = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
+```{r, include = FALSE, cache = TRUE}
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2019.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
@@ -82,7 +82,12 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
   if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
-  if (!(identical(yrs_vec, 2006:2018) | identical(yrs_vec, 2006:2017))) return(str_c(yrs_vec, collapse = ", "))
+  if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
+  if (!(identical(yrs_vec, 2006:2019) | 
+        identical(yrs_vec, 2006:2018) | 
+        identical(yrs_vec, 2006:2017))) {
+    return(str_c(yrs_vec, collapse = ", "))
+  }
 }
 ```
 
@@ -110,7 +115,7 @@ nam <- function(var, tbl = meta) {
 
 \bigskip
 
-This dataset combines thirteen years (2006 - 2018) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+This dataset combines thirteen years (2006 - 2019) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
@@ -150,7 +155,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006_2018.Rds")
+cc <- readRDS("cumulative_2006_2019.Rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -160,11 +165,11 @@ cc
 ```
 
 
-\noindent  A Stata dta version is provided as well. `cumulative_2006_2018.dta` can be read by Stata, or in R by the `haven` package 
+\noindent  A Stata dta version is provided as well. `cumulative_2006_2019.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-cc <- read_dta("cumulative_2006_2018.dta")
+cc <- read_dta("cumulative_2006_2019.dta")
 ```
 
 
@@ -968,6 +973,10 @@ glimpse(select(cc, matches("_party$")))
 # Version History of Dataverse Releases
 
 Dataverse assigns version numbers by incremeting a full number if any of the datasets change, and an incrementing decimal when the description changes.
+
+### Version 5.0 
+- Released `2020-XX-XX`
+- Enter 2019 common content
 
 ### Version 4.0 
 - Released `2019-09-09`
