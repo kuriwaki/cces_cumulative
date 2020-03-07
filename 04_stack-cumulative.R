@@ -5,6 +5,7 @@ library(foreach)
 library(stringr)
 library(glue)
 library(lubridate)
+library(questionr)
 
 
 # helper data ----
@@ -40,6 +41,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_rep = vote_intent_house,
         intent_sen = vote_intent_senate,
         intent_gov = vote_intent_gov,
+        immstat = immigration_status,
         vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
@@ -744,11 +746,13 @@ clps_pres16 <- function(vec) {
 
 #' give pres party from chars of pres names
 pres_names <- function(vec) {
+  
   case_when(
     str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
+    str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other",
     TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican"))
+    factor(levels = c("Democratic", "Republican", "Other"))
 }
 
 # READ ------
@@ -778,7 +782,6 @@ ccs <- list(
   "2018" = std_name(cc18),
   "2019" = std_name(cc19)
 )
-
 
 
 # mutations to data -----
@@ -948,7 +951,6 @@ pres_party <- i_pres08 %>%
             intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
             voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
 
-
 # House, Sen, Gov -----
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
 i_sen <- find_stack(ccs, intent_sen, new_reorder = FALSE)
@@ -995,6 +997,22 @@ marstat <- find_stack(ccs, marstat, make_labelled = TRUE) %>%
   mutate(marstat = na_if(marstat, 8)) %>% 
   add_value_labels(marstat = c(`Single / Never Married` = 5))
 
+# citizenship ----
+# define by immstat
+citizen <- find_stack(ccs, immstat) %>% 
+  mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) %>% 
+  mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
+  select(-immstat)
+  
+
+# xtabs(~ citizen + year, citizen)
+# xtabs(~ immstat + citizen, citizen)
+# ccs$`2016` %>% lookfor("citizen")
+# ccs$`2014` %>% lookfor("cit")
+# ccs$`2018`$cit1
+# count(ccs$`2018`, immstat, cit1)
+
+
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
 vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
@@ -1039,6 +1057,7 @@ ccc <- geo %>%
   left_join(educ) %>%
   left_join(faminc) %>%
   left_join(marstat) %>%
+  left_join(citizen) %>%
   left_join(econ) %>%
   left_join(newsint) %>%
   left_join(apvpres) %>%

@@ -514,6 +514,18 @@ print_tab(marstat)
 * The option "Single" was used till 2016, which was then replaced by "Never Married" in 2017 and 2018.
 * The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
 
+### `r nam(citizen)`
+
+`r descrip(citizen)`
+
+
+```{r, results = "asis"}
+print_tab(citizen)
+```
+
+* Years: `r in_years(citizen)`
+* These come from the immigration status questions, which asks respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
+
 \newpage
 
 

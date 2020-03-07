@@ -308,5 +308,4 @@ if (writeToCrunch) {
   logout()  
 }
 
-
 cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")

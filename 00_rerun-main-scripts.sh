@@ -6,5 +6,5 @@ Rscript 04_stack-cumulative.R || exit 1
 Rscript 05_extract-contextual.R || exit 1
 Rscript 06_merge-contextual_upload.R || exit 1
 # Rscript 07_format-crunch.R || exit 1
-Rscript -e "rmarkdown::render('guide/guide_cumulative_2006_2018.Rmd')" || exit 1
+Rscript -e "rmarkdown::render('guide/guide_cumulative_2006_2019.Rmd')" || exit 1
 
