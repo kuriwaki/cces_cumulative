@@ -413,6 +413,7 @@ cc %>%
 ```
 
 * Years: `r in_years(state)`
+* Note the distinction between `dist` and `dist_up`, especially in 2012. The former should generally be used for linking respondents to their representatives at the time of the survey, where as the latter can be used for the district in which they will vote for. New districts were drawn in 2010-2012 and candidates ran in new district maps in the 2012 CCES. Because respondents would not be _represented_ in the new district lines until January 2013, in the 2012 CCES `dist` is the old district line and `dist_up` is the new district line for the General Election. 
 * Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
 
 \newpage
@@ -988,7 +989,7 @@ Dataverse assigns version numbers by incremeting a full number if any of the dat
 
 ### Version 5.0 
 - Released `2020-XX-XX`
-- Enter 2019 common content
+- Enter 2019 common content (up to n = 470,755)
 
 ### Version 4.0 
 - Released `2019-09-09`

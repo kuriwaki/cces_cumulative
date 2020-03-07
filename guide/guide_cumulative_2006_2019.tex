@@ -796,6 +796,16 @@ $ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "36063", "...
 \item
   Years: All of 2006-2019
 \item
+  Note the distinction between \texttt{dist} and \texttt{dist\_up},
+  especially in 2012. The former should generally be used for linking
+  respondents to their representatives at the time of the survey, where
+  as the latter can be used for the district in which they will vote
+  for. New districts were drawn in 2010-2012 and candidates ran in new
+  district maps in the 2012 CCES. Because respondents would not be
+  \emph{represented} in the new district lines until January 2013, in
+  the 2012 CCES \texttt{dist} is the old district line and
+  \texttt{dist\_up} is the new district line for the General Election.
+\item
   Limitations: Some years do not provide the variable relevant to
   \texttt{dist\_up}, in which case the current district (\texttt{dist})
   is assigned automatically. Thus, \texttt{dist\_up} may not reflect
@@ -2341,7 +2351,7 @@ changes.
 \item
   Released \texttt{2020-XX-XX}
 \item
-  Enter 2019 common content
+  Enter 2019 common content (up to n = 470,755)
 \end{itemize}
 
 \hypertarget{version-4.0}{%
