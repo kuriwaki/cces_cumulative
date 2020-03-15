@@ -26,7 +26,7 @@ library(rprojroot)
 ```
 
 
-```{r, include = FALSE, cache = TRUE}
+```{r, include = FALSE, cache = FALSE}
 cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2019.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
@@ -748,6 +748,26 @@ print_tab(approval_gov)
 
 Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years. 
 
+### `r nam(intent_pres_party)`
+
+`r descrip(intent_pres_party)`
+
+```{r, results = "asis"}
+print_tab(intent_pres_party)
+```
+
+* Years: `r in_years(intent_pres_party)`
+
+### `r nam(voted_pres_party)`
+
+`r descrip(voted_pres_party)`
+
+```{r, results = "asis"}
+print_tab(voted_pres_party)
+```
+
+* Years: `r in_years(voted_pres_party)`
+* Note: In a presidential election year, this asks the vote of that year. The vote choice of the presidential election 4 years prior is often recorded in the individual common content but not in this cumulative file. 
 
 
 ### `r nam(intent_pres_08)`
@@ -760,7 +780,7 @@ print_tab(intent_pres_08)
 ```
 
 * Years: `r in_years(intent_pres_08)`
-
+* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_12)`
 
@@ -772,6 +792,7 @@ print_tab(intent_pres_12)
 ```
 
 * Years: `r in_years(intent_pres_12)`
+* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_16)`
 
@@ -783,6 +804,7 @@ print_tab(intent_pres_16)
 ```
 
 * Years: `r in_years(intent_pres_16)`
+* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
 ### `r nam(voted_pres_08)`
@@ -796,6 +818,7 @@ print_tab(voted_pres_08)
 
 * Years: `r in_years(voted_pres_08)`
 * Limitations: Response options offer slightly by year; some are collapsed into one. 
+* See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_12)`
 
@@ -807,6 +830,7 @@ print_tab(voted_pres_12)
 
 * Years: `r in_years(voted_pres_12)`
 * Limitations: Response options offer slightly by year; some are collapsed into one. 
+* See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_16)`
 
@@ -818,6 +842,7 @@ print_tab(voted_pres_16)
 
 * Years: `r in_years(voted_pres_16)`
 * This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
 ## House, Senate and Governor Vote

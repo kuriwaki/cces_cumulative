@@ -750,9 +750,10 @@ pres_names <- function(vec) {
   case_when(
     str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
-    str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other",
+    str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
+    str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did Not Vote",
     TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican", "Other"))
+    factor(levels = c("Democratic", "Republican", "Other Candidate", "Did Not Vote"))
 }
 
 # READ ------

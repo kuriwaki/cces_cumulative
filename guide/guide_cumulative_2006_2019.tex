@@ -153,7 +153,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2020-03-07}
+\date{Guide last updated: 2020-03-15}
 
 \begin{document}
 
@@ -1686,6 +1686,67 @@ straight party ticket in the applicable states will appear to have voted
 for the Republican candidate in all offices. The straight ticket party
 option was not asked in other years.
 
+\hypertarget{intent_pres_party-president-preference-part}{%
+\subsubsection{\texorpdfstring{\texttt{intent\_pres\_party}: President
+preference
+part}{intent\_pres\_party: President preference part}}\label{intent_pres_party-president-preference-part}}
+
+{[}Party of presidential candidate chosen in intent\_pres{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Democratic & 64,800\\
+Republican & 53,287\\
+Other Candidate & 4,013\\
+(Missing) & 348,655\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2008, 2012, 2016
+\end{itemize}
+
+\hypertarget{voted_pres_party-president-vote-in-last-election}{%
+\subsubsection{\texorpdfstring{\texttt{voted\_pres\_party}: President
+vote in last
+election}{voted\_pres\_party: President vote in last election}}\label{voted_pres_party-president-vote-in-last-election}}
+
+{[}Party of presidential candidate chosen in last election{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Democratic & 173,614\\
+Republican & 150,102\\
+Other Candidate & 19,234\\
+Did Not Vote & 25,991\\
+(Missing) & 101,814\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  2018, 2019
+\item
+  Note: In a presidential election year, this asks the vote of that
+  year. The vote choice of the presidential election 4 years prior is
+  often recorded in the individual common content but not in this
+  cumulative file.
+\end{itemize}
+
 \hypertarget{intent_pres_08-2008-president-preference-before-voting}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_pres\_08}: 2008 President
 preference (before
@@ -1718,6 +1779,9 @@ I'm Not Sure & 1,697\\
 \tightlist
 \item
   Years: 2008
+\item
+  See \texttt{intent\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{intent_pres_12-2012-president-preference-before-voting}{%
@@ -1747,6 +1811,9 @@ I'm Not Sure & 3,856\\
 \tightlist
 \item
   Years: 2012
+\item
+  See \texttt{intent\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{intent_pres_16-2016-president-preference-before-voting}{%
@@ -1778,6 +1845,9 @@ I'm Not Sure & 6,536\\
 \tightlist
 \item
   Years: 2016
+\item
+  See \texttt{intent\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{voted_pres_08-2008-president-vote-choice-after-voting}{%
@@ -1811,6 +1881,9 @@ Not Sure / Don't Recall & 1,787\\
 \item
   Limitations: Response options offer slightly by year; some are
   collapsed into one.
+\item
+  See \texttt{voted\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{voted_pres_12-2012-president-vote-choice-after-voting}{%
@@ -1845,6 +1918,9 @@ Not Sure / Don't Recall & 1,990\\
 \item
   Limitations: Response options offer slightly by year; some are
   collapsed into one.
+\item
+  See \texttt{voted\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{voted_pres_16-2016-president-vote-choice-after-voting}{%
@@ -1881,6 +1957,9 @@ Not Sure / Don't Recall & 527\\
   to the early vote question in the pre-election wave if the respondent
   indicates they have already voted, or if not, the response in the
   post-election wave.
+\item
+  See \texttt{voted\_pres\_party} for vote choice in the most recent
+  preceding presidential election into one party column.
 \end{itemize}
 
 \hypertarget{house-senate-and-governor-vote}{%
