@@ -115,15 +115,15 @@ nam <- function(var, tbl = meta) {
 
 \bigskip
 
-This dataset combines thirteen years (2006 - 2019) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+This dataset combines fourteen years (2006 - 2019) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
-CCES questions change from year to year, so this cumulative file only includes a subset of those questions that are standard. Users can still merge in year-specific questions easily into this cumulative file and take advantage of its harmonized variables. 
+CCES questions change from year to year, so this cumulative file only includes a subset of those questions that are standard. Users can still merge in year-specific questions easily into this cumulative file and take advantage of its harmonized variables, as explained below. 
  
 \bigskip
 
-This dataset was constructed from CCES datasets from each year. The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
+This dataset was constructed from each year's full CCES, all of them publicly available as separate datasets on [dataverse](cces.gov.harvard.edu). The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
 
 \bigskip
 
