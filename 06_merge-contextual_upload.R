@@ -1,7 +1,7 @@
-library(tidyverse)
+library(crunch)
+library(tidyverse) # mask tidyverse
 library(haven)
 library(glue)
-library(crunch)
 library(noncensus)
 
 writeToCrunch <- FALSE # to change the crunch dataset
@@ -228,11 +228,12 @@ ccc_cand <- ccc %>%
 
 
 # Format for output  --------
-# for ambiguous categories, where one number cancorrespond to different lables (intent_rep), use fct_reorder
+# for ambiguous categories, where one number can correspond to different lables (intent_rep), use fct_reorder
 ccc_df <- ccc_cand %>%
   mutate(zipcode = as.character(zipcode)) %>%
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
-  mutate_at(vars(year, case_id), as.integer)
+  mutate_at(vars(year, case_id), as.integer) %>% 
+  mutate_if(is.factor, fct_drop) # drop unused values
 
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
 ccc_fac <- ccc_df %>% 
