@@ -401,6 +401,7 @@ A series of variables for the respondent's location
 * `r nam(dist)`: `r descrip(dist)`
 * `r nam(dist_up)`: `r descrip(dist_up)`
 * `r nam(cd)`: `r descrip(cd)`
+* `r nam(cd_up)`: `r descrip(cd_up)`
 * `r nam(zipcode)`: `r descrip(zipcode)`
 * `r nam(county_fips)`: `r descrip(county_fips)`
 
