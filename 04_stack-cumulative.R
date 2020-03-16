@@ -695,25 +695,28 @@ std_vvv <- function (vec, varname, yrvec) {
 
 #' Fix for voted08
 clps_pres08 <- function(vec) {
-  str_trim(vec) %>% 
-  fct_collapse(vec, 
-               `Barack Obama` = c("Barack Obama", 
-                                  "Barack Obama (Democratic)", 
-                                  "Barack Obama (Democrat)"),
-               `John McCain` = c("John Mccain (Republican)", 
-                                 "John Mccain"),
-               `Other / Someone Else` = c("Someone Else", 
-                                          "Ralph Nader (Independent)",
-                                          "Robert Barr (Libertarian)",
-                                          "Ron Paul",
-                                          "Other Candidate Or Party:",
-                                          "Cynthia Mckinney (Green Party)"),
-               `Did Not Vote` = c("Did Not Vote",
-                                  "I Did Not Vote In The Election",
-                                  "I Did Not Vote In This Race"),
-               `Not Sure / Don't Recall` = c("Don't Recall"),
-  ) %>% 
-    fct_relevel("Barack Obama", "John McCain", "Other / Someone Else", "Did Not Vote")
+  vec %>% 
+    as.character() %>% 
+    str_trim() %>% 
+    as_factor() %>% 
+    fct_collapse(`Barack Obama` = c("Barack Obama", 
+                                    "Barack Obama (Democratic)",
+                                    "Barack Obama (Democrat)"),
+                 `John McCain` = c("John Mccain (Republican)", 
+                                   "John Mccain"),
+                 `Other / Someone Else` = c("Someone Else", 
+                                            "Ralph Nader (Independent)",
+                                            "Robert Barr (Libertarian)",
+                                            "Ron Paul",
+                                            "Other Candidate Or Party:",
+                                            "Cynthia Mckinney (Green Party)"),
+                 `Did Not Vote` = c("Did Not Vote",
+                                    "I Did Not Vote In The Election",
+                                    "I Did Not Vote In This Race"),
+                 `Not Sure / Don't Recall` = c("Don't Recall")
+    ) %>% 
+    fct_relevel("Barack Obama", "John McCain", "Other / Someone Else", "Did Not Vote") %>% 
+    fct_drop()
 }
 
 #' Quick fix for 2012 voted, where labels are too mixed to fix automatically
@@ -931,10 +934,11 @@ v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 
 # quick fixes
-v_pres08 <- v_pres08 %>% 
-  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA),
-         voted_pres_08 = clps_pres08(voted_pres_08))
-count(v_pres08, voted_pres_08)
+# v_pres08 <- 
+v_pres08 %>% 
+  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
+  mutate(voted_pres_08 = clps_pres08(voted_pres_08))
+
 v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- v_pres16 %>%
   mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
@@ -948,6 +952,8 @@ pres_party <- i_pres08 %>%
   left_join(v_pres12, by = c("year", "case_id")) %>% 
   left_join(v_pres16, by = c("year", "case_id")) %>% 
   mutate_if(is.factor, as.character) %>% 
+  mutate(voted_pres_12 = replace(voted_pres_12, year == 2016, NA),# NA for previous election
+         voted_pres_08 = replace(voted_pres_08, year == 2012, NA)) %>%  
   transmute(year, case_id,
             intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
             voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
@@ -1030,8 +1036,9 @@ stcd <- left_join(state, dist) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
   left_join(select(statecode, state, st), by = "state") %>%
-  mutate(cd = as.character(glue("{st}-{str_pad(dist, width = 2, pad = '0')}"))) %>%
-  select(year, case_id, state, st, cd, dist, dist_up, cong, cong_up)
+  mutate(cd = as.character(glue("{st}-{str_pad(dist, width = 2, pad = '0')}")),
+         cd_up = as.character(glue("{st}-{str_pad(dist_up, width = 2, pad = '0')}"))) %>%
+  select(year, case_id, state, st, cd, cd_up, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
   left_join(zipcode) %>%
