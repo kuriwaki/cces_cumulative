@@ -141,7 +141,7 @@
 % Parmaters
 
 \title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006
-- 2018)}}
+- 2019)}}
  
 
 \author{Shiro Kuriwaki\thanks{Department of Government, Harvard
@@ -761,15 +761,13 @@ A series of variables for the respondent's location
   zipcode){]}
 \item
   \texttt{dist}: Congressional district number in current Congress:
-  {[}Current Congressional District Number (Imputed from input
-  zipcode){]}
+  {[}Current Congressional District Number{]}
 \item
   \texttt{dist\_up}: Congressional district number for upcoming
-  Congress: {[}Upcoming Congressional District Number (Imputed from
-  input zipcode){]}
+  Congress: {[}Upcoming Congressional District Number{]}
 \item
   \texttt{cd}: Congressional district in current Congress: {[}Current
-  Congressional District (Imputed from input zipcode){]}
+  Congressional District{]}
 \item
   \texttt{zipcode}: Zipcode of residence: ``So that we can ask you about
   the news and events in your area, in what zip code do you currently
@@ -781,10 +779,11 @@ A series of variables for the respondent's location
 
 \begin{verbatim}
 Observations: 470,755
-Variables: 7
+Variables: 8
 $ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas"...
 $ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "...
 $ cd          <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", "...
+$ cd_up       <chr> "CA-01", "PA-03", "TX-16", "TX-19", "TX-06", "NY-27", "...
 $ dist        <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, 1...
 $ dist_up     <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, 1...
 $ zipcode     <chr> "95969", "16255", "79924", "79423", "76123", "14131", "...
@@ -1665,8 +1664,8 @@ Neither Approve Nor Disapprove & 1,414\\
 
 \newpage
 
-\hypertarget{presidential-vote}{%
-\subsection{Presidential Vote}\label{presidential-vote}}
+\hypertarget{vote-choice-variables}{%
+\subsection{Vote Choice Variables}\label{vote-choice-variables}}
 
 \paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":}
 
@@ -1686,10 +1685,18 @@ straight party ticket in the applicable states will appear to have voted
 for the Republican candidate in all offices. The straight ticket party
 option was not asked in other years.
 
-\hypertarget{intent_pres_party-president-preference-part}{%
+The cateogry ``Did Not Vote'' is recorded only when the respondent
+selects that option. Respondent who have missing values for intent or
+vote choice can also be non-voters for a variety of reasons. For general
+turnout, see the section on turnout.
+
+\hypertarget{presidential-vote}{%
+\subsection{Presidential Vote}\label{presidential-vote}}
+
+\hypertarget{intent_pres_party-president-preference-party}{%
 \subsubsection{\texorpdfstring{\texttt{intent\_pres\_party}: President
 preference
-part}{intent\_pres\_party: President preference part}}\label{intent_pres_party-president-preference-part}}
+party}{intent\_pres\_party: President preference party}}\label{intent_pres_party-president-preference-party}}
 
 {[}Party of presidential candidate chosen in intent\_pres{]}
 
@@ -1726,11 +1733,11 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \toprule
  & n\\
 \midrule
-Democratic & 173,614\\
-Republican & 150,102\\
-Other Candidate & 19,234\\
-Did Not Vote & 25,991\\
-(Missing) & 101,814\\
+Democratic & 162,905\\
+Republican & 145,634\\
+Other Candidate & 15,829\\
+Did Not Vote & 72,369\\
+(Missing) & 74,018\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1738,13 +1745,14 @@ Did Not Vote & 25,991\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019
+  Years: All of 2006-2019
 \item
-  Note: In a presidential election year, this asks the vote of that
-  year. The vote choice of the presidential election 4 years prior is
-  often recorded in the individual common content but not in this
-  cumulative file.
+  Note: In a presidential election year, this asks the vote of
+  \emph{that} year. The vote choice of the presidential election 4 years
+  prior might be recorded separtely. For example, for respondents in
+  2012, \texttt{voted\_pres\_party} corresponds to their 2012 vote,
+  while \texttt{voted\_pres\_party\_08} corresponds to their 2008 vote
+  (which was asked in the same 2012 survey).
 \end{itemize}
 
 \hypertarget{intent_pres_08-2008-president-preference-before-voting}{%
@@ -1864,12 +1872,12 @@ vote? {[}see guide for wording in all years{]}''
 \toprule
  & n\\
 \midrule
-Barack Obama & 73,986\\
-John McCain & 68,398\\
-Other / Someone Else & 4,204\\
-Did Not Vote & 18,227\\
-Not Sure / Don't Recall & 1,787\\
-(Missing) & 304,153\\
+Barack Obama (Democratic) & 73,986\\
+John Mccain (Republican) & 68,398\\
+Someone Else & 4,204\\
+Did Not Vote & 64,647\\
+Don't Recall & 1,787\\
+(Missing) & 257,733\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1877,7 +1885,7 @@ Not Sure / Don't Recall & 1,787\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012
+  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012
 \item
   Limitations: Response options offer slightly by year; some are
   collapsed into one.
@@ -2394,7 +2402,7 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
 Observations: 470,755
 Variables: 8
 $ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ voted_pres_party  <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+$ voted_pres_party  <fct> Did Not Vote, Did Not Vote, Did Not Vote, Did Not...
 $ intent_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, D...
 $ voted_rep_party   <fct> Democratic, Democratic, Democratic, Democratic, D...
 $ intent_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, NA, R...
