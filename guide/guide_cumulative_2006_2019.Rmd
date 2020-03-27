@@ -246,7 +246,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
 
-1. Obtain Access: For View access to the dataset (free), please [sign up here](https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap). For questions and more access, please contact the CCES Team.
+1. Obtain Access: For View access to the dataset (free), please [sign up here](https://tufts.qualtrics.com/jfe/form/SV_1A0vMbbE6j0fubr) or via the CCES website. For questions and more access, please contact the CCES Team.
 
 \newpage
 

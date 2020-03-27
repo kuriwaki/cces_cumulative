@@ -167,9 +167,7 @@ ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
 cc07 <- std_dv("data/source/cces/2007_cc.dta")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
-hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
-hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
 cc10 <- std_dv("data/source/cces/2010_cc.dta")
 cc11 <- std_dv("data/source/cces/2011_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
@@ -179,9 +177,17 @@ cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
-cc18_novv <- std_dv("data/source/cces/2018_cc_novv.dta")
+
+# 2018
 cc18 <- std_dv("data/source/cces/2018_cc.dta")
+cc18_comp <- std_dv("data/source/cces/2018_cc_competitive.dta")
+cc18_cnew <- anti_join(cc18_comp, select(cc18, year, case_id))
+
 cc19 <- std_dv("data/source/cces/2019_cc.dta")
+
+# modules
+hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
+hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
 hua18 <- std_dv("data/source/cces/2018_hua.dta")
 hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
@@ -224,7 +230,7 @@ save(
   cc06, cc07, cc08, cc09, 
   cc10, cc11, cc12, cc13, 
   cc14, cc15, cc16, cc17, 
-  cc18, cc19, 
+  cc18, cc18_cnew, cc19, 
   panel12, 
   mit06_add,
   hu08,  hu09, 

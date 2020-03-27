@@ -784,6 +784,11 @@ ccs <- list(
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
   "2018" = std_name(cc18),
+  "2018comp" = std_name(mutate(cc18_cnew, 
+                               commonweight = NA, 
+                               commonpostweight = NA,
+                               vvweight = NA, 
+                               vvweight_post = NA)),
   "2019" = std_name(cc19)
 )
 
@@ -1103,7 +1108,8 @@ panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as
 # mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(hu09_id, panel_id) # hu08_id, 
+comp_id <- ccs[["2018comp"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+addon_id <- bind_rows(hu09_id, panel_id, comp_id) # hu08_id, 
 
 
 # Common manipulations ----
@@ -1114,7 +1120,7 @@ size_year <- ccc %>%
   summarize(size = n()) %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
 
-ccc <- ccc %>%
+ccc_sort <- ccc %>%
   left_join(select(size_year, year, size_factor)) %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
@@ -1124,7 +1130,7 @@ ccc <- ccc %>%
 # Write ----- 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
-saveRDS(ccc, "data/output/01_responses/cumulative_stacked.Rds")
+saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 saveRDS(size_year, "data/output/03_contextual/weight_rescale_by-year.Rds")
 
