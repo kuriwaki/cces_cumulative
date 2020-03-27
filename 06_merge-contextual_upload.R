@@ -1,4 +1,3 @@
-library(crunch)
 library(tidyverse) # mask tidyverse
 library(haven)
 library(glue)
@@ -302,6 +301,8 @@ if (file.exists("data/release/cumulative_2006_2018_crunch.sav.gz")) {
 
 # might write to crunch
 if (writeToCrunch) {
+  library(crunch)
+  
   login()
   deleteDataset("CCES Cumulative Common Dev")
   newDataset("https://www.dropbox.com/s/p8cx49h82coqfcs/cumulative_2006_2018_crunch.sav?dl=0", 
