@@ -153,7 +153,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2020-03-26}
+\date{Guide last updated: 2020-04-02}
 
 \begin{document}
 
@@ -326,7 +326,7 @@ labelled class.
 3  2006  439228 1 [Democrat] Democrat
 4  2006  439237 1 [Democrat] Democrat
 5  2006  439238 1 [Democrat] Democrat
-# ... with 4.708e+05 more rows
+# ... with 470,750 more rows
 \end{verbatim}
 
 \noindent Unlike factors, labelled variables can be referenced by their
@@ -350,7 +350,7 @@ do that.
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# ... with 1.672e+05 more rows
+# ... with 167,167 more rows
 \end{verbatim}
 
 \indent In this cumulative (R) dataset, some variables are of class
@@ -783,8 +783,8 @@ A series of variables for the respondent's location
 \end{itemize}
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 8
+Rows: 470,755
+Columns: 8
 $ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas"...
 $ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "...
 $ cd          <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", "...
@@ -974,12 +974,11 @@ No & 337,449\\
   ``Hipsanic'' in the \texttt{race} question.
 \end{itemize}
 
-\hypertarget{faminc-family-income}{%
-\subsubsection{\texorpdfstring{\texttt{faminc}: Family
-Income}{faminc: Family Income}}\label{faminc-family-income}}
+\hypertarget{citizen-citizenship}{%
+\subsubsection{\texorpdfstring{\texttt{citizen}:
+Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}}
 
-``Thinking back over the last year, what was your family's annual
-income? {[}Brackets coarsened{]}''
+{[}Based on self-report for immigration status{]}
 
 \begin{table}[H]
 \centering
@@ -987,21 +986,9 @@ income? {[}Brackets coarsened{]}''
 \toprule
  & n\\
 \midrule
-Less than 10k & 19,803\\
-10k - 20k & 34,469\\
-20k - 30k & 47,793\\
-30k - 40k & 48,521\\
-40k - 50k & 43,368\\
-50k - 60k & 42,308\\
-60k - 70k & 31,180\\
-70k - 80k & 33,792\\
-80k - 100k & 39,258\\
-100k - 120k & 28,577\\
-120k - 150k & 22,930\\
-150k+ & 26,150\\
-Prefer not to say & 51,038\\
-Skipped & 12\\
-(Missing) & 1,556\\
+Citizen & 437,930\\
+Non-Citizen & 7,045\\
+(Missing) & 25,780\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1009,16 +996,16 @@ Skipped & 12\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2019
+  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017,
+  2018, 2019
 \item
-  Limitations: The income brackets provided changed slightly over time.
-  The brackets in this cumulative dataset coarsens certain brackets,
-  losing some granularity. In particular, from 2011-2016, respondents
-  answering ``over 150k'' were asked a follow-up question to select one
-  of several brackets above 150k. Here, these are top-coded and only
-  labelled as ``over 150k.''
+  These come from the immigration status questions, which asks
+  respondents between first, second, and third generation citizens, and
+  other foreign-born citizens. Here we mark anyone who does not answer
+  the last category to be a citizen.
 \item
-  The 2009 CCES did not have an option for 60-70k.
+  Limitation: Most of the missingness comes from 2007 and 2015, when the
+  immigration status question does not appear to have been asked.
 \end{itemize}
 
 \hypertarget{marstat-marital-status}{%
@@ -1056,11 +1043,11 @@ Domestic Partnership & 21,579\\
   replaced by ``Domestic / Civl Partnership'' in 2017 and 2018.
 \end{itemize}
 
-\hypertarget{citizen-citizenship}{%
-\subsubsection{\texorpdfstring{\texttt{citizen}:
-Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}}
+\hypertarget{religion-religion}{%
+\subsubsection{\texorpdfstring{\texttt{religion}:
+Religion}{religion: Religion}}\label{religion-religion}}
 
-{[}Based on self-report for immigration status{]}
+``What is your present religion, if any?''
 
 \begin{table}[H]
 \centering
@@ -1068,9 +1055,19 @@ Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}}
 \toprule
  & n\\
 \midrule
-Citizen & 437,930\\
-Non-Citizen & 7,045\\
-(Missing) & 25,780\\
+Protestant & 169,012\\
+Roman Catholic & 90,879\\
+Mormon & 6,689\\
+Eastern Or Greek Orthodox & 2,189\\
+Jewish & 10,772\\
+Muslim & 2,037\\
+Buddhist & 3,601\\
+Hindu & 1,190\\
+Atheist & 20,343\\
+Agnostic & 24,318\\
+Nothing In Particular & 73,916\\
+Something Else & 28,393\\
+(Missing) & 37,416\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1078,16 +1075,11 @@ Non-Citizen & 7,045\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017,
-  2018, 2019
+  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+  2017, 2018, 2019
 \item
-  These come from the immigration status questions, which asks
-  respondents between first, second, and third generation citizens, and
-  other foreign-born citizens. Here we mark anyone who does not answer
-  the last category to be a citizen.
-\item
-  Limitation: Most of the missingness comes from 2007 and 2015, when the
-  immigration status question does not appear to have been asked.
+  The response options have stayed largely consistent and follow that of
+  Pew.
 \end{itemize}
 
 \newpage
@@ -1315,7 +1307,8 @@ Not Sure & 20,930\\
   Limitations: Response options offer slightly by year. For example, the
   \texttt{Not\ Sure} option is not a response option in years 2006 and
   2010. Open-text responses not included. 2010 values are from the
-  post-election wave.
+  post-election wave. 2020 values do not include the \texttt{Not\ Sure}
+  option (option 5).
 \end{itemize}
 
 \hypertarget{pid7-partisan-identity-7-point}{%
@@ -1411,8 +1404,117 @@ Not Sure & 33,386\\
   Years: All of 2006-2019
 \end{itemize}
 
-\hypertarget{economy}{%
-\subsection{Economy}\label{economy}}
+\hypertarget{economics-and-income}{%
+\subsection{Economics and Income}\label{economics-and-income}}
+
+\hypertarget{faminc-family-income}{%
+\subsubsection{\texorpdfstring{\texttt{faminc}: Family
+Income}{faminc: Family Income}}\label{faminc-family-income}}
+
+``Thinking back over the last year, what was your family's annual
+income? {[}Brackets coarsened{]}''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Less than 10k & 19,803\\
+10k - 20k & 34,469\\
+20k - 30k & 47,793\\
+30k - 40k & 48,521\\
+40k - 50k & 43,368\\
+50k - 60k & 42,308\\
+60k - 70k & 31,180\\
+70k - 80k & 33,792\\
+80k - 100k & 39,258\\
+100k - 120k & 28,577\\
+120k - 150k & 22,930\\
+150k+ & 26,150\\
+Prefer not to say & 51,038\\
+Skipped & 12\\
+(Missing) & 1,556\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2019
+\item
+  Limitations: The income brackets provided changed slightly over time.
+  The brackets in this cumulative dataset coarsens certain brackets,
+  losing some granularity. In particular, from 2011-2016, respondents
+  answering ``over 150k'' were asked a follow-up question to select one
+  of several brackets above 150k. Here, these are top-coded and only
+  labelled as ``over 150k.''
+\item
+  The 2009 CCES did not have an option for 60-70k.
+\end{itemize}
+
+\hypertarget{union-union-membership}{%
+\subsubsection{\texorpdfstring{\texttt{union}: Union
+membership}{union: Union membership}}\label{union-union-membership}}
+
+``Are you a member of a union?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes, currently & 30,503\\
+Yes, formerly & 88,418\\
+No, never & 307,894\\
+(Missing) & 43,940\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Question wording and response options have been reworded to be
+  harmonized across years. Please see each individual CCES for exact
+  wording.
+\item
+  The 2008 CCES in its common content has a union question that roughly
+  combines both the \texttt{union} and \texttt{union\_hh} question.
+\end{itemize}
+
+\hypertarget{union_hh-union-membership-in-household}{%
+\subsubsection{\texorpdfstring{\texttt{union\_hh}: Union membership in
+household}{union\_hh: Union membership in household}}\label{union_hh-union-membership-in-household}}
+
+``Other than yourself, is any member of your household a union member?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes, currently & 39,311\\
+Yes, formerly & 62,390\\
+No, never & 322,672\\
+(Missing) & 46,382\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Question wording and response options have been reworded to be
+  harmonized across years. Please see each individual CCES for exact
+  wording.
+\item
+  The 2008 CCES in its common content has a union question that roughly
+  combines both the \texttt{union} and \texttt{union\_hh} question.
+\end{itemize}
 
 \hypertarget{economy_retro-retrospective-economy}{%
 \subsubsection{\texorpdfstring{\texttt{economy\_retro}: Retrospective
@@ -2262,8 +2364,8 @@ YouGov panel respondent with different identifiers; for example the 2007
 CCES draws from the 2006 CCES respondents.
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 2
+Rows: 470,755
+Columns: 2
 $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006,...
 $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439...
 \end{verbatim}
@@ -2283,8 +2385,8 @@ depending on the year. Party names are abbreviated down to initials
 Independent) in this dataset.
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 4
+Rows: 470,755
+Columns: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Ro...
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menen...
 $ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "Frank ...
@@ -2317,8 +2419,8 @@ district, by district and last name, or both:
 \end{itemize}
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 3
+Rows: 470,755
+Columns: 3
 $ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, ...
 $ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, ...
 $ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, ...
@@ -2384,8 +2486,8 @@ the form \texttt{HouseCand1Name}).
 \subsection{Name of Chosen Candidate}\label{name-of-chosen-candidate}}
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 6
+Rows: 470,755
+Columns: 6
 $ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (...
 $ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)"...
 $ intent_gov_chosen <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
@@ -2407,8 +2509,8 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
 \subsection{Party of Chosen Candidate}\label{party-of-chosen-candidate}}
 
 \begin{verbatim}
-Observations: 470,755
-Variables: 8
+Rows: 470,755
+Columns: 8
 $ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
 $ voted_pres_party  <fct> Did Not Vote, Did Not Vote, Did Not Vote, Did Not...
 $ intent_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, D...
@@ -2447,6 +2549,15 @@ changes.
   Released \texttt{2020-XX-XX}
 \item
   Enter 2019 common content (up to n = 470,755)
+\item
+  Adds variable for union membership, religion, citizenship
+\item
+  Adds a separate variable for intent/voted party choice in current or
+  immediate past presidential race
+\item
+  Add leading zeros to congressional districts in the first digits
+  (e.g.~\texttt{"MA-1"} is now \texttt{"MA-01"}), and create a variable
+  \texttt{cd\_up} similar to \texttt{dist\_up}.
 \end{itemize}
 
 \hypertarget{version-4.0}{%
