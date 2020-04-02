@@ -612,7 +612,7 @@ print_tab(pid3)
 ```
 
 * Years: `r in_years(pid3)`
-* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 2010 values are from the post-election wave. 
+* Limitations: Response options offer slightly by year. For example, the `Not Sure` option is not a response option in years 2006 and 2010.  Open-text responses not included. 2010 values are from the post-election wave. 2020 values do not include the `Not Sure` option (option 5). 
 
 
 ### `r nam(pid7)`
