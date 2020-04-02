@@ -489,19 +489,18 @@ print_tab(hispanic)
 * Years: `r in_years(hispanic)`
 * In years in which this question was fielded, this question supplements the `race` variable by asking those who did _not_ respond "Hipsanic" in the `race` question.
 
-### `r nam(faminc)`
+### `r nam(citizen)`
 
-`r descrip(faminc)`
+`r descrip(citizen)`
 
 
 ```{r, results = "asis"}
-print_tab(faminc)
+print_tab(citizen)
 ```
 
-* Years: `r in_years(faminc)`
-* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
-* The 2009 CCES did not have an option for 60-70k. 
-
+* Years: `r in_years(citizen)`
+* These come from the immigration status questions, which asks respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
+* Limitation: Most of the missingness comes from 2007 and 2015, when the immigration status question does not appear to have been asked.
 
 ### `r nam(marstat)`
 
@@ -516,18 +515,6 @@ print_tab(marstat)
 * The option "Single" was used till 2016, which was then replaced by "Never Married" in 2017 and 2018.
 * The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
 
-### `r nam(citizen)`
-
-`r descrip(citizen)`
-
-
-```{r, results = "asis"}
-print_tab(citizen)
-```
-
-* Years: `r in_years(citizen)`
-* These come from the immigration status questions, which asks respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
-* Limitation: Most of the missingness comes from 2007 and 2015, when the immigration status question does not appear to have been asked.
 
 \newpage
 
@@ -649,7 +636,46 @@ print_tab(ideo5)
 * Years: `r in_years(ideo5)`
 
 
-## Economy
+## Economics and Income
+
+### `r nam(faminc)`
+
+`r descrip(faminc)`
+
+
+```{r, results = "asis"}
+print_tab(faminc)
+```
+
+* Years: `r in_years(faminc)`
+* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
+* The 2009 CCES did not have an option for 60-70k. 
+
+### `r nam(union)`
+
+
+`r descrip(union)`
+
+```{r, results = "asis"}
+print_tab(union)
+```
+
+* Question wording and response options have been reworded to be harmonized across years. Please see each individual CCES for exact wording.
+* The 2008 CCES in its common content has a union question that roughly combines both the `union` and `union_hh` question. 
+
+### `r nam(union_hh)`
+
+`r descrip(union_hh)`
+
+```{r, results = "asis"}
+print_tab(union_hh)
+```
+
+
+* Question wording and response options have been reworded to be harmonized across years. Please see each individual CCES for exact wording.
+* The 2008 CCES in its common content has a union question that roughly combines both the `union` and `union_hh` question. 
+
+
 ### `r nam(economy_retro)`
 
 `r descrip(economy_retro)`
@@ -673,6 +699,8 @@ print_tab(newsint)
 
 * Years: `r in_years(newsint)`
 * Limitations: Not asked in 2006. Similar questions about watching TV news was asked in 2006, but not included in this cumulative file.
+
+
 
 ## Approval
 

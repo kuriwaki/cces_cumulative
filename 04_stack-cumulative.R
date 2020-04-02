@@ -32,6 +32,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         economy_retro = economy_retrospective,
         newsint = news_interest,
         marstat = marriage_status,
+        religpew = religion,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -42,6 +43,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_sen = vote_intent_senate,
         intent_gov = vote_intent_gov,
         immstat = immigration_status,
+        unionhh = union_household,
         vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
@@ -910,6 +912,30 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
          faminc_num = coalesce(family_income_old, family_income)) %>% 
   transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num))
 
+# union ----
+union <- find_stack(ccs, union, make_labelled = TRUE) %>% 
+  mutate(union = labelled(zap_label(union), 
+                          c("Yes, currently" = 1,
+                            "Yes, formerly" = 2, 
+                            "No, never" = 3)),
+         union = na_if(union, 8))
+xtabs(~ union + year, mutate_if(union, is.labelled, as_factor))
+
+union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>% 
+  mutate(union_hh = fct_collapse(unionhh,
+    `Yes, currently` = c(
+      "Current Member In Household",
+      "Yes, A Member Of My Household Is Currently A Union Member"),
+    `Yes, formerly` = c(
+      "A Member Of My Household Was Formerly A Member Of A Labor Union, But Is Not Now",
+      "Former Member In Household"),
+    `No, never` = c(
+      "No Union Members In Household",
+      "No, No One In My Household Has Ever Been A Member Of A Labor Union",
+      "Not Sure")
+    )) %>% 
+  select(-unionhh)
+
 
 # geography ----
 state      <- find_stack(ccs, state, "character")
@@ -1067,10 +1093,13 @@ ccc <- geo %>%
   left_join(age) %>%
   left_join(race) %>%
   left_join(hisp) %>%
-  left_join(educ) %>%
-  left_join(faminc) %>%
-  left_join(marstat) %>%
   left_join(citizen) %>%
+  left_join(educ) %>%
+  left_join(marstat) %>%
+  left_join(faminc) %>%
+  left_join(union) %>%
+  left_join(union_hh) %>%
+  left_join(relig) %>%
   left_join(econ) %>%
   left_join(newsint) %>%
   left_join(apvpres) %>%
