@@ -936,6 +936,10 @@ union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>%
     )) %>% 
   select(-unionhh)
 
+# religion -----
+relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
+  rename(religion = religpew)
+
 
 # geography ----
 state      <- find_stack(ccs, state, "character")

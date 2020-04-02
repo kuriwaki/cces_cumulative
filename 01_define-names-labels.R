@@ -104,6 +104,7 @@ ccc_meta <- tribble(
   "faminc",              "categorical", "Family Income",                 "Thinking back over the last year, what was your family's annual income? [Brackets coarsened]",
   "union",               "categorical", "Union membership",              "Are you a member of a union?",
   "union_hh",            "categorical", "Union membership in household", "Other than yourself, is any member of your household a union member?",
+  "religion",            "categorical", "Religion",                      "What is your present religion, if any?",
   "economy_retro",       "categorical", "Retrospective economy",         "OVER THE PAST YEAR the nation's economy has ...?",
   "newsint",             "categorical", "News Interest",                 "Some people seem to follow what's going on in government and public affairs most of the time, whether there's an election going on or not. Others aren't that interested. Would you say you follow what's going on in government and public affairs ..", 
   "marstat",             "categorical", "Marital Status",                "What is your marital status?", 
