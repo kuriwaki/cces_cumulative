@@ -919,22 +919,26 @@ union <- find_stack(ccs, union, make_labelled = TRUE) %>%
                             "Yes, formerly" = 2, 
                             "No, never" = 3)),
          union = na_if(union, 8))
-xtabs(~ union + year, mutate_if(union, is.labelled, as_factor))
 
 union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>% 
   mutate(union_hh = fct_collapse(unionhh,
-    `Yes, currently` = c(
+    `1` = c(
       "Current Member In Household",
       "Yes, A Member Of My Household Is Currently A Union Member"),
-    `Yes, formerly` = c(
+    `2` = c(
       "A Member Of My Household Was Formerly A Member Of A Labor Union, But Is Not Now",
       "Former Member In Household"),
-    `No, never` = c(
+    `3` = c(
       "No Union Members In Household",
       "No, No One In My Household Has Ever Been A Member Of A Labor Union",
       "Not Sure")
     )) %>% 
+  mutate(union_hh = labelled(as.integer(union_hh), 
+                             c("Yes, currently" = 1, 
+                             "Yes, formerly" = 2,
+                             "No, never" = 3))) %>% 
   select(-unionhh)
+
 
 # religion -----
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
@@ -1046,14 +1050,6 @@ citizen <- find_stack(ccs, immstat) %>%
   mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
   select(-immstat)
   
-
-# xtabs(~ citizen + year, citizen)
-# xtabs(~ immstat + citizen, citizen)
-# ccs$`2016` %>% lookfor("citizen")
-# ccs$`2014` %>% lookfor("cit")
-# ccs$`2018`$cit1
-# count(ccs$`2018`, immstat, cit1)
-
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
