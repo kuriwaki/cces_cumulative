@@ -1063,10 +1063,11 @@ Dataverse assigns version numbers by incremeting a full number if any of the dat
 
 ### Version 5.0 
 - Released `2020-XX-XX`
-- Enter 2019 common content (up to n = 470,75   5)
+- Enter 2019 common content (up to n = 470,755)
 - Adds variable for union membership, religion, citizenship
-- Adds a separate variable for intent/voted party choice in current or immediate past presidential race
+- Adds a separate variable for intent/voted party choice in presidential race
 - Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
+- Modify prepositions of value labels to lower case
 
 ### Version 4.0 
 - Released `2019-09-09`

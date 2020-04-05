@@ -555,6 +555,7 @@ set_to_label <- function(df, numvarname, varname) {
   label_key <- select(df, -year, -case_id) %>%
     distinct() %>%
     select(matches("_char"), matches("_num")) %>%
+    arrange(!!sym(numvarname)) %>% 
     deframe()
   
   df %>%
@@ -601,7 +602,7 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
       !! num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
     ) %>%
     mutate( # change al lvalues to title case
-      !! chr_var_name := str_to_title(str_trim(.data[[chr_var_name]])),
+      !! chr_var_name := my_var_case(str_trim(.data[[chr_var_name]])),
       !! chr_var_name := recode(.data[[chr_var_name]],
                                 `Never Heard Of This Person` = "Never Heard",
                                 `No Hs` = "No HS")
@@ -611,6 +612,29 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
       !! chr_var_name := na_if(.data[[chr_var_name]], "Skipped"),
       !! num_var_name := na_if(.data[[num_var_name]], notasked_num),
       !! num_var_name := na_if(.data[[num_var_name]], skipped_num))
+}
+
+#' custom title case
+my_var_case <- function(chr) {
+  str_to_title(chr) %>% 
+    str_replace_all(" A ", " a ") %>% 
+    str_replace_all(" An ", " an ") %>% 
+    str_replace_all(" About ", " about ") %>% 
+    str_replace_all(" By ", " by ") %>% 
+    str_replace_all(" And ", " and ") %>% 
+    str_replace_all(" For ", " for ") %>% 
+    str_replace_all(" To ", " to ") %>% 
+    str_replace_all(" Or ", " or ") %>% 
+    str_replace_all(" Of ", " of ") %>% 
+    str_replace_all(" In ", " in ") %>% 
+    str_replace_all(" This ", " this ") %>% 
+    str_replace_all(" The ", " the ") %>% 
+    str_replace_all(" At ", " at ") %>% 
+    str_replace_all(" Nor ", " nor ") %>% 
+    str_replace_all("Most of the Time", "Most of the time") %>% 
+    str_replace_all("Some of the Time", "Some of the time") %>% 
+    str_replace_all("Only Now and Then", "Only now and then") %>% 
+    str_replace_all("Hardly at All", "Hardly at all")
 }
 
 
@@ -706,15 +730,8 @@ clps_pres08 <- function(vec) {
                                     "Barack Obama (Democrat)"),
                  `John McCain` = c("John Mccain (Republican)", 
                                    "John Mccain"),
-                 `Other / Someone Else` = c("Someone Else", 
-                                            "Ralph Nader (Independent)",
-                                            "Robert Barr (Libertarian)",
-                                            "Ron Paul",
-                                            "Other Candidate Or Party:",
-                                            "Cynthia Mckinney (Green Party)"),
-                 `Did Not Vote` = c("Did Not Vote",
-                                    "I Did Not Vote In The Election",
-                                    "I Did Not Vote In This Race"),
+                 `Other / Someone Else` = c("Someone Else"), 
+                 `Did Not Vote` = c("Did Not Vote"),
                  `Not Sure / Don't Recall` = c("Don't Recall")
     ) %>% 
     fct_relevel("Barack Obama", "John McCain", "Other / Someone Else", "Did Not Vote") %>% 
@@ -724,13 +741,14 @@ clps_pres08 <- function(vec) {
 #' Quick fix for 2012 voted, where labels are too mixed to fix automatically
 clps_pres12 <- function(vec) {
   fct_collapse(vec, 
-               `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote For Barack Obama"),
-               `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote For Mitt Romney"),
-               `Other / Someone Else` = c("Someone Else", "Vote For Someone Else", "Other", "3"),
-               `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote For This Office", "I Did Not Vote In This Race"),
+               `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote for Barack Obama"),
+               `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote for Mitt Romney"),
+               `Other / Someone Else` = c("Someone Else", "Vote for Someone Else", "Other", "3"),
+               `Did Not Vote` = c("Did Not Vote", "I Did ot Vote", "Not Vote", "Not Vote for this Office", "I Did Not Vote in this Race"),
                `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall"),
                `Not Asked (2016)` = c("Not Asked")
-  )
+  ) %>% 
+    fct_lump(n = 6)
 }
 clps_pres16 <- function(vec) {
   fct_collapse(vec, 
@@ -740,25 +758,25 @@ clps_pres16 <- function(vec) {
                                           "Evan Mcmullin (Independent)", "Evan Mcmullin",
                                           "Jill Stein (Green)", "Jill Stein",
                                           "Other", "Someone Else"),
-               `Did Not Vote` = c("I Didn't Vote In This Election",
-                                  "Did Not Vote For President",
-                                  "I Did Not Cast A Vote For President"),
+               `Did Not Vote` = c("I Didn't Vote in this Election",
+                                  "Did Not Vote for President",
+                                  "I Did Not Cast a Vote for President"),
                `Not Sure / Don't Recall` = c("I'm Not Sure", "I Don't Recall"),
                `Not Asked` = c("Not Asked")
   ) %>% 
-    fct_relevel("Hilary Clinton", "Donald Trump")
+    fct_relevel("Hilary Clinton", "Donald Trump") %>% 
+    fct_lump(n = 6)
 }
 
 #' give pres party from chars of pres names
 pres_names <- function(vec) {
-  
   case_when(
     str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
     str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
-    str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did Not Vote",
+    str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did not Vote",
     TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican", "Other Candidate", "Did Not Vote"))
+    factor(levels = c("Democratic", "Republican", "Other Candidate", "Did not Vote"))
 }
 
 # READ ------
@@ -915,28 +933,29 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
 # union ----
 union <- find_stack(ccs, union, make_labelled = TRUE) %>% 
   mutate(union = labelled(zap_label(union), 
-                          c("Yes, currently" = 1,
-                            "Yes, formerly" = 2, 
-                            "No, never" = 3)),
+                          c("Yes, Currently" = 1,
+                            "Yes, Formerly" = 2, 
+                            "No, Never" = 3)),
          union = na_if(union, 8))
 
 union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>% 
   mutate(union_hh = fct_collapse(unionhh,
     `1` = c(
-      "Current Member In Household",
-      "Yes, A Member Of My Household Is Currently A Union Member"),
+      "Current Member in Household",
+      "Yes, A Member of My Household Is Currently A Union Member"),
     `2` = c(
-      "A Member Of My Household Was Formerly A Member Of A Labor Union, But Is Not Now",
-      "Former Member In Household"),
+      "A Member of My Household Was Formerly A Member of A Labor Union, But Is Not Now",
+      "Former Member in Household"),
     `3` = c(
-      "No Union Members In Household",
-      "No, No One In My Household Has Ever Been A Member Of A Labor Union",
-      "Not Sure")
+      "No Union Members in Household",
+      "No, No One in My Household Has Ever Been A Member of A Labor Union"),
+    `4` = c("Not Sure")
     )) %>% 
   mutate(union_hh = labelled(as.integer(union_hh), 
-                             c("Yes, currently" = 1, 
-                             "Yes, formerly" = 2,
-                             "No, never" = 3))) %>% 
+                             c("Yes, Currently" = 1, 
+                             "Yes, Formerly" = 2,
+                             "No, Never" = 3, 
+                             "Not Sure" = 4))) %>% 
   select(-unionhh)
 
 
@@ -973,8 +992,7 @@ v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 
 # quick fixes
-# v_pres08 <- 
-v_pres08 %>% 
+v_pres08 <- v_pres08 %>%
   mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08))
 
@@ -1020,10 +1038,15 @@ econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder =
                                      `Gotten Somewhat Worse`  = "Gotten Worse / Somewhat Worse", 
                                      `Gotten Better`          = "Gotten Better / Somewhat Better",
                                      `Gotten Somewhat Better` = "Gotten Better / Somewhat Better")) %>% 
-  mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
-         economy_retro_num  = na_if(economy_retro_num, 8)) %>%
   filter(year != 2009) %>% 
-  bind_rows(cc09_econ)
+  bind_rows(cc09_econ) %>% 
+  mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
+         economy_retro_num  = na_if(economy_retro_num, 8),
+         economy_retro_char = str_to_lower(economy_retro_char),
+         economy_retro_char = str_replace(economy_retro_char, "^g", "G"),
+         economy_retro_char = str_replace(economy_retro_char, "^s", "S"),
+         economy_retro_char = str_replace(economy_retro_char, "^n", "N"),
+         )
 
 # correct to labelled
 econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
