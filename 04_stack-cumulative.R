@@ -20,7 +20,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (is_panel) cces_year <- paste0(cces_year, "_", "panel")
   
   
-  # panel ------
+  # pettigrew ------
   if (identical(cces_year, 2006:2011)) {
     tbl <- tbl %>%
       rename(
@@ -44,6 +44,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_gov = vote_intent_gov,
         immstat = immigration_status,
         unionhh = union_household,
+        ownhome = home_owner,
+        child18 = children,
+        milstat_5 = military_none,
+        healthins_6 = health_ins_none,
         vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
@@ -744,7 +748,7 @@ clps_pres12 <- function(vec) {
                `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote for Barack Obama"),
                `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote for Mitt Romney"),
                `Other / Someone Else` = c("Someone Else", "Vote for Someone Else", "Other", "3"),
-               `Did Not Vote` = c("Did Not Vote", "I Did ot Vote", "Not Vote", "Not Vote for this Office", "I Did Not Vote in this Race"),
+               `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote for this Office", "I Did Not Vote in this Race"),
                `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall"),
                `Not Asked (2016)` = c("Not Asked")
   ) %>% 
@@ -942,13 +946,13 @@ union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>%
   mutate(union_hh = fct_collapse(unionhh,
     `1` = c(
       "Current Member in Household",
-      "Yes, A Member of My Household Is Currently A Union Member"),
+      "Yes, a Member of My Household Is Currently a Union Member"),
     `2` = c(
-      "A Member of My Household Was Formerly A Member of A Labor Union, But Is Not Now",
+      "A Member of My Household Was Formerly a Member of a Labor Union, But Is Not Now",
       "Former Member in Household"),
     `3` = c(
       "No Union Members in Household",
-      "No, No One in My Household Has Ever Been A Member of A Labor Union"),
+      "No, No One in My Household Has Ever Been a Member of a Labor Union"),
     `4` = c("Not Sure")
     )) %>% 
   mutate(union_hh = labelled(as.integer(union_hh), 
@@ -957,6 +961,33 @@ union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>%
                              "No, Never" = 3, 
                              "Not Sure" = 4))) %>% 
   select(-unionhh)
+
+
+# employment, military, child, homeownership, healthins -------
+employ <- find_stack(ccs, employ)
+ownhome <- find_stack(ccs, ownhome)
+
+child18 <- find_stack(ccs, child18) %>% 
+  rename(has_child = child18)
+milstat <- find_stack(ccs, milstat_5) %>% 
+  rename(no_milstat = milstat_5) %>% 
+  mutate(no_milstat = recode_factor(no_milstat,
+                                      Yes = "Yes",
+                                      Selected = "Yes",
+                                      No = "No", 
+                                      `Not Selected` = "No"))
+
+hi_most <- find_stack(ccs, healthins_6) %>% 
+  filter(year != "2018") %>% 
+  rename(no_healthins = healthins_6)
+hi_18 <- find_stack(ccs[c("2018", "2018comp")], healthins_7) %>% 
+  rename(no_healthins = healthins_7)
+healthins <- bind_rows(hi_most, hi_18) %>% 
+  mutate(no_healthins = recode_factor(no_healthins,
+                                      Yes = "Yes",
+                                      Selected = "Yes",
+                                      No = "No", 
+                                      `Not Selected` = "No"))
 
 
 # religion -----
@@ -1072,6 +1103,8 @@ citizen <- find_stack(ccs, immstat) %>%
   mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) %>% 
   mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
   select(-immstat)
+
+
   
 
 # validated vote -----
@@ -1122,6 +1155,11 @@ ccc <- geo %>%
   left_join(faminc) %>%
   left_join(union) %>%
   left_join(union_hh) %>%
+  left_join(employ) %>%
+  left_join(healthins) %>%
+  left_join(child18) %>%
+  left_join(ownhome) %>%
+  left_join(milstat) %>%
   left_join(relig) %>%
   left_join(econ) %>%
   left_join(newsint) %>%

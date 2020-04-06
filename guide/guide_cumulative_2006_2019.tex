@@ -153,7 +153,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2020-04-05}
+\date{Guide last updated: 2020-04-06}
 
 \begin{document}
 
@@ -1008,41 +1008,6 @@ Non-Citizen & 7,045\\
   immigration status question does not appear to have been asked.
 \end{itemize}
 
-\hypertarget{marstat-marital-status}{%
-\subsubsection{\texorpdfstring{\texttt{marstat}: Marital
-Status}{marstat: Marital Status}}\label{marstat-marital-status}}
-
-``What is your marital status?''
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lr}
-\toprule
- & n\\
-\midrule
-Married & 259,450\\
-Separated & 7,885\\
-Divorced & 51,680\\
-Widowed & 22,188\\
-Single / Never Married & 106,418\\
-Domestic Partnership & 21,579\\
-(Missing) & 1,555\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{itemize}
-\tightlist
-\item
-  Years: All of 2006-2019
-\item
-  The option ``Single'' was used till 2016, which was then replaced by
-  ``Never Married'' in 2017 and 2018.
-\item
-  The option ``Domestic Partnership'' was used till 2016, which was then
-  replaced by ``Domestic / Civl Partnership'' in 2017 and 2018.
-\end{itemize}
-
 \hypertarget{religion-religion}{%
 \subsubsection{\texorpdfstring{\texttt{religion}:
 Religion}{religion: Religion}}\label{religion-religion}}
@@ -1080,6 +1045,136 @@ Something Else & 28,393\\
 \item
   The response options have stayed largely consistent and follow that of
   Pew.
+\end{itemize}
+
+\hypertarget{family-status}{%
+\subsection{Family Status}\label{family-status}}
+
+\hypertarget{marstat-marital-status}{%
+\subsubsection{\texorpdfstring{\texttt{marstat}: Marital
+Status}{marstat: Marital Status}}\label{marstat-marital-status}}
+
+``What is your marital status?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Married & 259,450\\
+Separated & 7,885\\
+Divorced & 51,680\\
+Widowed & 22,188\\
+Single / Never Married & 106,418\\
+Domestic Partnership & 21,579\\
+(Missing) & 1,555\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2019
+\item
+  The option ``Single'' was used till 2016, which was then replaced by
+  ``Never Married'' in 2017 and 2018.
+\item
+  The option ``Domestic Partnership'' was used till 2016, which was then
+  replaced by ``Domestic / Civl Partnership'' in 2017 and 2018.
+\end{itemize}
+
+\hypertarget{ownhome-home-ownership}{%
+\subsubsection{\texorpdfstring{\texttt{ownhome}: Home
+Ownership}{ownhome: Home Ownership}}\label{ownhome-home-ownership}}
+
+``Do you own your home or pay rent?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Own & 279,076\\
+Rent & 128,882\\
+Other & 17,820\\
+(Missing) & 44,977\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  2018, 2019
+\end{itemize}
+
+\hypertarget{has_child-parent-of-young-children}{%
+\subsubsection{\texorpdfstring{\texttt{has\_child}: Parent of Young
+Children}{has\_child: Parent of Young Children}}\label{has_child-parent-of-young-children}}
+
+``Are you the parent or guardian of any children under the age of 18?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes & 107,607\\
+No & 315,904\\
+(Missing) & 47,244\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  2018, 2019
+\end{itemize}
+
+\hypertarget{no_milstat-military-status-none}{%
+\subsubsection{\texorpdfstring{\texttt{no\_milstat}: Military Status
+(None)}{no\_milstat: Military Status (None)}}\label{no_milstat-military-status-none}}
+
+{[}Based on military household question; neither respondent nor
+immediate family has served{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes & 189,823\\
+No & 270,838\\
+(Missing) & 10,094\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+  2017, 2018, 2019
+\item
+  The original question is of the form ``We'd like to know whether you
+  or someone in your immediate family is currently serving or has ever
+  served in the U.S. military. Immediate family is defined as your
+  parents, siblings, spouse, and children. Please check all boxes that
+  apply.'', where respondents can pick more than one of the options
+  including the following: ``I served personally'', ``Family served
+  previously''. The entry in the cumulative response only selects the
+  ``None'' option. A value of \texttt{no\_milstat\ ==\ "Yes"} means that
+  a respondent indicated they had neither served nor had a immediate
+  family member who has served. To see the other responses, see the
+  individual year's CCES.
 \end{itemize}
 
 \newpage
@@ -1454,6 +1549,77 @@ Skipped & 12\\
   The 2009 CCES did not have an option for 60-70k.
 \end{itemize}
 
+\hypertarget{employ-employment-status}{%
+\subsubsection{\texorpdfstring{\texttt{employ}: Employment
+Status}{employ: Employment Status}}\label{employ-employment-status}}
+
+``Which of the following best describes your current employment
+status?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Full-Time & 186,667\\
+Part-Time & 48,011\\
+Temporarily Laid Off & 3,310\\
+Unemployed & 29,102\\
+Retired & 100,382\\
+Permanently Disabled & 27,096\\
+Homemaker & 33,526\\
+Student & 20,961\\
+Other & 11,442\\
+(Missing) & 10,258\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+  2017, 2018, 2019
+\end{itemize}
+
+\hypertarget{no_healthins-uninsured}{%
+\subsubsection{\texorpdfstring{\texttt{no\_healthins}:
+Uninsured}{no\_healthins: Uninsured}}\label{no_healthins-uninsured}}
+
+{[}Based on health insurance question; respondent has none of the
+insurance options given{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes & 44,261\\
+No & 347,210\\
+(Missing) & 79,284\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+  2019
+\item
+  The original question is of the form ``Do you currently have health
+  insurance? (check all that apply)'', where respondents can pick more
+  than one of the options including the following: ``Yes, through my job
+  or a family member's employer'', ``Yes, through a government program,
+  such as Medicare or Medicaid''. The entry in the cumulative response
+  only selects the ``None'' option. A value of
+  \texttt{no\_healthins\ ==\ "Yes"} means that a respondent indicated
+  they were not insured. To see the other responses, see the individual
+  year's CCES.
+\end{itemize}
+
 \hypertarget{union-union-membership}{%
 \subsubsection{\texorpdfstring{\texttt{union}: Union
 membership}{union: Union membership}}\label{union-union-membership}}
@@ -1477,6 +1643,9 @@ No, Never & 307,894\\
 \begin{itemize}
 \tightlist
 \item
+  Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  2018, 2019
+\item
   Question wording and response options have been reworded to be
   harmonized across years. Please see each individual CCES for exact
   wording.
@@ -1497,13 +1666,10 @@ household}{union\_hh: Union membership in household}}\label{union_hh-union-membe
 \toprule
  & n\\
 \midrule
-Yes, Currently & 13,233\\
-Yes, Formerly & 26,078\\
-No, Never & 40,558\\
-Not Sure & 21,832\\
-5 & 85,286\\
-6 & 233,810\\
-7 & 3,576\\
+Yes, Currently & 39,311\\
+Yes, Formerly & 62,390\\
+No, Never & 319,096\\
+Not Sure & 3,576\\
 (Missing) & 46,382\\
 \bottomrule
 \end{tabular}
@@ -1511,6 +1677,9 @@ Not Sure & 21,832\\
 
 \begin{itemize}
 \tightlist
+\item
+  Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  2018, 2019
 \item
   Question wording and response options have been reworded to be
   harmonized across years. Please see each individual CCES for exact
@@ -2030,9 +2199,8 @@ guide for wording in all years{]}''
 Barack Obama & 82,681\\
 Mitt Romney & 64,956\\
 Other / Someone Else & 5,890\\
-Did Not Vote & 2,831\\
+Did Not Vote & 2,839\\
 Not Sure / Don't Recall & 1,990\\
-I Did Not Vote & 8\\
 (Missing) & 312,399\\
 \bottomrule
 \end{tabular}
@@ -2559,7 +2727,9 @@ changes.
 \item
   Enter 2019 common content (up to n = 470,755)
 \item
-  Adds variable for union membership, religion, citizenship
+  Adds variable for employment, union membership, religion, citizenship,
+  children, homewnership, lack of insurance, and lack of military
+  members in immediate family.
 \item
   Adds a separate variable for intent/voted party choice in presidential
   race

@@ -502,6 +502,23 @@ print_tab(citizen)
 * These come from the immigration status questions, which asks respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
 * Limitation: Most of the missingness comes from 2007 and 2015, when the immigration status question does not appear to have been asked.
 
+
+
+### `r nam(religion)`
+
+`r descrip(religion)`
+
+
+```{r, results = "asis"}
+print_tab(religion)
+```
+
+* Years: `r in_years(religion)`
+* The response options have stayed largely consistent and follow that of Pew.
+
+
+## Family Status
+
 ### `r nam(marstat)`
 
 `r descrip(marstat)`
@@ -516,17 +533,38 @@ print_tab(marstat)
 * The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
 
 
-### `r nam(religion)`
+### `r nam(ownhome)`
 
-`r descrip(religion)`
-
+`r descrip(ownhome)`
 
 ```{r, results = "asis"}
-print_tab(religion)
+print_tab(ownhome)
 ```
 
-* Years: `r in_years(religion)`
-* The response options have stayed largely consistent and follow that of Pew.
+* Years: `r in_years(ownhome)`
+
+### `r nam(has_child)`
+
+`r descrip(has_child)`
+
+```{r, results = "asis"}
+print_tab(has_child)
+```
+
+* Years: `r in_years(has_child)`
+
+
+### `r nam(no_milstat)`
+
+`r descrip(no_milstat)`
+
+```{r, results = "asis"}
+print_tab(no_milstat)
+```
+
+
+* Years: `r in_years(no_milstat)`
+* The original question is of the form "We'd like to know whether you or someone in your immediate family is currently serving or has ever served in the U.S. military. Immediate family is defined as your parents, siblings, spouse, and children. Please check all boxes that apply.", where respondents can pick more than one of the options including the following: "I served personally", "Family served previously".  The entry in the cumulative response only selects the "None" option. A value of `no_milstat == "Yes"` means that a respondent indicated they had neither served nor had a immediate family member who has served.   To see the other responses, see the individual year's CCES.
 
 \newpage
 
@@ -663,8 +701,30 @@ print_tab(faminc)
 * Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
 * The 2009 CCES did not have an option for 60-70k. 
 
-### `r nam(union)`
 
+### `r nam(employ)`
+
+`r descrip(employ)`
+
+```{r, results = "asis"}
+print_tab(employ)
+```
+
+* Years: `r in_years(employ)`
+
+
+### `r nam(no_healthins)`
+
+`r descrip(no_healthins)`
+
+```{r, results = "asis"}
+print_tab(no_healthins)
+```
+
+* Years: `r in_years(no_healthins)`
+* The original question is of the form "Do you currently have health insurance? (check all that apply)", where respondents can pick more than one of the options including the following: "Yes, through my job or a family member’s employer", "Yes, through a government program, such as Medicare or Medicaid".  The entry in the cumulative response only selects the "None" option. A value of `no_healthins == "Yes"` means that a respondent indicated they were not insured.   To see the other responses, see the individual year's CCES.
+
+### `r nam(union)`
 
 `r descrip(union)`
 
@@ -672,6 +732,7 @@ print_tab(faminc)
 print_tab(union)
 ```
 
+* Years: `r in_years(union)`
 * Question wording and response options have been reworded to be harmonized across years. Please see each individual CCES for exact wording.
 * The 2008 CCES in its common content has a union question that roughly combines both the `union` and `union_hh` question. 
 
@@ -683,7 +744,7 @@ print_tab(union)
 print_tab(union_hh)
 ```
 
-
+* Years: `r in_years(union_hh)`
 * Question wording and response options have been reworded to be harmonized across years. Please see each individual CCES for exact wording.
 * The 2008 CCES in its common content has a union question that roughly combines both the `union` and `union_hh` question. 
 
@@ -1064,7 +1125,7 @@ Dataverse assigns version numbers by incremeting a full number if any of the dat
 ### Version 5.0 
 - Released `2020-XX-XX`
 - Enter 2019 common content (up to n = 470,755)
-- Adds variable for union membership, religion, citizenship
+- Adds variable for employment, union membership, religion, citizenship, children, homewnership, lack of insurance, and lack of military members in immediate family.
 - Adds a separate variable for intent/voted party choice in presidential race
 - Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
 - Modify prepositions of value labels to lower case
