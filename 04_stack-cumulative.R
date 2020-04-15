@@ -389,7 +389,7 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_gov = replace(voted_gov, CC18_409 == 1, 1),
              voted_gov = replace(voted_gov, CC18_409 == 2, 2),
              ) %>%
-      mutate_at(vars(matches("^vv")), ~replace_na(.x, "")) %>% 
+      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -808,13 +808,16 @@ ccs <- list(
   "2016" = std_name(cc16),
   "2017" = std_name(cc17),
   "2018" = std_name(cc18),
-  "2018comp" = std_name(mutate(cc18_cnew, 
-                               commonweight = NA, 
+  "2018comp" = std_name(mutate(cc18_cnew,
+                               commonweight = NA,
                                commonpostweight = NA,
-                               vvweight = NA, 
+                               vvweight = NA,
                                vvweight_post = NA)),
   "2019" = std_name(cc19)
 )
+
+
+write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 
 
 # mutations to data -----

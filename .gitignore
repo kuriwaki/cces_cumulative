@@ -73,6 +73,7 @@ past_guides/*
 documents_CQ/*
 tests_old-code/*
 crunch_admin/*
+data/temp_*
 
 
 # Other links
