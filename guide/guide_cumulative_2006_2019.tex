@@ -168,9 +168,9 @@ Malecki, and Gordon Shotwell at Crunch for their help.}  }
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2019, ``Cumulative CCES Common Content (2006-2019)'',
+Kuriwaki, Shiro, 2020, ``Cumulative CCES Common Content (2006-2019)'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
-Harvard Dataverse, V4.
+Harvard Dataverse, V5.
 \end{quote}
 
 \bigskip
@@ -183,34 +183,37 @@ Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
-CCES questions change from year to year, so this cumulative file only
-includes a subset of those questions that are standard. Users can still
-merge in year-specific questions easily into this cumulative file and
-take advantage of its harmonized variables, as explained below.
+Each year's CCES asks hundreds of questions, many of which change from
+year to year. This cumulative file only includes \emph{a subset} of
+those questions that are standard and important. It standardizes
+(harmonizes) its values across years and creates a few new variables
+too. Users can still merge in their year-specific questions of interest
+easily into this cumulative file and take advantage of its standardized
+variables.
 
 \bigskip
 
-This dataset was constructed from each year's full CCES, all of them
+I constructed this dataset from each year's full CCES, all of them
 publicly available as separate datasets on
-\href{cces.gov.harvard.edu}{dataverse}. The final product is a
+\href{cces.gov.harvard.edu}{dataverse}.The final product is a
 \texttt{tibble}-style data frame (built in R) that is also available as
 a Stata \texttt{dta} file. In addition, the same dataset is available on
 \texttt{Crunch}, an analytics interface optimized for survey datasets.
+The source code is open-source.
 
 \bigskip
 
 Please note that this cumulative dataset makes some modifications to the
-original CCES datasets for comparability. These modifications are only
-made when differences are deemed sufficiently minor, and are documented
-in source code (see below). However, for details on the survey
-methodology and a list of all questions, readers should consult the
-guides for each year.
+original CCES datasets to maintain comparability across years. These
+modifications are only made when differences are deemed sufficiently
+minor. Still, for details on the survey methodology and a list of all
+questions, readers should consult the guides for each year.
 
 \vspace{1cm}
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
-\begin{itemize}\addtolength{\itemsep}{7pt}
+\begin{itemize}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
@@ -220,6 +223,8 @@ guides for each year.
 \end{itemize}
 \end{minipage}
 }
+
+\vspace{1cm}
 
 \newpage
 \setcounter{tocdepth}{3}
@@ -258,6 +263,46 @@ it can also be used without tidyverse.
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
 \NormalTok{cc <{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.dta"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{unique-identifiers-and-how-to-add-more-variables}{%
+\subsection{Unique identifiers and how to add more
+variables}\label{unique-identifiers-and-how-to-add-more-variables}}
+
+The cumulative dataset only uses key variables from each year's common
+content. However, other common content variables can be merged in.
+
+In R, we recommend using the \texttt{left\_join} or \texttt{inner\_join}
+functions (or the base-R \texttt{merge} function). In Stata, use
+\texttt{merge\ 1:1}. In all cases, the combination of \texttt{year} and
+\texttt{case\_id} \textbf{uniquely identifies each row} in the
+cumulative common content, so any merges should merge on year and the
+case identifier. For example, suppose we have separately downloaded the
+\href{https://doi.org/10.7910/DVN/GDF6Z0/JPMOZZ}{2016 Common Content}
+and read it in as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cc16 <{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"CCES16\_Common\_OUTPUT\_Feb2018\_VV.dta"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Suppose we want to merge in the 2016-specific issue questions that ask
+respondent's views about key votes in Congress. This variable all start
+with \texttt{"CC16\_351"} and the case-identifier is called
+\texttt{V101}, so we can merge this in to the cumulative file as
+follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# subset}
+\NormalTok{cc16\_rc <{-}}\StringTok{ }\KeywordTok{select}\NormalTok{(cc16, V101, }\KeywordTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
+
+\CommentTok{\# join on case ID}
+\NormalTok{cc\_rc <{-}}\StringTok{ }\NormalTok{cc }\OperatorTok{\%>\%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2016}\NormalTok{) }\OperatorTok{\%>\%}\StringTok{ }
+\StringTok{  }\KeywordTok{left\_join}\NormalTok{(cc16\_rc, }\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"case\_id"}\NormalTok{ =}\StringTok{ "V101"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -331,7 +376,7 @@ labelled class.
 
 \noindent Unlike factors, labelled variables can be referenced by their
 underlying numeric value. It is sometimes useful to treat survey values
-as numbers rather than as raw text, and the labelled calss allows you to
+as numbers rather than as raw text, and the labelled class allows you to
 do that.
 
 \begin{Shaded}
@@ -357,20 +402,6 @@ do that.
 labelled, and some are of factor class. This is because the latter
 variables were different enough in their value codings across years that
 summarizing them into a single numeric value was difficult.
-
-\hypertarget{adding-more-variables}{%
-\subsection{Adding more variables}\label{adding-more-variables}}
-
-As noted, the cumulative dataset only uses key variables from each
-year's common content. However,common content variables can be merged
-in.
-
-In R, we recommend using the \texttt{left\_join} or \texttt{inner\_join}
-functions (or the base-R \texttt{merge} function). In Stata, use
-\texttt{merge\ 1:1}. In all cases, the combination of \texttt{year} and
-\texttt{case\_id} \textbf{uniquely identifies each row} in the
-cumulative common content, so any merges should merge on year and the
-case identifier.
 
 \newpage
 
@@ -1082,7 +1113,7 @@ Domestic Partnership & 21,579\\
   ``Never Married'' in 2017 and 2018.
 \item
   The option ``Domestic Partnership'' was used till 2016, which was then
-  replaced by ``Domestic / Civl Partnership'' in 2017 and 2018.
+  replaced by ``Domestic / Civil Partnership'' in 2017 and 2018.
 \end{itemize}
 
 \hypertarget{ownhome-home-ownership}{%
@@ -1262,7 +1293,9 @@ Socialist Party & 5\\
 \item
   Years: 2012, 2014, 2016, 2018
 \item
-  Limitations: Not available for some even years
+  Limitations: Note that if the state's voter roll does not record party
+  registration, this value will be missing. Not available for some even
+  years.
 \end{itemize}
 
 \hypertarget{vv_party_prm-validated-registered-primary-party}{%
@@ -1971,7 +2004,7 @@ straight party ticket in the applicable states will appear to have voted
 for the Republican candidate in all offices. The straight ticket party
 option was not asked in other years.
 
-The cateogry ``Did Not Vote'' is recorded only when the respondent
+The category ``Did Not Vote'' is recorded only when the respondent
 selects that option. Respondent who have missing values for intent or
 vote choice can also be non-voters for a variety of reasons. For general
 turnout, see the section on turnout.
@@ -2036,7 +2069,7 @@ Did not Vote & 25,949\\
 \item
   Note: In a presidential election year, this asks the vote of
   \emph{that} year. The vote choice of the presidential election 4 years
-  prior might be recorded separtely. For example, for respondents in
+  prior might be recorded separately. For example, for respondents in
   2012, \texttt{voted\_pres\_party} corresponds to their 2012 vote,
   while \texttt{voted\_pres\_party\_08} corresponds to their 2008 vote
   (which was asked in the same 2012 survey).
@@ -2713,8 +2746,8 @@ $ voted_sen_party   <fct> NA, Democratic, Democratic, NA, Democratic, NA, R...
 \section{Version History of Dataverse
 Releases}\label{version-history-of-dataverse-releases}}
 
-Dataverse assigns version numbers by incremeting a full number if any of
-the datasets change, and an incrementing decimal when the description
+Dataverse assigns version numbers by incrementing a full number if any
+of the datasets change, and an incrementing decimal when the description
 changes.
 
 \hypertarget{version-5.0}{%
@@ -2723,13 +2756,13 @@ changes.
 \begin{itemize}
 \tightlist
 \item
-  Released \texttt{2020-XX-XX}
+  Released \texttt{2020-04-15}
 \item
   Enter 2019 common content (up to n = 470,755)
 \item
-  Adds variable for employment, union membership, religion, citizenship,
-  children, homewnership, lack of insurance, and lack of military
-  members in immediate family.
+  Adds variables for: employment, union membership, religion,
+  citizenship, children, homeownership, lack of insurance, and lack of
+  military members in immediate family.
 \item
   Adds a separate variable for intent/voted party choice in presidential
   race

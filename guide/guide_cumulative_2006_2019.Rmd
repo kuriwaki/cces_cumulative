@@ -111,7 +111,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2019, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V4. 
+> Kuriwaki, Shiro, 2020, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V5. 
 
 \bigskip
 
@@ -119,22 +119,21 @@ This dataset combines fourteen years (2006 - 2019) of the Cooperative Congressio
 
 \bigskip
 
-CCES questions change from year to year, so this cumulative file only includes a subset of those questions that are standard. Users can still merge in year-specific questions easily into this cumulative file and take advantage of its harmonized variables, as explained below. 
+Each year's CCES asks hundreds of questions, many of which change from year to year. This cumulative file only includes _a subset_ of those questions that are standard and important. It standardizes (harmonizes) its values across years and creates a few new variables too.  Users can still merge in their year-specific questions of interest easily into this cumulative file and take advantage of its standardized variables. 
  
 \bigskip
 
-This dataset was constructed from each year's full CCES, all of them publicly available as separate datasets on [dataverse](cces.gov.harvard.edu). The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets.  
+I constructed this dataset from each year's full CCES, all of them publicly available as separate datasets on [dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
 
 \bigskip
 
-
-Please note that this cumulative dataset makes some modifications to the original CCES datasets for comparability. These modifications are only made when differences are deemed sufficiently minor, and are documented in source code (see below). However, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+Please note that this cumulative dataset makes some modifications to the original CCES datasets to maintain comparability across years. These modifications are only made when differences are deemed sufficiently minor. Still, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
 \vspace{1cm}
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
-\begin{itemize}\addtolength{\itemsep}{7pt}
+\begin{itemize}
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
@@ -144,6 +143,8 @@ Please note that this cumulative dataset makes some modifications to the origina
 \end{itemize}
 \end{minipage}
 }
+
+\vspace{1cm}
 
 \newpage
 \setcounter{tocdepth}{3}
@@ -173,6 +174,29 @@ cc <- read_dta("cumulative_2006_2019.dta")
 ```
 
 
+## Unique identifiers and how to add more variables
+
+The cumulative dataset only uses key variables from each year's common content. However, other common content variables can be merged in.
+
+In R, we recommend using the `left_join` or `inner_join` functions (or the base-R `merge` function). In Stata, use `merge 1:1`. In all cases, the combination of `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so any merges should merge on year and the case identifier. For example, suppose we have separately downloaded the [2016 Common Content](https://doi.org/10.7910/DVN/GDF6Z0/JPMOZZ) and read it in as follows:
+
+```{r, eval = FALSE, echo = TRUE}
+cc16 <- read_dta("CCES16_Common_OUTPUT_Feb2018_VV.dta")
+```
+
+Suppose we want to merge in the 2016-specific issue questions that ask respondent's views about key votes in Congress. This variable all start with `"CC16_351"` and the case-identifier is called `V101`, so we can merge this in to the cumulative file as follows:
+
+```{r, eval = FALSE, echo = TRUE}
+# subset
+cc16_rc <- select(cc16, V101, matches("CC16_351"))
+
+# join on case ID
+cc_rc <- cc %>% 
+  filter(year == 2016) %>% 
+  left_join(cc16_rc, by = c("case_id" = "V101"))
+```
+
+
 ## Labelled variables (for analysis in R)
 
 A note on variable types. The R dataset stores variables in `numeric`, `character`, `factor`, or `labelled` class.^[Technically, this is now called a `labelled_haven` class, to disambiguate from an unrelated but older use of `labelled` in the Hmisc package.] The first three classes are commonly used, but the `lablelled` format is more novel. `labelled` classes are numeric integers where each integer is associated with a label (See vignette [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)). This makes it equivalent to a `factor` but referenceable by its numeric value. It is essentially the labels in Stata and SPSS. 
@@ -198,7 +222,7 @@ select(cc, year, case_id, pid3) %>%
 ```
 
 
-\noindent Unlike factors, labelled variables can be referenced by their underlying numeric value. It is sometimes useful to treat survey values as numbers rather than as raw text, and the labelled calss allows you to do that.
+\noindent Unlike factors, labelled variables can be referenced by their underlying numeric value. It is sometimes useful to treat survey values as numbers rather than as raw text, and the labelled class allows you to do that.
 
 ```{r, echo = TRUE,  eval = FALSE}
 select(cc, year, case_id, pid3) %>% 
@@ -213,11 +237,6 @@ select(cc, year, case_id, pid3) %>%
 \indent In this cumulative (R) dataset, some variables are of class labelled, and some are of factor class. This is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
 
 
-## Adding more variables
-
-As noted, the cumulative dataset only uses key variables from each year's common content. However,common content variables can be merged in.
-
-In R, we recommend using the `left_join` or `inner_join` functions (or the base-R `merge` function). In Stata, use `merge 1:1`. In all cases, the combination of `year` and `case_id` **uniquely identifies each row** in the cumulative common content, so any merges should merge on year and the case identifier. 
 
 
 
@@ -530,7 +549,7 @@ print_tab(marstat)
 
 * Years: `r in_years(marstat)`
 * The option "Single" was used till 2016, which was then replaced by "Never Married" in 2017 and 2018.
-* The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civl Partnership" in 2017 and 2018.
+* The option "Domestic Partnership" was used till 2016, which was then replaced by "Domestic / Civil Partnership" in 2017 and 2018.
 
 
 ### `r nam(ownhome)`
@@ -595,7 +614,7 @@ print_tab(vv_party_gen)
 ```
 
 * Years: `r in_years(vv_party_gen)`
-* Limitations: Not available for some even years
+* Limitations: Note that if the state's voter roll does not record party registration, this value will be missing. Not available for some even years.
 
 
 ### `r nam(vv_party_prm)`
@@ -852,7 +871,7 @@ print_tab(approval_gov)
 Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
 
 
-The cateogry "Did Not Vote" is recorded only when the respondent selects that option. Respondent who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
+The category "Did Not Vote" is recorded only when the respondent selects that option. Respondent who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
 
 
 ## Presidential Vote
@@ -877,7 +896,7 @@ print_tab(voted_pres_party)
 ```
 
 * Years: `r in_years(voted_pres_party)`
-* Note: In a presidential election year, this asks the vote of _that_ year. The vote choice of the presidential election 4 years prior might be recorded separtely. For example, for respondents in 2012, `voted_pres_party` corresponds to their 2012 vote, while `voted_pres_party_08` corresponds to their 2008 vote (which was asked in the same 2012 survey). 
+* Note: In a presidential election year, this asks the vote of _that_ year. The vote choice of the presidential election 4 years prior might be recorded separately. For example, for respondents in 2012, `voted_pres_party` corresponds to their 2012 vote, while `voted_pres_party_08` corresponds to their 2008 vote (which was asked in the same 2012 survey). 
 
 
 ### `r nam(intent_pres_08)`
@@ -1120,12 +1139,12 @@ glimpse(select(cc, matches("_party$")))
 
 # Version History of Dataverse Releases
 
-Dataverse assigns version numbers by incremeting a full number if any of the datasets change, and an incrementing decimal when the description changes.
+Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
 ### Version 5.0 
-- Released `2020-XX-XX`
+- Released `2020-04-15`
 - Enter 2019 common content (up to n = 470,755)
-- Adds variable for employment, union membership, religion, citizenship, children, homewnership, lack of insurance, and lack of military members in immediate family.
+- Adds variables for: employment, union membership, religion, citizenship, children, homeownership, lack of insurance, and lack of military members in immediate family.
 - Adds a separate variable for intent/voted party choice in presidential race
 - Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
 - Modify prepositions of value labels to lower case
