@@ -146,12 +146,14 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
       mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
       mutate(dist_up = coalesce(dist_up, dist)) # for 2006:2011, append dist for now
   }
-  # fix at large
+  # fix at large and add cd
   fix_al <- tbl %>%
        mutate(
          dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
          dist_up = replace(dist_up, dist_up == 0, 1L)
-         )
+       ) %>% 
+    mutate(cd    = str_c(st, "-", str_pad(dist, width = 2, pad = '0')),
+           cd_up = str_c(st, "-", str_pad(dist_up, width = 2, pad = '0')))
   
   fix_al
 }
@@ -213,7 +215,7 @@ mit_fmt <- mit06_raw %>%
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
 
-# 2008 addiiton
+# 2008 addition
 # (used above in std_dv, because that only takes a path)
 read_dta("data/source/cces/2008_hum.dta") %>% 
   rename_all(str_to_upper) %>% 
@@ -240,3 +242,7 @@ save(
 
 
 cat("Finished standardizing input\n")
+
+write_rds(cc18,      "~/Dropbox/swing-split/data/input/cc18.rds")
+write_rds(cc18_comp, "~/Dropbox/swing-split/data/input/cc18_comp.rds")
+write_rds(mit_fmt, "~/Dropbox/CCES_representation/data/source/cces/2006_mit_fmt.rds")

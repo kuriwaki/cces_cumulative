@@ -8,9 +8,6 @@ library(lubridate)
 library(questionr)
 
 
-# helper data ----
-statecode <- read_csv("data/source/statecode.csv")
-
 
 # functions -----
 
@@ -998,24 +995,6 @@ relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>%
   rename(religion = religpew)
 
 
-# geography ----
-state      <- find_stack(ccs, state, "character")
-zipcode    <- find_stack(ccs, zipcode, "character") %>% 
-  mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
-
-county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
-  left_join(cc17_county, by = c("year", "case_id")) %>% 
-  mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) %>% 
-  select(-countyfips) %>% 
-  filter(year != 2007) %>% 
-  bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
-              mutate_all(zap_labels))
-
-dist       <- find_stack(ccs, dist, "integer")
-dist_up    <- find_stack(ccs, dist_up, "integer")
-cong       <- find_stack(ccs, cong, "integer")
-cong_up    <- find_stack(ccs, cong_up, "integer")
-
 # president -------
 i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
@@ -1119,15 +1098,34 @@ vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
 
 
 
+# geography ----
+state      <- find_stack(ccs, state, "character")
+zipcode    <- find_stack(ccs, zipcode, "character") %>% 
+  mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
+
+county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
+  left_join(cc17_county, by = c("year", "case_id")) %>% 
+  mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) %>% 
+  select(-countyfips) %>% 
+  filter(year != 2007) %>% 
+  bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) %>% 
+              mutate_all(zap_labels))
+
+dist       <- find_stack(ccs, dist, "integer")
+dist_up    <- find_stack(ccs, dist_up, "integer")
+cd         <- find_stack(ccs, cd, "character")
+cd_up      <- find_stack(ccs, cd_up, "character")
+cong       <- find_stack(ccs, cong, "integer")
+cong_up    <- find_stack(ccs, cong_up, "integer")
 
 # format state and CD, then zipcode and county ----
 stcd <- left_join(state, dist) %>%
   left_join(dist_up) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
-  left_join(select(statecode, state, st), by = "state") %>%
-  mutate(cd = as.character(glue("{st}-{str_pad(dist, width = 2, pad = '0')}")),
-         cd_up = as.character(glue("{st}-{str_pad(dist_up, width = 2, pad = '0')}"))) %>%
+  left_join(cd) %>%
+  left_join(cd_up) %>%
+  left_join(tibble(state = state.name, st = state.abb), by = "state") %>%
   select(year, case_id, state, st, cd, cd_up, dist, dist_up, cong, cong_up)
 
 geo <- stcd %>%
