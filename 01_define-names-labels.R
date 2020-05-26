@@ -93,7 +93,7 @@ ccc_meta <- tribble(
   "cong_up",             "categorical", "Congressional session for upcoming Congress",         "[Upcoming Congressional session. Use to join candidates.]",
   "state",               "categorical", "State (FIPS)",                         "[State (Imputed from input zipcode)]",
   "st",                  "categorical", "State abbreviation (FIPS)",     "[State (Imputed from input zipcode)]",
-  "zipcode",             "text",        "Zipcode of residence",          "So that we can ask you about the news and events in your area, in what zip code do you currently reside?",
+  "zipcode",             "text",        "Zipcode (lookupzip)", "[lookupzip in most years.] So that we can ask you about the news and events in your area, in what zip code do you currently reside?",
   "county_fips",         "text",        "County of residence",           "[County (Imputed from input zipcode)]",
   "gender",              "categorical", "Gender",                        "Are you male or female?",
   "birthyr",             "numeric",     "Year of birth",                 "In what year were you born?",
