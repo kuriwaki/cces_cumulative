@@ -1,7 +1,7 @@
 library(tidyverse) # mask tidyverse
 library(haven)
 library(glue)
-library(noncensus)
+library(tigris)
 
 writeToCrunch <- FALSE # to change the crunch dataset
 
@@ -242,17 +242,11 @@ ccc_fac <- ccc_df %>%
 
 
 # FIPS-state key 
-data(counties)
-fips_key <- counties %>% 
-  distinct(state, state_fips) %>% 
-  tbl_df() %>% 
-  mutate(state_fips = as.integer(as.character(state_fips)), state = as.character(state)) %>%
-  select(st = state, st_fips = state_fips) %>% 
-  select(st, st_fips) %>% 
-  left_join(distinct(ccc_df, state, st)) %>% 
-  na.omit()
+fips_key <-  tigris::fips_codes %>% 
+  as_tibble() %>% 
+  transmute(st = state, state = state_name, st_fips = as.integer(state_code)) %>% 
+  distinct()
 
-# Error: Evaluation error: vector memory exhausted (limit reached?).
 ccc_factor <-   ccc_fac %>% 
   left_join(fips_key) %>%
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
