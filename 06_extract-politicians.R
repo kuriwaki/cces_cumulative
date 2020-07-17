@@ -308,21 +308,18 @@ for (yr in c(2006:2018, str_c(seq(2012, 2018, 2), "_post"), "2018c")) { # "2006m
     # if it should exist, rename
     if (!is.na(rename_from)) {
       cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] %>% 
-        rename("{{var}}" := all_of(rename_from))
+        rename({{var}} := all_of(rename_from))
     }
   }
 }
 
 
 # bind ------
-dfcc <- map_dfr(cclist, clean_out, carry_vars, master, .id = "dataset")
+dfcc <- map_dfr(cclist, clean_out, cvars = carry_vars, m = master, .id = "dataset")
 
 # hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
 # gov_inc = CurrentGovName, # KY, LA, MS Gov
-
-
-
 # standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 
 assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
@@ -341,9 +338,9 @@ df_current <- dfcc %>%
 
 
 # wide to long cand-party df -----
-rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), carry_vars)
-sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), carry_vars)
-gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), carry_vars)
+rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), c("dataset", carry_vars))
+sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), c("dataset", carry_vars))
+gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), c("dataset", carry_vars))
 
 
 # create key of incumbent MC ----
