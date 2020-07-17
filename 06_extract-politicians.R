@@ -336,28 +336,30 @@ df_current <- dfcc %>%
          ) %>%
   mutate_at(vars(matches("(_pty|_ipt)")), std_ptylabel)
 
+# unique by dataset
+carry_vars2 <- c("dataset", carry_vars)
 
 # wide to long cand-party df -----
-rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), c("dataset", carry_vars))
-sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), c("dataset", carry_vars))
-gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), c("dataset", carry_vars))
+rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), carry_vars2)
+sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), carry_vars2)
+gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), carry_vars2)
 
 
 # create key of incumbent MC ----
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
-ri_mc_match  <- match_MC(df_current, inc_H, "rep", carry_vars)
-s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars)
-s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars)
+ri_mc_match  <- match_MC(df_current, inc_H, "rep",  carry_vars2)
+s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars2)
+s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars2)
 
 # a bit more work for governors
 r_govinc <- df_current %>%
-  select(!!carry_vars, gov_inc, gov_ipt) %>% 
+  select(!!carry_vars2, gov_inc, gov_ipt) %>% 
   mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
 
 gov_inc_match <- r_govinc %>% 
   mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) %>%
   arrange(year, case_id) %>% 
-  select(!!carry_vars,
+  select(!!carry_vars2,
          matches("_current"))
   
 
