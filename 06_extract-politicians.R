@@ -248,6 +248,23 @@ suffixes <- "(,?\\sIV|,?\\sI{1,3}|,?\\sM\\.?D\\.?|,?\\sJr\\.|,?\\sSr\\.)$"
 # carry these along as id vectors 
 carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "cong_up") 
 
+  
+# Rename variables ----
+master <- readRDS("data/output/02_questions/variable_std_key.Rds")
+master$`2008h` <- master$`2008`
+master$`2009r` <- master$`2009`
+master$`2012p` <- master$`2012`
+master$`2018a` <- master$`2018`
+master$`2018b` <- master$`2018`
+master$`2018c` <- master$`2018`
+
+master$`2012_post` <- str_c(master$`2012`, "_post")
+master$`2014_post` <- str_c(master$`2014`, "_post")
+master$`2016_post` <- str_c(master$`2016`, "_post")
+master$`2018_post` <- str_c(master$`2018`, "_post")
+
+
+# list to store data with renamed variables
 cclist <- list(`2006` = cc06, 
                # `2006m` = mit06_add,
                `2007` = cc07, 
@@ -266,21 +283,17 @@ cclist <- list(`2006` = cc06,
                `2017` = cc17,
                `2018` = cc18,
                `2018c` = cc18_cnew,
-               `2019` = cc19)
-               # `2018a` = hua18,
-               # `2018b` = hub18)s
+               `2019` = cc19,
+               `2012_post` = cc12,
+               `2014_post` = cc14,
+               `2016_post` = cc16,
+               `2018_post` = cc18
+               )
 
-  
-# Rename variables ----
-master <- readRDS("data/output/02_questions/variable_std_key.Rds")
-master$`2008h` <- master$`2008`
-master$`2009r` <- master$`2009`
-master$`2012p` <- master$`2012`
-master$`2018a` <- master$`2018`
-master$`2018b` <- master$`2018`
-master$`2018c` <- master$`2018`
+# `2018a` = hua18,
+# `2018b` = hub18)
 
-for (yr in c(2006:2019, "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2018, str_c(seq(2012, 2018, 2), "_post"), "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -289,23 +302,20 @@ for (yr in c(2006:2019, "2018c")) { # "2006m", "2008h", "2009r","2012p"
     
     # if it shouldn't exist, ensure it doesn't exist
     if (is.na(rename_from)) {
-      cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] %>% 
-        mutate(!!var := NULL)
+      cclist[[as.character(yr)]][[var]] <- NULL
     }
     
     # if it should exist, rename
     if (!is.na(rename_from)) {
       cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] %>% 
-        rename(!!var := !!rename_from)
+        rename("{{var}}" := all_of(rename_from))
     }
   }
 }
 
 
-
 # bind ------
-
-dfcc <- map_dfr(cclist, clean_out, carry_vars, master)
+dfcc <- map_dfr(cclist, clean_out, carry_vars, master, .id = "dataset")
 
 # hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
