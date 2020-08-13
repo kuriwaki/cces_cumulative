@@ -64,7 +64,7 @@ master_17 <- tribble(
   "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",    NA
 )
 
-master <- bind_cols(master_11, master_17)
+master <- left_join(master_11, master_17, by = "name")
 
 master$`2018` <- master$`2016`
 master$`2019` <- master$`2017`
