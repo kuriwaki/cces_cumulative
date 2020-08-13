@@ -12,11 +12,11 @@ statecode <- read_csv("data/source/statecode.csv")
 std_dv <- function(path, guess_year = TRUE) {
   if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_(cc|hu|panel).*", "\\1", path))
   if (!guess_year) guessed_yr <- NA
-
+  
   ## then
   tbl <- haven::read_dta(path, encoding = 'latin1')
-
-
+  
+  
   ## guess ID
   cnames <- colnames(tbl)
   if ("caseid" %in% cnames) orig_key <- "caseid"
@@ -38,69 +38,126 @@ std_dv <- function(path, guess_year = TRUE) {
   # state
   tbl_st <- std_state(tbl_cong, guess_year, guessed_yr)
   
+  if (!guess_year | guessed_yr %% 2 == 0)
+    tbl_st <- std_statepost(tbl_st, guess_year, guessed_yr)
+  
   # CD number
-  tbl_stc <- std_dist(tbl_st, guess_year, guessed_yr)
-
-
+  tbl_cd <- std_dist(tbl_st, guess_year, guessed_yr)
+  
+  if (!guess_year | guessed_yr %% 2 == 0)
+    tbl_cd <- std_distpost(tbl_cd, guess_year, guessed_yr)
+  
+  
   # then rename id
-  tbl_stc %>%
+  tbl_cd %>%
     rename(case_id = !! orig_key) %>%
-    select(year, case_id, state, st, dist, dist_up, cong, cong_up, everything())
+    relocate(year, case_id, 
+             state, st, matches("(state|st)_post"),
+             dist, dist_up, matches("(dist|dist_up)_post"),
+             cd, cd_up, matches("(cd|cd_up)_post"),
+             cong, cong_up)
 }
 
 
 #' change class of state for specific years
 std_state <- function(tbl, guess_year, guessed_yr) {
-  if (guess_year) {
-    statevar <- case_when(
-      guessed_yr %in% c(2007, 2012:2019) ~ "inputstate",
-      guessed_yr %in% c(2008, 2010:2011) ~ "V206",
-      guessed_yr %in% 2009 ~ "v259",
-      guessed_yr %in% 2006 ~ "v1002"
-    )
-    
-    if (!guessed_yr %in% c(2006, 2009)) {
+  
+  if (!guess_year) {
+    if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
       tbl <- tbl %>%
-        mutate(state = as.character(as_factor(.data[[statevar]]))) %>%
-        mutate(state = str_replace(str_to_title(state), "\\sOf\\s", " of ")) %>% 
+        mutate(state = as.character(as_factor(state_pre))) %>%
         left_join(select(statecode, state, st), by = "state")
     }
-    
-    if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
-      tbl <- tbl %>%
-        rename(st = !! statevar) %>%
-        left_join(select(statecode, state, st), by = "st")
-    }
-    
-    if (guessed_yr %in% 2009) { # 2009 codes lower case labels
-      tbl <- tbl %>%
-        mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) %>%
-        left_join(select(statecode, state, st), by = "state")
-    }
+    return(tbl)
   }
   
-  if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
+  # guess variable based on year
+  statevar <- case_when(
+    guessed_yr %in% c(2007, 2012:2019) ~ "inputstate",
+    guessed_yr %in% c(2008, 2010:2011) ~ "V206",
+    guessed_yr %in% 2009 ~ "v259",
+    guessed_yr %in% 2006 ~ "v1002"
+  )
+  
+  if (!guessed_yr %in% c(2006, 2009)) {
     tbl <- tbl %>%
-      mutate(state = as.character(as_factor(state_pre))) %>%
+      mutate(state = as.character(as_factor(.data[[statevar]]))) %>%
+      mutate(state = str_replace(str_to_title(state), "\\sOf\\s", " of ")) %>% 
+      left_join(select(statecode, state, st), by = "state")
+  }
+  
+  if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
+    tbl <- tbl %>%
+      rename(st = !! statevar) %>%
+      left_join(select(statecode, state, st), by = "st")
+  }
+  
+  if (guessed_yr %in% 2009) { # 2009 codes lower case labels
+    tbl <- tbl %>%
+      mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) %>%
       left_join(select(statecode, state, st), by = "state")
   }
   tbl
 }
 
+std_statepost <- function(tbl, guess_year, guessed_yr) {
+  if (!guess_year) {
+    if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
+      tbl <- tbl %>%
+        mutate(state_post = as.character(as_factor(state_post))) %>%
+        left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
+    }
+    return(tbl) 
+  }
+  
+  if (guessed_yr == 2006) { # no distinction
+    tbl <- tbl %>% 
+      mutate(state_post = state,
+             st_post = st)
+    
+    return(tbl)
+  }
+  
+  statevar <- case_when(
+    guessed_yr %in% c(2012, 2014, 2016, 2018) ~ "inputstate_post",
+    guessed_yr %in% c(2010) ~ "V206_post",
+    guessed_yr %in% 2008 ~ "V259"
+  )
+  
+  # 2012-2014 panel is an exception
+  if (any(str_detect(colnames(tbl), "post_inputstate")))
+    statevar <- "post_inputstate"
+  
+  # create state_post and st_post
+  tbl %>%
+    mutate(state_post = as.character(as_factor(.data[[statevar]]))) %>%
+    mutate(state_post = str_replace(str_to_title(state_post), "\\sOf\\s", " of ")) %>% 
+    left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
+}
+
 
 #' change class of dist for specific years
+
 std_dist <- function(tbl, guess_year, guessed_yr) {
+  if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
+    tbl <- tbl %>%
+      mutate(dist = as.integer(zap_labels(congdist_pre)),
+             dist_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
+      mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
+      mutate(dist_up = coalesce(dist_up, dist)) # for 2006:2011, append dist for now
+  }
+  
   if (guess_year) {
     distvar <- case_when(
       guessed_yr %in% c(2019) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
-      guessed_yr %in% 2006 ~ "v1003",
-      guessed_yr %in% 2007 ~ "cdid_num",
-      guessed_yr %in% 2008 ~ "V250",
+      guessed_yr %in% c(2010, 2011) ~ "V276",
       guessed_yr %in% 2009 ~ "v264",
-      guessed_yr %in% c(2010, 2011) ~ "V276"
+      guessed_yr %in% 2008 ~ "V250",
+      guessed_yr %in% 2007 ~ "cdid_num",
+      guessed_yr %in% 2006 ~ "v1003"
     )
     
     # district in the upcoming election
@@ -108,15 +165,6 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     if (guessed_yr == 2012) distupvar <- "cdid113"
     if (guessed_yr == 2016) distupvar <- "cdid115"
     if (guessed_yr == 2018) distupvar <- "cdid116"
-    
-    
-    # what about post
-    distvar_post <- case_when(
-      guessed_yr %in% 2016 ~ "cdid113_post"
-    )
-    distupvar_post <- case_when(
-      guessed_yr %in% 2016 ~ "cdid115_post"
-    )
     
     if (!guessed_yr %in% c(2006, 2007)) {
       
@@ -147,25 +195,95 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     }
   }
   
-  if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
-    tbl <- tbl %>%
-      mutate(dist = as.integer(zap_labels(congdist_pre)),
-             dist_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
-      mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
-      mutate(dist_up = coalesce(dist_up, dist)) # for 2006:2011, append dist for now
-  }
   # fix at large and add cd
   fix_al <- tbl %>%
-       mutate(
-         dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
-         dist_up = replace(dist_up, dist_up == 0, 1L)
-       ) %>% 
+    mutate(
+      dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
+      dist_up = replace(dist_up, dist_up == 0, 1L)
+    ) %>% 
     mutate(cd    = str_c(st, "-", str_pad(dist, width = 2, pad = '0')),
            cd_up = str_c(st, "-", str_pad(dist_up, width = 2, pad = '0')))
   
   fix_al
 }
 
+
+# post is only for even years
+std_distpost <- function(tbl, guess_year, guessed_yr) {
+  
+  if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
+    tbl <- tbl %>%
+      mutate(dist_post = as.integer(zap_labels(congdist_post)),
+             dist_up_post = as.integer(zap_labels(congdist_redist_post))) %>% 
+      mutate(dist_up_post = replace(dist_up_post, year %in% c(2006:2011), NA)) %>% 
+      mutate(dist_up_post = coalesce(dist_up_post, dist_post)) # for 2006:2011, append dist for now
+  }
+  
+  if (guess_year && guessed_yr == 2006) {
+    tbl <- tbl %>% 
+      mutate(dist_post = dist,
+             dist_up_post = dist_up)
+  }
+  
+  if (guess_year && guessed_yr != 2006) {
+    distvar <- case_when(
+      guessed_yr %in% c(2018) ~ "cdid115_post",
+      guessed_yr %in% c(2016) ~ "cdid113_post",
+      guessed_yr %in% c(2012, 2014) ~ "cdid_post",
+      guessed_yr %in% c(2010) ~ "V276_post",
+      guessed_yr %in% 2008 ~ "V264"
+    )
+    
+    distupvar <- distvar
+    if (guessed_yr == 2012) distupvar <- "cdid113_post"
+    if (guessed_yr == 2016) distupvar <- "cdid115_post"
+    if (guessed_yr == 2018) distupvar <- "cdid116_post"
+    
+    # 2012-2014 panel is an exception; overwrite
+    if (any(str_detect(colnames(tbl), "post_cdid"))) {
+      distvar   <- "post_cdid"
+      distupvar <- "post_cdid113"
+    }
+    
+    tbl <- tbl %>%
+      rename(dist_post = !!distvar) %>%
+      mutate(dist_post = as.integer(dist_post))
+    
+    if (distupvar != distvar) {
+      tbl <- tbl %>%
+        rename(dist_up_post = !!distupvar) %>%
+        mutate(dist_up_post = as.integer(dist_up_post))
+    }
+    
+    if (distupvar == distvar) {
+      tbl <- tbl %>%
+        mutate(dist_up_post = as.integer(dist_post))
+    }
+  }
+  
+  # fix at large and add cd
+  fix_al <- tbl %>%
+    mutate(
+      dist_post = replace(dist_post, dist_post == 0, 1L), 
+      dist_up_post = replace(dist_up_post, dist_up_post == 0, 1L)
+    ) %>% 
+    mutate(cd_post    = str_c(st_post, "-", str_pad(dist_post, width = 2, pad = '0')),
+           cd_up_post = str_c(st_post, "-", str_pad(dist_up_post, width = 2, pad = '0')))
+  
+  fix_al
+}
+
+# Check that at least some state and district are  different between  pre and post
+check_pre_post <- function(tbl) {
+  tbl_movers <- filter(tbl,
+                       state != state_post,
+                       dist != dist_post,
+                       dist_up != dist_up_post,
+                       cd != cd_post
+  )
+  
+  stopifnot(nrow(tbl_movers) > 0)
+}
 
 # Data -----------
 # 2012 and before (compiled by Stephen Pettigrew and others)
@@ -233,6 +351,13 @@ read_dta("data/source/cces/2008_hum.dta") %>%
 hu08 <- anti_join(hu08, select(cc08, year, case_id)) %>% 
   mutate(V300 = as_datetime(V300))
 
+
+check_pre_post(cc08)
+check_pre_post(cc10)
+check_pre_post(cc12)
+check_pre_post(cc14)
+check_pre_post(cc16)
+check_pre_post(cc18)
 
 # save ----
 save(
