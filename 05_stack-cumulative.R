@@ -1,12 +1,13 @@
 library(tidyverse)
-library(haven)
 library(labelled)
+library(haven)
 library(foreach)
 library(stringr)
 library(glue)
 library(lubridate)
 library(questionr)
 
+stopifnot(packageVersion("labelled") >= "2.4.0")
 
 
 # functions -----
@@ -105,9 +106,9 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_turnout_gvm = g2006
       ) %>% 
       mutate(marstat = coalesce(profile_marstat, marstat)) %>% 
-      add_value_labels(race = c("Other" = 7)) %>% 
-      add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
-                                "Not Very Strong Republican" = 6))
+      labelled::add_value_labels(race = c("Other" = 7)) %>% 
+      labelled::add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
+                                          "Not Very Strong Republican" = 6))
   }
   
   # 2009 --------
@@ -334,7 +335,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(
         countyfips = NA
       ) %>% 
-      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   # 2018, 2019 ------
@@ -387,7 +388,7 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_gov = replace(voted_gov, CC18_409 == 2, 2),
              ) %>%
       mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
-      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   if (identical(cces_year, 2019L)) {
@@ -403,7 +404,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         faminc = faminc_new,
         voted_pres_16 = presvote16post
         ) %>%
-      add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   
@@ -1076,7 +1077,7 @@ newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>%
 marstat <- find_stack(ccs, marstat, make_labelled = TRUE) %>% 
   remove_value_labels(marstat = 8) %>% 
   mutate(marstat = na_if(marstat, 8)) %>% 
-  add_value_labels(marstat = c(`Single / Never Married` = 5))
+  labelled::add_value_labels(marstat = c(`Single / Never Married` = 5))
 
 # citizenship ----
 # define by immstat
@@ -1095,10 +1096,17 @@ vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
 vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
 vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
 
+# year -----
+cong       <- find_stack(ccs, cong, "integer")
+cong_up    <- find_stack(ccs, cong_up, "integer")
 
 
 # geography ----
 state      <- find_stack(ccs, state, "character")
+state_post      <- find_stack(ccs, state_post, "character")
+st      <- find_stack(ccs, st, "character")
+st_post      <- find_stack(ccs, st_post, "character")
+
 zipcode    <- find_stack(ccs, zipcode, "character") %>% 
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 
@@ -1114,18 +1122,27 @@ dist       <- find_stack(ccs, dist, "integer")
 dist_up    <- find_stack(ccs, dist_up, "integer")
 cd         <- find_stack(ccs, cd, "character")
 cd_up      <- find_stack(ccs, cd_up, "character")
-cong       <- find_stack(ccs, cong, "integer")
-cong_up    <- find_stack(ccs, cong_up, "integer")
+
+dist_post     <- find_stack(ccs, dist_post, "integer")
+dist_up_post  <- find_stack(ccs, dist_up_post, "integer")
+cd_post       <- find_stack(ccs, cd_post, "character")
+cd_up_post    <- find_stack(ccs, cd_up_post, "character")
+
 
 # format state and CD, then zipcode and county ----
-stcd <- left_join(state, dist) %>%
-  left_join(dist_up) %>%
+stcd <- left_join(state, st) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
+  left_join(state_post) %>%
+  left_join(st_post) %>%
+  left_join(dist) %>%
+  left_join(dist_up) %>%
   left_join(cd) %>%
   left_join(cd_up) %>%
-  left_join(tibble(state = state.name, st = state.abb), by = "state") %>%
-  select(year, case_id, state, st, cd, cd_up, dist, dist_up, cong, cong_up)
+  left_join(dist_post) %>%
+  left_join(dist_up_post) %>%
+  left_join(cd_post) %>%
+  left_join(cd_up_post)
 
 geo <- stcd %>%
   left_join(zipcode) %>%
