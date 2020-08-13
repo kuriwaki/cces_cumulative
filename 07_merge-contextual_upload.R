@@ -5,8 +5,9 @@ library(tigris)
 
 writeToCrunch <- FALSE # to change the crunch dataset
 
-# apppend the candidatename-candidate party variables to the vote choice qs
+drop_post <- function(x) filter(x, !str_detect(dataset, "_post"))
 
+# apppend the candidatename-candidate party variables to the vote choice qs
 #' append labels to numeric responses
 #' 
 #' @param numdf the slim df with choices as numbers
@@ -22,7 +23,8 @@ num_cand_match <- function(numdf, canddf) {
   party_varname <-  glue("{no_num}_party") # e.g. intent_rep_party = Democrat
   abstract_varname <- as.character(glue("{str_replace(type, '_num', '')}_char")) # e.g. intent_rep_char = Democract /Cand 1
   
-  canddf <- rename(canddf, !!type := cand)
+  canddf <- rename(canddf, !!type := cand) %>% 
+    drop_post()
   
   joined <- left_join(numdf, canddf, by = c("year", "case_id", type))
   
@@ -85,7 +87,7 @@ spell_out_party_abbrv <- function (vec) {
 #' combined char to number
 #' change character by re-defining label ordering ordered by the original number and breaking ties with year
 #' @param tbl A table with columns _char and _num for the labels
-bind_label <- function(tbl) {
+bind_label <- function(tbl, carry_vars = ids) {
   charname <- str_subset(colnames(tbl), "_char$")
   numname <-  str_subset(colnames(tbl), "(intent|voted).*_num$")
   varname <-  str_replace(charname, "_char", "")
@@ -104,7 +106,7 @@ bind_label <- function(tbl) {
                                       .y = .data[["year"]], 
                                       .fun = median2,
                                       .desc = FALSE)) %>%
-    select(year, case_id, !! varname)
+    select(!!carry_vars, !!varname)
 }
 
 #' Manual edit vote/intent vars to collapse
@@ -141,7 +143,7 @@ int_vot_manual <- function(tbl, vn, cn, nn) {
 #' @tbl The dataset to slim out
 #' @varmaker regexp to capture var of interest
 #' @id  suffix for identifier variable
-slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL) {
+slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL, carry_vars = ids) {
   
   chosen_var <- str_subset(colnames(tbl), varmarker)
   type <- str_replace(chosen_var, varmarker, '')
@@ -149,18 +151,22 @@ slim <- function(tbl, varmarker = '(_chosen|_party)', id = NULL) {
   if (!is.null(id)) {
     id_rename <- unique(glue("{type}_{id}"))
     
-    tbl_fmt <- select(tbl, !!c("year", "case_id"), 
-           matches(as.character(glue("{varmarker}$"))),
-           !!id_rename := !!id)
+    tbl_fmt <- select(tbl, 
+                      !!carry_vars, 
+                      matches(as.character(glue("{varmarker}$"))),
+                      !!id_rename := !!id)
     
     return(tbl_fmt)
   }
   
   if (is.null(id))  {
-    select(tbl, !!c("year", "case_id"), 
+                      
+    select(tbl, 
+           !!carry_vars, 
            matches(as.character(glue("{varmarker}$"))))
   }
 }
+
 
 
 # Data -------------
@@ -196,11 +202,11 @@ chosen_with_party <-  slim(i_rep_who) %>%
 
 # now we can wrap up the abstract labels 
 abstract_lbl <- bind_label(i_rep_who) %>% 
-  left_join(bind_label(i_sen_who), ids) %>%
-  left_join(bind_label(i_gov_who), ids) %>%
-  left_join(bind_label(v_rep_who), ids) %>%
-  left_join(bind_label(v_sen_who), ids) %>%
-  left_join(bind_label(v_gov_who), ids)
+  left_join(bind_label(i_sen_who)) %>%
+  left_join(bind_label(i_gov_who)) %>%
+  left_join(bind_label(v_rep_who)) %>%
+  left_join(bind_label(v_sen_who)) %>%
+  left_join(bind_label(v_gov_who))
 
 # pre-merge and order vars 
 lbl_party_name <- 
@@ -215,16 +221,17 @@ lbl_party_name <-
          everything())
 
 # nice dataset for incumbents ? ----
-incumbents_with_ID <-  slim(ri_mc_match, "_current", "icpsr") %>% 
-  left_join(slim(s1i_mc_match, "_current", "icpsr"), ids) %>% 
-  left_join(slim(s2i_mc_match, "_current", "icpsr"), ids) %>% 
-  left_join(slim(gov_inc_match, "_current"), ids)
+incumbents_with_ID <-  slim(drop_post(ri_mc_match), "_current", "icpsr") %>% 
+  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), ids) %>% 
+  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), ids) %>% 
+  left_join(slim(drop_post(gov_inc_match), "_current"), ids)
 
 # merge in the candidate vars ----
 ccc_cand <- ccc %>% 
   left_join(lbl_party_name, ids) %>% 
   left_join(incumbents_with_ID, ids)
 
+stopifnot(nrow(ccc) == nrow(ccc_cand))
 
 # Format for output  --------
 # for ambiguous categories, where one number can correspond to different lables (intent_rep), use fct_reorder
@@ -247,12 +254,17 @@ fips_key <-  tigris::fips_codes %>%
   transmute(st = state, state = state_name, st_fips = as.integer(state_code)) %>% 
   distinct()
 
+fips_key_post <- rename(fips_key, st_post = st, state_post = state)
+
 ccc_factor <-   ccc_fac %>% 
   left_join(fips_key) %>%
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
          st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) %>% 
+  select(-st_fips) %>% 
+  left_join(fips_key_post) %>%
+  mutate(state_post = labelled(st_fips, deframe(select(fips_key_post, state_post, st_fips))),
+         st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) %>% 
   select(-st_fips)
-
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05

@@ -1,5 +1,4 @@
 library(tidyverse)
-library(data.table)
 library(haven)
 library(glue)
 library(stringdist)
@@ -258,11 +257,22 @@ master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
 master$`2018c` <- master$`2018`
 
+master$`2010_post` <- str_c(master$`2010`, "_post")
 master$`2012_post` <- str_c(master$`2012`, "_post")
 master$`2014_post` <- str_c(master$`2014`, "_post")
 master$`2016_post` <- str_c(master$`2016`, "_post")
 master$`2018_post` <- str_c(master$`2018`, "_post")
 
+# trick functions that it uses post
+blend_post <- function(tbl) {
+  mutate(tbl,
+         st = st_post,
+         dist = dist_post,
+         dist_up = dist_up_post,
+         cd = cd_post,
+         cd_up = cd_up_post) %>% 
+    filter(!is.na(st) | !is.na(dist) | !is.na(cd))
+}
 
 # list to store data with renamed variables
 cclist <- list(`2006` = cc06, 
@@ -284,16 +294,17 @@ cclist <- list(`2006` = cc06,
                `2018` = cc18,
                `2018c` = cc18_cnew,
                `2019` = cc19,
-               `2012_post` = cc12,
-               `2014_post` = cc14,
-               `2016_post` = cc16,
-               `2018_post` = cc18
+               `2010_post` = blend_post(cc10),
+               `2012_post` = blend_post(cc12),
+               `2014_post` = blend_post(cc14),
+               `2016_post` = blend_post(cc16),
+               `2018_post` = blend_post(cc18)
                )
 
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2018, str_c(seq(2012, 2018, 2), "_post"), "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2018, str_c(seq(2010, 2018, 2), "_post"), "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
