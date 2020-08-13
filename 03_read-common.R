@@ -6,8 +6,13 @@ library(lubridate)
 # helper data ---
 statecode <- read_csv("data/source/statecode.csv")
 
+cces_cd <- function(s, d) {
+  str_c(s, "-", str_pad(d, width = 2, pad = '0'))
+} 
 
 # functions ---
+
+
 #' rudimentary standardization for data that comes out of dataverse
 std_dv <- function(path, guess_year = TRUE) {
   if (guess_year) guessed_yr <- as.integer(gsub(".*/([0-9]+)_(cc|hu|panel).*", "\\1", path))
@@ -47,6 +52,17 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year | guessed_yr %% 2 == 0)
     tbl_cd <- std_distpost(tbl_cd, guess_year, guessed_yr)
   
+  # 2006 is special but just for CC
+  tbl_cd_06 <- filter(tbl_cd, year == 2006) %>% 
+    mutate(state_post = state,
+           st_post = st,
+           dist_post = dist,
+           dist_up_post = dist_up) %>% 
+    mutate(cd_post = cces_cd(st_post, dist_post),
+           cd_up_post = cces_cd(st_post, dist_up_post))
+  
+  tbl_cd <- bind_rows(tbl_cd_06, filter(tbl_cd, year != 2006))
+  
   
   # then rename id
   tbl_cd %>%
@@ -62,12 +78,10 @@ std_dv <- function(path, guess_year = TRUE) {
 #' change class of state for specific years
 std_state <- function(tbl, guess_year, guessed_yr) {
   
-  if (!guess_year) {
-    if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
+  if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
       tbl <- tbl %>%
         mutate(state = as.character(as_factor(state_pre))) %>%
         left_join(select(statecode, state, st), by = "state")
-    }
     return(tbl)
   }
   
@@ -101,12 +115,10 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 }
 
 std_statepost <- function(tbl, guess_year, guessed_yr) {
-  if (!guess_year) {
-    if (identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
-      tbl <- tbl %>%
-        mutate(state_post = as.character(as_factor(state_post))) %>%
-        left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
-    }
+  if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
+    tbl <- tbl %>%
+      mutate(state_post = as.character(as_factor(state_post))) %>%
+      left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
     return(tbl) 
   }
   
@@ -201,8 +213,8 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
       dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
       dist_up = replace(dist_up, dist_up == 0, 1L)
     ) %>% 
-    mutate(cd    = str_c(st, "-", str_pad(dist, width = 2, pad = '0')),
-           cd_up = str_c(st, "-", str_pad(dist_up, width = 2, pad = '0')))
+    mutate(cd    = cces_cd(st, dist),
+           cd_up = cces_cd(st, dist_up))
   
   fix_al
 }
@@ -267,9 +279,8 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
       dist_post = replace(dist_post, dist_post == 0, 1L), 
       dist_up_post = replace(dist_up_post, dist_up_post == 0, 1L)
     ) %>% 
-    mutate(cd_post    = str_c(st_post, "-", str_pad(dist_post, width = 2, pad = '0')),
-           cd_up_post = str_c(st_post, "-", str_pad(dist_up_post, width = 2, pad = '0')))
-  
+    mutate(cd_post    = cces_cd(st_post, dist_post),
+           cd_up_post = cces_cd(st_post, dist_up_post))
   fix_al
 }
 
