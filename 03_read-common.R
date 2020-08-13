@@ -53,16 +53,17 @@ std_dv <- function(path, guess_year = TRUE) {
     tbl_cd <- std_distpost(tbl_cd, guess_year, guessed_yr)
   
   # 2006 is special but just for CC
-  tbl_cd_06 <- filter(tbl_cd, year == 2006) %>% 
-    mutate(state_post = state,
-           st_post = st,
-           dist_post = dist,
-           dist_up_post = dist_up) %>% 
-    mutate(cd_post = cces_cd(st_post, dist_post),
-           cd_up_post = cces_cd(st_post, dist_up_post))
-  
-  tbl_cd <- bind_rows(tbl_cd_06, filter(tbl_cd, year != 2006))
-  
+  if (!guess_year) {
+    tbl_cd_06 <- filter(tbl_cd, year == 2006, is.na(start_post)) %>% 
+      mutate(state_post = state,
+             st_post = st,
+             dist_post = dist,
+             dist_up_post = dist_up) %>% 
+      mutate(cd_post = cces_cd(st_post, dist_post),
+             cd_up_post = cces_cd(st_post, dist_up_post))
+    
+    tbl_cd <- bind_rows(tbl_cd_06, filter(tbl_cd, year != 2006 | !is.na(start_post)))
+  }
   
   # then rename id
   tbl_cd %>%
