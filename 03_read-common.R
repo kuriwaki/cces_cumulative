@@ -110,6 +110,14 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     if (guessed_yr == 2018) distupvar <- "cdid116"
     
     
+    # what about post
+    distvar_post <- case_when(
+      guessed_yr %in% 2016 ~ "cdid113_post"
+    )
+    distupvar_post <- case_when(
+      guessed_yr %in% 2016 ~ "cdid115_post"
+    )
+    
     if (!guessed_yr %in% c(2006, 2007)) {
       
       if (distupvar == distvar) {
