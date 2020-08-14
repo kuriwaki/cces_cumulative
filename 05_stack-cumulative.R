@@ -173,7 +173,14 @@ std_name <- function(tbl, is_panel = FALSE) {
       vv_party_pprm = presprim_pty
     ) %>%
       mutate(
-        voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
+        intent_pres_12x = recode(zap_labels(intent_pres_12x), `2` = 1, `1` = 2, `5` = 7, `4` = 6, `3` = 4),
+        voted_pres_12 = labelled(coalesce(voted_pres_12, intent_pres_12x),
+                                 c("Barack Obama (Democratic)" = 1,
+                                   "Mitt Romney (Republican)" = 2,
+                                   "Other" = 4,
+                                   "I did not vote in this race" = 5,
+                                   "I did not vote" = 6,
+                                   "Not sure" = 7)),
         voted_rep = coalesce(voted_rep, intent_repx),
         voted_sen = coalesce(voted_sen, intent_senx),
         voted_gov = coalesce(voted_gov, intent_govx)
