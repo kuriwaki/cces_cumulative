@@ -92,8 +92,8 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
   
   
-  cat(glue("Out of {nrow(persn_remain)} incumbent-rows that didn't match on first try,",
-           "{nrow(uniq_matched2)} matched uniquely by district-lastname", 
+  cat(glue("Out of {nrow(persn_remain)} incumbent-rows that didn't match on first try, ",
+           "{nrow(uniq_matched2)} matched uniquely by district-lastname ", 
            "(match rate up to ",
            "{round(100*(nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))} percent)"), 
       "\n")
@@ -382,3 +382,6 @@ save(rc_key, sc_key, gc_key,
 
 
 cat("Finished matching candidate info to identifiers\n")
+# rc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, dist, cand,name, party)
+# sc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, cand,name, party)
+# gc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, cand,name, party)
