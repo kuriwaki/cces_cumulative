@@ -153,7 +153,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2020-04-14}
+\date{Guide last updated: 2020-08-15}
 
 \begin{document}
 
@@ -241,7 +241,7 @@ file is assigned to an object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc <{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.Rds"}\NormalTok{)}
+\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.Rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -262,7 +262,7 @@ it can also be used without tidyverse.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\NormalTok{cc <{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.dta"}\NormalTok{)}
+\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -284,7 +284,7 @@ and read it in as follows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc16 <{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"CCES16\_Common\_OUTPUT\_Feb2018\_VV.dta"}\NormalTok{)}
+\NormalTok{cc16 \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"CCES16\_Common\_OUTPUT\_Feb2018\_VV.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -297,11 +297,11 @@ follows:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# subset}
-\NormalTok{cc16\_rc <{-}}\StringTok{ }\KeywordTok{select}\NormalTok{(cc16, V101, }\KeywordTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
+\NormalTok{cc16\_rc \textless{}{-}}\StringTok{ }\KeywordTok{select}\NormalTok{(cc16, V101, }\KeywordTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
 
 \CommentTok{\# join on case ID}
-\NormalTok{cc\_rc <{-}}\StringTok{ }\NormalTok{cc }\OperatorTok{\%>\%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2016}\NormalTok{) }\OperatorTok{\%>\%}\StringTok{ }
+\NormalTok{cc\_rc \textless{}{-}}\StringTok{ }\NormalTok{cc }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2016}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
 \StringTok{  }\KeywordTok{left\_join}\NormalTok{(cc16\_rc, }\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"case\_id"}\NormalTok{ =}\StringTok{ "V101"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
@@ -357,7 +357,7 @@ labelled class.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%>\%}\StringTok{ }
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pid3\_fct =} \KeywordTok{as\_factor}\NormalTok{(pid3))}
 \end{Highlighting}
 \end{Shaded}
@@ -381,7 +381,7 @@ do that.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%>\%}\StringTok{ }
+\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
 \StringTok{  }\KeywordTok{filter}\NormalTok{(pid3 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -783,31 +783,50 @@ the even years.{]}
 \hypertarget{geography}{%
 \subsection{Geography}\label{geography}}
 
-A series of variables for the respondent's location
+A series of variables for the respondent's location:
 
 \begin{itemize}
 \tightlist
 \item
-  \texttt{state}: State (FIPS): {[}State (Imputed from input zipcode){]}
+  \texttt{state}: State (FIPS): {[}State{]}
 \item
-  \texttt{st}: State abbreviation (FIPS): {[}State (Imputed from input
-  zipcode){]}
+  \texttt{state\_post}: State (FIPS), post-election: {[}State,
+  post-election{]}
+\item
+  \texttt{st}: State abbreviation (FIPS): {[}State Abbreviation{]}
+\item
+  \texttt{st\_post}: State abbreviation (FIPS), post-election: {[}State,
+  post-election{]}
 \item
   \texttt{dist}: Congressional district number in current Congress:
   {[}Current Congressional District Number{]}
 \item
+  \texttt{dist\_post}: Congressional district number in current
+  Congress, post-election: {[}Current Congressional District Number,
+  post-election{]}
+\item
   \texttt{dist\_up}: Congressional district number for upcoming
   Congress: {[}Upcoming Congressional District Number{]}
+\item
+  \texttt{dist\_up\_post}: Congressional district number for upcoming
+  Congress, post-election: {[}Upcoming Congressional District Number,
+  post-election{]}
 \item
   \texttt{cd}: Congressional district in current Congress: {[}Current
   Congressional District{]}
 \item
+  \texttt{cd\_post}: Congressional district in current Congress,
+  post-election: {[}Current Congressional District, post-election{]}
+\item
   \texttt{cd\_up}: Congressional district in upcoming Congress:
   {[}Upcoming Congressional District{]}
 \item
-  \texttt{zipcode}: Zipcode of residence: ``So that we can ask you about
-  the news and events in your area, in what zip code do you currently
-  reside?''
+  \texttt{cd\_up\_post}: Congressional district in upcoming Congress,
+  post-election: {[}Upcoming Congressional District, post-election{]}
+\item
+  \texttt{zipcode}: Zipcode (lookupzip): {[}lookupzip in most years.{]}
+  So that we can ask you about the news and events in your area, in what
+  zip code do you currently reside?
 \item
   \texttt{county\_fips}: County of residence: {[}County (Imputed from
   input zipcode){]}
@@ -815,15 +834,21 @@ A series of variables for the respondent's location
 
 \begin{verbatim}
 Rows: 470,755
-Columns: 8
-$ state       <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas"...
-$ st          <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "...
-$ cd          <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", "...
-$ cd_up       <chr> "CA-01", "PA-03", "TX-16", "TX-19", "TX-06", "NY-27", "...
-$ dist        <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, 1...
-$ dist_up     <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, 1...
-$ zipcode     <chr> "95969", "16255", "79924", "79423", "76123", "14131", "...
-$ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "36063", "...
+Columns: 14
+$ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas...
+$ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", ...
+$ state_post   <chr> NA, "Pennsylvania", NA, "Texas", "Texas", "New York", ...
+$ st_post      <chr> NA, "PA", NA, "TX", "TX", "NY", NA, NA, "MA", NA, "MI"...
+$ dist         <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, ...
+$ dist_up      <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, ...
+$ cd           <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", ...
+$ cd_up        <chr> "CA-01", "PA-03", "TX-16", "TX-19", "TX-06", "NY-27", ...
+$ dist_post    <int> NA, 5, NA, 19, 6, 28, NA, NA, 1, NA, 15, 1, 2, NA, NA,...
+$ dist_up_post <int> NA, 3, NA, 19, 6, 27, NA, NA, 2, NA, 12, 1, 2, NA, NA,...
+$ cd_post      <chr> NA, "PA-05", NA, "TX-19", "TX-06", "NY-28", NA, NA, "M...
+$ cd_up_post   <chr> NA, "PA-03", NA, "TX-19", "TX-06", "NY-27", NA, NA, "M...
+$ zipcode      <chr> "95969", "16255", "79924", "79423", "76123", "14131", ...
+$ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", ...
 \end{verbatim}
 
 \begin{itemize}
@@ -840,6 +865,13 @@ $ county_fips <chr> "06007", "42031", "48141", "48303", "48439", "36063", "...
   \emph{represented} in the new district lines until January 2013, in
   the 2012 CCES \texttt{dist} is the old district line and
   \texttt{dist\_up} is the new district line for the General Election.
+\item
+  \texttt{zipcode} mostly relies on the variable often called
+  \texttt{lookupzip} in each year's CCES. This is the zipcode of voter
+  registration, or if not available, the residential zipcode, of the
+  respondent. It is called lookup because it is used to look up the
+  congressional district and other geographies of the respondent. For
+  more information on zipcodes, see the CCES question.
 \item
   Limitations: Some years do not provide the variable relevant to
   \texttt{dist\_up}, in which case the current district (\texttt{dist})
@@ -2052,11 +2084,11 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \toprule
  & n\\
 \midrule
-Democratic & 162,905\\
-Republican & 145,634\\
-Other Candidate & 18,826\\
-Did not Vote & 25,949\\
-(Missing) & 117,441\\
+Democratic & 162,619\\
+Republican & 145,337\\
+Other Candidate & 18,748\\
+Did not Vote & 25,927\\
+(Missing) & 118,124\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2229,12 +2261,12 @@ guide for wording in all years{]}''
 \toprule
  & n\\
 \midrule
-Barack Obama & 82,681\\
-Mitt Romney & 64,956\\
-Other / Someone Else & 5,890\\
-Did Not Vote & 2,839\\
+Barack Obama & 82,543\\
+Mitt Romney & 64,740\\
+Other / Someone Else & 5,872\\
+Did Not Vote & 2,827\\
 Not Sure / Don't Recall & 1,990\\
-(Missing) & 312,399\\
+(Missing) & 312,783\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2266,12 +2298,12 @@ United States? {[}Post-election{]}''
 \toprule
  & n\\
 \midrule
-Hilary Clinton & 57,694\\
-Donald Trump & 49,751\\
-Other / Someone Else & 11,478\\
-Did Not Vote & 5,026\\
-Not Sure / Don't Recall & 527\\
-(Missing) & 346,279\\
+Hilary Clinton & 57,546\\
+Donald Trump & 49,670\\
+Other / Someone Else & 11,418\\
+Did Not Vote & 5,016\\
+Not Sure / Don't Recall & 516\\
+(Missing) & 346,589\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2442,21 +2474,21 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 117,581\\
-{[Republican / Candidate 2]} & 111,255\\
-{[Other / Candidate 3]} & 2,786\\
+{[Democrat / Candidate 1]} & 116,949\\
+{[Republican / Candidate 2]} & 110,850\\
+{[Other / Candidate 3]} & 2,769\\
 \$HouseCand4Name (\$HouseCand4Party) & 27\\
-Other & 3,120\\
-I Did Not Vote In This Race & 12,535\\
+Other & 3,089\\
+I Did Not Vote In This Race & 12,354\\
 \$HouseCand5Name (\$HouseCand5Party) & 24\\
-Not Sure & 4,493\\
+Not Sure & 4,419\\
 \$HouseCand6Name (\$HouseCand6Party) & 39\\
-\$HouseCand7Name (\$HouseCand7Party) & 15\\
+\$HouseCand7Name (\$HouseCand7Party) & 14\\
 \$HouseCand8Name (\$HouseCand8Party) & 16\\
 \$HouseCand9Name (\$HouseCand9Party) & 2\\
 \$HouseCand10Name (\$HouseCand10Party) & 2\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
-(Missing) & 218,857\\
+(Missing) & 220,198\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2492,14 +2524,14 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 86,668\\
-{[Republican / Candidate 2]} & 77,569\\
-{[Other / Candidate 3]} & 2,974\\
-Other & 1,967\\
-Not Sure & 2,094\\
+{[Democrat / Candidate 1]} & 86,205\\
+{[Republican / Candidate 2]} & 77,310\\
+{[Other / Candidate 3]} & 2,963\\
+Other & 1,949\\
+Not Sure & 2,052\\
 \$SenCand4Name (\$SenCand4Party) & 11\\
-I Did Not Vote In This Race & 4,789\\
-(Missing) & 294,683\\
+I Did Not Vote In This Race & 4,717\\
+(Missing) & 295,548\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2534,13 +2566,13 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 68,445\\
-{[Republican / Candidate 2]} & 63,434\\
-{[Other / Candidate 3]} & 2,800\\
-Other & 1,817\\
-I Did Not Vote In This Race & 10,116\\
-Not Sure & 1,091\\
-(Missing) & 323,052\\
+{[Democrat / Candidate 1]} & 63,117\\
+{[Republican / Candidate 2]} & 59,287\\
+{[Other / Candidate 3]} & 2,613\\
+Other & 1,683\\
+I Did Not Vote In This Race & 3,576\\
+Not Sure & 1,078\\
+(Missing) & 339,401\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2666,8 +2698,8 @@ Democrats in the race.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OperatorTok{\%>\%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2012}\NormalTok{, st }\OperatorTok{==}\StringTok{ "CA"}\NormalTok{, dist\_up }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{) }\OperatorTok{\%>\%}\StringTok{ }
+\NormalTok{cc }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2012}\NormalTok{, st }\OperatorTok{==}\StringTok{ "CA"}\NormalTok{, dist\_up }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
 \StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
 \end{Highlighting}
 \end{Shaded}
@@ -2762,7 +2794,15 @@ changes.
 \item
   Adds variables for: employment, union membership, religion,
   citizenship, children, homeownership, lack of insurance, and lack of
-  military members in immediate family.
+  military members in immediate family
+\item
+  Add a separate variable for the post-election wave values of
+  \texttt{state}, \texttt{st}, \texttt{dist}, \texttt{cd}, and
+  \texttt{cd\_up}. Between the pre-post waves, about 0.9 percent of
+  respondents appear to move CDs and 0.4 percent move states.
+\item
+  Undo coalescing pre-elecetion wave already-voted vote choice, keeping
+  \texttt{voted\_*} variables with just post-election wave responses.
 \item
   Adds a separate variable for intent/voted party choice in presidential
   race
@@ -2772,6 +2812,7 @@ changes.
   \texttt{cd\_up} similar to \texttt{dist\_up}.
 \item
   Modify prepositions of value labels to lower case
+  (e.g.~\texttt{Not\ At\ All} to \texttt{Not\ at\ All})
 \end{itemize}
 
 \hypertarget{version-4.0}{%

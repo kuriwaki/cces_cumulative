@@ -50,7 +50,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
       ) %>% 
-      mutate(tookpost = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
+      mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
              voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
              voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
@@ -171,20 +171,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       vv_party_gen = PartyRegist,
       vv_party_prm = congprim_pty,
       vv_party_pprm = presprim_pty
-    ) %>%
-      mutate(
-        intent_pres_12x = recode(zap_labels(intent_pres_12x), `2` = 1, `1` = 2, `5` = 7, `4` = 6, `3` = 4),
-        voted_pres_12 = labelled(coalesce(voted_pres_12, intent_pres_12x),
-                                 c("Barack Obama (Democratic)" = 1,
-                                   "Mitt Romney (Republican)" = 2,
-                                   "Other" = 4,
-                                   "I did not vote in this race" = 5,
-                                   "I did not vote" = 6,
-                                   "Not sure" = 7)),
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_govx)
-      )
+    )
   }
   
   
@@ -211,12 +198,6 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_rep = CC12_390b,
         intent_repx = CC12_390,
         CC350 = CC12_350 # rename later
-      ) %>%
-      mutate(
-        voted_pres_12 = coalesce(voted_pres_12, intent_pres_12x),
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_govx)
       )
   }
   
@@ -261,10 +242,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       vv_st = state_cl
     ) %>%
       mutate(
-        tookpost = labelled(tookpost, labels = c(`1` = 1, `0` = 0)), # for consistency
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_govx)
+        tookpost = labelled(tookpost, labels = c(`1` = 1, `0` = 0)) # for consistency
       )
   }
   
@@ -318,12 +296,6 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_prm = CL_E2016PEP,
         vv_party_pprm = CL_E2016PPEP,
         vv_st = CL_state
-      ) %>% # combine early vote
-      mutate(
-        voted_pres_16 = coalesce(voted_pres_16, intent_pres_16x),
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_gov)
       )
   }
   
@@ -380,11 +352,6 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_prm = CL_2018pep,
         vv_st = CL_state
       ) %>% # combine early vote
-      mutate(
-        voted_rep = coalesce(voted_rep, intent_repx),
-        voted_sen = coalesce(voted_sen, intent_senx),
-        voted_gov = coalesce(voted_gov, intent_gov)
-      ) %>%  # replace straight ticket
       mutate(voted_rep = replace(voted_rep, CC18_409 == 1, 1),
              voted_rep = replace(voted_rep, CC18_409 == 2, 2),
              # we found that only in US House, sometimes party 2 was not a Republican.
@@ -735,8 +702,7 @@ clps_pres08 <- function(vec) {
     str_trim() %>% 
     as_factor() %>% 
     fct_collapse(`Barack Obama` = c("Barack Obama", 
-                                    "Barack Obama (Democratic)",
-                                    "Barack Obama (Democrat)"),
+                                    "Barack Obama (Democratic)"),
                  `John McCain` = c("John Mccain (Republican)", 
                                    "John Mccain"),
                  `Other / Someone Else` = c("Someone Else"), 
@@ -752,10 +718,9 @@ clps_pres12 <- function(vec) {
   fct_collapse(vec, 
                `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote for Barack Obama"),
                `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote for Mitt Romney"),
-               `Other / Someone Else` = c("Someone Else", "Vote for Someone Else", "Other", "3"),
+               `Other / Someone Else` = c("Someone Else", "Vote for Someone Else", "Other"),
                `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote for this Office", "I Did Not Vote in this Race"),
-               `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall"),
-               `Not Asked (2016)` = c("Not Asked")
+               `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall")
   ) %>% 
     fct_lump(n = 6)
 }
@@ -770,11 +735,10 @@ clps_pres16 <- function(vec) {
                `Did Not Vote` = c("I Didn't Vote in this Election",
                                   "Did Not Vote for President",
                                   "I Did Not Cast a Vote for President"),
-               `Not Sure / Don't Recall` = c("I'm Not Sure", "I Don't Recall"),
-               `Not Asked` = c("Not Asked")
+               `Not Sure / Don't Recall` = c("I'm Not Sure", "I Don't Recall")
   ) %>% 
     fct_relevel("Hilary Clinton", "Donald Trump") %>% 
-    fct_lump(n = 6)
+    fct_lump(n = 5)
 }
 
 #' give pres party from chars of pres names
@@ -1011,7 +975,7 @@ v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 
-# quick fixes
+# quick consolidations for multiple years (Asked in the past)
 v_pres08 <- v_pres08 %>%
   mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08))

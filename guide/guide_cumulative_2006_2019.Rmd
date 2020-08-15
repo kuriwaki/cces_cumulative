@@ -413,14 +413,20 @@ print_numeric(weight_post)
 
 ## Geography
 
-A series of variables for the respondent's location
+A series of variables for the respondent's location:
 
 * `r nam(state)`: `r descrip(state)`
+* `r nam(state_post)`: `r descrip(state_post)`
 * `r nam(st)`: `r descrip(st)`
+* `r nam(st_post)`: `r descrip(st_post)`
 * `r nam(dist)`: `r descrip(dist)`
+* `r nam(dist_post)`: `r descrip(dist_post)`
 * `r nam(dist_up)`: `r descrip(dist_up)`
+* `r nam(dist_up_post)`: `r descrip(dist_up_post)`
 * `r nam(cd)`: `r descrip(cd)`
+* `r nam(cd_post)`: `r descrip(cd_post)`
 * `r nam(cd_up)`: `r descrip(cd_up)`
+* `r nam(cd_up_post)`: `r descrip(cd_up_post)`
 * `r nam(zipcode)`: `r descrip(zipcode)`
 * `r nam(county_fips)`: `r descrip(county_fips)`
 
@@ -428,12 +434,13 @@ A series of variables for the respondent's location
 cc %>%
   mutate(is_2012 = year == 2012) %>%
   arrange(desc(is_2012)) %>%
-  select(matches("(state|^st$|dist|cd|zipcode|county_fips)")) %>% 
+  select(matches("(state|^st(|_post)$|dist|cd|zipcode|county_fips)")) %>% 
   glimpse()
 ```
 
 * Years: `r in_years(state)`
 * Note the distinction between `dist` and `dist_up`, especially in 2012. The former should generally be used for linking respondents to their representatives at the time of the survey, where as the latter can be used for the district in which they will vote for. New districts were drawn in 2010-2012 and candidates ran in new district maps in the 2012 CCES. Because respondents would not be _represented_ in the new district lines until January 2013, in the 2012 CCES `dist` is the old district line and `dist_up` is the new district line for the General Election. 
+* `zipcode` mostly relies on the variable often called `lookupzip` in each year's CCES. This is the zipcode of voter registration, or if not available, the residential zipcode, of the respondent. It is called lookup because it is used to look up the congressional district and other geographies of the respondent. For more information on zipcodes, see the CCES question.
 * Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
 
 \newpage
@@ -1144,10 +1151,12 @@ Dataverse assigns version numbers by incrementing a full number if any of the da
 ### Version 5.0 
 - Released `2020-04-15`
 - Enter 2019 common content (up to n = 470,755)
-- Adds variables for: employment, union membership, religion, citizenship, children, homeownership, lack of insurance, and lack of military members in immediate family.
+- Adds variables for: employment, union membership, religion, citizenship, children, homeownership, lack of insurance, and lack of military members in immediate family
+- Add a separate variable for the post-election wave values of `state`, `st`, `dist`, `cd`, and `cd_up`.  Between the pre-post waves, about 0.9 percent of respondents appear to move CDs and 0.4 percent move states.
+- Undo coalescing pre-elecetion wave already-voted vote choice, keeping `voted_*` variables with just post-election wave responses.
 - Adds a separate variable for intent/voted party choice in presidential race
 - Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
-- Modify prepositions of value labels to lower case
+- Modify prepositions of value labels to lower case (e.g. `Not At All` to `Not at All`)
 
 ### Version 4.0 
 - Released `2019-09-09`
