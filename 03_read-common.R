@@ -54,7 +54,7 @@ std_dv <- function(path, guess_year = TRUE) {
   
   # 2006 is special but just for CC
   if (!guess_year) {
-    tbl_cd_06 <- filter(tbl_cd, year == 2006, is.na(start_post)) %>% 
+    tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) %>% 
       mutate(state_post = state,
              st_post = st,
              dist_post = dist,
@@ -62,7 +62,7 @@ std_dv <- function(path, guess_year = TRUE) {
       mutate(cd_post = cces_cd(st_post, dist_post),
              cd_up_post = cces_cd(st_post, dist_up_post))
     
-    tbl_cd <- bind_rows(tbl_cd_06, filter(tbl_cd, year != 2006 | !is.na(start_post)))
+    tbl_cd <- bind_rows(tbl_cd_06, anti_join(tbl_cd, select(tbl_cd_06, year, caseid)))
   }
   
   # then rename id
@@ -228,8 +228,8 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     tbl <- tbl %>%
       mutate(dist_post = as.integer(zap_labels(congdist_post)),
              dist_up_post = as.integer(zap_labels(congdist_redist_post))) %>% 
-      mutate(dist_up_post = replace(dist_up_post, year %in% c(2006:2011), NA)) %>% 
-      mutate(dist_up_post = coalesce(dist_up_post, dist_post)) # for 2006:2011, append dist for now
+      mutate(dist_up_post = coalesce(dist_up_post, dist_post)) %>% 
+      mutate(dist_up_post = replace(dist_up_post, year %% 2 == 1, NA)) 
   }
   
   if (guess_year && guessed_yr == 2006) {
