@@ -304,7 +304,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2018, str_c(seq(2010, 2018, 2), "_post"), "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2018, str_c(seq(2010, 2018, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
