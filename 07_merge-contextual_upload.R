@@ -268,11 +268,11 @@ ccc_factor <-   ccc_fac %>%
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-write_rds(ccc_df, "data/release/cumulative_2006_2019_addon.Rds")
+write_rds(ccc_df, "data/release/cumulative_2006-2019_addon.Rds")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
-saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006_2019.Rds")
+saveRDS(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2019.Rds")
 
 
 # remove panel cases
@@ -283,8 +283,8 @@ for (v in colnames(ccc_common)) {
   attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
-saveRDS(ccc_common, "data/output/cumulative_2006_2019_factor.Rds")
-write_dta(ccc_common, "data/release/cumulative_2006_2019.dta", version = 14)
+saveRDS(ccc_common, "data/output/cumulative_2006-2019_factor.Rds")
+write_dta(ccc_common, "data/release/cumulative_2006-2019.dta", version = 14)
 
 
 # crunch var
@@ -298,12 +298,12 @@ ccc_crunch <- ccc_common %>%
   mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) %>% 
   select(year, year_date, everything())
 
-write_sav(ccc_crunch, "data/release/cumulative_2006_2018_crunch.sav") 
+write_sav(ccc_crunch, "data/release/cumulative_2006-2019_crunch.sav") 
 
-if (file.exists("data/release/cumulative_2006_2018_crunch.sav.gz")) {
-  file.remove("data/release/cumulative_2006_2018_crunch.sav.gz")
+if (file.exists("data/release/cumulative_2006-2019_crunch.sav.gz")) {
+  file.remove("data/release/cumulative_2006-2019_crunch.sav.gz")
 }
-  R.utils::gzip("data/release/cumulative_2006_2018_crunch.sav")
+  R.utils::gzip("data/release/cumulative_2006-2019_crunch.sav")
 
 # might write to crunch
 if (writeToCrunch) {
