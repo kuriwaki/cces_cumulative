@@ -34,7 +34,6 @@
 
 % Parameters
 \usepackage{soul} % underline
-\usepackage{tcolorbox}
 
 % Minion for main text and math
 % \usepackage{MinionPro}
@@ -95,6 +94,10 @@
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 
 
+% SVG
+% \usepackage{svg}
+
+
 % Shading and Rmd macros
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -144,13 +147,15 @@
 - 2019)}}
  
 
-\author{Shiro Kuriwaki\thanks{Department of Government, Harvard
-University. ORCID: \url{https://orcid.org/0000-0002-5687-2647}. Bug
-reports welcome. My thanks to Alexander Agadjanian, Steve Ansolabehere,
-Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik,
-Stephen Pettigrew, and Boris Shor for their suggestions and
-contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
-Malecki, and Gordon Shotwell at Crunch for their help.}  }
+\author{\href{https://orcid.org/0000-0002-5687-2647}{\XeTeXLinkBox{\raisebox{-0.1em}{\includegraphics[width=1em]{orcid.png}}}}~Shiro
+Kuriwaki\thanks{Department of Government, Harvard University. Website:
+\url{https://www.shirokuriwaki.com}. ORCID:
+\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome. My
+thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro,
+Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and
+Boris Shor for their suggestions and contributions. Thanks to Joe
+Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at
+Crunch for their help.}}
 
 
 \date{Guide last updated: 2020-10-04}
@@ -241,7 +246,7 @@ file is assigned to an object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.Rds"}\NormalTok{)}
+\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.Rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -256,13 +261,13 @@ it can also be used without tidyverse.
 \end{Shaded}
 
 \noindent  A Stata dta version is provided as well.
-\texttt{cumulative\_2006\_2019.dta} can be read by Stata, or in R by the
+\texttt{cumulative\_2006-2019.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(haven)}
-\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006\_2019.dta"}\NormalTok{)}
+\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 

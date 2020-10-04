@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "Guide to the CCES Cumulative Common Content (2006 - 2019)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -27,7 +27,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2019.Rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2019.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
@@ -156,7 +156,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006_2019.Rds")
+cc <- readRDS("cumulative_2006-2019.Rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -166,11 +166,11 @@ cc
 ```
 
 
-\noindent  A Stata dta version is provided as well. `cumulative_2006_2019.dta` can be read by Stata, or in R by the `haven` package 
+\noindent  A Stata dta version is provided as well. `cumulative_2006-2019.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-cc <- read_dta("cumulative_2006_2019.dta")
+cc <- read_dta("cumulative_2006-2019.dta")
 ```
 
 

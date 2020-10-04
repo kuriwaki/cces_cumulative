@@ -34,7 +34,6 @@
 
 % Parameters
 \usepackage{soul} % underline
-\usepackage{tcolorbox}
 
 % Minion for main text and math
 % \usepackage{MinionPro}
@@ -95,6 +94,10 @@
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 
 
+% SVG
+% \usepackage{svg}
+
+
 % Shading and Rmd macros
 $if(listings)$
 \usepackage{listings}
@@ -119,7 +122,7 @@ $if(title)$
 \title{ \LARGE\textbf{$title$}}
 $endif$ 
 
-\author{$for(author)$$author$$if(thanks)$\thanks{$thanks$} $endif$ $sep$\\$endfor$}
+\author{\href{https://orcid.org/0000-0002-5687-2647}{\XeTeXLinkBox{\raisebox{-0.1em}{\includegraphics[width=1em]{orcid.png}}}}~$author$\thanks{$thanks$}}
 
 
 $if(date)$
