@@ -586,12 +586,29 @@ time}{starttime: Start time}}\label{starttime-start-time}}
 
 {[}Pre-election wave start time (up to second){]}
 
-\begin{verbatim}
-                 Min.               1st Qu.                Median 
-"2006-10-07 00:02:34" "2010-10-12 08:17:58" "2013-11-23 15:04:56" 
-                 Mean               3rd Qu.                  Max. 
-"2013-09-26 03:40:41" "2016-10-12 11:20:19" "2019-12-05 18:34:04" 
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}{lrr}
+\toprule
+ & Earliest Date & Latest Date\\
+\midrule
+2006 & 2006-10-07 & 2006-11-08\\
+2007 & 2007-11-09 & 2007-12-10\\
+2008 & 2008-10-08 & 2008-11-03\\
+2009 & 2009-11-05 & 2009-12-14\\
+2010 & 2010-10-01 & 2010-11-01\\
+2011 & 2011-11-09 & 2012-01-07\\
+2012 & 2012-10-01 & 2012-11-05\\
+2013 & 2013-11-06 & 2013-12-03\\
+2014 & 2014-10-01 & 2014-11-03\\
+2015 & 2015-11-06 & 2015-12-03\\
+2016 & 2016-09-28 & 2016-11-07\\
+2017 & 2017-11-08 & 2017-12-12\\
+2018 & 2018-09-27 & 2018-11-05\\
+2019 & 2019-11-06 & 2019-12-05\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
@@ -648,11 +665,13 @@ Took Post-Election Survey & 300,892\\
   In even years, they are re-computed after vote validation has been
   computed and those re-computed weights are taken here when available.
   The weights applied to the sample (which is originally drawn from a
-  matched sample) are constructed to make each year's respondents' pool
-  representative of the national adult population. See the methodology
+  matched sample) are constructed to \textbf{make each year's data
+  representative of the national adult population}. See the methodology
   section of the
   \href{https://dataverse.harvard.edu/api/access/datafile/3047286}{2016
-  Guide} for details.
+  Guide} and the
+  \href{https://cces.gov.harvard.edu/frequently-asked-questions}{FAQ on
+  the CCES website} for details.
 \item
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
@@ -683,6 +702,12 @@ year to make years comparable{]}
   example, all weights in the 2016 common content are divided by about
   2.44, because it has about twice as many observations as the other
   datasets.
+\item
+  This transformation means that this simple cumulative weight makes
+  sense when all years should be re-weighted to have the same sample
+  size, even if that means doubling the weights. For analyses that are
+  done year by year, using \texttt{weight} and
+  \texttt{weight\_cumulative} are equivalent.
 \end{itemize}
 
 \begin{center}
@@ -709,6 +734,27 @@ Year & Observations & Factor\\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\hypertarget{weight_post-survey-weight-for-post-election-wave}{%
+\subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
+post-election
+wave}{weight\_post: Survey weight for post-election wave}}\label{weight_post-survey-weight-for-post-election-wave}}
+
+{[}weight for post-election wave respondents. Only available for some of
+the even years.{]}
+
+\begin{verbatim}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    0.0     0.4     0.7     1.0     1.1    15.0  321170 
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2012, 2016, 2018
+\item
+  Limitations: Only available for some even years.
+\end{itemize}
 
 \hypertarget{rvweight-survey-weights-to-validated-registered-voters}{%
 \subsubsection{\texorpdfstring{\texttt{rvweight}: Survey weights to
@@ -756,27 +802,6 @@ wave{]}
 \tightlist
 \item
   Years: 2018
-\item
-  Limitations: Only available for some even years.
-\end{itemize}
-
-\hypertarget{weight_post-survey-weight-for-post-election-wave}{%
-\subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
-post-election
-wave}{weight\_post: Survey weight for post-election wave}}\label{weight_post-survey-weight-for-post-election-wave}}
-
-{[}weight for post-election wave respondents. Only available for some of
-the even years.{]}
-
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.4     0.7     1.0     1.1    15.0  321170 
-\end{verbatim}
-
-\begin{itemize}
-\tightlist
-\item
-  Years: 2012, 2016, 2018
 \item
   Limitations: Only available for some even years.
 \end{itemize}
@@ -2797,9 +2822,9 @@ changes.
 \item
   Enter 2019 common content (up to n = 470,755)
 \item
-  Adds variables for: employment, union membership, religion,
+  Adds variables for: \textbf{employment, union membership, religion,
   citizenship, children, homeownership, lack of insurance, and lack of
-  military members in immediate family
+  military members in immediate family}.
 \item
   Add a separate variable for the post-election wave values of
   \texttt{state}, \texttt{st}, \texttt{dist}, \texttt{cd}, and
