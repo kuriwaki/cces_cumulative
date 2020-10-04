@@ -153,7 +153,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}  }
 
 
-\date{Guide last updated: 2020-08-17}
+\date{Guide last updated: 2020-10-04}
 
 \begin{document}
 
@@ -469,10 +469,11 @@ without any programming experience.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Obtain Access: For View access to the dataset (free), please
-  \href{https://tufts.qualtrics.com/jfe/form/SV_1A0vMbbE6j0fubr}{sign up
-  here} or via the CCES website. For questions and more access, please
-  contact the CCES Team.
+  Obtain Access: The Crunch interface currently does not allow users to
+  sign up to a particular dataset on their own. For free view access to
+  the dataset, please sign up via the sign-up link in the CCES
+  \href{https://cces.gov.harvard.edu/explore}{website}. For questions
+  and more access, please contact the CCES Team.
 \end{enumerate}
 
 \newpage
@@ -2626,6 +2627,10 @@ depending on the year. Party names are abbreviated down to initials
 (\texttt{D} for Democrat, \texttt{R} for Republican, \texttt{I} for
 Independent) in this dataset.
 
+Because of the changes in naming by year, users should not assume that
+\texttt{rep\_current} and \texttt{voted\_rep\_chosen} of a given
+respondent should be named the same way.
+
 \begin{verbatim}
 Rows: 470,755
 Columns: 4
@@ -2788,7 +2793,7 @@ changes.
 \begin{itemize}
 \tightlist
 \item
-  Released \texttt{2020-04-15}
+  Released \texttt{2020-10-04}
 \item
   Enter 2019 common content (up to n = 470,755)
 \item
@@ -2801,7 +2806,7 @@ changes.
   \texttt{cd\_up}. Between the pre-post waves, about 0.9 percent of
   respondents appear to move CDs and 0.4 percent move states.
 \item
-  Undo coalescing pre-elecetion wave already-voted vote choice, keeping
+  Undo coalescing pre-election wave already-voted vote choice, keeping
   \texttt{voted\_*} variables with just post-election wave responses.
 \item
   Adds a separate variable for intent/voted party choice in presidential

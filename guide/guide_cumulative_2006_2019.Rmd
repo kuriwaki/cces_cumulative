@@ -265,7 +265,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
 
-1. Obtain Access: For View access to the dataset (free), please [sign up here](https://tufts.qualtrics.com/jfe/form/SV_1A0vMbbE6j0fubr) or via the CCES website. For questions and more access, please contact the CCES Team.
+1. Obtain Access: The Crunch interface currently does not allow users to sign up to a particular dataset on their own. For free view access to the dataset, please sign up via the sign-up link in the CCES [website](https://cces.gov.harvard.edu/explore). For questions and more access, please contact the CCES Team.
 
 \newpage
 
@@ -748,7 +748,7 @@ print_tab(no_healthins)
 ```
 
 * Years: `r in_years(no_healthins)`
-* The original question is of the form "Do you currently have health insurance? (check all that apply)", where respondents can pick more than one of the options including the following: "Yes, through my job or a family member’s employer", "Yes, through a government program, such as Medicare or Medicaid".  The entry in the cumulative response only selects the "None" option. A value of `no_healthins == "Yes"` means that a respondent indicated they were not insured.   To see the other responses, see the individual year's CCES.
+* The original question is of the form "Do you currently have health insurance? (check all that apply)", where respondents can pick more than one of the options including the following: "Yes, through my job or a family member's employer", "Yes, through a government program, such as Medicare or Medicaid".  The entry in the cumulative response only selects the "None" option. A value of `no_healthins == "Yes"` means that a respondent indicated they were not insured.   To see the other responses, see the individual year's CCES.
 
 ### `r nam(union)`
 
@@ -1085,6 +1085,8 @@ glimpse(select(cc, matches("year|case_id")))
 
 The four names in the three offices are representatives of the respondent _at the time of the survey_. Names are printed as shown, and similarly parties are shown if the particular year's CCES did not show party. For example, Senator Shelby is presented as `Richard Craig Shelby`, `Richard C. Shelby (R)`, `Richard Shelby (R)`, `Richard C. Shelby (R)`, depending on the year. Party names are abbreviated down to initials (`D` for Democrat, `R` for Republican, `I` for Independent) in this dataset. 
 
+Because of the changes in naming by year, users should not assume that `rep_current` and `voted_rep_chosen` of a given respondent should be named the same way.
+
 ```{r}
 glimpse(select(cc, matches("(rep|sen1|sen2|gov)_current")))
 ```
@@ -1149,11 +1151,11 @@ glimpse(select(cc, matches("_party$")))
 Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
 ### Version 5.0 
-- Released `2020-04-15`
+- Released `2020-10-04`
 - Enter 2019 common content (up to n = 470,755)
 - Adds variables for: employment, union membership, religion, citizenship, children, homeownership, lack of insurance, and lack of military members in immediate family
 - Add a separate variable for the post-election wave values of `state`, `st`, `dist`, `cd`, and `cd_up`.  Between the pre-post waves, about 0.9 percent of respondents appear to move CDs and 0.4 percent move states.
-- Undo coalescing pre-elecetion wave already-voted vote choice, keeping `voted_*` variables with just post-election wave responses.
+- Undo coalescing pre-election wave already-voted vote choice, keeping `voted_*` variables with just post-election wave responses.
 - Adds a separate variable for intent/voted party choice in presidential race
 - Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
 - Modify prepositions of value labels to lower case (e.g. `Not At All` to `Not at All`)
