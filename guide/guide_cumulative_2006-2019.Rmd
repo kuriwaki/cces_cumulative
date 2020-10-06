@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "Guide to the CCES Cumulative Common Content (2006 - 2019)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. Bug reports welcome.  My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -111,7 +111,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2020, "Cumulative CCES Common Content (2006-2019)", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V5. 
+> Kuriwaki, Shiro, 2020, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V5. 
 
 \bigskip
 
@@ -123,7 +123,7 @@ Each year's CCES asks hundreds of questions, many of which change from year to y
  
 \bigskip
 
-I constructed this dataset from each year's full CCES, all of them publicly available as separate datasets on [dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
+I constructed this dataset from each year's full CCES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
 
 \bigskip
 
