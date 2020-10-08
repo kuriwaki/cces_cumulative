@@ -65,3 +65,5 @@ write_rds(econ_recoded, "data/output/01_responses/cc09_econ_retro.Rds")
 write_rds(cc06_time, "data/output/01_responses/cc06_datetime.Rds")
 write_rds(cc09_time, "data/output/01_responses/cc09_datetime.Rds")
 write_rds(cc06_interest, "data/output/01_responses/cc06_newsintnum.Rds")
+fs::file_copy("data/output/01_responses/cc06_newsintnum.Rds",
+              "~/Dropbox/CCES_representation/data/output/intermediate", overwrite = TRUE)
