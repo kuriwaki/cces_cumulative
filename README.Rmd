@@ -27,11 +27,11 @@ Please feel free to file any questions or requests about the cumulative file as 
 Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but please contact  me  for the newest version. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006_2018.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2019.Rds"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006_2018.Rds")
+df <- readRDS("cumulative_2006-2019.Rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
@@ -97,11 +97,12 @@ For a bit more on using the R crunch package for your own purposes, see the crun
 R scripts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
 
 - `01_define-names-labels.R` constructs two variable name tables -- one that names and describes each variable to be in the final dataset, and another that indicates which variables corresponds to the candidate columns in each year's CCES.
-- `02_read-common.R` pulls out the common contents with minimal formatting (e.g. state, case identifier variable names)
-- `03_prepare-fixes.R` makes some fixes to variables in each year's datasets.
-- `04_stack-cumulative.R` pulls out the variables of interest from annual CCES files, we stack this into a long dataset where each row is a respondent from CCES.
-- `05_extract_contextual.R` pulls out the "contextual variables" at the respondent-level. information on candidates and representatives. It uses some long format voting tables from `04`.
-- `06_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
-- `07_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
+- `02_download-cces-dataverse.R` indicates a (partial) way to download the component CCES data from dataverse  so that the rest of the code can be run.
+- `03_read-common.R` pulls out the common contents with minimal formatting (e.g. state, case identifier variable names)
+- `04_prepare-fixes.R` makes some fixes to variables in each year's datasets.
+- `05_stack-cumulative.R` pulls out the variables of interest from annual CCES files, we stack this into a long dataset where each row is a respondent from CCES.
+- `06_extract_politicians.R` pulls out the "contextual variables" at the respondent-level. information on candidates and representatives. It uses some long format voting tables from `05`.
+- `07_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
+- `08_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
 More scripts  are in `00_prepare`, they format other datasets like NOMINATE, CQ, and DIME. 
