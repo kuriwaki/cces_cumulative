@@ -2,6 +2,8 @@ CCES Cumulative File
 ================
 Shiro Kuriwaki
 
+[![](https://img.shields.io/badge/Dataverse%20DOI-10.7910/DVN/II2DB6-orange)](https://www.doi.org/10.7910/DVN/II2DB6)
+
 This repository is R code to build the Cooperative Congressional
 Election Study (CCES) cumulative file (2006 - 2019).
 
