@@ -157,7 +157,7 @@ suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon
 Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{Guide last updated: 2020-10-05}
+\date{Guide last updated: 2021-03-25}
 
 \begin{document}
 
@@ -245,7 +245,7 @@ file is assigned to an object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.Rds"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.Rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -254,7 +254,7 @@ it can also be used without tidyverse.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
 \NormalTok{cc}
 \end{Highlighting}
 \end{Shaded}
@@ -265,8 +265,8 @@ it can also be used without tidyverse.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(haven)}
-\NormalTok{cc \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.dta"}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(haven)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2019.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -288,7 +288,7 @@ and read it in as follows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc16 \textless{}{-}}\StringTok{ }\KeywordTok{read\_dta}\NormalTok{(}\StringTok{"CCES16\_Common\_OUTPUT\_Feb2018\_VV.dta"}\NormalTok{)}
+\NormalTok{cc16 }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"CCES16\_Common\_OUTPUT\_Feb2018\_VV.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -301,12 +301,12 @@ follows:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# subset}
-\NormalTok{cc16\_rc \textless{}{-}}\StringTok{ }\KeywordTok{select}\NormalTok{(cc16, V101, }\KeywordTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
+\NormalTok{cc16\_rc }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(cc16, V101, }\FunctionTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
 
 \CommentTok{\# join on case ID}
-\NormalTok{cc\_rc \textless{}{-}}\StringTok{ }\NormalTok{cc }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2016}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{left\_join}\NormalTok{(cc16\_rc, }\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"case\_id"}\NormalTok{ =}\StringTok{ "V101"}\NormalTok{))}
+\NormalTok{cc\_rc }\OtherTok{\textless{}{-}}\NormalTok{ cc }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2016}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{left\_join}\NormalTok{(cc16\_rc, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"case\_id"} \OtherTok{=} \StringTok{"V101"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -333,7 +333,7 @@ makes it immediately obvious which value is associated with which label:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3)}
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -360,9 +360,9 @@ labelled class.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(haven)}
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pid3\_fct =} \KeywordTok{as\_factor}\NormalTok{(pid3))}
+\FunctionTok{library}\NormalTok{(haven)}
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pid3\_fct =} \FunctionTok{as\_factor}\NormalTok{(pid3))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -385,8 +385,8 @@ do that.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, pid3) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(pid3 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(pid3 }\SpecialCharTok{==} \DecValTok{1}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -441,7 +441,7 @@ individuals.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{select}\NormalTok{(cc, year, case\_id, st, }\KeywordTok{matches}\NormalTok{(}\StringTok{"voted\_sen"}\NormalTok{))}
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, st, }\FunctionTok{matches}\NormalTok{(}\StringTok{"voted\_sen"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -865,20 +865,20 @@ A series of variables for the respondent's location:
 \begin{verbatim}
 Rows: 470,755
 Columns: 14
-$ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas...
-$ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", ...
-$ state_post   <chr> NA, "Pennsylvania", NA, "Texas", "Texas", "New York", ...
-$ st_post      <chr> NA, "PA", NA, "TX", "TX", "NY", NA, NA, "MA", NA, "MI"...
-$ dist         <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, ...
-$ dist_up      <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, ...
-$ cd           <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", ...
-$ cd_up        <chr> "CA-01", "PA-03", "TX-16", "TX-19", "TX-06", "NY-27", ...
-$ dist_post    <int> NA, 5, NA, 19, 6, 28, NA, NA, 1, NA, 15, 1, 2, NA, NA,...
-$ dist_up_post <int> NA, 3, NA, 19, 6, 27, NA, NA, 2, NA, 12, 1, 2, NA, NA,...
-$ cd_post      <chr> NA, "PA-05", NA, "TX-19", "TX-06", "NY-28", NA, NA, "M...
-$ cd_up_post   <chr> NA, "PA-03", NA, "TX-19", "TX-06", "NY-27", NA, NA, "M...
-$ zipcode      <chr> "95969", "16255", "79924", "79423", "76123", "14131", ...
-$ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", ...
+$ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas", ~
+$ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "CA~
+$ state_post   <chr> NA, "Pennsylvania", NA, "Texas", "Texas", "New York", NA,~
+$ st_post      <chr> NA, "PA", NA, "TX", "TX", "NY", NA, NA, "MA", NA, "MI", "~
+$ dist         <int> 2, 5, 16, 19, 6, 28, 11, 7, 1, 17, 15, 1, 2, 6, 1, 1, 16,~
+$ dist_up      <int> 1, 3, 16, 19, 6, 27, 11, 7, 2, 20, 12, 1, 2, 8, 1, 1, 15,~
+$ cd           <chr> "CA-02", "PA-05", "TX-16", "TX-19", "TX-06", "NY-28", "NC~
+$ cd_up        <chr> "CA-01", "PA-03", "TX-16", "TX-19", "TX-06", "NY-27", "NC~
+$ dist_post    <int> NA, 5, NA, 19, 6, 28, NA, NA, 1, NA, 15, 1, 2, NA, NA, NA~
+$ dist_up_post <int> NA, 3, NA, 19, 6, 27, NA, NA, 2, NA, 12, 1, 2, NA, NA, NA~
+$ cd_post      <chr> NA, "PA-05", NA, "TX-19", "TX-06", "NY-28", NA, NA, "MA-0~
+$ cd_up_post   <chr> NA, "PA-03", NA, "TX-19", "TX-06", "NY-27", NA, NA, "MA-0~
+$ zipcode      <chr> "95969", "16255", "79924", "79423", "76123", "14131", "28~
+$ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", "37~
 \end{verbatim}
 
 \begin{itemize}
@@ -2089,8 +2089,10 @@ party}{intent\_pres\_party: President preference party}}\label{intent_pres_party
 \midrule
 Democratic & 64,800\\
 Republican & 53,287\\
+Third Party & 5,412\\
+Independent & 209\\
 Other Candidate & 4,013\\
-(Missing) & 348,655\\
+(Missing) & 343,034\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2638,8 +2640,8 @@ CCES draws from the 2006 CCES respondents.
 \begin{verbatim}
 Rows: 470,755
 Columns: 2
-$ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006,...
-$ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439...
+$ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 20~
+$ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439254~
 \end{verbatim}
 
 \hypertarget{current-representatives-name-and-party}{%
@@ -2663,10 +2665,10 @@ respondent should be named the same way.
 \begin{verbatim}
 Rows: 470,755
 Columns: 4
-$ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Ro...
-$ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menen...
-$ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "Frank ...
-$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzine (D)...
+$ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Rober~
+$ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menendez~
+$ sen2_current <chr> "Richard Burr (R)", "George V. Voinovich (R)", "Frank R. ~
+$ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzine (D)", ~
 \end{verbatim}
 
 \hypertarget{icpsr-identifiers}{%
@@ -2697,9 +2699,9 @@ district, by district and last name, or both:
 \begin{verbatim}
 Rows: 470,755
 Columns: 3
-$ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, ...
-$ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, ...
-$ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, ...
+$ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, 205~
+$ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, 493~
+$ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, 403~
 \end{verbatim}
 
 \begin{itemize}
@@ -2732,9 +2734,9 @@ Democrats in the race.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{==}\StringTok{ }\DecValTok{2012}\NormalTok{, st }\OperatorTok{==}\StringTok{ "CA"}\NormalTok{, dist\_up }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
-\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
+\NormalTok{cc }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, st }\SpecialCharTok{==} \StringTok{"CA"}\NormalTok{, dist\_up }\SpecialCharTok{==} \DecValTok{43}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -2764,12 +2766,12 @@ the form \texttt{HouseCand1Name}).
 \begin{verbatim}
 Rows: 470,755
 Columns: 6
-$ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (...
-$ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)"...
-$ intent_gov_chosen <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
-$ voted_rep_chosen  <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (...
-$ voted_sen_chosen  <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)"...
-$ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
+$ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (D)"~
+$ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)", N~
+$ intent_gov_chosen <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D)",~
+$ voted_rep_chosen  <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (D)"~
+$ voted_sen_chosen  <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)", N~
+$ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D)",~
 \end{verbatim}
 
 \begin{itemize}
@@ -2787,14 +2789,14 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D...
 \begin{verbatim}
 Rows: 470,755
 Columns: 8
-$ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ voted_pres_party  <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ intent_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, D...
-$ voted_rep_party   <fct> Democratic, Democratic, Democratic, Democratic, D...
-$ intent_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, NA, R...
-$ voted_gov_party   <fct> NA, Democratic, NA, Democratic, Democratic, NA, R...
-$ intent_sen_party  <fct> NA, Democratic, Democratic, NA, NA, NA, Republica...
-$ voted_sen_party   <fct> NA, Democratic, Democratic, NA, Democratic, NA, R...
+$ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ voted_pres_party  <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ intent_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, Demo~
+$ voted_rep_party   <fct> Democratic, Democratic, Democratic, Democratic, Demo~
+$ intent_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, NA, Repu~
+$ voted_gov_party   <fct> NA, Democratic, NA, Democratic, Democratic, NA, Repu~
+$ intent_sen_party  <fct> NA, Democratic, Democratic, NA, NA, NA, Republican, ~
+$ voted_sen_party   <fct> NA, Democratic, Democratic, NA, Democratic, NA, Repu~
 \end{verbatim}
 
 \begin{itemize}

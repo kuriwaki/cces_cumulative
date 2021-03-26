@@ -746,10 +746,12 @@ pres_names <- function(vec) {
   case_when(
     str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
+    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Johnson)", ignore_case = TRUE)) ~ "Third Party",
+    str_detect(vec, regex("(McMullin|Nader)", ignore_case = TRUE)) ~ "Independent",
     str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
     str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did not Vote",
     TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican", "Other Candidate", "Did not Vote"))
+    factor(levels = c("Democratic", "Republican", "Third Party", "Independent", "Other Candidate", "Did not Vote"))
 }
 
 # READ ------
@@ -995,9 +997,10 @@ pres_party <- i_pres08 %>%
   mutate_if(is.factor, as.character) %>% 
   mutate(voted_pres_12 = replace(voted_pres_12, year == 2016, NA),# NA for previous election
          voted_pres_08 = replace(voted_pres_08, year == 2012, NA)) %>%  
-  transmute(year, case_id,
-            intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
-            voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
+  transmute(
+    year, case_id,
+    intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
+    voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
 
 # House, Sen, Gov -----
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
