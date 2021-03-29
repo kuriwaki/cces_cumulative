@@ -12,7 +12,7 @@ library(tidyverse)
 library(rprojroot)
 ```
 
-This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2019). 
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2020). 
 
 
 
@@ -29,11 +29,11 @@ Please feel free to file any questions or requests about the cumulative file as 
 Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but please contact  me  for the newest version. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2019.Rds"))
+df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2020.Rds"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006-2019.Rds")
+df <- readRDS("cumulative_2006-2020.Rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
@@ -96,7 +96,7 @@ For a bit more on using the R crunch package for your own purposes, see the crun
 
 # Organization of Scripts
 
-R scripts `01` - `06` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
+R scripts `01` - `07` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
 
 - `01_define-names-labels.R` constructs two variable name tables -- one that names and describes each variable to be in the final dataset, and another that indicates which variables corresponds to the candidate columns in each year's CCES.
 - `02_download-cces-dataverse.R` indicates a (partial) way to download the component CCES data from dataverse  so that the rest of the code can be run.
