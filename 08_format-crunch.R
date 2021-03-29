@@ -12,18 +12,18 @@ login() # you need a login and password to complete this command
 
 # connect to data---------
 # ds <- loadDataset("Fork of CCES Cumulative Common")
-ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+# ds <- loadDataset("CCES Cumulative Common", project = "CCES")
+ds <- loadDataset("CCES Cumulative v6.0")
 
 unlock(ds)
 
 # description for dataset
 description(ds) <- "Only a limited set of questions are included for this cumulative file, and this crunch datasets has a few more variables on issue questions notin the dataverse version. The cumulative file is a combination of each year's common content; see the dataverse codebook for details. Updated and overwritten on 2019-04-29 with 2018 data and more variables. Source code and bug reports: https://github.com/kuriwaki/cces_cumulative"
 startDate(ds) <- as.Date("2006-10-06")
-endDate(ds) <- as.Date("2018-11-05")
+endDate(ds) <- as.Date("2020-11-02")
 
 
 # add metadata ---------
-
 mvars <- bind_rows(iss_meta, ccc_meta)
 for (j in 1:ncol(ds)) {
   if (!names(ds)[j] %in% mvars$alias) next
@@ -39,7 +39,7 @@ weight(ds) <- ds$weight_cumulative
 # change look  -----
 type(ds$year) <- "categorical"
 ds <- dropRows(ds, is.na(ds$year) & is.na(ds$case_id))
-names(categories(ds$year)) <- c(as.character(2006:2018)) # did some fixing by hand
+names(categories(ds$year)) <- c(as.character(2006:2020), "No Data") # did some fixing by hand
 rollupResolution(ds$year_date) <- "Y"
 type(ds$cong) <- type(ds$cong_up) <- "categorical"
 
@@ -84,9 +84,9 @@ newFilter("White Non-College Women", ds$race == "White" & ds$educ %in% c("High S
 newFilter("Democrat", ds$pid3 == "Democrat", is_public = TRUE)
 newFilter("Independent", ds$pid3 == "Independent", is_public = TRUE)
 newFilter("Republican", ds$pid3 == "Republican", is_public = TRUE)
-newFilter("Democrat (Including Leaners)", ds$pid3 == "Democrat (Including Leaners)", is_public = TRUE)
-newFilter("Republican (Including Leaners)", ds$pid3 == "Republican (Including Leaners)", is_public = TRUE)
-newFilter("Independent (Excluding Leaners)", ds$pid3 == "Independent (Excluding Leaners)", is_public = TRUE)
+newFilter("Democrat (Including Leaners)", ds$pid3_leaner == "Democrat (Including Leaners)", is_public = TRUE)
+newFilter("Republican (Including Leaners)", ds$pid3_leaner == "Republican (Including Leaners)", is_public = TRUE)
+newFilter("Independent (Excluding Leaners)", ds$pid3_leaner == "Independent (Excluding Leaners)", is_public = TRUE)
 
 newFilter("Liberal", ds$ideo5 %in% c("Liberal", "Very Liberal"), is_public = TRUE)
 newFilter("Conservative", ds$ideo5 %in% c("Conservative", "Very Conservative"), is_public = TRUE)
@@ -95,6 +95,7 @@ newFilter("Moderate", ds$ideo5 %in% c("Moderate", "Not Sure"), is_public = TRUE)
 newFilter("2012", ds$year == "2012", is_public = TRUE)
 newFilter("2016", ds$year == "2016", is_public = TRUE)
 newFilter("2018", ds$year == "2018", is_public = TRUE)
+newFilter("2020", ds$year == "2020", is_public = TRUE)
 
 
 
@@ -104,7 +105,6 @@ newFilter("2018", ds$year == "2018", is_public = TRUE)
 st_order <- c(order(table(ds$state, useNA = "ifany"), decreasing = TRUE),
               which(ids(categories(ds$state)) < 0)) # missings
 categories(ds$state) <- categories(ds$state)[c(st_order)]
-
 
 
 # Variable Groups and ordering ------
@@ -123,9 +123,11 @@ ind_iss <- grep("(banassault|repeal|resent|spend|legal|security|gay|cleanair|ren
 
 ind_act <- grep("(sign|meeting|candidate|donor)", vn)
 
+ind_pres <- grep("(intent|voted)_pres_party", vn)
 ind_pres_08 <- grep("(intent|voted)_pres_08", vn)
 ind_pres_12 <- grep("(intent|voted)_pres_12", vn)
 ind_pres_16 <- grep("(intent|voted)_pres_16", vn)
+ind_pres_20 <- grep("(intent|voted)_pres_20", vn)
 
 ind_vv  <- grep("^vv_.*", vn)
 
@@ -134,7 +136,7 @@ ind_sen <- str_which(vn, "(intent|voted)_sen(_party|$)")
 ind_gov <- str_which(vn, "(intent|voted)_gov(_party|$)")
 
 ind_candID  <- str_which(vn, "(intent|voted)_(rep|gov|sen)_(chosen|fec)")
-ind_incID  <- grep("^rep_current$", vn):grep("^gov_fec$", vn) 
+ind_incID  <- grep("^rep_current$", vn):grep("^gov_current$", vn) 
 
 
 ind_wgt <- grep("(weight)", vn)
@@ -146,7 +148,8 @@ ind_other <- setdiff(
     ind_geo, ind_wgt, 
     ind_dem, 
     ind_econ, ind_pid, ind_app, ind_iss, ind_act, ind_int,
-    c(ind_pres_08, ind_pres_12, ind_pres_16),  
+    ind_pres,
+    c(ind_pres_08, ind_pres_12, ind_pres_16, ind_pres_20),  
     ind_rep, ind_sen, ind_gov, 
     ind_vv,
     ind_incID, ind_candID)
@@ -159,7 +162,7 @@ ordering(ds) <- VariableOrder(
   VariableGroup("Identity and Attitudes", ds[c(ind_pid, ind_econ, ind_app, ind_iss, ind_int)]),
   VariableGroup("Political Actions", ds[ind_act]),
   VariableGroup("Validated Vote and Turnout", ds[ind_vv]),
-  VariableGroup("Presidential Preference and Vote", ds[c(ind_pres_08, ind_pres_12, ind_pres_16)]),
+  VariableGroup("Presidential Preference and Vote", ds[c(ind_pres, ind_pres_08, ind_pres_12, ind_pres_16, ind_pres_20)]),
   VariableGroup("House, Senate, and Governor Preference and Vote", ds[c(ind_rep, ind_sen, ind_gov)]),
   VariableGroup("Politician Names and Identifiers", ds[c(ind_candID, ind_incID)]),
   VariableGroup("Weights", ds[ind_wgt]),
@@ -168,9 +171,11 @@ ordering(ds) <- VariableOrder(
 
 
 ordering(ds)[["Presidential Preference and Vote"]] <- VariableOrder(
+  VariableGroup("President Party",  ds[ind_pres]),
   VariableGroup("2008 Obama - McCain",  ds[ind_pres_08]),
   VariableGroup("2012 Obama - Romney",  ds[ind_pres_12]),
-  VariableGroup("2016 Trump - Clinton", ds[ind_pres_16])
+  VariableGroup("2016 Clinton - Trump", ds[ind_pres_16]),
+  VariableGroup("2020 Biden - Trump", ds[ind_pres_20])
 )
 
 ordering(ds)[["House, Senate, and Governor Preference and Vote"]] <- VariableOrder(
@@ -186,7 +191,6 @@ ordering(ds)[["Identity and Attitudes"]] <- VariableOrder(
   VariableGroup("Issues", ds[ind_iss]),
   VariableGroup("News Interest", ds[ind_int])
 )
-
 
 
 ordering(ds)[["Politician Names and Identifiers"]]  <- VariableOrder(
