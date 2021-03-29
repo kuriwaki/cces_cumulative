@@ -292,6 +292,7 @@ write_dta(ccc_common,
 
 # crunch var
 bs_df <- bs_stata %>% 
+  select(-religion) %>% # already in 
   mutate(case_id = as.character(case_id),
          year = as.integer(year)) %>%
   select(year, case_id, everything())
