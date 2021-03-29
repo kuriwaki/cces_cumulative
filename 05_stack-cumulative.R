@@ -351,7 +351,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_gen = CL_party,
         vv_party_prm = CL_2018pep,
         vv_st = CL_state
-      ) %>% # combine early vote
+      ) %>% 
+      # party straight ticket
       mutate(voted_rep = replace(voted_rep, CC18_409 == 1, 1),
              voted_rep = replace(voted_rep, CC18_409 == 2, 2),
              # we found that only in US House, sometimes party 2 was not a Republican.
@@ -381,9 +382,54 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  # 2020 ----
+  if (identical(cces_year, 2020L)) {
+    
+    tbl <- tbl %>%
+      # called "Two or more races" in 2020
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) %>%
+      # rename
+      rename(
+        weight = commonweight,
+        # rvweight = vvweight,
+        # rvweight_post = vvweight_post,
+        weight_post = commonpostweight,
+        approval_pres = CC20_320a,
+        approval_rep = CC20_320f,
+        approval_sen1 = CC20_320g,
+        approval_sen2 = CC20_320h,
+        approval_gov = CC20_320d,
+        economy_retro = CC20_302,
+        faminc = faminc_new,
+        intent_trn = CC20_363,
+        intent_pres_20 = CC20_364b,
+        intent_pres_20x = CC20_364a, # double check if this is actually voted
+        intent_rep = CC20_367,
+        intent_repx = CC20_367_voted,
+        intent_sen = CC20_365,
+        intent_senx = CC20_365_voted,
+        intent_gov = CC20_366,
+        intent_govx = CC20_366_voted,
+        voted_trn = CC20_401,
+        voted_pres_16 = presvote16post,
+        voted_pres_20 = CC20_410,
+        voted_rep = CC20_412,
+        voted_sen = CC20_411,
+        voted_gov = CC20_413#,
+        # vv_turnout_gvm = CL_2018gvm,
+        # vv_turnout_pvm = CL_2018pvm,
+        # vv_regstatus = CL_voter_status,
+        # vv_party_gen = CL_party,
+        # vv_party_prm = CL_2018pep,
+        # vv_st = CL_state
+      ) %>% # combine early vote?
+      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
   
   # more standardization for post 2012
-  if (cces_year[1] %in% c(2012:2019) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2020) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -741,10 +787,23 @@ clps_pres16 <- function(vec) {
     fct_lump(n = 5)
 }
 
+clps_pres20 <- function(vec) {
+  fct_collapse(vec, 
+               `Joe Biden` = c("Joe Biden (Democrat)"),
+               `Donald Trump` = c("Donald Trump", "Donald Trump (Republican)", "Donald J. Trump (Republican)"),
+               `Other / Someone Else` = c("Other", "Someone Else"),
+               `Did Not Vote` = c("I Didn't Vote in this Election",
+                                  "I Did Not Vote"),
+               `Not Sure / Don't Recall` = c("I'm Not Sure")
+  ) %>% 
+    fct_relevel("Joe Biden", "Donald Trump") %>% 
+    fct_lump(n = 5)
+}
+
 #' give pres party from chars of pres names
 pres_names <- function(vec) {
   case_when(
-    str_detect(vec, regex("(Obama|Clinton)", ignore_case = TRUE)) ~ "Democratic",
+    str_detect(vec, regex("(Obama|Clinton|Biden)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
     str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Johnson)", ignore_case = TRUE)) ~ "Third Party",
     str_detect(vec, regex("(McMullin|Nader)", ignore_case = TRUE)) ~ "Independent",
@@ -784,7 +843,8 @@ ccs <- list(
                                commonpostweight = NA,
                                vvweight = NA,
                                vvweight_post = NA)),
-  "2019" = std_name(cc19)
+  "2019" = std_name(cc19),
+  "2020" = std_name(cc20)
 )
 
 
@@ -972,35 +1032,47 @@ relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>%
 i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
+i_pres20 <- find_stack(ccs, intent_pres_20)
 
 v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
+v_pres20 <- find_stack(ccs, voted_pres_20)
 
 # quick consolidations for multiple years (Asked in the past)
 v_pres08 <- v_pres08 %>%
   mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08))
 
-v_pres12 <- mutate(v_pres12, voted_pres_12 = clps_pres12(voted_pres_12))
+v_pres12 <- v_pres12 %>% 
+  mutate(voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- v_pres16 %>%
   mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
          voted_pres_16 = clps_pres16(voted_pres_16))
+v_pres20 <- v_pres20 %>%
+  mutate(voted_pres_20 = clps_pres20(voted_pres_20))
 
 # coalesce
 pres_party <- i_pres08 %>% 
   left_join(i_pres12, by = c("year", "case_id")) %>% 
   left_join(i_pres16, by = c("year", "case_id")) %>% 
+  left_join(i_pres20, by = c("year", "case_id")) %>% 
   left_join(v_pres08, by = c("year", "case_id")) %>% 
   left_join(v_pres12, by = c("year", "case_id")) %>% 
   left_join(v_pres16, by = c("year", "case_id")) %>% 
+  left_join(v_pres20, by = c("year", "case_id")) %>% 
   mutate_if(is.factor, as.character) %>% 
-  mutate(voted_pres_12 = replace(voted_pres_12, year == 2016, NA),# NA for previous election
-         voted_pres_08 = replace(voted_pres_08, year == 2012, NA)) %>%  
+  # NA for previous election
+  mutate(voted_pres_08 = replace(voted_pres_08, year == 2012, NA),
+         voted_pres_12 = replace(voted_pres_12, year == 2016, NA),
+         voted_pres_16 = replace(voted_pres_16, year == 2020, NA)) %>%  
   transmute(
     year, case_id,
-    intent_pres_party = pres_names(coalesce(intent_pres_16, intent_pres_12, intent_pres_08)),
-    voted_pres_party  = pres_names(coalesce(voted_pres_16, voted_pres_12, voted_pres_08)))
+    intent_pres_party = pres_names(
+      coalesce(intent_pres_20, intent_pres_16, intent_pres_12, intent_pres_08)),
+    voted_pres_party  = pres_names(
+      coalesce(voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
+    )
 
 # House, Sen, Gov -----
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
@@ -1162,9 +1234,11 @@ ccc <- geo %>%
   left_join(i_pres08) %>%
   left_join(i_pres12) %>%
   left_join(i_pres16) %>%
+  left_join(i_pres20) %>%
   left_join(v_pres08) %>%
   left_join(v_pres12) %>%
   left_join(v_pres16) %>%
+  left_join(v_pres20) %>%
   left_join(pres_party) %>%
   left_join(vv_regstatus) %>%
   left_join(vv_party_gen) %>%

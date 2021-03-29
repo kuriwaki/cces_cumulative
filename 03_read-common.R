@@ -88,7 +88,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   
   # guess variable based on year
   statevar <- case_when(
-    guessed_yr %in% c(2007, 2012:2019) ~ "inputstate",
+    guessed_yr %in% c(2007, 2012:2020) ~ "inputstate",
     guessed_yr %in% c(2008, 2010:2011) ~ "V206",
     guessed_yr %in% 2009 ~ "v259",
     guessed_yr %in% 2006 ~ "v1002"
@@ -132,7 +132,7 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
   }
   
   statevar <- case_when(
-    guessed_yr %in% c(2012, 2014, 2016, 2018) ~ "inputstate_post",
+    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020) ~ "inputstate_post",
     guessed_yr %in% c(2010) ~ "V206_post",
     guessed_yr %in% 2008 ~ "V259"
   )
@@ -162,7 +162,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
   
   if (guess_year) {
     distvar <- case_when(
-      guessed_yr %in% c(2019) ~ "cdid116",
+      guessed_yr %in% c(2019, 2020) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
       guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
@@ -240,6 +240,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
   
   if (guess_year && guessed_yr != 2006) {
     distvar <- case_when(
+      guessed_yr %in% c(2020) ~ "cdid116_post",
       guessed_yr %in% c(2018) ~ "cdid115_post",
       guessed_yr %in% c(2016) ~ "cdid113_post",
       guessed_yr %in% c(2012, 2014) ~ "cdid_post",
@@ -248,9 +249,9 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     )
     
     distupvar <- distvar
-    if (guessed_yr == 2012) distupvar <- "cdid113_post"
-    if (guessed_yr == 2016) distupvar <- "cdid115_post"
     if (guessed_yr == 2018) distupvar <- "cdid116_post"
+    if (guessed_yr == 2016) distupvar <- "cdid115_post"
+    if (guessed_yr == 2012) distupvar <- "cdid113_post"
     
     # 2012-2014 panel is an exception; overwrite
     if (any(str_detect(colnames(tbl), "post_cdid"))) {
@@ -317,13 +318,13 @@ cc14 <- std_dv("data/source/cces/2014_cc.dta")
 cc15 <- std_dv("data/source/cces/2015_cc.dta")
 cc16 <- std_dv("data/source/cces/2016_cc.dta")
 cc17 <- std_dv("data/source/cces/2017_cc.dta")
-
-# 2018
 cc18 <- std_dv("data/source/cces/2018_cc.dta")
+
 cc18_comp <- std_dv("data/source/cces/2018_cc_competitive.dta")
 cc18_cnew <- anti_join(cc18_comp, select(cc18, year, case_id))
 
 cc19 <- std_dv("data/source/cces/2019_cc.dta")
+cc20 <- std_dv("data/source/cces/2020_cc.dta")
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
@@ -378,6 +379,7 @@ save(
   cc10, cc11, cc12, cc13, 
   cc14, cc15, cc16, cc17, 
   cc18, cc18_cnew, cc19, 
+  cc20,
   panel12, 
   mit06_add,
   hu08,  hu09, 
