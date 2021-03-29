@@ -10,7 +10,7 @@ Election Study (CCES) cumulative file (2006 - 2020).
 -   [*Current Dataverse
     Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
 -   [*Current
-    Guide*](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006_2019.pdf)
+    Guide*](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/guide_cumulative_2006-2020.pdf)
 
 Please feel free to file any questions or requests about the cumulative
 file as [Github
