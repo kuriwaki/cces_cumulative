@@ -152,9 +152,10 @@ Kuriwaki\thanks{Department of Government, Harvard University. Website:
 \url{https://www.shirokuriwaki.com}. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander
 Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan
-Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their
-suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon
-Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
+Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor
+for their suggestions and contributions. Thanks to Joe Williams at
+YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
+their help.}}
 
 
 \date{Guide last updated: 2021-03-29}
@@ -431,7 +432,7 @@ Identifiers}\label{chosen-candidate-names-and-identifiers}}
 One addition to this cumulative dataset are variables of candidate names
 and identifiers that a respondent chose. In the individual year's CCES
 datasets, typically the response values for a vote choice question is a
-generic label, e.g.~\texttt{Candidate1} and \texttt{Candidate2}. Then,
+generic label, e.g., \texttt{Candidate1} and \texttt{Candidate2}. Then,
 separate variables of names and parties correspond to each
 \texttt{Candidate1} and \texttt{Candidate2}.
 
@@ -536,7 +537,7 @@ each variable.
   verbatim.
 \item
   A tabulation of response options (or summary statistics for numeric
-  variables) follow. Numbers are unweighted counts.
+  variables) follows. Numbers are unweighted counts.
 \item
   The ``Years'' bullet lists the years of the CCES in which data on the
   variable is available at all. If a year is not listed, either the
@@ -544,7 +545,7 @@ each variable.
   creation of this dataset.
 \item
   Finally, the ``Limitations'' bullet notes some of the caveats required
-  when interpreting this variable. As this dataset is combinations of
+  when interpreting this variable. As this dataset is a combination of
   different surveys, some year-specific details on implementation are
   inevitably lost. For example, for all 2016 responses ``Not Asked'' and
   ``Skipped'' are both coded as a \texttt{NA} (missing) to stay
@@ -1096,7 +1097,7 @@ Non-Citizen & 8,055\\
   Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017,
   2018, 2019, 2020
 \item
-  These come from the immigration status questions, which asks
+  These come from the immigration status questions, which ask
   respondents between first, second, and third generation citizens, and
   other foreign-born citizens. Here we mark anyone who does not answer
   the last category to be a citizen.
@@ -1342,7 +1343,7 @@ No Party Affiliation & 13,874\\
 Declined to State & 2,376\\
 Other & 1,635\\
 Independent Party & 1,511\\
-Liberatarian Party & 537\\
+Libertarian Party & 537\\
 Green Party & 265\\
 Cns & 44\\
 Constitution Party & 38\\
@@ -1381,7 +1382,7 @@ No Record of Party Registration & 208,027\\
 Republican Party & 14,486\\
 Democratic Party & 12,783\\
 No Party Affiliation & 16\\
-Liberatarian Party & 11\\
+Libertarian Party & 11\\
 Other & 8\\
 Green Party & 4\\
 (Missing) & 296,420\\
@@ -1639,11 +1640,11 @@ Skipped & 12\\
   Years: All of 2006-2020
 \item
   Limitations: The income brackets provided changed slightly over time.
-  The brackets in this cumulative dataset coarsens certain brackets,
-  losing some granularity. In particular, from 2011-2016, respondents
-  answering ``over 150k'' were asked a follow-up question to select one
-  of several brackets above 150k. Here, these are top-coded and only
-  labelled as ``over 150k.''
+  The brackets in this cumulative dataset coarsen certain original
+  brackets, losing some granularity. In particular, from 2011-2016,
+  respondents answering ``over 150k'' were asked a follow-up question to
+  select one of several brackets above 150k. Here, these are top-coded
+  and only labelled as ``over 150k.''
 \item
   The 2009 CCES did not have an option for 60-70k.
 \end{itemize}
@@ -1816,8 +1817,8 @@ Not sure & 13,233\\
 \item
   Years: All of 2006-2020
 \item
-  Limitations: Response options varies by year. Some are collapsed into
-  one category (e.g.~\texttt{Gotten\ Better}, presented in some years,
+  Limitations: Response options vary by year. Some are collapsed into
+  one category (e.g., \texttt{Gotten\ Better}, presented in some years,
   and \texttt{Gotten\ Somewhat\ Better}, presented in other years, are
   collapsed into \texttt{Gotten\ Better\ /\ Somewhat\ Better}). Some are
   left as is. For example, \texttt{Not\ Sure} was not an option in 2009.
@@ -1972,7 +1973,7 @@ Neither Approve nor Disapprove & 1,413\\
   Years: All of 2006-2020
 \item
   Limitations: Response options varies by year. Some are collapsed into
-  one category (e.g.~\texttt{Approve}, presented in some years, and
+  one category (e.g., \texttt{Approve}, presented in some years, and
   \texttt{Somewhat\ Approve}, presented in other years, are collapsed
   into \texttt{Approve\ /\ Somewhat\ Approve}).
   \texttt{Neither\ approve\ nor\ disapprove} only included in 2007.
@@ -2071,7 +2072,7 @@ for the Republican candidate in all offices. The straight ticket party
 option was not asked in other years.
 
 The category ``Did Not Vote'' is recorded only when the respondent
-selects that option. Respondent who have missing values for intent or
+selects that option. Respondents who have missing values for intent or
 vote choice can also be non-voters for a variety of reasons. For general
 turnout, see the section on turnout.
 
@@ -2472,7 +2473,7 @@ No One & 22,730\\
   not shown for most years. Response options differ by year.
 \item
   Note that it is not always the case that 1 is a Democrat and 2 is a
-  Republican. When two Democrats are on the general ballot (e.g.~in
+  Republican. When two Democrats are on the general ballot (e.g., in
   top-two primary states like California), both candidates are
   Democrats. Use \texttt{intent\_rep\_party} to see the party
   affiliation of the chosen candidate.
@@ -2517,9 +2518,9 @@ I Won't Vote in this Election & 1,145\\
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020
 \item
-  Limitations: See \texttt{intent\_rep}. When both senate seats are up
+  Limitations: See \texttt{intent\_rep}. When both Senate seats are up
   for re-election in the same year, only responses to the first senate
-  seat is incorporated. For the second senate seat, see individual
+  seat is incorporated. For the second Senate seat, see individual
   year's CCES.
 \item
   See \texttt{intent\_sen\_party} for the party affiliation of the
@@ -2608,7 +2609,7 @@ I Did Not Vote & 260\\
   or if not, the response in the post-election wave.
 \item
   Note that it is not always the case that 1 is a Democrat and 2 is a
-  Republican. When two Democrats are on the general ballot (e.g.~in
+  Republican. When two Democrats are on the general ballot (e.g., in
   top-two primary states like California), both candidates are
   Democrats. Use \texttt{voted\_rep\_party} for party affiliation
 \item
@@ -2652,7 +2653,7 @@ I Did Not Vote In This Race & 5,001\\
 \item
   See \texttt{voted\_sen\_party} for party affiliation.
 \item
-  Senate Special elections where both senate seats are up for election
+  Senate Special elections where both Senate seats are up for election
   is often recorded as different columns in the year-specific CCES, but
   these are not collected in the cumulative.
 \end{itemize}
@@ -2762,7 +2763,7 @@ district, by district and last name, or both:
   For House representatives, we join on \texttt{cong}, \texttt{st}, and
   \texttt{dist} to a NOMINATE database that only consists of unique
   observations according to the key. For duplicates with regards to
-  these three variables (e.g.~in the rare case where a new
+  these three variables (e.g., in the rare case where a new
   representative comes into office mid-session), we match on
   \texttt{cong}, \texttt{st}, \texttt{dist} and last name.
 \item
@@ -2831,7 +2832,7 @@ Democrats in the race.
 # ... with 81 more rows
 \end{verbatim}
 
-The name and party are those as provided in the CCES datasets (e.g.~in
+The name and party are those as provided in the CCES datasets (e.g., in
 the form \texttt{HouseCand1Name}).
 
 \hypertarget{name-of-chosen-candidate}{%
@@ -2927,11 +2928,11 @@ changes.
   race
 \item
   Add leading zeros to congressional districts in the first digits
-  (e.g.~\texttt{"MA-1"} is now \texttt{"MA-01"}), and create a variable
+  (e.g., \texttt{"MA-1"} is now \texttt{"MA-01"}), and create a variable
   \texttt{cd\_up} similar to \texttt{dist\_up}.
 \item
-  Modify prepositions of value labels to lower case
-  (e.g.~\texttt{Not\ At\ All} to \texttt{Not\ at\ All})
+  Modify prepositions of value labels to lower case (e.g.,
+  \texttt{Not\ At\ All} to \texttt{Not\ at\ All})
 \end{itemize}
 
 \hypertarget{version-4.0}{%

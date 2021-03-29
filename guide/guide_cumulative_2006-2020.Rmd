@@ -6,7 +6,7 @@ output:
     keep_tex: TRUE
 title: "Guide to the CCES Cumulative Common Content (2006 - 2020)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -253,7 +253,7 @@ Most variables in this dataset come straight from each year's CCES. However, it 
 
 
 ## Chosen Candidate Names and Identifiers
-One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g. `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
+One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g., `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
 
 Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name and party, which will vary across individuals. 
 
@@ -293,9 +293,9 @@ The sections below provide summary statistics and more information on each varia
 
 * The title shows the name of the variable as it appears in the dataset ("alias" in Crunch terminology), followed by a more descriptive name suitable for presentation ("name" in Crunch terminology).
 * Question wordings, where applicable, immediately follow. Otherwise a description is provided in square  brackets (`[  ]`). All square brackets, both in the description and the response options, indicate descriptions that are summaries rather than the question verbatim. 
-* A tabulation of response options (or summary statistics for numeric variables) follow. Numbers are unweighted counts.
+* A tabulation of response options (or summary statistics for numeric variables) follows. Numbers are unweighted counts.
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
-* Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is combinations of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
+* Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is a combination of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
 
  
  
@@ -541,7 +541,7 @@ print_tab(citizen)
 ```
 
 * Years: `r in_years(citizen)`
-* These come from the immigration status questions, which asks respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
+* These come from the immigration status questions, which ask respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
 * Limitation: Most of the missingness comes from 2007 and 2015, when the immigration status question does not appear to have been asked.
 
 
@@ -740,7 +740,7 @@ print_tab(faminc)
 ```
 
 * Years: `r in_years(faminc)`
-* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsens certain brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
+* Limitations: The income brackets provided changed slightly over time. The brackets in this cumulative dataset coarsen certain original brackets, losing some granularity. In particular, from 2011-2016, respondents answering "over 150k" were asked a follow-up question to select one of several brackets above 150k. Here, these are top-coded and only labelled as "over 150k."
 * The 2009 CCES did not have an option for 60-70k. 
 
 
@@ -800,7 +800,7 @@ print_tab(economy_retro)
 ```
 
 * Years: `r in_years(economy_retro)`
-* Limitations: Response options varies by year. Some are collapsed into one category (e.g. `Gotten Better`, presented in some years, and `Gotten Somewhat Better`, presented in other years, are collapsed into `Gotten Better / Somewhat Better`). Some are left as is. For example, `Not Sure` was not an option in 2009.
+* Limitations: Response options vary by year. Some are collapsed into one category (e.g., `Gotten Better`, presented in some years, and `Gotten Somewhat Better`, presented in other years, are collapsed into `Gotten Better / Somewhat Better`). Some are left as is. For example, `Not Sure` was not an option in 2009.
 
 ## News Interest
 ### `r nam(newsint)`
@@ -856,7 +856,7 @@ print_tab(approval_sen1)
 ```
 
 * Years: `r in_years(approval_sen1)`
-* Limitations: Response options varies by year. Some are collapsed into one category (e.g. `Approve`, presented in some years, and `Somewhat Approve`, presented in other years, are collapsed into `Approve / Somewhat Approve`). `Neither approve nor disapprove` only included in 2007.
+* Limitations: Response options varies by year. Some are collapsed into one category (e.g., `Approve`, presented in some years, and `Somewhat Approve`, presented in other years, are collapsed into `Approve / Somewhat Approve`). `Neither approve nor disapprove` only included in 2007.
 * To see who [Senator 1] refers to for a particular respondent, see `sen1_inc` (incumbent identifier in `sen1_icpsr`)
 
 ### `r nam(approval_sen2)`
@@ -894,7 +894,7 @@ print_tab(approval_gov)
 Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
 
 
-The category "Did Not Vote" is recorded only when the respondent selects that option. Respondent who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
+The category "Did Not Vote" is recorded only when the respondent selects that option. Respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
 
 
 ## Presidential Vote
@@ -1033,7 +1033,7 @@ print_tab(intent_rep)
 
 * Years: `r in_years(intent_rep)`
 * Limitations: Only available for even years. The third party candidate is not specified for early years. The fourth candidate and below are not shown for most years.  Response options differ by year.
-* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` to see the party affiliation of the chosen candidate.
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g., in top-two primary states like California), both candidates are Democrats. Use `intent_rep_party` to see the party affiliation of the chosen candidate.
 * Note that for each respondent, a name (and party affiliation) is shown in place of the square bracket values. To see the name of the candidate chosen, see `intent_rep_chosen`.
 * `[Other / Candidate 3]` refers to the third option presented, whereas `Other` refers to the unnamed choice after all numbered candidates. 
 
@@ -1048,7 +1048,7 @@ print_tab(intent_sen)
 ```
 
 * Years: `r in_years(intent_sen)`
-* Limitations: See `intent_rep`. When both senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second senate seat, see individual year's CCES. 
+* Limitations: See `intent_rep`. When both Senate seats are up for re-election in the same year, only responses to the first senate seat is incorporated. For the second Senate seat, see individual year's CCES. 
 * See `intent_sen_party` for the party affiliation of the chosen candidate.
 
 ### `r nam(intent_gov)`
@@ -1075,7 +1075,7 @@ print_tab(voted_rep)
 
 * Years: `r in_years(voted_rep)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
-* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g. in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
+* Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g., in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
 * See `voted_rep_party` for party affiliation.
 
 ### `r nam(voted_sen)`
@@ -1090,7 +1090,7 @@ print_tab(voted_sen)
 * Years: `r in_years(voted_sen)`
 * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
 * See `voted_sen_party` for party affiliation.
-* Senate Special elections where both senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
+* Senate Special elections where both Senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
 
 ### `r nam(voted_gov)`
 
@@ -1136,7 +1136,7 @@ Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the cur
 
 The matching of identifiers to respondent occurs through matching by district, by district and last name, or both:
 
-* For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g. in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
+* For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g., in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
 * For Senators, we join entirely on `cong`, `st`, and last name
 
 
@@ -1162,7 +1162,7 @@ cc %>%
   select(matches("intent_rep")) 
 ```
 
-The name and party are those as provided in the CCES datasets (e.g. in the form `HouseCand1Name`). 
+The name and party are those as provided in the CCES datasets (e.g., in the form `HouseCand1Name`). 
 
 ## Name of Chosen Candidate
 
@@ -1200,8 +1200,8 @@ Dataverse assigns version numbers by incrementing a full number if any of the da
 - Add a separate variable for the post-election wave values of `state`, `st`, `dist`, `cd`, and `cd_up`.  Between the pre-post waves, about 0.9 percent of respondents appear to move CDs and 0.4 percent move states.
 - Undo coalescing pre-election wave already-voted vote choice, keeping `voted_*` variables with just post-election wave responses.
 - Adds a separate variable for intent/voted party choice in presidential race
-- Add leading zeros to congressional districts in the first digits (e.g. `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
-- Modify prepositions of value labels to lower case (e.g. `Not At All` to `Not at All`)
+- Add leading zeros to congressional districts in the first digits (e.g., `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
+- Modify prepositions of value labels to lower case (e.g., `Not At All` to `Not at All`)
 
 ### Version 4.0 
 - Released `2019-09-09`
