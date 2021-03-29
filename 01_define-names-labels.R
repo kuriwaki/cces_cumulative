@@ -138,6 +138,8 @@ ccc_meta <- tribble(
   "vv_party_prm",        "categorical", "Validated registered Primary party",                 "[Validation results. Only available for some states and years]",
   "vv_turnout_gvm",      "categorical", "Validated turnout General Election",                 "[Validation results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_pvm",      "categorical", "Validated turnout Primary Election (Congressional)", "[Validation results. Congressional primaries.]",
+  "voted_pres_20",       "categorical", "2020 President vote choice (after voting)",   "[If reported voting] 2020: For whom did you vote for President of the United States? [Post-election]",
+  "intent_pres_20",      "categorical", "2020 President preference (before voting)",    "Which candidate for President of the United States do you prefer?",
   "voted_pres_16",       "categorical", "2016 President vote choice (after voting)",   "2017: In the election for U.S. President, who did you vote for? [If reported voting] 2016: For whom did you vote for President of the United States? [Post-election]",
   "intent_pres_16",      "categorical", "2016 President preference (before voting)",    "Which candidate did you prefer for President of the United States?",
   "voted_pres_12",       "categorical", "2012 President vote choice (after voting)",   "2012: For whom did you vote for President of the United States? 2016: In 2012, who did you vote for in the election for President? [see guide for wording in all years]",
