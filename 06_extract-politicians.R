@@ -262,6 +262,7 @@ master$`2012_post` <- str_c(master$`2012`, "_post")
 master$`2014_post` <- str_c(master$`2014`, "_post")
 master$`2016_post` <- str_c(master$`2016`, "_post")
 master$`2018_post` <- str_c(master$`2018`, "_post")
+master$`2020_post` <- str_c(master$`2020`, "_post")
 
 # trick functions that it uses post
 blend_post <- function(tbl) {
@@ -294,17 +295,18 @@ cclist <- list(`2006` = cc06,
                `2018` = cc18,
                `2018c` = cc18_cnew,
                `2019` = cc19,
+               `2020` = cc20,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
                `2016_post` = blend_post(cc16),
-               `2018_post` = blend_post(cc18)
+               `2018_post` = blend_post(cc18),
+               `2020_post` = blend_post(cc20)
                )
-
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2018, str_c(seq(2010, 2018, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2020, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
