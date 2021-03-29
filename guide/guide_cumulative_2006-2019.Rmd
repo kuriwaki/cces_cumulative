@@ -4,7 +4,7 @@ output:
     latex_engine: xelatex
     template: guide_helvet.sty
     keep_tex: TRUE
-title: "Guide to the CCES Cumulative Common Content (2006 - 2019)"
+title: "Guide to the CCES Cumulative Common Content (2006 - 2020)"
 author: "Shiro Kuriwaki"
 thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
@@ -27,7 +27,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2019.Rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2020.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
@@ -83,6 +83,7 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
+  if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
@@ -111,11 +112,11 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2020, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V5. 
+> Kuriwaki, Shiro, 2021, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V6. 
 
 \bigskip
 
-This dataset combines fourteen years (2006 - 2019) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+This dataset combines fourteen years (2006 - 2020) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
@@ -156,7 +157,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. Unlike a `.Rdata` file, an `.Rds` file is assigned to an object.
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2019.Rds")
+cc <- readRDS("cumulative_2006-2020.Rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -170,7 +171,7 @@ cc
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-cc <- read_dta("cumulative_2006-2019.dta")
+cc <- read_dta("cumulative_2006-2020.dta")
 ```
 
 
@@ -957,6 +958,18 @@ print_tab(intent_pres_16)
 * Years: `r in_years(intent_pres_16)`
 * See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
+### `r nam(intent_pres_20)`
+
+`r descrip(intent_pres_20)`
+
+
+```{r, results = "asis"}
+print_tab(intent_pres_20)
+```
+
+* Years: `r in_years(intent_pres_20)`
+* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
+
 
 ### `r nam(voted_pres_08)`
 
@@ -993,6 +1006,17 @@ print_tab(voted_pres_16)
 
 * Years: `r in_years(voted_pres_16)`
 * This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+* See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
+
+### `r nam(voted_pres_20)`
+
+`r descrip(voted_pres_20)`
+
+```{r, results = "asis"}
+print_tab(voted_pres_20)
+```
+
+* Years: `r in_years(voted_pres_20)`
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
@@ -1164,6 +1188,10 @@ glimpse(select(cc, matches("_party$")))
 # Version History of Dataverse Releases
 
 Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
+
+### Version 6.0
+
+- Enter 2020 common content, pre-election (up to n = 531,755)
 
 ### Version 5.0 
 - Released `2020-10-04`
