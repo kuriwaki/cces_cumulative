@@ -158,7 +158,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{Guide last updated: 2021-04-05}
+\date{Guide last updated: 2021-04-06}
 
 \begin{document}
 
@@ -665,9 +665,9 @@ survey (in even years){]}
 \toprule
  & n\\
 \midrule
-Did Not Take Post-Election Survey & 138,064\\
-Took Post-Election Survey & 300,892\\
-(Missing) & 92,799\\
+Did Not Take Post-Election Survey & 68,513\\
+Took Post-Election Survey & 352,443\\
+(Missing) & 110,799\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -675,8 +675,8 @@ Took Post-Election Survey & 300,892\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2019, 2020
-  (Post-election wave only exists for even years)
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020 (Post-election
+  wave only exists for even years)
 \end{itemize}
 
 \hypertarget{weights}{%
@@ -2427,11 +2427,6 @@ Not Sure / Don't Recall & 516\\
 \item
   Years: 2016, 2017, 2018, 2019, 2020
 \item
-  This variable coalesces two variables in the CCES: Either the response
-  to the early vote question in the pre-election wave if the respondent
-  indicates they have already voted, or if not, the response in the
-  post-election wave.
-\item
   See \texttt{voted\_pres\_party} for vote choice in the most recent
   preceding presidential election into one party column.
 \end{itemize}
@@ -2648,11 +2643,6 @@ I Did Not Vote & 260\\
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020
 \item
-  This variable coalesces two variables in the CCES for years 2012 and
-  onward: Either the response to the early vote question in the
-  pre-election wave if the respondent indicates they have already voted,
-  or if not, the response in the post-election wave.
-\item
   Note that it is not always the case that 1 is a Democrat and 2 is a
   Republican. When two Democrats are on the general ballot (e.g., in
   top-two primary states like California), both candidates are
@@ -2691,11 +2681,6 @@ I Did Not Vote In This Race & 5,001\\
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020
 \item
-  This variable coalesces two variables in the CCES for years 2012 and
-  onward: Either the response to the early vote question in the
-  pre-election wave if the respondent indicates they have already voted,
-  or if not, the response in the post-election wave.
-\item
   See \texttt{voted\_sen\_party} for party affiliation.
 \item
   Senate Special elections where both Senate seats are up for election
@@ -2733,11 +2718,6 @@ Not Sure & 1,128\\
 \tightlist
 \item
   Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020
-\item
-  This variable coalesces two variables in the CCES for years 2012 and
-  onward: Either the response to the early vote question in the
-  pre-election wave if the respondent indicates they have already voted,
-  or if not, the response in the post-election wave.
 \item
   See \texttt{voted\_gov\_party} for party affiliation.
 \end{itemize}
@@ -2953,7 +2933,7 @@ changes.
   Added further explanation to usage of weighs where post-election
   weights are not available (thanks to Alexander Agadjanian)
 \item
-  Added usage example of the R \texttt{dataverse} pacakge
+  Added usage example of the R \texttt{dataverse} package
 \end{itemize}
 
 \hypertarget{version-5.0}{%

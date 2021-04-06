@@ -1031,7 +1031,7 @@ print_tab(voted_pres_16)
 ```
 
 * Years: `r in_years(voted_pres_16)`
-* This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+<!-- * This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_20)`
@@ -1100,7 +1100,7 @@ print_tab(voted_rep)
 ```
 
 * Years: `r in_years(voted_rep)`
-* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g., in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
 * See `voted_rep_party` for party affiliation.
 
@@ -1114,7 +1114,7 @@ print_tab(voted_sen)
 ```
 
 * Years: `r in_years(voted_sen)`
-* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_sen_party` for party affiliation.
 * Senate Special elections where both Senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
 
@@ -1127,7 +1127,7 @@ print_tab(voted_gov)
 ```
 
 * Years: `r in_years(voted_gov)`
-* This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave.
+<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_gov_party` for party affiliation.
 
 

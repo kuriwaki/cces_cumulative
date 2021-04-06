@@ -765,7 +765,8 @@ clps_pres12 <- function(vec) {
                `Barack Obama` = c("Barack Obama", "Barack Obama (Democratic)", "Vote for Barack Obama"),
                `Mitt Romney` = c("Mitt Romney", "Mitt Romney (Republican)", "Vote for Mitt Romney"),
                `Other / Someone Else` = c("Someone Else", "Vote for Someone Else", "Other"),
-               `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote for this Office", "I Did Not Vote in this Race"),
+               `Did Not Vote` = c("Did Not Vote", "I Did Not Vote", "Not Vote", "Not Vote for this Office", 
+                                  "I Did Not Vote in this Race"),
                `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall")
   ) %>% 
     fct_lump(n = 6)
