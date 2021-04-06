@@ -868,9 +868,11 @@ vwgt        <- find_stack(ccs, rvweight, "numeric")
 vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
-  mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | tookpost_num == 2 & year == 2018), # diff number in 2018
+  mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | 
+                                          tookpost_num == 2 & year %in% c(2018, 2020)), # diff number in 2018
                              labels = c("Took Post-Election Survey" = 1,
                                         "Did Not Take Post-Election Survey" = 0))) %>% 
+  mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA)) %>% 
   select(year, case_id, tookpost)
 
 time <- find_stack(ccs, starttime, type = "datetime") %>%
