@@ -158,7 +158,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{Guide last updated: 2021-03-29}
+\date{Guide last updated: 2021-04-05}
 
 \begin{document}
 
@@ -180,7 +180,7 @@ Harvard Dataverse, V6.
 
 \bigskip
 
-This dataset combines fourteen years (2006 - 2020) of the Cooperative
+This dataset combines 15 years (2006 -- 2020) of the Cooperative
 Congressional Election Study (CCES). The CCES is an online survey
 conducted around November of each year, asking a range of questions on
 political behavior and public opinion. Its principal investigators are
@@ -239,10 +239,12 @@ questions, readers should consult the guides for each year.
 \hypertarget{getting-started}{%
 \section{Getting Started}\label{getting-started}}
 
+\hypertarget{data-read-in}{%
+\subsection{Data Read-in}\label{data-read-in}}
+
 The \texttt{.Rds} format can be read into R. This format preserves
 dataset properties such as the distinction between integers and doubles,
-and labelled variables. Unlike a \texttt{.Rdata} file, an \texttt{.Rds}
-file is assigned to an object.
+and labelled variables.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -261,7 +263,7 @@ it can also be used without tidyverse.
 \end{Shaded}
 
 \noindent  A Stata dta version is provided as well.
-\texttt{cumulative\_2006-2019.dta} can be read by Stata, or in R by the
+\texttt{cumulative\_2006-2020.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
 \begin{Shaded}
@@ -271,12 +273,40 @@ it can also be used without tidyverse.
 \end{Highlighting}
 \end{Shaded}
 
+R is free software and, if necessary, the \texttt{haven} and
+\texttt{readr} package can be used to export the CCES datasets in other
+formats such as plain-text, or SPSS sav files. Plain-text formats are
+somewhat less convenient because they do not preserve value labels.
+
+\hypertarget{data-download}{%
+\subsection{Data Download}\label{data-download}}
+
+\noindent \emph{Downloading the data via R.} In some cases, it may be
+convenient to download the dataset directly into an R environment
+without dowloading the file to one's computer. The recent version of
+\texttt{dataverse} (\textgreater{} 0.3.0) allows this by the function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dataverse)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2019.dta"}\NormalTok{,}
+  \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
+  \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
+  \AttributeTok{server =} \StringTok{"dataverse.harvard.edu"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 \hypertarget{unique-identifiers-and-how-to-add-more-variables}{%
 \subsection{Unique identifiers and how to add more
 variables}\label{unique-identifiers-and-how-to-add-more-variables}}
 
 The cumulative dataset only uses key variables from each year's common
-content. However, other common content variables can be merged in.
+content. But users can still merge in other common content variables, or
+variables from other CCES datasets like the policy preferences
+dataset\footnote{Dagonel, Angelo, 2021, ``Cumulative CCES Policy Preferences'', \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/OSXDQO}{\url{doi:10.7910/DVN/OSXDQO}}, Harvard Dataverse.}.
 
 In R, we recommend using the \texttt{left\_join} or \texttt{inner\_join}
 functions (or the base-R \texttt{merge} function). In Stata, use
@@ -296,8 +326,7 @@ and read it in as follows:
 Suppose we want to merge in the 2016-specific issue questions that ask
 respondent's views about key votes in Congress. This variable all start
 with \texttt{"CC16\_351"} and the case-identifier is called
-\texttt{V101}, so we can merge this in to the cumulative file as
-follows:
+\texttt{V101}, so we can merge this into the cumulative file as follows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -683,6 +712,10 @@ Took Post-Election Survey & 300,892\\
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
   wave respondents. See \texttt{weight\_post}
+\item
+  In Version 6, the 2020 weights are preliminary weights that were
+  computed without the vote validation in hand. In Version 7, the same
+  variable \texttt{weight} will be updated with YouGov's weight.
 \end{itemize}
 
 \hypertarget{weight_cumulative-survey-weight-cumulative}{%
@@ -762,6 +795,18 @@ the even years.{]}
   Years: 2012, 2016, 2018, 2020
 \item
   Limitations: Only available for some even years.
+\item
+  To analyze the post-election wave responses for years that do not have
+  a post-specific weight, the second-best option is to use the normal
+  \texttt{weight} variable. These weights will not be designed for the
+  post-wave subset but they tend to correlate. When applying the weights
+  to a subset of the data, make sure that they are rescaled to mean 1 in
+  the non-missing subset (most statistical software will do this
+  automatically).
+\item
+  To use the \texttt{weight\_post} for years it is available but
+  \texttt{weight} for where it is not, one could coalesce into a new
+  variable.
 \end{itemize}
 
 \hypertarget{rvweight-survey-weights-to-validated-registered-voters}{%
@@ -784,7 +829,7 @@ voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight
   In 2018, YouGov computed weights after vote validation to weight to
   the target population of registered voters. See the methodology
   section of the \href{https://doi.org/10.7910/DVN/ZSBZ7K}{2018 Guide}
-  for details. For this reason, and to distinguish it from previous
+  for details. For this reason, and to distinguish it from the previous
   year's post-validation weights, the cumulative renames the 2018
   \texttt{vvweight} into \texttt{rvweight}.
 \item
@@ -892,10 +937,10 @@ $ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", "37~
 \item
   Note the distinction between \texttt{dist} and \texttt{dist\_up},
   especially in 2012. The former should generally be used for linking
-  respondents to their representatives at the time of the survey, where
-  as the latter can be used for the district in which they will vote
-  for. New districts were drawn in 2010-2012 and candidates ran in new
-  district maps in the 2012 CCES. Because respondents would not be
+  respondents to their representatives at the time of the survey,
+  whereas the latter can be used for the district in which they will
+  vote for. New districts were drawn in 2010-2012 and candidates ran in
+  new district maps in the 2012 CCES. Because respondents would not be
   \emph{represented} in the new district lines until January 2013, in
   the 2012 CCES \texttt{dist} is the old district line and
   \texttt{dist\_up} is the new district line for the General Election.
@@ -1270,7 +1315,7 @@ No & 302,200\\
   including the following: ``I served personally'', ``Family served
   previously''. The entry in the cumulative response only selects the
   ``None'' option. A value of \texttt{no\_milstat\ ==\ "Yes"} means that
-  a respondent indicated they had neither served nor had a immediate
+  a respondent indicated they had neither served nor had an immediate
   family member who has served. To see the other responses, see the
   individual year's CCES.
 \end{itemize}
@@ -2899,7 +2944,16 @@ changes.
 \begin{itemize}
 \tightlist
 \item
-  Enter 2020 common content, pre-election (up to n = 531,755)
+  Enter 2020 common content (preliminary, before voter file match),
+  pre-election (up to n = 531,755).
+\item
+  Distinguished between third party Presidential vote (thanks to Valerie
+  Bradley)
+\item
+  Added further explanation to usage of weighs where post-election
+  weights are not available (thanks to Alexander Agadjanian)
+\item
+  Added usage example of the R \texttt{dataverse} pacakge
 \end{itemize}
 
 \hypertarget{version-5.0}{%
@@ -2914,7 +2968,7 @@ changes.
 \item
   Adds variables for: \textbf{employment, union membership, religion,
   citizenship, children, homeownership, lack of insurance, and lack of
-  military members in immediate family}.
+  military members in immediate family}. (thanks to Brian Schaffner)
 \item
   Add a separate variable for the post-election wave values of
   \texttt{state}, \texttt{st}, \texttt{dist}, \texttt{cd}, and
@@ -2976,7 +3030,8 @@ changes.
   Consolidates weights to a single column, using post-vote validation
   weights for even years.
 \item
-  Adds \texttt{hispanic} and \texttt{faminc} variables
+  Adds \texttt{hispanic} and \texttt{faminc} variables (thanks to
+  Bernard Fraga)
 \end{itemize}
 
 \hypertarget{version-1.0}{%
