@@ -10,7 +10,7 @@ dir_create("data/source/cces")
 dir_create("data/output")
 dir_create("data/release")
 
-for (yr in 2006:2018) {
+for (yr in 2006:2020) {
   filedir <- "data/source/cces"
   
   filename <- glue("{yr}_cc.dta")
@@ -23,4 +23,5 @@ for (yr in 2006:2018) {
     next
   
   dataverse_dl <- get_cces_dv(name = yr)
+  read_dta(dataverse_dl, path(filedir, filename))
 }
