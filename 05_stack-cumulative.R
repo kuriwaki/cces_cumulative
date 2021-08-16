@@ -164,6 +164,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       intent_govx = CC356,
       intent_rep = CC390b,
       intent_repx = CC390,
+      intent_trn = CC354,
       vv_turnout_gvm = e2012g,
       vv_turnout_pvm = e2012congp,
       vv_turnout_ppvm = e2012presp,
@@ -1136,7 +1137,13 @@ citizen <- find_stack(ccs, immstat) %>%
   select(-immstat)
 
 
-  
+# self reported vote ----
+turnout_self <- find_stack(ccs, intent_trn, type = "factor") %>% 
+  mutate(turnout_self = recode(intent_trn, 
+                               `Yes, Definitely` = "Yes, definitely",
+                               `I Plan to Vote Before November 3rd` = "Plan to vote early",
+                               `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
+  select(-intent_trn)
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -1243,6 +1250,7 @@ ccc <- geo %>%
   left_join(v_pres16) %>%
   left_join(v_pres20) %>%
   left_join(pres_party) %>%
+  left_join(turnout_self) %>%
   left_join(vv_regstatus) %>%
   left_join(vv_party_gen) %>%
   left_join(vv_party_prm) %>%
