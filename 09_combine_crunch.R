@@ -17,24 +17,28 @@ if (writeToCrunch) {
 
 # append intent to vote party -----
 
-
 ds_orig <- loadDataset("CCES Cumulative Common", project = "CCES")
 forkDataset(ds_orig, "Fork of CCES Cumulative Common")
 
 ds_fork <- loadDataset("Fork of CCES Cumulative Common")
-ds_new <- loadDataset("CCES Cumulative v4.0")
+ds_new <- loadDataset("CCES Cumulative v6.0")
+ds_iss <- loadDataset("CCES Cumulative Issues")
 
 # identifier
 ds_fork$year_caseid <- paste0(as.character(as.vector(ds_fork$year)), "_",  as.vector(ds_fork$case_id))
 ds_new$year_caseid <- paste0(as.character(as.vector(ds_new$year)), "_",  as.vector(ds_new$case_id))
+ds_iss$year_caseid <- paste0(as.character(as.vector(ds_iss$year)), "_",  as.vector(ds_iss$case_id))
 
 # compare
-vars_to_replace <- c(str_subset(names(ds_new), "vv"),
-                     str_subset(names(ds_new), "voted_(rep|gov|sen)"))
+vars_to_replace <- setdiff(names(ds_new), c("year_caseid", "year", "case_id"))
+
+# validated vote update
+# vars_to_replace <- c(str_subset(names(ds_new), "vv"),
+#                      str_subset(names(ds_new), "voted_(rep|gov|sen)"))
 
 # A - for the new variables dataset
 # keep only variables to merge
-# delete everything BUT the key and the to be replaced
+# delete everything BUT the key and the vars to be replaced
 deleteVariables(ds_new, 
                 setdiff(names(ds_new), c("year_caseid", vars_to_replace)))
 saveVersion(ds_new, "dropped all but the vote validation and post-elec vote")
@@ -50,7 +54,7 @@ refresh(ds_new)
 # merge fork on new, dropping 2018 rows
 extendDataset(ds_fork, ds_new, by = "year_caseid")
 refresh(ds_fork)
-saveVersion(ds_fork, description = "fork merged with new 2018")
+saveVersion(ds_fork, description = "fork merged with new 2020")
 
 
 # updte new dataset to be only 2018
