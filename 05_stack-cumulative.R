@@ -417,13 +417,15 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_20 = CC20_410,
         voted_rep = CC20_412,
         voted_sen = CC20_411,
-        voted_gov = CC20_413#,
-        # vv_turnout_gvm = CL_2018gvm,
-        # vv_turnout_pvm = CL_2018pvm,
-        # vv_regstatus = CL_voter_status,
-        # vv_party_gen = CL_party,
-        # vv_party_prm = CL_2018pep,
-        # vv_st = CL_state
+        voted_gov = CC20_413,
+        vv_turnout_gvm = CL_2020gvm,
+        vv_turnout_pvm = CL_2020pvm,
+        vv_turnout_ppvm = CL_2020ppvm,
+        vv_regstatus = CL_voter_status,
+        vv_party_gen = CL_party,
+        vv_party_prm = CL_2020pep,
+        vv_party_pprm = CL_2020ppep,
+        vv_st = CL_state
       ) %>% # combine early vote?
       mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
