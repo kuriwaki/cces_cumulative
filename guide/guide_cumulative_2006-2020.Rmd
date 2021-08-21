@@ -704,6 +704,19 @@ print_tab(vv_turnout_pvm)
 * Years: `r in_years(vv_turnout_pvm)`
 * Limitations: See `vv_turnout_gvm`
 
+
+### `r nam(turnout_self)`
+
+`r descrip(turnout_self)`
+
+```{r, results = "asis"}
+print_tab(turnout_self)
+```
+
+* Years: `r in_years(turnout_self)`
+
+
+
 \newpage
 
 

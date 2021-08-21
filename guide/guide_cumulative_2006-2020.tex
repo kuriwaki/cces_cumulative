@@ -158,7 +158,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{Guide last updated: 2021-08-16}
+\date{Guide last updated: 2021-08-21}
 
 \begin{document}
 
@@ -477,18 +477,18 @@ individuals.
 
 \begin{verbatim}
 # A tibble: 531,755 x 6
-    year case_id st    voted_sen           voted_sen_party voted_sen_chosen     
-   <int>   <int> <chr> <fct>               <fct>           <chr>                
- 1  2006  439219 NC    <NA>                <NA>            <NA>                 
- 2  2006  439224 OH    [Democrat / Candid~ Democratic      Sherrod C. Brown (D) 
- 3  2006  439228 NJ    [Democrat / Candid~ Democratic      Robert Menendez (D)  
- 4  2006  439237 IL    <NA>                <NA>            <NA>                 
- 5  2006  439238 NY    [Democrat / Candid~ Democratic      Hillary Rodham Clint~
- 6  2006  439242 TX    I Did Not Vote In ~ <NA>            <NA>                 
- 7  2006  439251 MN    [Republican / Cand~ Republican      Mark Kennedy (R)     
- 8  2006  439254 NV    [Democrat / Candid~ Democratic      Jack Carter (D)      
- 9  2006  439255 TX    [Democrat / Candid~ Democratic      Barbara Ann Radnofsk~
-10  2006  439263 MD    I Did Not Vote In ~ <NA>            <NA>                 
+    year case_id st    voted_sen                   voted_sen_party voted_sen_chosen
+   <int>   <int> <chr> <fct>                       <fct>           <chr>           
+ 1  2006  439219 NC    <NA>                        <NA>            <NA>            
+ 2  2006  439224 OH    [Democrat / Candidate 1]    Democratic      Sherrod C. Brow~
+ 3  2006  439228 NJ    [Democrat / Candidate 1]    Democratic      Robert Menendez~
+ 4  2006  439237 IL    <NA>                        <NA>            <NA>            
+ 5  2006  439238 NY    [Democrat / Candidate 1]    Democratic      Hillary Rodham ~
+ 6  2006  439242 TX    I Did Not Vote In This Race <NA>            <NA>            
+ 7  2006  439251 MN    [Republican / Candidate 2]  Republican      Mark Kennedy (R)
+ 8  2006  439254 NV    [Democrat / Candidate 1]    Democratic      Jack Carter (D) 
+ 9  2006  439255 TX    [Democrat / Candidate 1]    Democratic      Barbara Ann Rad~
+10  2006  439263 MD    I Did Not Vote In This Race <NA>            <NA>            
 # ... with 531,745 more rows
 \end{verbatim}
 
@@ -818,13 +818,13 @@ voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.6     0.8     1.0     1.2    15.0  491738 
+    0.0     0.6     0.8     1.0     1.2    16.3  448671 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2018
+  Years: 2018, 2020
 \item
   In 2018, YouGov computed weights after vote validation to weight to
   the target population of registered voters. See the methodology
@@ -848,13 +848,13 @@ wave{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.5     0.8     1.0     1.2    15.0  494806 
+    0.0     0.5     0.8     1.0     1.2    15.0  455792 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2018
+  Years: 2018, 2020
 \item
   Limitations: Only available for some even years.
 \end{itemize}
@@ -1511,6 +1511,37 @@ No Voter File & 1,363\\
   Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020
 \item
   Limitations: See \texttt{vv\_turnout\_gvm}
+\end{itemize}
+
+\hypertarget{turnout_self-self-reported-turnout-general-election}{%
+\subsubsection{\texorpdfstring{\texttt{turnout\_self}: Self-reported
+turnout General
+Election}{turnout\_self: Self-reported turnout General Election}}\label{turnout_self-self-reported-turnout-general-election}}
+
+``2020: Do you intend to vote in the 2020 general election on November
+3rd?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes, definitely & 169,609\\
+Probably & 16,474\\
+I already voted (early or absentee) & 18,741\\
+Plan to vote early & 5,364\\
+No & 17,967\\
+Undecided & 11,642\\
+(Missing) & 291,958\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2012, 2016, 2018, 2020
 \end{itemize}
 
 \newpage
