@@ -134,6 +134,7 @@ ccc_meta <- tribble(
   "approval_sen2",       "categorical", "Senator 2 approval",            "Do you approve of the way each is doing their job... [Pipe Incumbent Senator 2's Name]",
   "approval_gov",        "categorical", "Governor approval",             "Do you approve of the way each is doing their job... Governor of [Pipe State]",
   "vv_regstatus",        "categorical", "Validated registration status",                      "[Validation results. Missing if validation was not conducted in the year. Categories are aggregated. Both Matched-not registered and unmatched are labeled as a no record.]",
+  "turnout_self",        "categorical", "Self-reported turnout General Election", "2020: Do you intend to vote in the 2020 general election on November 3rd?",
   "vv_party_gen",        "categorical", "Validated registered party",                         "[Validation results. Only available for some states and years]",
   "vv_party_prm",        "categorical", "Validated registered Primary party",                 "[Validation results. Only available for some states and years]",
   "vv_turnout_gvm",      "categorical", "Validated turnout General Election",                 "[Validation results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
