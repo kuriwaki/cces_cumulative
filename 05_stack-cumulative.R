@@ -393,8 +393,8 @@ std_name <- function(tbl, is_panel = FALSE) {
       # rename
       rename(
         weight = commonweight,
-        # rvweight = vvweight,
-        # rvweight_post = vvweight_post,
+        rvweight = vvweight,
+        rvweight_post = vvweight_post,
         weight_post = commonpostweight,
         approval_pres = CC20_320a,
         approval_rep = CC20_320f,
@@ -866,7 +866,7 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
 
 # admin ------
 wgt        <- find_stack(ccs, weight, "numeric")
-wgt_post <- find_stack(ccs, weight_post, "numeric")
+wgt_post   <- find_stack(ccs, weight_post, "numeric")
 
 vwgt        <- find_stack(ccs, rvweight, "numeric")
 vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
@@ -1143,6 +1143,7 @@ citizen <- find_stack(ccs, immstat) %>%
 turnout_self <- find_stack(ccs, intent_trn, type = "factor") %>% 
   mutate(turnout_self = recode(intent_trn, 
                                `Yes, Definitely` = "Yes, definitely",
+                               `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
                                `I Plan to Vote Before November 3rd` = "Plan to vote early",
                                `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
   select(-intent_trn)
