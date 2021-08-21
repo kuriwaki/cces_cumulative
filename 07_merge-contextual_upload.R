@@ -289,7 +289,6 @@ write_dta(ccc_common,
           "data/release/cumulative_2006-2020.dta", 
           version = 14)
 
-
 # crunch var
 bs_df <- bs_stata %>% 
   select(-religion) %>% # already in 
