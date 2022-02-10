@@ -704,19 +704,6 @@ print_tab(vv_turnout_pvm)
 * Years: `r in_years(vv_turnout_pvm)`
 * Limitations: See `vv_turnout_gvm`
 
-
-### `r nam(turnout_self)`
-
-`r descrip(turnout_self)`
-
-```{r, results = "asis"}
-print_tab(turnout_self)
-```
-
-* Years: `r in_years(turnout_self)`
-
-
-
 \newpage
 
 
@@ -1228,11 +1215,18 @@ glimpse(select(cc, matches("_party$")))
 
 Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
+
+### Version 7.0
+
+- Enter 2020 voter file match
+- Corrects error in 2010 3 point Party ID which had used the post-election wave rather than the pre-election wave used in the other years (Thanks to Gerald Wright).
+- Adds variables for:  **self reported turnout**
+
 ### Version 6.0
 
 - Enter 2020 common content (preliminary, before voter file match), pre-election (up to n = 531,755). 
 - Distinguished between third party Presidential vote (thanks to Valerie Bradley)
-- Added further explanation to usage of weighs where post-election weights are not available (thanks to Alexander Agadjanian)
+- Added further explanation to usage of weights where post-election weights are not available (thanks to Alexander Agadjanian)
 - Added usage example of the R `dataverse` package
 
 ### Version 5.0 

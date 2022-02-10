@@ -158,7 +158,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{Guide last updated: 2021-08-21}
+\date{Guide last updated: 2022-02-10}
 
 \begin{document}
 
@@ -421,7 +421,7 @@ do that.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 189,917 x 3
+# A tibble: 192,495 x 3
    year case_id         pid3
   <int>   <int>    <int+lbl>
 1  2006  439219 1 [Democrat]
@@ -429,7 +429,7 @@ do that.
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# ... with 189,912 more rows
+# ... with 192,490 more rows
 \end{verbatim}
 
 \indent In this cumulative (R) dataset, some variables are of class
@@ -477,18 +477,18 @@ individuals.
 
 \begin{verbatim}
 # A tibble: 531,755 x 6
-    year case_id st    voted_sen                   voted_sen_party voted_sen_chosen
-   <int>   <int> <chr> <fct>                       <fct>           <chr>           
- 1  2006  439219 NC    <NA>                        <NA>            <NA>            
- 2  2006  439224 OH    [Democrat / Candidate 1]    Democratic      Sherrod C. Brow~
- 3  2006  439228 NJ    [Democrat / Candidate 1]    Democratic      Robert Menendez~
- 4  2006  439237 IL    <NA>                        <NA>            <NA>            
- 5  2006  439238 NY    [Democrat / Candidate 1]    Democratic      Hillary Rodham ~
- 6  2006  439242 TX    I Did Not Vote In This Race <NA>            <NA>            
- 7  2006  439251 MN    [Republican / Candidate 2]  Republican      Mark Kennedy (R)
- 8  2006  439254 NV    [Democrat / Candidate 1]    Democratic      Jack Carter (D) 
- 9  2006  439255 TX    [Democrat / Candidate 1]    Democratic      Barbara Ann Rad~
-10  2006  439263 MD    I Did Not Vote In This Race <NA>            <NA>            
+    year case_id st    voted_sen           voted_sen_party voted_sen_chosen     
+   <int>   <int> <chr> <fct>               <fct>           <chr>                
+ 1  2006  439219 NC    <NA>                <NA>            <NA>                 
+ 2  2006  439224 OH    [Democrat / Candid~ Democratic      Sherrod C. Brown (D) 
+ 3  2006  439228 NJ    [Democrat / Candid~ Democratic      Robert Menendez (D)  
+ 4  2006  439237 IL    <NA>                <NA>            <NA>                 
+ 5  2006  439238 NY    [Democrat / Candid~ Democratic      Hillary Rodham Clint~
+ 6  2006  439242 TX    I Did Not Vote In ~ <NA>            <NA>                 
+ 7  2006  439251 MN    [Republican / Cand~ Republican      Mark Kennedy (R)     
+ 8  2006  439254 NV    [Democrat / Candid~ Democratic      Jack Carter (D)      
+ 9  2006  439255 TX    [Democrat / Candid~ Democratic      Barbara Ann Radnofsk~
+10  2006  439263 MD    I Did Not Vote In ~ <NA>            <NA>                 
 # ... with 531,745 more rows
 \end{verbatim}
 
@@ -590,7 +590,7 @@ year}{year: CCES year}}\label{year-cces-year}}
 
 {[}Year of CCES Common Content{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -621,7 +621,7 @@ time}{starttime: Start time}}\label{starttime-start-time}}
 
 {[}Pre-election wave start time (up to second){]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lrr}
 \toprule
@@ -659,7 +659,7 @@ wave}{tookpost: Took post-election wave}}\label{tookpost-took-post-election-wave
 {[}Whether or not the respondent took the post-election wave of the
 survey (in even years){]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -971,7 +971,7 @@ Gender}{gender: Gender}}\label{gender-gender}}
 
 ``Are you male or female?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1030,7 +1030,7 @@ Education}{educ: Education}}\label{educ-education}}
 
 ``What is the highest level of education you have completed?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1059,7 +1059,7 @@ Race}{race: Race}}\label{race-race}}
 
 ``What racial or ethnic group best describes you?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1093,7 +1093,7 @@ Hispanic}{hispanic: Hispanic}}\label{hispanic-hispanic}}
 ``Are you of Spanish, Latino, or Hispanic origin or descent? {[}Asked if
 response to race is not Hispanic{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1123,7 +1123,7 @@ Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}}
 
 {[}Based on self-report for immigration status{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1157,7 +1157,7 @@ Religion}{religion: Religion}}\label{religion-religion}}
 
 ``What is your present religion, if any?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1199,7 +1199,7 @@ Status}{marstat: Marital Status}}\label{marstat-marital-status}}
 
 ``What is your marital status?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1234,7 +1234,7 @@ Ownership}{ownhome: Home Ownership}}\label{ownhome-home-ownership}}
 
 ``Do you own your home or pay rent?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1261,7 +1261,7 @@ Children}{has\_child: Parent of Young Children}}\label{has_child-parent-of-young
 
 ``Are you the parent or guardian of any children under the age of 18?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1288,7 +1288,7 @@ No & 362,055\\
 {[}Based on military household question; neither respondent nor
 immediate family has served{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1342,7 +1342,7 @@ status}{vv\_regstatus: Validated registration status}}\label{vv_regstatus-valida
 year. Categories are aggregated. Both Matched-not registered and
 unmatched are labeled as a no record.{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1374,7 +1374,7 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 
 {[}Validation results. Only available for some states and years{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1417,7 +1417,7 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
 
 {[}Validation results. Only available for some states and years{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1455,7 +1455,7 @@ Election}{vv\_turnout\_gvm: Validated turnout General Election}}\label{vv_turnou
 {[}Validation results. All vote methods (polling, mail, early, unknown,
 etc..) are aggregated as a vote.{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1491,7 +1491,7 @@ turnout Primary Election
 
 {[}Validation results. Congressional primaries.{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1513,37 +1513,6 @@ No Voter File & 1,363\\
   Limitations: See \texttt{vv\_turnout\_gvm}
 \end{itemize}
 
-\hypertarget{turnout_self-self-reported-turnout-general-election}{%
-\subsubsection{\texorpdfstring{\texttt{turnout\_self}: Self-reported
-turnout General
-Election}{turnout\_self: Self-reported turnout General Election}}\label{turnout_self-self-reported-turnout-general-election}}
-
-``2020: Do you intend to vote in the 2020 general election on November
-3rd?''
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lr}
-\toprule
- & n\\
-\midrule
-Yes, definitely & 169,609\\
-Probably & 16,474\\
-I already voted (early or absentee) & 18,741\\
-Plan to vote early & 5,364\\
-No & 17,967\\
-Undecided & 11,642\\
-(Missing) & 291,958\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{itemize}
-\tightlist
-\item
-  Years: 2012, 2016, 2018, 2020
-\end{itemize}
-
 \newpage
 
 \hypertarget{partisan-identity}{%
@@ -1555,18 +1524,18 @@ point)}{pid3: Partisan identity (3 point)}}\label{pid3-partisan-identity-3-point
 
 ``Generally speaking, do you think of yourself as a \ldots?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-Democrat & 189,917\\
-Republican & 139,064\\
-Independent & 148,200\\
-Other & 21,163\\
-Not Sure & 24,457\\
-(Missing) & 8,954\\
+Democrat & 192,495\\
+Republican & 140,388\\
+Independent & 150,807\\
+Other & 21,477\\
+Not Sure & 26,350\\
+(Missing) & 238\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1589,7 +1558,7 @@ point)}{pid7: Partisan identity (7 point)}}\label{pid7-partisan-identity-7-point
 
 {[}Based on branching from Partisan Identity question{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1624,7 +1593,7 @@ leaners)}{pid3\_leaner: Partisan identity (including leaners)}}\label{pid3_leane
 {[}Codes self-identified Independents in pid3 who expressed leaning
 towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1653,7 +1622,7 @@ point)}{ideo5: Ideology (5 point)}}\label{ideo5-ideology-5-point}}
 
 ``In general, how would you describe your own political viewpoint?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1686,7 +1655,7 @@ Income}{faminc: Family Income}}\label{faminc-family-income}}
 ``Thinking back over the last year, what was your family's annual
 income? {[}Brackets coarsened{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1733,7 +1702,7 @@ Status}{employ: Employment Status}}\label{employ-employment-status}}
 ``Which of the following best describes your current employment
 status?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1767,7 +1736,7 @@ Uninsured}{no\_healthins: Uninsured}}\label{no_healthins-uninsured}}
 {[}Based on health insurance question; respondent has none of the
 insurance options given{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1803,7 +1772,7 @@ membership}{union: Union membership}}\label{union-union-membership}}
 
 ``Are you a member of a union?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1837,7 +1806,7 @@ household}{union\_hh: Union membership in household}}\label{union_hh-union-membe
 
 ``Other than yourself, is any member of your household a union member?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1872,7 +1841,7 @@ economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospecti
 
 ``OVER THE PAST YEAR the nation's economy has \ldots?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1913,7 +1882,7 @@ affairs most of the time, whether there's an election going on or not.
 Others aren't that interested. Would you say you follow what's going on
 in government and public affairs ..''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1949,7 +1918,7 @@ approval}{approval\_pres: President approval}}\label{approval_pres-president-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent President{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -1986,7 +1955,7 @@ approval}{approval\_rep: House Representative approval}}\label{approval_rep-hous
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Representative's Name{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2026,7 +1995,7 @@ approval}{approval\_sen1: Senator 1 approval}}\label{approval_sen1-senator-1-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Senator 1's Name{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2066,7 +2035,7 @@ approval}{approval\_sen2: Senator 2 approval}}\label{approval_sen2-senator-2-app
 ``Do you approve of the way each is doing their job\ldots{} {[}Pipe
 Incumbent Senator 2's Name{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2097,7 +2066,7 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 ``Do you approve of the way each is doing their job\ldots{} Governor of
 {[}Pipe State{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2163,7 +2132,7 @@ party}{intent\_pres\_party: President preference party}}\label{intent_pres_party
 
 {[}Party of presidential candidate chosen in intent\_pres{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2192,7 +2161,7 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 
 {[}Party of presidential candidate chosen in last election{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2229,7 +2198,7 @@ voting)}{intent\_pres\_08: 2008 President preference (before voting)}}\label{int
 ``For which candidate for President of the United States would you
 vote?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2265,7 +2234,7 @@ voting)}{intent\_pres\_12: 2012 President preference (before voting)}}\label{int
 
 ``In the race for President of the United States, who do you prefer?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2297,7 +2266,7 @@ voting)}{intent\_pres\_16: 2016 President preference (before voting)}}\label{int
 
 ``Which candidate did you prefer for President of the United States?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2331,7 +2300,7 @@ voting)}{intent\_pres\_20: 2020 President preference (before voting)}}\label{int
 
 ``Which candidate for President of the United States do you prefer?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2364,7 +2333,7 @@ voting)}{voted\_pres\_08: 2008 President vote choice (after voting)}}\label{vote
 ``2008: For which candidate for President of the United States did you
 vote? {[}see guide for wording in all years{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2401,7 +2370,7 @@ voting)}{voted\_pres\_12: 2012 President vote choice (after voting)}}\label{vote
 In 2012, who did you vote for in the election for President? {[}see
 guide for wording in all years{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2438,7 +2407,7 @@ voting)}{voted\_pres\_16: 2016 President vote choice (after voting)}}\label{vote
 reported voting{]} 2016: For whom did you vote for President of the
 United States? {[}Post-election{]}''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2471,7 +2440,7 @@ voting)}{voted\_pres\_20: 2020 President vote choice (after voting)}}\label{vote
 {[}If reported voting{]} 2020: For whom did you vote for President of
 the United States? {[}Post-election{]}
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
@@ -2509,15 +2478,15 @@ voting)}{intent\_rep: House preference (before voting)}}\label{intent_rep-house-
 ``In the general election for U.S. House of Representatives in your
 area, who do you prefer?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 147,842\\
-{[Republican / Candidate 2]} & 131,759\\
-{[Other / Candidate 3]} & 4,449\\
+{}{[Democrat / Candidate 1]} & 147,842\\
+{}{[Republican / Candidate 2]} & 131,759\\
+{}{[Other / Candidate 3]} & 4,449\\
 \$HouseCand4Name (\$HouseCand4Party) & 45\\
 Other & 2,664\\
 \$HouseCand5Name (\$HouseCand5Party) & 24\\
@@ -2566,15 +2535,15 @@ voting)}{intent\_sen: Senate preference (before voting)}}\label{intent_sen-senat
 
 ``In the race for U.S. Senator in your state, who do you prefer?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 108,125\\
-{[Republican / Candidate 2]} & 91,859\\
-{[Other / Candidate 3]} & 4,477\\
+{}{[Democrat / Candidate 1]} & 108,125\\
+{}{[Republican / Candidate 2]} & 91,859\\
+{}{[Other / Candidate 3]} & 4,477\\
 \$SenCand4Name (\$SenCand4Party) & 19\\
 Other & 1,957\\
 I'm Not Sure & 41,842\\
@@ -2606,15 +2575,15 @@ voting)}{intent\_gov: Governor preference (before voting)}}\label{intent_gov-gov
 
 ``In the race for Governor in your state, who do you prefer?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 77,361\\
-{[Republican / Candidate 2]} & 68,934\\
-{[Other / Candidate 3]} & 4,055\\
+{}{[Democrat / Candidate 1]} & 77,361\\
+{}{[Republican / Candidate 2]} & 68,934\\
+{}{[Other / Candidate 3]} & 4,055\\
 Other & 1,530\\
 I'm Not Sure & 25,158\\
 No One & 8,350\\
@@ -2643,15 +2612,15 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
 
 ``For whom did you vote for U.S. House?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 141,884\\
-{[Republican / Candidate 2]} & 128,604\\
-{[Other / Candidate 3]} & 2,819\\
+{}{[Democrat / Candidate 1]} & 141,884\\
+{}{[Republican / Candidate 2]} & 128,604\\
+{}{[Other / Candidate 3]} & 2,819\\
 \$HouseCand4Name (\$HouseCand4Party) & 34\\
 \$HouseCand7Name (\$HouseCand7Party) & 34\\
 Other & 3,700\\
@@ -2690,15 +2659,15 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
 
 ``For whom did you vote for U.S. Senator?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 99,696\\
-{[Republican / Candidate 2]} & 87,236\\
-{[Other / Candidate 3]} & 2,963\\
+{}{[Democrat / Candidate 1]} & 99,696\\
+{}{[Republican / Candidate 2]} & 87,236\\
+{}{[Other / Candidate 3]} & 2,963\\
 Other & 2,317\\
 Not Sure & 2,280\\
 \$SenCand4Name (\$SenCand4Party) & 11\\
@@ -2727,15 +2696,15 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 
 ``For whom did you vote for Governor?''
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{lr}
 \toprule
  & n\\
 \midrule
-{[Democrat / Candidate 1]} & 66,410\\
-{[Republican / Candidate 2]} & 61,950\\
-{[Other / Candidate 3]} & 2,613\\
+{}{[Democrat / Candidate 1]} & 66,410\\
+{}{[Republican / Candidate 2]} & 61,950\\
+{}{[Other / Candidate 3]} & 2,613\\
 I Did Not Vote in this Race & 39\\
 I Did Not Vote & 17\\
 Other & 1,861\\
@@ -2950,6 +2919,21 @@ Dataverse assigns version numbers by incrementing a full number if any
 of the datasets change, and an incrementing decimal when the description
 changes.
 
+\hypertarget{version-7.0}{%
+\subsubsection{Version 7.0}\label{version-7.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Enter 2020 voter file match
+\item
+  Corrects error in 2010 3 point Party ID which had used the
+  post-election wave rather than the pre-election wave used in the other
+  years (Thanks to Gerald Wright).
+\item
+  Adds variables for: \textbf{self reported turnout}
+\end{itemize}
+
 \hypertarget{version-6.0}{%
 \subsubsection{Version 6.0}\label{version-6.0}}
 
@@ -2962,7 +2946,7 @@ changes.
   Distinguished between third party Presidential vote (thanks to Valerie
   Bradley)
 \item
-  Added further explanation to usage of weighs where post-election
+  Added further explanation to usage of weights where post-election
   weights are not available (thanks to Alexander Agadjanian)
 \item
   Added usage example of the R \texttt{dataverse} package

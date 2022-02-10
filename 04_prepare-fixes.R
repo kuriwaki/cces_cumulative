@@ -12,7 +12,7 @@ load("data/output/01_responses/common_all.RData")
 
 # Retrieve 2010 PID  -------
 pid3_cc10 <- cc10 %>%
-  mutate(pid3 = CC421a) %>%
+  mutate(pid3 = V212a) %>%
   mutate(
     pid3_char = as.character(as_factor(pid3)),
     pid3_num = as.numeric(pid3)

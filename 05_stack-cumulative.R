@@ -68,6 +68,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         family_income_old = V246,
         marstat = V214,
         starttime = V300,
+        intent_trn = CC326,
+        voted_trn = CC401,
         intent_rep = CC339,
         intent_sen  = CC335,
         intent_gov  = CC336,
@@ -100,6 +102,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         family_income_old = income,
         zipcode = inputzip,
         county_fips = profile_fips,
+        intent_trn = vote2006,
+        voted_trn = v4004,
         intent_rep = profile_housevote_coded,
         intent_sen  = profile_senvote_coded,
         intent_gov  = profile_govvote_coded,
@@ -158,6 +162,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       voted_rep = CC412,
       voted_sen = CC410b,
       voted_gov = CC411,
+      voted_trn = CC401,
       intent_sen = CC355b,
       intent_senx = CC355,
       intent_gov = CC356b,
@@ -235,6 +240,8 @@ std_name <- function(tbl, is_panel = FALSE) {
       intent_govx = CC356x,
       intent_rep = CC360,
       intent_repx = CC360x,
+      intent_trn = CC354,
+      voted_trn = CC401,
       vv_turnout_gvm = e2014gvm,
       vv_turnout_pvm = e2014pvm,
       vv_regstatus = voterstatus,
@@ -1140,13 +1147,21 @@ citizen <- find_stack(ccs, immstat) %>%
 
 
 # self reported vote ----
-turnout_self <- find_stack(ccs, intent_trn, type = "factor") %>% 
-  mutate(turnout_self = recode(intent_trn, 
+intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
+  mutate(turnout_self_pre = recode(intent_trn, 
                                `Yes, Definitely` = "Yes, definitely",
                                `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
                                `I Plan to Vote Before November 3rd` = "Plan to vote early",
                                `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
   select(-intent_trn)
+
+voted_trn <- find_stack(ccs, voted_trn, type = "factor") # %>% 
+  # mutate(turnout_self_post = recode(voted_trn, 
+  #                              `Yes, Definitely` = "Yes, definitely",
+  #                              `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
+  #                              `I Plan to Vote Before November 3rd` = "Plan to vote early",
+  #                              `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
+  # select(-voted_trn)
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -1253,7 +1268,7 @@ ccc <- geo %>%
   left_join(v_pres16) %>%
   left_join(v_pres20) %>%
   left_join(pres_party) %>%
-  left_join(turnout_self) %>%
+  # left_join(turnout_self) %>%
   left_join(vv_regstatus) %>%
   left_join(vv_party_gen) %>%
   left_join(vv_party_prm) %>%
