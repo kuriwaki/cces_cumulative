@@ -184,7 +184,7 @@ R is free software and, if necessary, the `haven`  and `readr` package can be us
 ```{r, eval = FALSE, echo = TRUE}
 library(dataverse)
 cc <- get_dataframe_by_name(
-  filename = "cumulative_2006-2019.dta",
+  filename = "cumulative_2006-2020.dta",
   dataset = "10.7910/DVN/II2DB6",
   original = TRUE,
   .f = haven::read_dta,
