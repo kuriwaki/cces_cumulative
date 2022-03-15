@@ -708,28 +708,28 @@ print_tab(vv_turnout_pvm)
 * Years: `r in_years(vv_turnout_pvm)`
 * Limitations: See `vv_turnout_gvm`
 
-### `r nam(turnout_self_pre)`
+### `r nam(intent_turnout_self)`
 
-`r descrip(turnout_self_pre)`
-
-
-```{r, results = "asis"}
-print_tab(turnout_self_pre)
-```
-
-* Years: `r in_years(turnout_self_pre)`
-
-
-### `r nam(turnout_self_post)`
-
-`r descrip(turnout_self_post)`
+`r descrip(intent_turnout_self)`
 
 
 ```{r, results = "asis"}
-print_tab(turnout_self_post)
+print_tab(intent_turnout_self)
 ```
 
-* Years: `r in_years(turnout_self_post)`
+* Years: `r in_years(intent_turnout_self)`
+
+
+### `r nam(voted_turnout_self)`
+
+`r descrip(voted_turnout_self)`
+
+
+```{r, results = "asis"}
+print_tab(voted_turnout_self)
+```
+
+* Years: `r in_years(voted_turnout_self)`
 
 
 \newpage

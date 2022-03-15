@@ -1146,32 +1146,33 @@ citizen <- find_stack(ccs, immstat) %>%
   select(-immstat)
 
 
-# self reported vote ----
+# self reported turnout ----
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
-  mutate(turnout_self_pre = recode(intent_trn, 
-                               `Yes, Definitely` = "Yes, definitely",
-                               `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
-                               `I Plan to Vote Before November 3rd` = "Plan to vote early",
-                               `I Plan to Vote Before November 4th` = "Plan to vote early",
-                               `I Plan to Vote Before November 6th` = "Plan to vote early"))
+  mutate(intent_turnout_self = recode(intent_trn, 
+                                      `Yes, Definitely` = "Yes, definitely",
+                                      `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
+                                      `I Plan to Vote Before November 3rd` = "Plan to vote early",
+                                      `I Plan to Vote Before November 4th` = "Plan to vote early",
+                                      `I Plan to Vote Before November 6th` = "Plan to vote early"))
 
 voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
-  mutate(turnout_self_post = case_when(
-    str_detect(voted_trn, regex("I Definitely Voted", ignore_case = TRUE)) ~ "Yes, Definitely",
+  mutate(voted_turnout_self = case_when(
+    str_detect(voted_trn, regex("I Definitely Voted", ignore_case = TRUE)) ~ "Yes",
     str_detect(voted_trn, regex("I Did Not Vote", ignore_case = TRUE)) ~ "No",
     str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
     str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
     TRUE ~ NA_character_)
-  )
+  ) %>% 
+  mutate(voted_turnout_self = fct_relevel(voted_turnout_self, "Yes", "No"))
 
 # checks before deleting
-count(intent_trn, intent_trn, turnout_self_pre)
-count(voted_trn, turnout_self_post, voted_trn)
+count(intent_trn, intent_turnout_self, intent_trn)
+count(voted_trn, voted_turnout_self, voted_turnout_self)
 voted_trn$voted_trn <- NULL
 intent_trn$intent_trn <- NULL
 
 
-# validated vote -----
+# validated vote turnout -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
 vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
 vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
