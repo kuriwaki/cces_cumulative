@@ -6,14 +6,14 @@ output:
     keep_tex: TRUE
 title: "Guide to the CCES Cumulative Common Content (2006 - 2020)"
 author: "Shiro Kuriwaki"
-thanks: "Department of Government, Harvard University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, and Boris Shor for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
 \renewcommand\UrlFont{\color{crimson}\ttfamily}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, comment = "")
+knitr::opts_chunk$set(echo = FALSE, comment = "", fig.pos = "H")
 ```
 
 ```{r, include = FALSE}
@@ -46,14 +46,15 @@ print_tab <- function(var, do_sort = FALSE, tbl = cc) {
   
   dframe <- as.data.frame(tal)
   
-  kable(dframe, 
-        format = "latex", 
-        align = c("l", "r"),
-        col.names = c("", "n"), 
-        format.args = list(big.mark = ','),
-        linesep = c(rep('', nrow(dframe))),
-        booktabs = TRUE) %>% 
-    kable_styling(full_width = FALSE) %>% 
+  kbl(dframe, 
+      format = "latex", 
+      align = c("l", "r"),
+      col.names = c("", "n"), 
+      format.args = list(big.mark = ','),
+      linesep = c(rep('', nrow(dframe))),
+      position = "!H",
+      booktabs = TRUE) %>% 
+    kable_styling(full_width = FALSE, latex_options = "HOLD_position") %>% 
     str_replace_all("\\[(?=(D|R|O))", "{[") %>% 
     str_replace_all("(?<=[1-4])\\]", "]}") %>% 
     cat()
@@ -112,7 +113,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2021, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V6. 
+> Kuriwaki, Shiro, 2022, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V7. 
 
 \bigskip
 
@@ -121,7 +122,7 @@ This dataset combines `r english::english(2020 - 2006 + 1)` years (2006 -- 2020)
 \bigskip
 
 Each year's CCES asks hundreds of questions, many of which change from year to year. This cumulative file only includes _a subset_ of those questions that are standard and important. It standardizes (harmonizes) its values across years and creates a few new variables too.  Users can still merge in their year-specific questions of interest easily into this cumulative file and take advantage of its standardized variables. 
- 
+
 \bigskip
 
 I constructed this dataset from each year's full CCES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
@@ -316,8 +317,8 @@ The sections below provide summary statistics and more information on each varia
 * The "Years" bullet lists the years of the CCES in which data on the variable is available at all. If a year is not listed, either the question was not asked in the year or was not incorporated in the creation of this dataset. 
 * Finally, the "Limitations" bullet notes some of the caveats required when interpreting this variable. As this dataset is a combination of different surveys, some year-specific details on implementation are inevitably lost. For example, for all 2016 responses "Not Asked" and "Skipped" are both coded as a `NA` (missing) to stay consistent with past years that did not make that finer distinction.
 
- 
- 
+
+
 ## Administration
 
 
@@ -346,8 +347,8 @@ cc %>%
         format.args = list(big.mark = ','),
         linesep = c(rep('', n_distinct(cc$year))),
         booktabs = TRUE) %>% 
-    kable_styling(full_width = FALSE) %>% 
-    cat()
+  kable_styling(full_width = FALSE) %>% 
+  cat()
 ```
 * Years: `r in_years(starttime)`
 
@@ -401,7 +402,7 @@ rsc %>%
   mutate(size  = formatC(size, format = "d", big.mark = ",")) %>% 
   kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
         linesep = rep('', nrow(rsc)))
-  
+
 ```
 \end{center}
 
@@ -421,7 +422,7 @@ print_numeric(weight_post)
 
 ```{r, eval = FALSE, echo = FALSE}
 cc %>% 
- mutate(weight_combined = coalesce(weight_post, weight))
+  mutate(weight_combined = coalesce(weight_post, weight))
 ```
 
 ### `r nam(rvweight)`
