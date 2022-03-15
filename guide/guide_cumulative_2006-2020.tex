@@ -158,7 +158,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{Guide last updated: 2022-02-10}
+\date{Guide last updated: 2022-03-15}
 
 \begin{document}
 
@@ -290,7 +290,7 @@ without downloading the file to one's computer. The recent version of
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
-  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2019.dta"}\NormalTok{,}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2020.dta"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
@@ -1511,6 +1511,63 @@ No Voter File & 1,363\\
   Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020
 \item
   Limitations: See \texttt{vv\_turnout\_gvm}
+\end{itemize}
+
+\hypertarget{turnout_self_pre-self-reported-turnout-pre-election-wave}{%
+\subsubsection{\texorpdfstring{\texttt{turnout\_self\_pre}:
+Self-reported turnout (pre-election
+wave)}{turnout\_self\_pre: Self-reported turnout (pre-election wave)}}\label{turnout_self_pre-self-reported-turnout-pre-election-wave}}
+
+``2020: Do you intend to vote in the 2020 general election on November
+3rd?''
+
+\begin{table}
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+Yes, definitely & 206,578\\
+Probably & 22,893\\
+I already voted (early or absentee) & 20,699\\
+Plan to vote early & 6,541\\
+No & 23,162\\
+Undecided & 16,122\\
+(Missing) & 235,760\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2012, 2014, 2016, 2018, 2020
+\end{itemize}
+
+\hypertarget{turnout_self_post-self-reported-turnout-post-election-wave}{%
+\subsubsection{\texorpdfstring{\texttt{turnout\_self\_post}:
+Self-reported turnout (post-election
+wave)}{turnout\_self\_post: Self-reported turnout (post-election wave)}}\label{turnout_self_post-self-reported-turnout-post-election-wave}}
+
+``2020: Which of the following statements best describes you?''
+
+\begin{table}
+\centering
+\begin{tabular}{lr}
+\toprule
+ & n\\
+\midrule
+No & 24,270\\
+Yes, Definitely & 207,841\\
+NA & 299,644\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2012, 2014, 2016, 2018, 2020
 \end{itemize}
 
 \newpage

@@ -1152,16 +1152,24 @@ intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>%
                                `Yes, Definitely` = "Yes, definitely",
                                `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
                                `I Plan to Vote Before November 3rd` = "Plan to vote early",
-                               `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
-  select(-intent_trn)
+                               `I Plan to Vote Before November 4th` = "Plan to vote early",
+                               `I Plan to Vote Before November 6th` = "Plan to vote early"))
 
-voted_trn <- find_stack(ccs, voted_trn, type = "factor") # %>% 
-  # mutate(turnout_self_post = recode(voted_trn, 
-  #                              `Yes, Definitely` = "Yes, definitely",
-  #                              `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
-  #                              `I Plan to Vote Before November 3rd` = "Plan to vote early",
-  #                              `I Plan to Vote Before November 6th` = "Plan to vote early")) %>% 
-  # select(-voted_trn)
+voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
+  mutate(turnout_self_post = case_when(
+    str_detect(voted_trn, regex("I Definitely Voted", ignore_case = TRUE)) ~ "Yes, Definitely",
+    str_detect(voted_trn, regex("I Did Not Vote", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
+    TRUE ~ NA_character_)
+  )
+
+# checks before deleting
+count(intent_trn, intent_trn, turnout_self_pre)
+count(voted_trn, turnout_self_post, voted_trn)
+voted_trn$voted_trn <- NULL
+intent_trn$intent_trn <- NULL
+
 
 # validated vote -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -1268,7 +1276,8 @@ ccc <- geo %>%
   left_join(v_pres16) %>%
   left_join(v_pres20) %>%
   left_join(pres_party) %>%
-  # left_join(turnout_self) %>%
+  left_join(intent_trn) %>%
+  left_join(voted_trn) %>%
   left_join(vv_regstatus) %>%
   left_join(vv_party_gen) %>%
   left_join(vv_party_prm) %>%

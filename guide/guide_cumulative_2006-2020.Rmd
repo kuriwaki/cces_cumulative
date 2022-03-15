@@ -678,6 +678,10 @@ print_tab(vv_party_prm)
 * Years: `r in_years(vv_party_prm)`
 * Limitations: Not available for some even years
 
+
+\newpage
+
+
 ## Turnout 
 
 ### `r nam(vv_turnout_gvm)`
@@ -703,6 +707,30 @@ print_tab(vv_turnout_pvm)
 
 * Years: `r in_years(vv_turnout_pvm)`
 * Limitations: See `vv_turnout_gvm`
+
+### `r nam(turnout_self_pre)`
+
+`r descrip(turnout_self_pre)`
+
+
+```{r, results = "asis"}
+print_tab(turnout_self_pre)
+```
+
+* Years: `r in_years(turnout_self_pre)`
+
+
+### `r nam(turnout_self_post)`
+
+`r descrip(turnout_self_post)`
+
+
+```{r, results = "asis"}
+print_tab(turnout_self_post)
+```
+
+* Years: `r in_years(turnout_self_post)`
+
 
 \newpage
 
