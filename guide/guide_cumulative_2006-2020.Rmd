@@ -4,7 +4,7 @@ output:
     latex_engine: xelatex
     template: guide_helvet.sty
     keep_tex: TRUE
-title: "Guide to the CCES Cumulative Common Content (2006 - 2020)"
+title: "Guide to the CCES Cumulative Common Content (2006 - 2021)"
 author: "Shiro Kuriwaki"
 thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
@@ -85,6 +85,7 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
   if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
+  if (identical(yrs_vec, 2006:2021)) return("All of 2006-2021")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
@@ -117,21 +118,21 @@ nam <- function(var, tbl = meta) {
 
 \bigskip
 
-This dataset combines `r english::english(2020 - 2006 + 1)` years (2006 -- 2020) of the Cooperative Congressional Election Study (CCES). The CCES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+This dataset combines `r english::english(2021 - 2006 + 1)` years (2006 -- 2021) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
-Each year's CCES asks hundreds of questions, many of which change from year to year. This cumulative file only includes _a subset_ of those questions that are standard and important. It standardizes (harmonizes) its values across years and creates a few new variables too.  Users can still merge in their year-specific questions of interest easily into this cumulative file and take advantage of its standardized variables. 
+Each year's CCES/CES asks hundreds of questions, many of which change from year to year. This cumulative file only includes _a subset_ of those questions that are standard and important. It standardizes (harmonizes) its values across years and creates a few new variables too.  Users can still merge in their year-specific questions of interest easily into this cumulative file and take advantage of its standardized variables. 
 
 \bigskip
 
-I constructed this dataset from each year's full CCES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
+I constructed this dataset from each year's full CCES/CES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
 
 \bigskip
 
-Please note that this cumulative dataset makes some modifications to the original CCES datasets to maintain comparability across years. These modifications are only made when differences are deemed sufficiently minor. Still, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
+Please note that this cumulative dataset makes some modifications to the original CCES/CES datasets to maintain comparability across years. These modifications are only made when differences are deemed sufficiently minor. Still, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
-\vspace{1cm}
+\bigskip
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
@@ -139,9 +140,9 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
+\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -176,7 +177,7 @@ library(haven)
 cc <- read_dta("cumulative_2006-2020.dta")
 ```
 
-R is free software and, if necessary, the `haven`  and `readr` package can be used to export the CCES datasets in other formats such as plain-text csv or SPSS sav files. Plain-text formats are somewhat less convenient because they do not preserve value labels.
+R is free software and, if necessary, the `haven`  and `readr` package can be used to export the CCES/CES datasets in other formats such as plain-text csv or SPSS sav files. Plain-text formats are somewhat less convenient because they do not preserve value labels.
 
 ## Data Download
 
@@ -269,11 +270,11 @@ Beyond stacking together each year's common content, the cumulative dataset prov
 
 ## Unified Variable Names
 
-Most variables in this dataset come straight from each year's CCES. However, it renames and standardizes variable names, making them accessible in one place.  Please see the rest of this guide or the Crunch dataset for a full list and description of variables. 
+Most variables in this dataset come straight from each year's CCES/CES. However, it renames and standardizes variable names, making them accessible in one place.  Please see the rest of this guide or the Crunch dataset for a full list and description of variables. 
 
 
 ## Chosen Candidate Names and Identifiers
-One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES datasets, typically the response values for a vote choice question is a generic label, e.g., `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
+One addition to this cumulative dataset are variables of candidate names and identifiers that a respondent chose. In the individual year's CCES/CES datasets, typically the response values for a vote choice question is a generic label, e.g., `Candidate1` and `Candidate2`. Then, separate variables of names and parties correspond to each `Candidate1` and `Candidate2`. 
 
 Instead, the cumulative dataset shows both the generic label _and_ the chosen candidate's name and party, which will vary across individuals. 
 
@@ -286,7 +287,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
 
-1. Obtain Access: The Crunch interface currently does not allow users to sign up to a particular dataset on their own. For free view access to the dataset, please sign up via the sign-up link in the CCES [website](https://cces.gov.harvard.edu/explore). For questions and more access, please contact the CCES Team.
+1. Obtain Access: The Crunch interface currently does not allow users to sign up to a particular dataset on their own. For free view access to the dataset, please sign up via the sign-up link in the CES [website](https://cces.gov.harvard.edu/explore). For questions and more access, please contact the CES Team.
 
 \newpage
 
@@ -378,7 +379,6 @@ print_numeric(weight)
 * Years: `r in_years(weight)`
 * In even years, they are re-computed after vote validation has been computed and those re-computed weights are taken here when available. The weights applied to the sample (which is originally drawn from a matched sample) are constructed to __make each year's data representative of the national adult population__. See the methodology section of the [2016 Guide](https://dataverse.harvard.edu/api/access/datafile/3047286) and the [FAQ on the CCES website](https://cces.gov.harvard.edu/frequently-asked-questions) for details. 
 * Limitations: Only specific to each year. Built off of the entire pre-election wave sample, but not necessarily to adjust post-election wave respondents. See `weight_post` 
-* In Version 6, the 2020 weights are preliminary weights that were computed without the vote validation in hand. In Version 7, the same variable `weight` will be updated with YouGov's weight.
 
 
 ### `r nam(weight_cumulative)`

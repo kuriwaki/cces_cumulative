@@ -144,7 +144,7 @@
 % Parmaters
 
 \title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006
-- 2020)}}
+- 2021)}}
  
 
 \author{\href{https://orcid.org/0000-0002-5687-2647}{\XeTeXLinkBox{\raisebox{-0.1em}{\includegraphics[width=1em]{orcid.png}}}}~Shiro
@@ -180,16 +180,17 @@ Harvard Dataverse, V7.
 
 \bigskip
 
-This dataset combines 15 years (2006 -- 2020) of the Cooperative
-Congressional Election Study (CCES). The CCES is an online survey
-conducted around November of each year, asking a range of questions on
-political behavior and public opinion. Its principal investigators are
-Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+This dataset combines 16 years (2006 -- 2021) of the Cooperative
+Congressional Election Study (CCES), renamed the Cooperative
+Congressional Election Study (CES) from 2020. The CCES/CES is an online
+survey conducted around November of each year, asking a range of
+questions on political behavior and public opinion. Its principal
+investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
 \bigskip
 
-Each year's CCES asks hundreds of questions, many of which change from
-year to year. This cumulative file only includes \emph{a subset} of
+Each year's CCES/CES asks hundreds of questions, many of which change
+from year to year. This cumulative file only includes \emph{a subset} of
 those questions that are standard and important. It standardizes
 (harmonizes) its values across years and creates a few new variables
 too. Users can still merge in their year-specific questions of interest
@@ -198,7 +199,7 @@ variables.
 
 \bigskip
 
-I constructed this dataset from each year's full CCES, all of them
+I constructed this dataset from each year's full CCES/CES, all of them
 publicly available as separate datasets on
 \href{cces.gov.harvard.edu}{Dataverse}.The final product is a
 \texttt{tibble}-style data frame (built in R) that is also available as
@@ -209,12 +210,12 @@ The source code is open-source.
 \bigskip
 
 Please note that this cumulative dataset makes some modifications to the
-original CCES datasets to maintain comparability across years. These
+original CCES/CES datasets to maintain comparability across years. These
 modifications are only made when differences are deemed sufficiently
 minor. Still, for details on the survey methodology and a list of all
 questions, readers should consult the guides for each year.
 
-\vspace{1cm}
+\bigskip
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
@@ -222,9 +223,9 @@ questions, readers should consult the guides for each year.
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CCES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CCES homepage}. Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CCES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
+\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/GDF6Z0}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -274,9 +275,10 @@ it can also be used without tidyverse.
 \end{Shaded}
 
 R is free software and, if necessary, the \texttt{haven} and
-\texttt{readr} package can be used to export the CCES datasets in other
-formats such as plain-text csv or SPSS sav files. Plain-text formats are
-somewhat less convenient because they do not preserve value labels.
+\texttt{readr} package can be used to export the CCES/CES datasets in
+other formats such as plain-text csv or SPSS sav files. Plain-text
+formats are somewhat less convenient because they do not preserve value
+labels.
 
 \hypertarget{data-download}{%
 \subsection{Data Download}\label{data-download}}
@@ -449,7 +451,7 @@ dataset provides several additional features to facilitate analysis.
 \hypertarget{unified-variable-names}{%
 \subsection{Unified Variable Names}\label{unified-variable-names}}
 
-Most variables in this dataset come straight from each year's CCES.
+Most variables in this dataset come straight from each year's CCES/CES.
 However, it renames and standardizes variable names, making them
 accessible in one place. Please see the rest of this guide or the Crunch
 dataset for a full list and description of variables.
@@ -459,11 +461,11 @@ dataset for a full list and description of variables.
 Identifiers}\label{chosen-candidate-names-and-identifiers}}
 
 One addition to this cumulative dataset are variables of candidate names
-and identifiers that a respondent chose. In the individual year's CCES
-datasets, typically the response values for a vote choice question is a
-generic label, e.g., \texttt{Candidate1} and \texttt{Candidate2}. Then,
-separate variables of names and parties correspond to each
-\texttt{Candidate1} and \texttt{Candidate2}.
+and identifiers that a respondent chose. In the individual year's
+CCES/CES datasets, typically the response values for a vote choice
+question is a generic label, e.g., \texttt{Candidate1} and
+\texttt{Candidate2}. Then, separate variables of names and parties
+correspond to each \texttt{Candidate1} and \texttt{Candidate2}.
 
 Instead, the cumulative dataset shows both the generic label \emph{and}
 the chosen candidate's name and party, which will vary across
@@ -505,9 +507,9 @@ without any programming experience.
 \item
   Obtain Access: The Crunch interface currently does not allow users to
   sign up to a particular dataset on their own. For free view access to
-  the dataset, please sign up via the sign-up link in the CCES
+  the dataset, please sign up via the sign-up link in the CES
   \href{https://cces.gov.harvard.edu/explore}{website}. For questions
-  and more access, please contact the CCES Team.
+  and more access, please contact the CES Team.
 \end{enumerate}
 
 \newpage
@@ -712,10 +714,6 @@ Took Post-Election Survey & 352,443\\
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
   wave respondents. See \texttt{weight\_post}
-\item
-  In Version 6, the 2020 weights are preliminary weights that were
-  computed without the vote validation in hand. In Version 7, the same
-  variable \texttt{weight} will be updated with YouGov's weight.
 \end{itemize}
 
 \hypertarget{weight_cumulative-survey-weight-cumulative}{%
@@ -1550,8 +1548,8 @@ Undecided & 16,122\\
   Some response categories are still not standardized. For example,
   ``Plan to vote early'' was not an option only in 2016. Additionally,
   the question is available in years 2010 and earlier but not included
-  in this version of the cumulative dataset because those years relies
-  on a 2006--2012 cumulative release.
+  in this version of the cumulative dataset because those years rely on
+  a 2006--2012 cumulative release.
 \end{itemize}
 
 \hypertarget{voted_turnout_self-self-reported-turnout-post-election-wave}{%
