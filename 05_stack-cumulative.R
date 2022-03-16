@@ -50,9 +50,12 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
       ) %>% 
-      mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
-             voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
-             voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
+      mutate(
+        voted_trn = coalesce(as_factor(turnout_10), as_factor(turnout_08), as_factor(turnout_06)),
+        voted_trn = replace(voted_trn, !year %in% c(2006, 2008, 2010), NA),
+        tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
+        voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
+        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
   }
   
   # 2008 -------
@@ -1148,18 +1151,24 @@ citizen <- find_stack(ccs, immstat) %>%
 
 # self reported turnout ----
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
-  mutate(intent_turnout_self = recode(intent_trn, 
-                                      `Yes, Definitely` = "Yes, definitely",
-                                      `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
-                                      `I Plan to Vote Before November 3rd` = "Plan to vote early",
-                                      `I Plan to Vote Before November 4th` = "Plan to vote early",
-                                      `I Plan to Vote Before November 6th` = "Plan to vote early"))
+  mutate(intent_turnout_self = recode(
+    intent_trn, 
+    `Yes, Definitely` = "Yes, definitely",
+    `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
+    `I Plan to Vote Before November 3rd` = "Plan to vote early",
+    `I Plan to Vote Before November 4th` = "Plan to vote early",
+    `I Plan to Vote Before November 6th` = "Plan to vote early"))
 
 voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
   mutate(voted_turnout_self = case_when(
-    str_detect(voted_trn, regex("I Definitely Voted", ignore_case = TRUE)) ~ "Yes",
-    str_detect(voted_trn, regex("I Did Not Vote", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("Definitely Voted", ignore_case = TRUE)) ~ "Yes",
+    str_detect(voted_trn, regex("yes", ignore_case = TRUE)) ~ "Yes",
+    str_detect(voted_trn, regex("no", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("not sure", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("Did Not Vote", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("didn't Vote", ignore_case = TRUE)) ~ "No",
     str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But couldn't", ignore_case = TRUE)) ~ "No",
     str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
     TRUE ~ NA_character_)
   ) %>% 
@@ -1167,7 +1176,7 @@ voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>%
 
 # checks before deleting
 count(intent_trn, intent_turnout_self, intent_trn)
-count(voted_trn, voted_turnout_self, voted_turnout_self)
+count(voted_trn, voted_turnout_self, voted_trn)
 voted_trn$voted_trn <- NULL
 intent_trn$intent_trn <- NULL
 

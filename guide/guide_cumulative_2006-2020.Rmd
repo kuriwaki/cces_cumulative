@@ -719,6 +719,7 @@ print_tab(intent_turnout_self)
 ```
 
 * Years: `r in_years(intent_turnout_self)`
+* Limitations: Collapses and simplifies response categories to standardize across years. See individual year's datasets for details. Some response categories are still not standardized. For example, "Plan to vote early" was not an option only in 2016. Additionally, the question is available in years 2010 and earlier but not included in this version of the cumulative dataset because those years rely on a 2006--2012 cumulative release.
 
 
 ### `r nam(voted_turnout_self)`
@@ -731,7 +732,7 @@ print_tab(voted_turnout_self)
 ```
 
 * Years: `r in_years(voted_turnout_self)`
-
+* Limitations: Collapses reasons for not voting into a single "No". Actual responses distinguish between "Did not vote" and "Tried to vote but could not" in some years, for example. To standardize across years, the cumulative dataset lumps these levels and others together. See the individual year's datasets for details. The cumulative dataset also does not include responses for odd years even though in some odd years this question is asked.
 
 \newpage
 
