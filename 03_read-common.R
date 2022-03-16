@@ -88,7 +88,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   
   # guess variable based on year
   statevar <- case_when(
-    guessed_yr %in% c(2007, 2012:2020) ~ "inputstate",
+    guessed_yr %in% c(2007, 2012:2021) ~ "inputstate",
     guessed_yr %in% c(2008, 2010:2011) ~ "V206",
     guessed_yr %in% 2009 ~ "v259",
     guessed_yr %in% 2006 ~ "v1002"
@@ -162,6 +162,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
   
   if (guess_year) {
     distvar <- case_when(
+      guessed_yr %in% c(2021, 2022) ~ "cdid117",
       guessed_yr %in% c(2019, 2020) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
@@ -325,6 +326,7 @@ cc18_cnew <- anti_join(cc18_comp, select(cc18, year, case_id))
 
 cc19 <- std_dv("data/source/cces/2019_cc.dta")
 cc20 <- std_dv("data/source/cces/2020_cc.dta")
+cc21 <- std_dv("data/source/cces/2021_cc.dta")
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
@@ -379,7 +381,7 @@ save(
   cc10, cc11, cc12, cc13, 
   cc14, cc15, cc16, cc17, 
   cc18, cc18_cnew, cc19, 
-  cc20,
+  cc20, cc21,
   panel12, 
   mit06_add,
   hu08,  hu09, 

@@ -378,7 +378,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   }
   
   if (identical(cces_year, 2019L)) {
-    tbl <- cc19 %>%
+    tbl <- tbl %>%
       rename(
         weight = commonweight,
         approval_pres = CC19_308a,
@@ -393,7 +393,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2020 ----
+  # 2020, 2021 ----
   if (identical(cces_year, 2020L)) {
     
     tbl <- tbl %>%
@@ -441,8 +441,28 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # more standardization for post 2012
-  if (cces_year[1] %in% c(2012:2020) | cces_year[1] == "2012_panel") {
+  if (identical(cces_year, 2021L)) {
+    tbl <- tbl %>%
+      # called "Two or more races" in 2020-2021
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) %>%
+      rename(
+        weight = commonweight,
+        approval_pres = CC21_315a,
+        approval_rep = CC21_315f,
+        approval_sen1 = CC21_315g,
+        approval_sen2 = CC21_315h,
+        approval_gov = CC21_315d,
+        economy_retro = CC21_301,
+        faminc = faminc_new,
+        voted_pres_16 = presvote16post,
+        voted_pres_20 = presvote20post
+      ) %>%
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
+  # more standardization for post 2012 ------
+  if (cces_year[1] %in% c(2012:2021) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -803,11 +823,12 @@ clps_pres16 <- function(vec) {
 
 clps_pres20 <- function(vec) {
   fct_collapse(vec, 
-               `Joe Biden` = c("Joe Biden (Democrat)"),
+               `Joe Biden` = c("Joe Biden", "Joe Biden (Democrat)"),
                `Donald Trump` = c("Donald Trump", "Donald Trump (Republican)", "Donald J. Trump (Republican)"),
-               `Other / Someone Else` = c("Other", "Someone Else"),
+               `Other / Someone Else` = c("Other", "Someone Else", "Jo Jorgensen", "Howie Hawkins"),
                `Did Not Vote` = c("I Didn't Vote in this Election",
-                                  "I Did Not Vote"),
+                                  "I Did Not Vote",
+                                  "Did not vote for President"),
                `Not Sure / Don't Recall` = c("I'm Not Sure")
   ) %>% 
     fct_relevel("Joe Biden", "Donald Trump") %>% 
@@ -858,8 +879,10 @@ ccs <- list(
                                vvweight = NA,
                                vvweight_post = NA)),
   "2019" = std_name(cc19),
-  "2020" = std_name(cc20)
+  "2020" = std_name(cc20),
+  "2021" = std_name(cc21)
 )
+
 
 
 
