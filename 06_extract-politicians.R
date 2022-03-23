@@ -205,8 +205,8 @@ std_ptylabel <- function(vec) {
 
 # Data ------
 load("data/output/01_responses/common_all.RData")
-inc_H <- readRDS("data/output/03_contextual/voteview_H_key.Rds")
-inc_S <- readRDS("data/output/03_contextual/voteview_S_key.Rds") %>% 
+inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv")
+inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv") %>% 
   mutate(dist = NA)
 statecode <- read_csv("data/source/statecode.csv")
 
@@ -354,6 +354,3 @@ save(rc_key, sc_key, gc_key,
 
 
 cat("Finished matching candidate info to identifiers\n")
-# rc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, dist, cand,name, party)
-# sc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, cand,name, party)
-# gc_key %>% filter(year == 2016, case_id == 301328578) %>% select(dataset, case_id, st, cand,name, party)

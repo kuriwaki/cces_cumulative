@@ -1,3 +1,43 @@
+# data
+####################
+data/source/*
+data/source/anes/*
+data/source/cces/*
+data/source/census_demog
+data/source/cq/*
+data/source/dime/*
+data/source/fec/*
+data/output/*
+!data/output/meta/
+data/output/03_contextual/old
+data/output/03_contextual/diff-zip
+!data/output/03_contextual/
+data/release/*
+pettigrew_code/*
+figures/*
+history/*
+past_guides/*
+documents_CQ/*
+tests_old-code/*
+crunch_admin/*
+data/temp_*
+
+
+# Other links
+####################
+.Rproj.user
+.RData
+.dropbox
+.Rhistory
+.Rapp.history
+*.Rproj
+Icon?
+.httr-oauth
+.here
+*.gif
+guide/*cache/
+
+
 # Compiled source #
 ###################
 *.com
@@ -53,39 +93,3 @@
 ehthumbs.db
 Thumbs.db
 
-
-# data
-####################
-data/source/*
-data/source/anes/*
-data/source/cces/*
-data/source/census_demog
-data/source/cq/*
-data/source/dime/*
-data/source/fec/*
-data/output/*
-!data/output/meta/
-data/release/*
-pettigrew_code/*
-figures/*
-history/*
-past_guides/*
-documents_CQ/*
-tests_old-code/*
-crunch_admin/*
-data/temp_*
-
-
-# Other links
-####################
-.Rproj.user
-.RData
-.dropbox
-.Rhistory
-.Rapp.history
-*.Rproj
-Icon?
-.httr-oauth
-.here
-*.gif
-guide/*cache/

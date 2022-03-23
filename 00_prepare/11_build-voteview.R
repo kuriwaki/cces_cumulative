@@ -52,11 +52,12 @@ vvS_min <- vvS %>%
   select(congress, chamber, icpsr, st, namelast) %>% 
   mutate(dist = NA)
 
-vv_crunch <- vv %>% 
-  select(congress:dim2)
+
 
 ## save ---
-write_rds(vv, "data/output/03_contextual/voteview_mcs.Rds")
-write_csv(vv_crunch, "data/output/03_contextual/voteview_mcs.csv", na = "")
-write_rds(vvH_min, "data/output/03_contextual/voteview_H_key.Rds")
-write_rds(vvS_min, "data/output/03_contextual/voteview_S_key.Rds")
+write_csv(vvH_min, "data/output/03_contextual/voteview_H_key.csv")
+write_csv(vvS_min, "data/output/03_contextual/voteview_S_key.csv")
+
+# vv_crunch <- vv %>% 
+#   select(congress:dim2)
+# write_csv(vv_crunch, "data/output/03_contextual/voteview_mcs.csv", na = "")
