@@ -27,7 +27,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2020.Rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
 ```
