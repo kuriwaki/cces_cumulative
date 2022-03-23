@@ -1248,6 +1248,7 @@ Dataverse assigns version numbers by incrementing a full number if any of the da
 
 ### Version 7.0
 
+- Enter 2021 Common Content (up to n = 557,455)
 - Enter 2020 voter file match
 - Corrects error in 2010 3 point Party ID which had used the post-election wave rather than the pre-election wave used in the other years (Thanks to Gerald Wright).
 - Adds variables for:  **self reported turnout**
