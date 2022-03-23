@@ -49,7 +49,8 @@ vvH_min <- vvH %>%
   mutate(CD = paste0(st, "-", dist))
 
 vvS_min <- vvS %>%
-  select(congress, chamber, icpsr, st, namelast)
+  select(congress, chamber, icpsr, st, namelast) %>% 
+  mutate(dist = NA)
 
 vv_crunch <- vv %>% 
   select(congress:dim2)

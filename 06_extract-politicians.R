@@ -3,6 +3,8 @@ library(haven)
 library(glue)
 library(stringdist)
 library(foreach)
+library(data.table)
+library(dtplyr)
 
 #' take a case_id - candidate key and melt to a df keyed on case_id _and_ 
 #' candidate
@@ -19,19 +21,18 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
   office <- unique(str_extract(measure_regex, "(rep|sen|gov)"))
   
   tbl %>% 
-    select(!!ids, matches(measure_regex[1]), matches(measure_regex[2])) %>% 
+    select(all_of(ids), matches(measure_regex[1]), matches(measure_regex[2])) %>% 
     pivot_longer(
-      cols = -c(ids),
+      cols = -all_of(ids),
       names_to = c(".value", "cand"),
-      names_pattern = glue("{office}_(pty|can)([1-9])")
+      names_pattern = glue("{office}_(pty|can)([1-9])"), 
+      values_drop_na = TRUE
     ) %>% 
     rename(name = can, party = pty) %>%
     filter(cand != "") %>%
     mutate(cand = as.integer(cand)) %>%
     mutate(name_caps = str_to_upper(gsub(remove_regex , "", name)),
-           namelast = word(name_caps, -1),
-           namefirstm = word(name_caps, start = 1, end = -2)) %>%
-    tbl_df()
+           namelast = word(name_caps, -1))
 }
 
 
@@ -67,9 +68,9 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   
   cat(glue("Out of {nrow(tbl)} incumbent-rows,",
            "{nrow(uniq_matched1)} ({round(100*nrow(uniq_matched1) / nrow(tbl))}",
-           "percent) matched uniquely by district"), "\n")
+           " percent) matched uniquely by district"), "\n")
   
-  # for second round, extrat last name
+  # for second round, extract last name
   persn_remain <- persn_unmatch %>% 
     mutate(namelast = gsub(remove_regex, "", .data[[glue("{var}_inc")]]),
            namelast = str_remove(namelast, "\\s\\((republican|democrat|independent)\\)"), 
@@ -111,10 +112,9 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
       namevec = .data[[namevar]], 
       partyvec = .data[[ptyvar]])) %>%
     arrange(year, case_id) %>% 
-    select(!!ids,
+    select(all_of(ids),
            matches("_current"),
-           icpsr, 
-           fec)
+           icpsr)
 }
 
 #' Concatenate name and party to a formatted label.
@@ -132,74 +132,42 @@ concatenate_current <- function(namevec, partyvec) {
 #' @param i the index of cdata to look for 
 #' @param type0 the office
 #' @param cdata the cell data that is keyed to district-party
-#' @param rdata responden-side data
-#' @param fdata fec level data
+#' @param rdata respondent-side data
 #' @param matchvar vector to key on in final match
 #' @param thresh the string distance threshold
 #' 
-#' @return a dataset with cdata$n[i] rows with FEC data merged if applicable
+#' @return a dataset with cdata$n[i] rows
 #' 
-stringdist_left_join <- function(i, type0, cdata, rdata, fdata, matchvar, thresh) {
+stringdist_left_join <- function(i, type0, cdata, rdata, matchvar, thresh) {
   
   pty_i <- cdata$party[i]
   
-  # If not coded party, expand search in FEC to all others
+  # If  party not coded, expand searchto all others
   if (!is.na(pty_i) & !pty_i %in% c("D", "R", "L", "I")) {
     r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
-    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == "NA/Other")
   } 
   
   # If no party, use the appropriate rows (b/c R wont accept party == NA). And consider everyone in district
   if (is.na(pty_i)) {
     r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], is.na(party))
-    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i])
   }
   
   # Usually there's no trouble
   if (!is.na(pty_i) & pty_i %in% c("D", "R", "L", "I")) {
     r_consider_i <- filter(rdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
-    f_consider_i <- filter(fdata, year == cdata$year[i], st == cdata$st[i], party == pty_i)
   }
   
   # further subset by district
   if (type0 == "federal:house") {
     r_consider_i <- filter(r_consider_i, dist_up == cdata$dist_up[i])
-    f_consider_i <- filter(f_consider_i, dist_up == cdata$dist_up[i])
   } 
   stopifnot(cdata$n[i] == nrow(r_consider_i))
-  if (nrow(f_consider_i) == 0) return(r_consider_i) # if there is no one FEC to consider, return
   
-  # get to the candidate level, not the respondent level
-  r_i_uniq <- distinct(r_consider_i, year, st, dist_up, party, namelast, namefirstm)
-  set.seed(02138)
-  f_i_shuffled <- sample_frac(f_consider_i)
-  
-  match_last  <- stringdistmatrix(r_i_uniq$namelast, f_i_shuffled$namelast, method = "jw")
-  match_first <- stringdistmatrix(r_i_uniq$namefirstm, f_i_shuffled$namefirstm, method = "jw")
-  
-  # for each row in r_i 
-  match_result <- foreach(i_r = 1:nrow(r_i_uniq), .combine = "bind_rows") %do% {
-    dists <- match_last[i_r, ] + match_first[i_r, ]
-    sort_dists <- order(dists)
-    is_match <- dists[sort_dists[1]] < thresh
-    
-    
-    if (!is_match) r_result <- slice(r_i_uniq, i_r) # if we call it a no matchreturn without anything
-    if (is_match) {
-      r_result <- bind_cols(slice(r_i_uniq, i_r),
-                            slice(f_i_shuffled, sort_dists[1]) %>% 
-                              select(-year, -st, -dist_up, -party, -namelast, -namefirstm))
-    }
-    r_result
-  }
-  
-  left_join(r_consider_i, 
-            match_result, 
-            by = c("year", "st", "dist_up", "party", "namelast", "namefirstm"))
+  r_consider_i
 }
 
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
-#' @param tbl A dataset of respodents
+#' @param tbl A dataset of respondents
 clean_out <- function(tbl, cvars = carry_vars, m = master) {
   tbl %>% 
     # make NA if empty or "_NA_" 
@@ -237,8 +205,9 @@ std_ptylabel <- function(vec) {
 
 # Data ------
 load("data/output/01_responses/common_all.RData")
-inc_H <- readRDS("data/output/03_contextual/incumbents_H.Rds")
-inc_S <- readRDS("data/output/03_contextual/incumbents_S.Rds")
+inc_H <- readRDS("data/output/03_contextual/voteview_H_key.Rds")
+inc_S <- readRDS("data/output/03_contextual/voteview_S_key.Rds") %>% 
+  mutate(dist = NA)
 statecode <- read_csv("data/source/statecode.csv")
 
 # parameters
@@ -296,6 +265,7 @@ cclist <- list(`2006` = cc06,
                `2018c` = cc18_cnew,
                `2019` = cc19,
                `2020` = cc20,
+               `2021` = cc21,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
@@ -306,7 +276,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2020, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -328,7 +298,7 @@ for (yr in c(2006:2020, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) {
 
 
 # bind ------
-dfcc <- map_dfr(cclist, clean_out, cvars = carry_vars, m = master, .id = "dataset")
+dfcc <- map_dfr(cclist, .f = clean_out, cvars = carry_vars, m = master, .id = "dataset")
 
 # hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
@@ -347,7 +317,7 @@ df_current <- dfcc %>%
          rep_pty2 = assign_08_10_pty(rep_pty2, year, rep_can2, "R"),
          sen_pty2 = assign_08_10_pty(sen_pty2, year, sen_can2, "R")
          ) %>%
-  mutate_at(vars(matches("(_pty|_ipt)")), std_ptylabel)
+  mutate_at(.vars = vars(matches("(_pty|_ipt)")), .funs = std_ptylabel)
 
 # unique by dataset
 carry_vars2 <- c("dataset", carry_vars)

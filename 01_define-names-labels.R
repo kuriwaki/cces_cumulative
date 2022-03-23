@@ -66,8 +66,9 @@ master_17 <- tribble(
 
 master <- left_join(master_11, master_17, by = "name")
 
+# same as previous years
 master$`2018` <- master$`2016`
-master$`2019` <- master$`2017`
+master$`2021` <- master$`2019` <- master$`2017`
 master$`2020` <- master$`2018`
 # don't exist in 2020
 master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Name", "GovCand3Party"
