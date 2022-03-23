@@ -43,8 +43,9 @@ vv_fec_S <- left_join(
 )
 
 # join CQ ---
-df_H <- left_join(vv_fec_H, cq_df, by = c("namelast", "chamber", "st", "dist", "congress"))
-df_S <- left_join(vv_fec_S, cq_df, by = c("namelast", "chamber", "st", "congress")) %>% 
+df_H <- vvH # left_join(vvH, cq_df, by = c("namelast", "chamber", "st", "dist", "congress"))
+df_S <- vvS %>% # left_join(vvS, cq_df, by = c("namelast", "chamber", "st", "congress")) %>% # Stevens missing
+  mutate(namefirst = NA) %>% 
   add_row(congress = 115, 
           chamber = "S",
           icpsr = 41705, 
