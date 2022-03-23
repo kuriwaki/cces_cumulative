@@ -947,10 +947,10 @@ print_tab(approval_gov)
 
 \paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
 
-Response to the vote choice questions coalesces both \emph{post-election} wave responses (the bulk of the responses) and pre-election respondents who reported having already voted early. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
+Response to the vote choice questions (in contrast to the intent questions) come from the post-election wave only.  It no longer coalesces pre-election respondents who reported having already voted early, as it did before V5 of this dataset. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
 
 
-The category "Did Not Vote" is recorded only when the respondent selects that option. Respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
+Be careful of the category "Did not Vote" when making cross-year comparisons. That category is recorded only when the respondent is _asked_ a vote choice question and selects that option. In some years, the vote choice question is not asked to those who report not turning out at all in a preceding question. In those years, having a value of "Did not Vote" could mean that "I voted in the election but not for that office."  In short, respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
 
 
 ## Presidential Vote

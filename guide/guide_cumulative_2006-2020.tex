@@ -2186,19 +2186,24 @@ the sort ``who would you vote for?'' in the \emph{pre-election} wave.
 ``Vote choice'' refers to the response to the retrospective question of
 the sort ``in the election this November, who did you vote for?''
 
-Response to the vote choice questions coalesces both
-\emph{post-election} wave responses (the bulk of the responses) and
-pre-election respondents who reported having already voted early. In
-2018, it also coalesces the responses to the straight ticket party
-option (\texttt{CC18\_409}), so that those who selected the Republican
-straight party ticket in the applicable states will appear to have voted
-for the Republican candidate in all offices. The straight ticket party
-option was not asked in other years.
+Response to the vote choice questions (in contrast to the intent
+questions) come from the post-election wave only. It no longer coalesces
+pre-election respondents who reported having already voted early, as it
+did before V5 of this dataset. In 2018, it also coalesces the responses
+to the straight ticket party option (\texttt{CC18\_409}), so that those
+who selected the Republican straight party ticket in the applicable
+states will appear to have voted for the Republican candidate in all
+offices. The straight ticket party option was not asked in other years.
 
-The category ``Did Not Vote'' is recorded only when the respondent
-selects that option. Respondents who have missing values for intent or
-vote choice can also be non-voters for a variety of reasons. For general
-turnout, see the section on turnout.
+Be careful of the category ``Did not Vote'' when making cross-year
+comparisons. That category is recorded only when the respondent is
+\emph{asked} a vote choice question and selects that option. In some
+years, the vote choice question is not asked to those who report not
+turning out at all in a preceding question. In those years, having a
+value of ``Did not Vote'' could mean that ``I voted in the election but
+not for that office.'' In short, respondents who have missing values for
+intent or vote choice can also be non-voters for a variety of reasons.
+For general turnout, see the section on turnout.
 
 \hypertarget{presidential-vote}{%
 \subsection{Presidential Vote}\label{presidential-vote}}
@@ -2247,9 +2252,9 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \midrule
 Democratic & 201,604\\
 Republican & 171,542\\
-Other Candidate & 20,869\\
-Did not Vote & 29,643\\
-(Missing) & 133,797\\
+Other Candidate & 20,890\\
+Did not Vote & 25,244\\
+(Missing) & 138,175\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2290,7 +2295,7 @@ Bob Barr & 258\\
 Cynthia Mckinney & 74\\
 Other & 352\\
 I Won't Vote in this Election & 851\\
-I'm Not Sure & 1,697\\
+Not Sure & 1,697\\
 (Missing) & 527,260\\
 \bottomrule
 \end{tabular}
@@ -2321,8 +2326,8 @@ voting)}{intent\_pres\_12: 2012 President preference (before voting)}}\label{int
 Mitt Romney (Republican) & 20,738\\
 Barack Obama (Democratic) & 24,401\\
 Other & 1,781\\
-I Will Not Vote in this Election & 1,467\\
-I'm Not Sure & 3,856\\
+I Will not Vote in this Election & 1,467\\
+Not Sure & 3,856\\
 (Missing) & 505,212\\
 \bottomrule
 \end{tabular}
@@ -2356,7 +2361,7 @@ Gary Johnson (Libertarian) & 3,145\\
 Jill Stein (Green) & 1,400\\
 Other & 1,880\\
 I Won't Vote in this Election & 3,312\\
-I'm Not Sure & 6,536\\
+Not Sure & 6,536\\
 (Missing) & 494,453\\
 \bottomrule
 \end{tabular}
@@ -2388,7 +2393,7 @@ Donald Trump (Republican) & 18,977\\
 Joe Biden (Democrat) & 22,400\\
 Other & 1,389\\
 I Won't Vote in this Election & 2,390\\
-I'm Not Sure & 3,791\\
+Not Sure & 3,791\\
 (Missing) & 508,508\\
 \bottomrule
 \end{tabular}
@@ -2420,7 +2425,7 @@ vote? {[}see guide for wording in all years{]}''
 Barack Obama & 73,986\\
 John McCain & 68,398\\
 Other / Someone Else & 4,204\\
-Did Not Vote & 18,227\\
+Did not Vote & 18,227\\
 Not Sure / Don't Recall & 1,787\\
 (Missing) & 390,853\\
 \bottomrule
@@ -2457,8 +2462,10 @@ guide for wording in all years{]}''
 Barack Obama & 82,543\\
 Mitt Romney & 64,740\\
 Other / Someone Else & 5,872\\
-Did Not Vote & 2,827\\
+Did not Vote & 217\\
+Did not Vote for this Office & 2,602\\
 Not Sure / Don't Recall & 1,990\\
+I Did not Vote & 8\\
 (Missing) & 399,483\\
 \bottomrule
 \end{tabular}
@@ -2494,9 +2501,10 @@ United States? {[}Post-election{]}''
 Hilary Clinton & 89,695\\
 Donald Trump & 74,767\\
 Other / Someone Else & 17,559\\
-Did Not Vote & 28,282\\
-Not Sure / Don't Recall & 516\\
-(Missing) & 346,636\\
+Did not Vote for this Office & 617\\
+Not Sure / Don't Recall & 287\\
+Not Sure & 229\\
+(Missing) & 374,301\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2524,18 +2532,12 @@ the United States? {[}Post-election{]}
 \toprule
  & n\\
 \midrule
-Joe Biden & 12,797\\
-Joe Biden (Democrat) & 26,188\\
-Donald J. Trump (Republican) & 17,702\\
-Donald Trump & 8,503\\
-Jo Jorgensen & 324\\
-Howie Hawkins & 137\\
-Other & 1,681\\
-I Did Not Vote in this Race & 100\\
-Did Not Vote for President & 3,716\\
-I Did Not Vote & 13\\
+Joe Biden & 38,985\\
+Donald Trump & 26,205\\
+Other / Someone Else & 2,142\\
+Did not Vote for President & 3,716\\
 Not Sure & 190\\
-(Missing) & 486,104\\
+(Missing) & 486,217\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2580,8 +2582,8 @@ I Won't Vote in this Election & 2,269\\
 \$HouseCand8Name (\$HouseCand8Party) & 22\\
 \$HouseCand10Name (\$HouseCand10Party) & 1\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
-I'm Not Sure & 79,608\\
 No One & 22,730\\
+Not Sure & 79,608\\
 (Missing) & 165,957\\
 \bottomrule
 \end{tabular}
@@ -2629,7 +2631,7 @@ voting)}{intent\_sen: Senate preference (before voting)}}\label{intent_sen-senat
 {}{[Other / Candidate 3]} & 4,477\\
 \$SenCand4Name (\$SenCand4Party) & 19\\
 Other & 1,957\\
-I'm Not Sure & 41,842\\
+Not Sure & 41,842\\
 No One & 14,114\\
 I Won't Vote in this Election & 1,145\\
 (Missing) & 293,917\\
@@ -2668,7 +2670,7 @@ voting)}{intent\_gov: Governor preference (before voting)}}\label{intent_gov-gov
 {}{[Republican / Candidate 2]} & 68,934\\
 {}{[Other / Candidate 3]} & 4,055\\
 Other & 1,530\\
-I'm Not Sure & 25,158\\
+Not Sure & 25,158\\
 No One & 8,350\\
 I Won't Vote in this Election & 466\\
 (Missing) & 371,601\\
@@ -2711,8 +2713,8 @@ I Did Not Vote In This Race & 12,361\\
 \$HouseCand5Name (\$HouseCand5Party) & 27\\
 Not Sure & 5,267\\
 \$HouseCand6Name (\$HouseCand6Party) & 44\\
-I Did Not Vote in this Race & 1,078\\
-I Did Not Vote & 261\\
+I Did not Vote in this Race & 1,078\\
+I Did not Vote & 261\\
 \$HouseCand8Name (\$HouseCand8Party) & 16\\
 \$HouseCand9Name (\$HouseCand9Party) & 2\\
 \$HouseCand10Name (\$HouseCand10Party) & 2\\
@@ -2788,8 +2790,8 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 {}{[Democrat / Candidate 1]} & 66,410\\
 {}{[Republican / Candidate 2]} & 61,950\\
 {}{[Other / Candidate 3]} & 2,613\\
-I Did Not Vote in this Race & 39\\
-I Did Not Vote & 17\\
+I Did not Vote in this Race & 39\\
+I Did not Vote & 17\\
 Other & 1,861\\
 I Did Not Vote In This Race & 3,576\\
 Not Sure & 1,128\\
@@ -2929,11 +2931,11 @@ Democrats in the race.
    intent_rep                 intent_rep_party intent_rep_chosen
    <fct>                      <fct>            <chr>            
  1 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
- 2 I'm Not Sure               <NA>             <NA>             
+ 2 Not Sure                   <NA>             <NA>             
  3 No One                     <NA>             <NA>             
  4 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
  5 [Republican / Candidate 2] Democratic       Bob Flores (D)   
- 6 I'm Not Sure               <NA>             <NA>             
+ 6 Not Sure                   <NA>             <NA>             
  7 Other                      <NA>             <NA>             
  8 [Republican / Candidate 2] Democratic       Bob Flores (D)   
  9 [Republican / Candidate 2] Democratic       Bob Flores (D)   
