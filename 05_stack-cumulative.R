@@ -691,6 +691,7 @@ my_var_case <- function(chr) {
     str_replace_all("Most of the Time", "Most of the time") %>% 
     str_replace_all("Some of the Time", "Some of the time") %>% 
     str_replace_all("Only Now and Then", "Only now and then") %>% 
+    str_replace_all("Mccain", "McCain") %>% 
     str_replace_all("Hardly at All", "Hardly at all")
 }
 
@@ -785,8 +786,8 @@ clps_pres08 <- function(vec) {
     fct_collapse(
       `Barack Obama` = c("Barack Obama", 
                          "Barack Obama (Democratic)"),
-      `John McCain` = c("John Mccain (Republican)", 
-                        "John Mccain"),
+      `John McCain` = c("John McCain (Republican)", 
+                        "John McCain"),
       `Other / Someone Else` = c("Someone Else"), 
       `Did not Vote` = c("Did not Vote"),
       `Not Sure / Don't Recall` = c("Don't Recall")
@@ -1399,6 +1400,6 @@ save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
-saveRDS(size_year, "data/output/03_contextual/weight_rescale_by-year.Rds")
+write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 
 cat("Finished stacking vars for cumulative \n")

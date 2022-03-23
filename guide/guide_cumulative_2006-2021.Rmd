@@ -29,7 +29,7 @@ library(rprojroot)
 ```{r, include = FALSE, cache = FALSE}
 cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.Rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
-rsc <- readRDS(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.Rds"))
+rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
 
 ```{r}
@@ -161,7 +161,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2020.Rds")
+cc <- readRDS("cumulative_2006-2021.Rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -170,11 +170,11 @@ library(tidyverse)
 cc
 ```
 
-\noindent  A Stata dta version is provided as well. `cumulative_2006-2020.dta` can be read by Stata, or in R by the `haven` package 
+\noindent  A Stata dta version is provided as well. `cumulative_2006-2021.dta` can be read by Stata, or in R by the `haven` package 
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-cc <- read_dta("cumulative_2006-2020.dta")
+cc <- read_dta("cumulative_2006-2021.dta")
 ```
 
 R is free software and, if necessary, the `haven`  and `readr` package can be used to export the CCES/CES datasets in other formats such as plain-text csv or SPSS sav files. Plain-text formats are somewhat less convenient because they do not preserve value labels.
@@ -186,7 +186,7 @@ R is free software and, if necessary, the `haven`  and `readr` package can be us
 ```{r, eval = FALSE, echo = TRUE}
 library(dataverse)
 cc <- get_dataframe_by_name(
-  filename = "cumulative_2006-2020.dta",
+  filename = "cumulative_2006-2021.dta",
   dataset = "10.7910/DVN/II2DB6",
   original = TRUE,
   .f = haven::read_dta,
