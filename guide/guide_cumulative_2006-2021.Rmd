@@ -4,7 +4,9 @@ output:
     latex_engine: xelatex
     template: guide_helvet.sty
     keep_tex: TRUE
-title: "Guide to the CCES Cumulative Common Content (2006 - 2021)"
+title: |
+    | Guide to the Cumulative Common Content
+    | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
 thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
@@ -27,7 +29,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.Rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -116,23 +118,23 @@ nam <- function(var, tbl = meta) {
 
 > Kuriwaki, Shiro, 2022, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V7. 
 
-\bigskip
+\medskip
 
 This dataset combines `r english::english(2021 - 2006 + 1)` years (2006 -- 2021) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its principal investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
-\bigskip
+\medskip
 
 Each year's CCES/CES asks hundreds of questions, many of which change from year to year. This cumulative file only includes _a subset_ of those questions that are standard and important. It standardizes (harmonizes) its values across years and creates a few new variables too.  Users can still merge in their year-specific questions of interest easily into this cumulative file and take advantage of its standardized variables. 
 
-\bigskip
+\medskip
 
 I constructed this dataset from each year's full CCES/CES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
 
-\bigskip
+\medskip
 
 Please note that this cumulative dataset makes some modifications to the original CCES/CES datasets to maintain comparability across years. These modifications are only made when differences are deemed sufficiently minor. Still, for details on the survey methodology and a list of all questions, readers should consult the guides for each year.  
 
-\bigskip
+\medskip
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
@@ -147,7 +149,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 \end{minipage}
 }
 
-\vspace{1cm}
+\vspace{0.2cm}
 
 \newpage
 \setcounter{tocdepth}{3}
@@ -158,10 +160,10 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 ## Data Read-in
 
-The `.Rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
+The `.rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2021.Rds")
+cc <- readRDS("cumulative_2006-2021.rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -256,7 +258,7 @@ select(cc, year, case_id, pid3) %>%
   print(n = 5)
 ```
 
-\indent In this cumulative (R) dataset, some variables are of class labelled, and some are of factor class. This is because the latter variables were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
+\indent In this cumulative R dataset, some variables are of class "labelled", and some are of class "factor".  This is because the latter were different enough in their value codings across years that summarizing them into a single numeric value was difficult.
 
 
 
@@ -285,7 +287,7 @@ select(cc, year, case_id, st, matches("voted_sen"))
 
 ## Crunch
 
-A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience. 
+A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey regardless of programming experience. 
 
 1. Obtain Access: The Crunch interface currently does not allow users to sign up to a particular dataset on their own. For free view access to the dataset, please sign up via the sign-up link in the CES [website](https://cces.gov.harvard.edu/explore). For questions and more access, please contact the CES Team.
 
@@ -950,7 +952,7 @@ print_tab(approval_gov)
 Response to the vote choice questions (in contrast to the intent questions) come from the post-election wave only.  It no longer coalesces pre-election respondents who reported having already voted early, as it did before V5 of this dataset. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
 
 
-Be careful of the category "Did not Vote" when making cross-year comparisons. That category is recorded only when the respondent is _asked_ a vote choice question and selects that option. In some years, the vote choice question is not asked to those who report not turning out at all in a preceding question. In those years, having a value of "Did not Vote" could mean that "I voted in the election but not for that office."  In short, respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For general turnout, see the section on turnout.
+Be careful of the category "Did not Vote" when making cross-year comparisons. That category is recorded only when the respondent is _asked_ a vote choice question and selects that option. In some years, the vote choice question is not asked to those who report not turning out at all in a preceding question. In those years, having a value of "Did not Vote" could mean that "I voted in the election but not for that office."  In some years, the cumulative version changes the values of did not vote to missing values to be consistent with the same variable in other years. In short, respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For turnout in the election, see the section on turnout.
 
 
 ## Presidential Vote
@@ -1061,7 +1063,6 @@ print_tab(voted_pres_16)
 ```
 
 * Years: `r in_years(voted_pres_16)`
-<!-- * This variable coalesces two variables in the CCES: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_20)`
@@ -1130,7 +1131,6 @@ print_tab(voted_rep)
 ```
 
 * Years: `r in_years(voted_rep)`
-<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * Note that it is not always the case that 1 is a Democrat and 2 is a Republican. When two Democrats are on the general ballot (e.g., in top-two primary states like California), both candidates are Democrats. Use `voted_rep_party` for party affiliation
 * See `voted_rep_party` for party affiliation.
 
@@ -1144,7 +1144,6 @@ print_tab(voted_sen)
 ```
 
 * Years: `r in_years(voted_sen)`
-<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_sen_party` for party affiliation.
 * Senate Special elections where both Senate seats are up for election is often recorded as different columns in the year-specific CCES, but these are not collected in the cumulative. 
 
@@ -1157,7 +1156,6 @@ print_tab(voted_gov)
 ```
 
 * Years: `r in_years(voted_gov)`
-<!-- * This variable coalesces two variables in the CCES for years 2012 and onward: Either the response to the early vote question in the pre-election wave if the respondent indicates they have already voted, or if not, the response in the post-election wave. -->
 * See `voted_gov_party` for party affiliation.
 
 
@@ -1188,7 +1186,7 @@ glimpse(select(cc, matches("(rep|sen1|sen2|gov)_current")))
 
 ## ICPSR Identifiers
 
-Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for the current representatives. Identifiers are not part of the individual year's CCES. Instead, I attempt to merge in these identifiers through a series of name and district merges.  
+Unique identifiers (ICPSR / Nominate for Congress) for the current representatives. Identifiers are not part of the individual year's CCES. Instead, I attempt to merge in these identifiers through a series of name and district merges.  
 
 The matching of identifiers to respondent occurs through matching by district, by district and last name, or both:
 
@@ -1243,18 +1241,20 @@ glimpse(select(cc, matches("_party$")))
 
 # Version History of Dataverse Releases
 
-Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
+Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
 
 ### Version 7.0
 
+- Released `2022-03-24`
 - Enter 2021 Common Content (up to n = 557,455)
-- Enter 2020 voter file match
+- Enter 2020 validated vote variables
 - Corrects error in 2010 3 point Party ID which had used the post-election wave rather than the pre-election wave used in the other years (Thanks to Gerald Wright).
 - Adds variables for:  **self reported turnout**
 
 ### Version 6.0
 
+- Released `2021-04-06`
 - Enter 2020 common content (preliminary, before voter file match), pre-election (up to n = 531,755). 
 - Distinguished between third party Presidential vote (thanks to Valerie Bradley)
 - Added further explanation to usage of weights where post-election weights are not available (thanks to Alexander Agadjanian)

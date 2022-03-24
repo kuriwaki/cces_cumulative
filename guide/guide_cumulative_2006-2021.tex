@@ -143,8 +143,8 @@
 
 % Parmaters
 
-\title{ \LARGE\textbf{Guide to the CCES Cumulative Common Content (2006
-- 2021)}}
+\title{ \LARGE\textbf{Guide to the Cumulative Common Content\\
+of the Cooperative (Congressional) Election Study}}
  
 
 \author{\href{https://orcid.org/0000-0002-5687-2647}{\XeTeXLinkBox{\raisebox{-0.1em}{\includegraphics[width=1em]{orcid.png}}}}~Shiro
@@ -158,7 +158,7 @@ contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{Guide last updated: 2022-03-23}
+\date{Guide last updated: 2022-03-24}
 
 \begin{document}
 
@@ -178,7 +178,7 @@ Kuriwaki, Shiro, 2022, ``Cumulative CCES Common Content'',
 Harvard Dataverse, V7.
 \end{quote}
 
-\bigskip
+\medskip
 
 This dataset combines 16 years (2006 -- 2021) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
@@ -187,7 +187,7 @@ survey conducted around November of each year, asking a range of
 questions on political behavior and public opinion. Its principal
 investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
 
-\bigskip
+\medskip
 
 Each year's CCES/CES asks hundreds of questions, many of which change
 from year to year. This cumulative file only includes \emph{a subset} of
@@ -197,7 +197,7 @@ too. Users can still merge in their year-specific questions of interest
 easily into this cumulative file and take advantage of its standardized
 variables.
 
-\bigskip
+\medskip
 
 I constructed this dataset from each year's full CCES/CES, all of them
 publicly available as separate datasets on
@@ -207,7 +207,7 @@ a Stata \texttt{dta} file. In addition, the same dataset is available on
 \texttt{Crunch}, an analytics interface optimized for survey datasets.
 The source code is open-source.
 
-\bigskip
+\medskip
 
 Please note that this cumulative dataset makes some modifications to the
 original CCES/CES datasets to maintain comparability across years. These
@@ -215,7 +215,7 @@ modifications are only made when differences are deemed sufficiently
 minor. Still, for details on the survey methodology and a list of all
 questions, readers should consult the guides for each year.
 
-\bigskip
+\medskip
 
 \noindent\makebox[\textwidth][c]{%
 \begin{minipage}{0.92\linewidth}
@@ -230,7 +230,7 @@ questions, readers should consult the guides for each year.
 \end{minipage}
 }
 
-\vspace{1cm}
+\vspace{0.2cm}
 
 \newpage
 \setcounter{tocdepth}{3}
@@ -243,13 +243,13 @@ questions, readers should consult the guides for each year.
 \hypertarget{data-read-in}{%
 \subsection{Data Read-in}\label{data-read-in}}
 
-The \texttt{.Rds} format can be read into R. This format preserves
+The \texttt{.rds} format can be read into R. This format preserves
 dataset properties such as the distinction between integers and doubles,
 and labelled variables.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2021.Rds"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2021.rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -434,9 +434,9 @@ do that.
 # ... with 202,449 more rows
 \end{verbatim}
 
-\indent In this cumulative (R) dataset, some variables are of class
-labelled, and some are of factor class. This is because the latter
-variables were different enough in their value codings across years that
+\indent In this cumulative R dataset, some variables are of class
+``labelled'', and some are of class ``factor''. This is because the
+latter were different enough in their value codings across years that
 summarizing them into a single numeric value was difficult.
 
 \newpage
@@ -498,8 +498,8 @@ individuals.
 \subsection{Crunch}\label{crunch}}
 
 A version of the dataset is also included in Crunch, a database platform
-that makes it easy to view and analyze survey data either with our
-without any programming experience.
+that makes it easy to view and analyze survey regardless of programming
+experience.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -2201,9 +2201,11 @@ comparisons. That category is recorded only when the respondent is
 years, the vote choice question is not asked to those who report not
 turning out at all in a preceding question. In those years, having a
 value of ``Did not Vote'' could mean that ``I voted in the election but
-not for that office.'' In short, respondents who have missing values for
-intent or vote choice can also be non-voters for a variety of reasons.
-For general turnout, see the section on turnout.
+not for that office.'' In some years, the cumulative version changes the
+values of did not vote to missing values to be consistent with the same
+variable in other years. In short, respondents who have missing values
+for intent or vote choice can also be non-voters for a variety of
+reasons. For turnout in the election, see the section on turnout.
 
 \hypertarget{presidential-vote}{%
 \subsection{Presidential Vote}\label{presidential-vote}}
@@ -2860,10 +2862,10 @@ $ gov_current  <chr> "Michael Easley (D)", "Bob Taft (R)", "Jon Corzine (D)", ~
 \hypertarget{icpsr-identifiers}{%
 \subsection{ICPSR Identifiers}\label{icpsr-identifiers}}
 
-Unique identifiers (ICPSR / Nominate for Congress, FEC for Governor) for
-the current representatives. Identifiers are not part of the individual
-year's CCES. Instead, I attempt to merge in these identifiers through a
-series of name and district merges.
+Unique identifiers (ICPSR / Nominate for Congress) for the current
+representatives. Identifiers are not part of the individual year's CCES.
+Instead, I attempt to merge in these identifiers through a series of
+name and district merges.
 
 The matching of identifiers to respondent occurs through matching by
 district, by district and last name, or both:
@@ -3000,8 +3002,11 @@ $ voted_sen_party   <fct> NA, Democratic, Democratic, NA, Democratic, NA, Repu~
 \section{Version History of Dataverse
 Releases}\label{version-history-of-dataverse-releases}}
 
-Dataverse assigns version numbers by incrementing a full number if any
-of the datasets change, and an incrementing decimal when the description
+Routine edits add new rows, add new variables, and change the
+customization of existing variables. The version history is explained
+below and old versions can be downloaded from Dataverse. Dataverse
+assigns version numbers by incrementing a full number if any of the
+datasets change, and an incrementing decimal when the description
 changes.
 
 \hypertarget{version-7.0}{%
@@ -3009,6 +3014,8 @@ changes.
 
 \begin{itemize}
 \tightlist
+\item
+  Released \texttt{2022-03-24}
 \item
   Enter 2021 Common Content (up to n = 557,455)
 \item
@@ -3026,6 +3033,8 @@ changes.
 
 \begin{itemize}
 \tightlist
+\item
+  Released \texttt{2021-04-06}
 \item
   Enter 2020 common content (preliminary, before voter file match),
   pre-election (up to n = 531,755).

@@ -268,11 +268,11 @@ ccc_factor <-   ccc_fac %>%
 
 # Save ---------
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-write_rds(ccc_df, "data/release/cumulative_2006-2021_addon.Rds")
+write_rds(ccc_df, "data/release/cumulative_2006-2021_addon.rds")
 
 # anti-join things not to put on dataverse (panel, module)
-panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for ctunch
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2021.Rds")
+panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2021.rds", compress = "xz")
 
 
 # remove panel cases
@@ -283,7 +283,7 @@ for (v in colnames(ccc_common)) {
   attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
-write_rds(ccc_common, "data/output/cumulative_2006-2021_factor.Rds")
+write_rds(ccc_common, "data/output/cumulative_2006-2021_factor.rds")
 
 write_dta(ccc_common,
           "data/release/cumulative_2006-2021.dta", 
