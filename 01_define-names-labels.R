@@ -116,6 +116,8 @@ ccc_meta <- tribble(
   "union",               "categorical", "Union membership",              "Are you a member of a union?",
   "union_hh",            "categorical", "Union membership in household", "Other than yourself, is any member of your household a union member?",
   "religion",            "categorical", "Religion",                      "What is your present religion, if any?",
+  "bornagain",           "categorical", "Evangelical Christian",         "Would you describe yourself as a born-again or evangelical Christian, or not?",
+  "protestant",          "categorical", "Branch of Protestantism",       "To which Protestant church or group do you belong?",
   "economy_retro",       "categorical", "Retrospective economy",         "OVER THE PAST YEAR the nation's economy has ...?",
   "newsint",             "categorical", "News Interest",                 "Some people seem to follow what's going on in government and public affairs most of the time, whether there's an election going on or not. Others aren't that interested. Would you say you follow what's going on in government and public affairs ..", 
   "marstat",             "categorical", "Marital Status",                "What is your marital status?", 
