@@ -31,6 +31,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         newsint = news_interest,
         marstat = marriage_status,
         religpew = religion,
+        pew_religimp = relig_importance,
         pew_bornagain = bornagain,
         religpew_protestant = protestant,
         voted_pres_08 = vote_pres_08,
@@ -1104,14 +1105,13 @@ healthins <- bind_rows(hi_most, hi_18) %>%
 # religion -----
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
   rename(religion = religpew)
-
-# bornagain -----
+religimp <- find_stack(ccs, pew_religimp, type = "factor") %>% 
+  rename(religimp = pew_religimp)
 bornagain <- find_stack(ccs, pew_bornagain, make_labelled = TRUE) %>%
   rename(bornagain = pew_bornagain)
-
-# protestant -----
 protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) %>%
   rename(protestant = religpew_protestant)
+
 
 # president -------
 i_pres08 <- find_stack(ccs, intent_pres_08)
@@ -1342,6 +1342,7 @@ ccc <- geo %>%
   left_join(ownhome) %>%
   left_join(milstat) %>%
   left_join(relig) %>%
+  left_join(religimp) %>%
   left_join(bornagain) %>%
   left_join(protestant) %>%
   left_join(econ) %>%
