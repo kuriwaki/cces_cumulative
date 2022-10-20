@@ -32,8 +32,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         marstat = marriage_status,
         religpew = religion,
         pew_religimp = relig_importance,
-        pew_bornagain = bornagain,
-        religpew_protestant = protestant,
+        pew_bornagain = born_again,
+        religpew_protestant = relig_protestant,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -1108,9 +1108,8 @@ relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>%
 religimp <- find_stack(ccs, pew_religimp, type = "factor") %>% 
   rename(religimp = pew_religimp)
 bornagain <- find_stack(ccs, pew_bornagain, make_labelled = TRUE) %>%
-  rename(bornagain = pew_bornagain)
-protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) %>%
-  rename(protestant = religpew_protestant)
+  rename(religpew_bornagain = pew_bornagain)
+protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE)
 
 
 # president -------
