@@ -392,6 +392,4 @@ save(
 
 cat("Finished standardizing input\n")
 
-write_rds(cc18,      "~/Dropbox/swing-split/data/input/cc18.rds")
-write_rds(cc18_comp, "~/Dropbox/swing-split/data/input/cc18_comp.rds")
-write_rds(mit_fmt, "~/Dropbox/CCES_representation/data/source/cces/2006_mit_fmt.rds")
+# write_rds(mit_fmt, "~/Dropbox/CCES_representation/data/source/cces/2006_mit_fmt.rds")
