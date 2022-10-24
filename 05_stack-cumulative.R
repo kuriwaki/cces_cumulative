@@ -1106,7 +1106,7 @@ healthins <- bind_rows(hi_most, hi_18) %>%
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
   rename(religion = religpew)
 religimp <- find_stack(ccs, pew_religimp, type = "factor") %>% 
-  rename(religimp = pew_religimp)
+  rename(relig_imp = pew_religimp)
 bornagain <- find_stack(ccs, pew_bornagain, make_labelled = TRUE) %>%
   rename(relig_bornagain = pew_bornagain)
 protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) |> 
