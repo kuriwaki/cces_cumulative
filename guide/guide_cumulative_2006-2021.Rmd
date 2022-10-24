@@ -575,6 +575,8 @@ print_tab(citizen)
 
 
 
+
+
 ### `r nam(religion)`
 
 `r descrip(religion)`
@@ -586,6 +588,41 @@ print_tab(religion)
 
 * Years: `r in_years(religion)`
 * The response options have stayed largely consistent and follow that of Pew.
+
+### `r nam(relig_imp)`
+
+`r descrip(relig_imp)`
+
+
+```{r, results = "asis"}
+print_tab(relig_imp)
+```
+
+* Years: `r in_years(relig_imp)`
+
+
+### `r nam(relig_bornagain)`
+
+`r descrip(relig_bornagain)`
+
+
+```{r, results = "asis"}
+print_tab(relig_bornagain)
+```
+
+* Years: `r in_years(relig_bornagain)`
+
+
+### `r nam(relig_protestant)`
+
+`r descrip(relig_protestant)`
+
+
+```{r, results = "asis"}
+print_tab(relig_protestant)
+```
+
+* Years: `r in_years(relig_protestant)`
 
 
 ## Family Status
