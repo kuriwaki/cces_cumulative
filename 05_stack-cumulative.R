@@ -1046,7 +1046,7 @@ inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) %>%
 faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>% 
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
          faminc_num = coalesce(family_income_old, family_income)) %>% 
-  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num))
+  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
 
 # union ----
 union <- find_stack(ccs, union, make_labelled = TRUE) %>% 
