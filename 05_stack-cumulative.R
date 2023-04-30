@@ -896,7 +896,7 @@ cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
 cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
-cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv") %>% 
+cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
   transmute(year = 2017, case_id = V101, countyfips)
 
 # execute name standardization -----

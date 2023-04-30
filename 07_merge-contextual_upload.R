@@ -1,4 +1,4 @@
-library(tidyverse) # mask tidyverse
+library(tidyverse)
 library(haven)
 library(glue)
 library(tigris)
@@ -23,15 +23,15 @@ num_cand_match <- function(numdf, canddf) {
   party_varname <-  glue("{no_num}_party") # e.g. intent_rep_party = Democrat
   abstract_varname <- as.character(glue("{str_replace(type, '_num', '')}_char")) # e.g. intent_rep_char = Democract /Cand 1
   
-  canddf <- rename(canddf, !!type := cand) %>% 
+  canddf <- rename(canddf, !!type := cand) |> 
     drop_post()
   
   joined <- left_join(numdf, canddf, by = c("year", "case_id", type))
   
-  joined %>% 
-    mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) %>%
+  joined |> 
+    mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) |>
     mutate(!!chosen_varname := str_c(name, " (", party, ")", sep = ""),
-           !!party_varname := spell_out_party_abbrv(party)) %>% 
+           !!party_varname := spell_out_party_abbrv(party)) |> 
     select(!!c(colnames(numdf), chosen_varname, party_varname), everything())
 }
 
@@ -63,10 +63,10 @@ std_voteopts <- function(vec,
          `$Housecand3name ($Housecand3party)` = chr3,
          `$Sencand3name ($Sencand3party)` = chr3,
          `$Govcand3name ($Govcand3party)` = chr3,
-         `Other, Third-Party Candidate` = chr3) %>% 
-    gsub("cand", "Cand", .) %>%  # capitalize
-    gsub("name", "Name", .) %>%
-    gsub("party", "Party", .)
+         `Other, Third-Party Candidate` = chr3) |> 
+    str_replace_all("cand", "Cand") |>
+    str_replace_all("name", "Name") |>
+    str_replace_all("party", "Party")
 }
 
 
@@ -79,8 +79,8 @@ spell_out_party_abbrv <- function (vec) {
          `R` = "Republican",                      
          `I` = "Independent", 
          `L` = "Libertarian",
-         `G` =  "Green") %>% 
-    fct_infreq() %>%  # generally in order
+         `G` =  "Green") |> 
+    fct_infreq() |>  # generally in order
     fct_relevel(c("Democratic", "Republican")) # set this 
 } 
 
@@ -100,13 +100,13 @@ bind_label <- function(tbl, carry_vars = ids) {
     median(x[order(y, na.last = FALSE)])
   }
   
-  tbl_clps  %>%
+  tbl_clps  |>
     mutate(!! varname := fct_reorder2(.data[[charname]], 
                                       .x = .data[[numname]], 
                                       .y = .data[["year"]], 
                                       .fun = median2,
                                       .na_rm = FALSE,
-                                      .desc = FALSE)) %>%
+                                      .desc = FALSE)) |>
     select(!!carry_vars, !!varname)
 }
 
@@ -124,14 +124,14 @@ int_vot_manual <- function(tbl, vn, cn, nn) {
     if (grepl("sen", vn)) values_nv <- c(5, 6, 9)
     if (grepl("rep|gov", vn)) values_nv <- c(8, 9)
     
-    tbl_fmt <- tbl %>% 
+    tbl_fmt <- tbl |> 
       mutate(!!cn := replace(.data[[cn]], .data[[nn]] %in% values_nv, text_nv),  # set "no vote to a 9"
-             !!nn := replace(.data[[nn]],  .data[[nn]] %in% values_nv, 9)) %>% 
-      mutate(!!cn := replace(.data[[cn]], .data[[nn]] == 90, "Not Sure")) %>% 
+             !!nn := replace(.data[[nn]],  .data[[nn]] %in% values_nv, 9)) |> 
+      mutate(!!cn := replace(.data[[cn]], .data[[nn]] == 90, "Not Sure")) |> 
       mutate(!!nn := replace(.data[[nn]],  .data[[nn]] == 90, 10)) # set not sure to 10, match up to others
     
     if (grepl("sen", vn)) {
-      tbl_fmt <- tbl_fmt %>%
+      tbl_fmt <- tbl_fmt |>
         mutate(!!cn := replace(.data[[cn]], .data[[nn]] %in% values_nv & .data[["year"]] == 2012, NA), # only in 2012 senate voted does NotAsked get this label
                !!nn := replace(.data[[nn]], .data[[nn]] %in% values_nv & .data[["year"]] == 2012, NA))
     }
@@ -194,24 +194,24 @@ v_gov_who <- num_cand_match(v_gov, gc_key)
 # create a separate dataset for chosen vars ------ 
 ids <- c("year", "case_id")
 
-chosen_with_party <-  slim(i_rep_who) %>% 
-  left_join(slim(i_sen_who), ids) %>% 
-  left_join(slim(i_gov_who), ids) %>% 
-  left_join(slim(v_rep_who), ids) %>% 
-  left_join(slim(v_sen_who), ids) %>% 
+chosen_with_party <-  slim(i_rep_who) |> 
+  left_join(slim(i_sen_who), ids) |> 
+  left_join(slim(i_gov_who), ids) |> 
+  left_join(slim(v_rep_who), ids) |> 
+  left_join(slim(v_sen_who), ids) |> 
   left_join(slim(v_gov_who), ids)
 
 # now we can wrap up the abstract labels 
-abstract_lbl <- bind_label(i_rep_who) %>% 
-  left_join(bind_label(i_sen_who)) %>%
-  left_join(bind_label(i_gov_who)) %>%
-  left_join(bind_label(v_rep_who)) %>%
-  left_join(bind_label(v_sen_who)) %>%
+abstract_lbl <- bind_label(i_rep_who) |> 
+  left_join(bind_label(i_sen_who)) |>
+  left_join(bind_label(i_gov_who)) |>
+  left_join(bind_label(v_rep_who)) |>
+  left_join(bind_label(v_sen_who)) |>
   left_join(bind_label(v_gov_who))
 
 # pre-merge and order vars 
 lbl_party_name <- 
-  left_join(abstract_lbl, chosen_with_party, by = ids) %>% 
+  left_join(abstract_lbl, chosen_with_party, by = ids) |> 
   select(year, case_id, 
          matches("intent_rep(_party|$)"),
          matches("voted_rep(_party|$)"),
@@ -222,49 +222,49 @@ lbl_party_name <-
          everything())
 
 # nice dataset for incumbents ? ----
-incumbents_with_ID <-  slim(drop_post(ri_mc_match), "_current", "icpsr") %>% 
-  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), ids) %>% 
-  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), ids) %>% 
+incumbents_with_ID <-  slim(drop_post(ri_mc_match), "_current", "icpsr") |> 
+  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), ids) |> 
+  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), ids) |> 
   left_join(slim(drop_post(gov_inc_match), "_current"), ids)
 
 # merge in the candidate vars ----
-ccc_cand <- ccc %>% 
-  left_join(lbl_party_name, ids) %>% 
+ccc_cand <- ccc |> 
+  left_join(lbl_party_name, ids) |> 
   left_join(incumbents_with_ID, ids)
 
 stopifnot(nrow(ccc) == nrow(ccc_cand))
 
 # Format for output  --------
 # for ambiguous categories, where one number can correspond to different lables (intent_rep), use fct_reorder
-ccc_df <- ccc_cand %>%
-  mutate(zipcode = as.character(zipcode)) %>%
-  mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) %>% 
-  mutate_at(vars(year, case_id), as.integer) %>% 
+ccc_df <- ccc_cand |>
+  mutate(zipcode = as.character(zipcode)) |>
+  mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) |> 
+  mutate_at(vars(year, case_id), as.integer) |> 
   mutate_if(is.factor, fct_drop) # drop unused values
 
 # make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
-ccc_fac <- ccc_df %>% 
-  mutate(case_id = as.character(case_id)) %>% # better this than let crunch think its a numeric
-  mutate_at(vars(matches("_icpsr$")), as.character) %>%
+ccc_fac <- ccc_df |> 
+  mutate(case_id = as.character(case_id)) |> # better this than let crunch think its a numeric
+  mutate_at(vars(matches("_icpsr$")), as.character) |>
   mutate_at(vars(matches("(^cong)")), as.factor)
 
 
 # FIPS-state key 
-fips_key <-  tigris::fips_codes %>% 
-  as_tibble() %>% 
-  transmute(st = state, state = state_name, st_fips = as.integer(state_code)) %>% 
+fips_key <-  tigris::fips_codes |> 
+  as_tibble() |> 
+  transmute(st = state, state = state_name, st_fips = as.integer(state_code)) |> 
   distinct()
 
 fips_key_post <- rename(fips_key, st_post = st, state_post = state)
 
-ccc_factor <-   ccc_fac %>% 
-  left_join(fips_key) %>%
+ccc_factor <-   ccc_fac |> 
+  left_join(fips_key) |>
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
-         st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) %>% 
-  select(-st_fips) %>% 
-  left_join(fips_key_post) %>%
+         st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) |> 
+  select(-st_fips) |> 
+  left_join(fips_key_post) |>
   mutate(state_post = labelled(st_fips, deframe(select(fips_key_post, state_post, st_fips))),
-         st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) %>% 
+         st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) |> 
   select(-st_fips)
 
 # Save ---------
@@ -291,15 +291,15 @@ write_dta(ccc_common,
           version = 14)
 
 # crunch var
-bs_df <- bs_stata %>% 
-  select(-religion) %>% # already in 
+bs_df <- bs_stata |> 
+  select(-religion) |> # already in 
   mutate(case_id = as.character(case_id),
-         year = as.integer(year)) %>%
+         year = as.integer(year)) |>
   select(year, case_id, everything())
 
-ccc_crunch <- ccc_common %>% 
-  left_join(bs_df, by = c("year", "case_id")) %>% 
-  mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) %>% 
+ccc_crunch <- ccc_common |> 
+  left_join(bs_df, by = c("year", "case_id")) |> 
+  mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) |> 
   select(year, year_date, everything())
 
 write_sav(ccc_crunch, "data/release/cumulative_2006-2021_crunch.sav") 

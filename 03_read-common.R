@@ -4,7 +4,7 @@ library(haven)
 library(lubridate)
 
 # helper data ---
-statecode <- read_csv("data/source/statecode.csv")
+statecode <- read_csv("data/source/statecode.csv", show_col_types = FALSE)
 
 cces_cd <- function(s, d) {
   str_c(s, "-", str_pad(d, width = 2, pad = '0'))
@@ -34,7 +34,7 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
   
   # add congressional session
-  tbl_cong <- tbl %>% 
+  tbl_cong <- tbl |> 
     mutate(
       cong = as.integer(ceiling((year - 1788)/2)),
       cong_up = cong + 1L
@@ -54,11 +54,11 @@ std_dv <- function(path, guess_year = TRUE) {
   
   # 2006 is special but just for CC
   if (!guess_year) {
-    tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) %>% 
+    tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) |> 
       mutate(state_post = state,
              st_post = st,
              dist_post = dist,
-             dist_up_post = dist_up) %>% 
+             dist_up_post = dist_up) |> 
       mutate(cd_post = cces_cd(st_post, dist_post),
              cd_up_post = cces_cd(st_post, dist_up_post))
     
@@ -66,8 +66,8 @@ std_dv <- function(path, guess_year = TRUE) {
   }
   
   # then rename id
-  tbl_cd %>%
-    rename(case_id = !! orig_key) %>%
+  tbl_cd |>
+    rename(case_id = !! orig_key) |>
     relocate(year, case_id, 
              state, st, matches("(state|st)_post"),
              dist, dist_up, matches("(dist|dist_up)_post"),
@@ -80,8 +80,8 @@ std_dv <- function(path, guess_year = TRUE) {
 std_state <- function(tbl, guess_year, guessed_yr) {
   
   if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
-      tbl <- tbl %>%
-        mutate(state = as.character(as_factor(state_pre))) %>%
+      tbl <- tbl |>
+        mutate(state = as.character(as_factor(state_pre))) |>
         left_join(select(statecode, state, st), by = "state")
     return(tbl)
   }
@@ -95,21 +95,21 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   )
   
   if (!guessed_yr %in% c(2006, 2009)) {
-    tbl <- tbl %>%
-      mutate(state = as.character(as_factor(.data[[statevar]]))) %>%
-      mutate(state = str_replace(str_to_title(state), "\\sOf\\s", " of ")) %>% 
+    tbl <- tbl |>
+      mutate(state = as.character(as_factor(.data[[statevar]]))) |>
+      mutate(state = str_replace(str_to_title(state), "\\sOf\\s", " of ")) |> 
       left_join(select(statecode, state, st), by = "state")
   }
   
   if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
-    tbl <- tbl %>%
-      rename(st = !! statevar) %>%
+    tbl <- tbl |>
+      rename(st = !! statevar) |>
       left_join(select(statecode, state, st), by = "st")
   }
   
   if (guessed_yr %in% 2009) { # 2009 codes lower case labels
-    tbl <- tbl %>%
-      mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) %>%
+    tbl <- tbl |>
+      mutate(state = str_to_title(as.character(as_factor(.data[[statevar]])))) |>
       left_join(select(statecode, state, st), by = "state")
   }
   tbl
@@ -117,14 +117,14 @@ std_state <- function(tbl, guess_year, guessed_yr) {
 
 std_statepost <- function(tbl, guess_year, guessed_yr) {
   if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
-    tbl <- tbl %>%
-      mutate(state_post = as.character(as_factor(state_post))) %>%
+    tbl <- tbl |>
+      mutate(state_post = as.character(as_factor(state_post))) |>
       left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
     return(tbl) 
   }
   
   if (guessed_yr == 2006) { # no distinction
-    tbl <- tbl %>% 
+    tbl <- tbl |> 
       mutate(state_post = state,
              st_post = st)
     
@@ -142,9 +142,9 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
     statevar <- "post_inputstate"
   
   # create state_post and st_post
-  tbl %>%
-    mutate(state_post = as.character(as_factor(.data[[statevar]]))) %>%
-    mutate(state_post = str_replace(str_to_title(state_post), "\\sOf\\s", " of ")) %>% 
+  tbl |>
+    mutate(state_post = as.character(as_factor(.data[[statevar]]))) |>
+    mutate(state_post = str_replace(str_to_title(state_post), "\\sOf\\s", " of ")) |> 
     left_join(select(statecode, state_post = state, st_post = st), by = "state_post")
 }
 
@@ -153,10 +153,10 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
 
 std_dist <- function(tbl, guess_year, guessed_yr) {
   if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       mutate(dist = as.integer(zap_labels(congdist_pre)),
-             dist_up = as.integer(zap_labels(congdist_redist_pre))) %>% 
-      mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) %>% # these were left as missing, except at-large. fix to missing.
+             dist_up = as.integer(zap_labels(congdist_redist_pre))) |> 
+      mutate(dist_up = replace(dist_up, year %in% 2006:2011, NA)) |> # these were left as missing, except at-large. fix to missing.
       mutate(dist_up = coalesce(dist_up, dist)) # for 2006:2011, append dist for now
   }
   
@@ -183,38 +183,38 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     if (!guessed_yr %in% c(2006, 2007)) {
       
       if (distupvar == distvar) {
-        tbl <- tbl %>%
-          rename(dist = !!distvar) %>%
-          mutate(dist = as.integer(dist)) %>% 
+        tbl <- tbl |>
+          rename(dist = !!distvar) |>
+          mutate(dist = as.integer(dist)) |> 
           mutate(dist_up = dist)
       } else {
-        tbl <- tbl %>%
+        tbl <- tbl |>
           rename(dist = !!distvar,
-                 dist_up = !!distupvar) %>%
+                 dist_up = !!distupvar) |>
           mutate(dist = as.integer(dist),
                  dist_up = as.integer(dist_up))
       }
     }
     
     if (guessed_yr %in% 2006) { # 2006 codes abbreviations as character
-      tbl <- tbl %>%
+      tbl <- tbl |>
         mutate(dist = as.integer(zap_labels(.data[[distvar]])),
                dist_up = dist)
     }
     
     if (guessed_yr %in% 2007) { # 2009 codes lower case labels
-      tbl <- tbl %>%
+      tbl <- tbl |>
         mutate(dist = as.integer(.data[[distvar]]),
                dist_up = dist)
     }
   }
   
   # fix at large and add cd
-  fix_al <- tbl %>%
+  fix_al <- tbl |>
     mutate(
       dist = replace(dist, dist == 0, 1L), # At-LARGE is 1
       dist_up = replace(dist_up, dist_up == 0, 1L)
-    ) %>% 
+    ) |> 
     mutate(cd    = cces_cd(st, dist),
            cd_up = cces_cd(st, dist_up))
   
@@ -226,15 +226,15 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
 std_distpost <- function(tbl, guess_year, guessed_yr) {
   
   if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       mutate(dist_post = as.integer(zap_labels(congdist_post)),
-             dist_up_post = as.integer(zap_labels(congdist_redist_post))) %>% 
-      mutate(dist_up_post = coalesce(dist_up_post, dist_post)) %>% 
+             dist_up_post = as.integer(zap_labels(congdist_redist_post))) |> 
+      mutate(dist_up_post = coalesce(dist_up_post, dist_post)) |> 
       mutate(dist_up_post = replace(dist_up_post, year %% 2 == 1, NA)) 
   }
   
   if (guess_year && guessed_yr == 2006) {
-    tbl <- tbl %>% 
+    tbl <- tbl |> 
       mutate(dist_post = dist,
              dist_up_post = dist_up)
   }
@@ -260,28 +260,28 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
       distupvar <- "post_cdid113"
     }
     
-    tbl <- tbl %>%
-      rename(dist_post = !!distvar) %>%
+    tbl <- tbl |>
+      rename(dist_post = !!distvar) |>
       mutate(dist_post = as.integer(dist_post))
     
     if (distupvar != distvar) {
-      tbl <- tbl %>%
-        rename(dist_up_post = !!distupvar) %>%
+      tbl <- tbl |>
+        rename(dist_up_post = !!distupvar) |>
         mutate(dist_up_post = as.integer(dist_up_post))
     }
     
     if (distupvar == distvar) {
-      tbl <- tbl %>%
+      tbl <- tbl |>
         mutate(dist_up_post = as.integer(dist_post))
     }
   }
   
   # fix at large and add cd
-  fix_al <- tbl %>%
+  fix_al <- tbl |>
     mutate(
       dist_post = replace(dist_post, dist_post == 0, 1L), 
       dist_up_post = replace(dist_up_post, dist_up_post == 0, 1L)
-    ) %>% 
+    ) |> 
     mutate(cd_post    = cces_cd(st_post, dist_post),
            cd_up_post = cces_cd(st_post, dist_up_post))
   fix_al
@@ -339,7 +339,7 @@ hub18 <- std_dv("data/source/cces/2018_hub.dta")
 # 2006 module addition
 # need for accountability paper 
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
-mit_fmt <- mit06_raw %>%
+mit_fmt <- mit06_raw |>
   mutate(year = 2006,
          cong = 109L,
          cong_up = 110L,
@@ -347,23 +347,23 @@ mit_fmt <- mit06_raw %>%
          dist_up = as.integer(district),
          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
          fips  = zap_labels(inputstate),
-         state = NULL) %>%
-  left_join(select(statecode, fips, state, st)) %>% 
+         state = NULL) |>
+  left_join(select(statecode, fips, state, st)) |> 
   mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
-         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) %>% 
-  rename(case_id = caseid) %>% 
+         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |> 
+  rename(case_id = caseid) |> 
   select(year, case_id, state, st, cong, dist, dist_up, everything())
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
 
 # 2008 addition
 # (used above in std_dv, because that only takes a path)
-read_dta("data/source/cces/2008_hum.dta") %>% 
-  rename_all(str_to_upper) %>% 
-  select(-HUM302, -HUM304) %>% # decimal labelled
+read_dta("data/source/cces/2008_hum.dta") |> 
+  rename_all(str_to_upper) |> 
+  select(-HUM302, -HUM304) |> # decimal labelled
   write_dta("data/source/cces/2008_hum_allcapvars.dta")
 
-hu08 <- anti_join(hu08, select(cc08, year, case_id)) %>% 
+hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
   mutate(V300 = as_datetime(V300))
 
 
