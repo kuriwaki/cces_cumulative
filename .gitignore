@@ -42,6 +42,7 @@ Icon?
 *.gif
 guide/*cache/
 
+*.Rout
 
 # Compiled source #
 ###################

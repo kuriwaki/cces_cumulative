@@ -896,7 +896,7 @@ cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
 cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
-cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv") %>% 
+cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
   transmute(year = 2017, case_id = V101, countyfips)
 
 # execute name standardization -----
@@ -1409,7 +1409,7 @@ ccc_sort <- ccc %>%
 
 
 # Write ----- 
-write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
+# write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")

@@ -20,17 +20,17 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
            remove_regex = suffixes) {
   office <- unique(str_extract(measure_regex, "(rep|sen|gov)"))
   
-  tbl %>% 
-    select(all_of(ids), matches(measure_regex[1]), matches(measure_regex[2])) %>% 
+  tbl |> 
+    select(all_of(ids), matches(measure_regex[1]), matches(measure_regex[2])) |> 
     pivot_longer(
       cols = -all_of(ids),
       names_to = c(".value", "cand"),
       names_pattern = glue("{office}_(pty|can)([1-9])"), 
       values_drop_na = TRUE
-    ) %>% 
-    rename(name = can, party = pty) %>%
-    filter(cand != "") %>%
-    mutate(cand = as.integer(cand)) %>%
+    ) |> 
+    rename(name = can, party = pty) |>
+    filter(cand != "") |>
+    mutate(cand = as.integer(cand)) |>
     mutate(name_caps = str_to_upper(gsub(remove_regex , "", name)),
            namelast = word(name_caps, -1))
 }
@@ -50,10 +50,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
   if (var %in% c("sen1", "sen2")) {
-    mc_counts <- key %>% group_by(congress, chamber, st) %>% tally()
-    tbl <- tbl %>% filter(st != "DC")
+    mc_counts <- key |> group_by(congress, chamber, st) |> tally()
+    tbl <- tbl |> filter(st != "DC")
   }
-  if (var == "rep") mc_counts <- key %>% group_by(congress, chamber, st, dist) %>% tally()
+  if (var == "rep") mc_counts <- key |> group_by(congress, chamber, st, dist) |> tally()
   
   key_uniq <- semi_join(key, filter(mc_counts, n == 1))
   key_notu <- semi_join(key, filter(mc_counts, n != 1))
@@ -71,11 +71,11 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
            " percent) matched uniquely by district"), "\n")
   
   # for second round, extract last name
-  persn_remain <- persn_unmatch %>% 
+  persn_remain <- persn_unmatch |> 
     mutate(namelast = gsub(remove_regex, "", .data[[glue("{var}_inc")]]),
            namelast = str_remove(namelast, "\\s\\((republican|democrat|independent)\\)"), 
            namelast = word(namelast, -1), # find lastname
-           namelast = toupper(namelast)) %>% 
+           namelast = toupper(namelast)) |> 
     mutate(namelast = replace(namelast, st == "NV" & namelast == "MASTO", "CORTEZ MASTO"),
            namelast = replace(namelast, st == "MD" & namelast == "HOLLEN", "VAN HOLLEN"),
            namelast = replace(namelast, st == "TX" & namelast == "HUTCHINSON", "HUTCHISON"),
@@ -107,11 +107,11 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   ptyvar <- glue("{var}_ipt")
   
   
-  bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) %>% 
+  bind_rows(uniq_matched1, uniq_matched2, persn_unmatch2) |> 
     mutate(!!paste0(var, "_current") := concatenate_current(
       namevec = .data[[namevar]], 
-      partyvec = .data[[ptyvar]])) %>%
-    arrange(year, case_id) %>% 
+      partyvec = .data[[ptyvar]])) |>
+    arrange(year, case_id) |> 
     select(all_of(ids),
            matches("_current"),
            icpsr)
@@ -169,11 +169,11 @@ stringdist_left_join <- function(i, type0, cdata, rdata, matchvar, thresh) {
 #' Remove NAs, change labelled (from the dta) to factors (better for R)
 #' @param tbl A dataset of respondents
 clean_out <- function(tbl, cvars = carry_vars, m = master) {
-  tbl %>% 
+  tbl |> 
     # make NA if empty or "_NA_" 
-    mutate_if(is.character, function(x) replace(x, x == "__NA__" | x == "", NA)) %>% 
+    mutate_if(is.character, function(x) replace(x, x == "__NA__" | x == "", NA)) |> 
     # the carry_vars specified and any vars in master
-    select(!!c(cvars, intersect(m$name, colnames(tbl)))) %>% 
+    select(!!c(cvars, intersect(m$name, colnames(tbl)))) |> 
     mutate_if(is.labelled, function(x) as.character(as_factor(x)))
 }
 
@@ -205,10 +205,10 @@ std_ptylabel <- function(vec) {
 
 # Data ------
 load("data/output/01_responses/common_all.RData")
-inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv")
-inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv") %>% 
+inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv", show_col_types = FALSE)
+inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv", show_col_types = FALSE) |> 
   mutate(dist = NA)
-statecode <- read_csv("data/source/statecode.csv")
+statecode <- read_csv("data/source/statecode.csv", show_col_types = FALSE)
 
 # parameters
 # remove generations, MDs, Jr/Srs.
@@ -240,7 +240,7 @@ blend_post <- function(tbl) {
          dist = dist_post,
          dist_up = dist_up_post,
          cd = cd_post,
-         cd_up = cd_up_post) %>% 
+         cd_up = cd_up_post) |> 
     filter(!is.na(st) | !is.na(dist) | !is.na(cd))
 }
 
@@ -280,7 +280,7 @@ for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) {
   for (var in master$name) {
     
     # lookup this var
-    rename_from <- filter(master, name == var) %>% 
+    rename_from <- filter(master, name == var) |> 
       pull(!!as.character(yr))
     
     # if it shouldn't exist, ensure it doesn't exist
@@ -290,7 +290,7 @@ for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) {
     
     # if it should exist, rename
     if (!is.na(rename_from)) {
-      cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] %>% 
+      cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] |> 
         rename({{var}} := all_of(rename_from))
     }
   }
@@ -309,14 +309,14 @@ assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
   replace(vec, yrvec %in% c(2008:2011) & !is.na(candvec), pty)
 }
 
-df_current <- dfcc %>% 
+df_current <- dfcc |> 
   mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, gov_can1, "D"),
          rep_pty1 = assign_08_10_pty(rep_pty1, year, rep_can1, "D"),
          sen_pty1 = assign_08_10_pty(sen_pty1, year, sen_can1, "D"),
          gov_pty2 = assign_08_10_pty(gov_pty2, year, gov_can2, "R"),
          rep_pty2 = assign_08_10_pty(rep_pty2, year, rep_can2, "R"),
          sen_pty2 = assign_08_10_pty(sen_pty2, year, sen_can2, "R")
-         ) %>%
+         ) |>
   mutate_at(.vars = vars(matches("(_pty|_ipt)")), .funs = std_ptylabel)
 
 # unique by dataset
@@ -335,15 +335,14 @@ s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars2)
 s2i_mc_match <- match_MC(df_current, inc_S, "sen2", carry_vars2)
 
 # a bit more work for governors
-r_govinc <- df_current %>%
-  select(!!carry_vars2, gov_inc, gov_ipt) %>% 
+r_govinc <- df_current |>
+  select(all_of(carry_vars2), gov_inc, gov_ipt) |> 
   mutate(namelast = str_to_upper(word(gsub(suffixes, "", gov_inc), -1)))
 
-gov_inc_match <- r_govinc %>% 
-  mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) %>%
-  arrange(year, case_id) %>% 
-  select(!!carry_vars2,
-         matches("_current"))
+gov_inc_match <- r_govinc |> 
+  mutate(gov_current = concatenate_current(gov_inc, gov_ipt)) |>
+  arrange(year, case_id) |> 
+  select(all_of(carry_vars2), matches("_current"))
   
 
 # Save ---------

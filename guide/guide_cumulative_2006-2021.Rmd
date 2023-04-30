@@ -38,12 +38,12 @@ rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale
 print_tab <- function(var, do_sort = FALSE, tbl = cc) {
   var <- enquo(var)
   
-  tal <- tbl %>% 
-    select(!!var) %>% 
-    mutate_if(is.labelled, as_factor) %>% 
-    mutate_if(is.factor, ~fct_na_value_to_level(.x, level = "(Missing)")) %>% 
-    group_by(!!var) %>% 
-    tally(sort = do_sort) %>% 
+  tal <- tbl |> 
+    select(!!var) |> 
+    mutate_if(is.labelled, as_factor) |> 
+    mutate_if(is.factor, ~fct_na_value_to_level(.x, level = "(Missing)")) |> 
+    group_by(!!var) |> 
+    tally(sort = do_sort) |> 
     mutate_at(vars(1), as.character)
   
   dframe <- as.data.frame(tal)
@@ -55,10 +55,10 @@ print_tab <- function(var, do_sort = FALSE, tbl = cc) {
       format.args = list(big.mark = ','),
       linesep = c(rep('', nrow(dframe))),
       position = "!H",
-      booktabs = TRUE) %>% 
-    kable_styling(full_width = FALSE, latex_options = "HOLD_position") %>% 
-    str_replace_all("\\[(?=(D|R|O))", "{[") %>% 
-    str_replace_all("(?<=[1-4])\\]", "]}") %>% 
+      booktabs = TRUE) |> 
+    kable_styling(full_width = FALSE, latex_options = "HOLD_position") |> 
+    str_replace_all("\\[(?=(D|R|O))", "{[") |> 
+    str_replace_all("(?<=[1-4])\\]", "]}") |> 
     cat()
 }
 ```
@@ -76,10 +76,10 @@ print_numeric <- function(var, tbl = cc) {
 in_years <- function(var, tbl = cc) {
   var <- enquo(var)
   
-  yrs_vec <- tbl %>% 
-    filter(!is.na(!!var)) %>% 
-    distinct(year) %>% 
-    arrange(year) %>%
+  yrs_vec <- tbl |> 
+    filter(!is.na(!!var)) |> 
+    distinct(year) |> 
+    arrange(year) |>
     pull() 
   
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
@@ -218,8 +218,8 @@ Suppose we want to merge in the 2016-specific issue questions that ask responden
 cc16_rc <- select(cc16, V101, matches("CC16_351"))
 
 # join on case ID
-cc_rc <- cc %>% 
-  filter(year == 2016) %>% 
+cc_rc <- cc |> 
+  filter(year == 2016) |> 
   left_join(cc16_rc, by = c("case_id" = "V101"))
 ```
 
@@ -238,13 +238,13 @@ select(cc, year, case_id, pid3)
 
 ```{r, echo = TRUE, eval = FALSE}
 library(haven)
-select(cc, year, case_id, pid3) %>% 
+select(cc, year, case_id, pid3) |> 
   mutate(pid3_fct = as_factor(pid3))
 ```
 ```{r, echo = FALSE, eval = TRUE}
 library(haven)
-select(cc, year, case_id, pid3) %>% 
-  mutate(pid3_fct = as_factor(pid3)) %>% 
+select(cc, year, case_id, pid3) |> 
+  mutate(pid3_fct = as_factor(pid3)) |> 
   print(n = 5)
 ```
 
@@ -252,12 +252,12 @@ select(cc, year, case_id, pid3) %>%
 \noindent Unlike factors, labelled variables can be referenced by their underlying numeric value. It is sometimes useful to treat survey values as numbers rather than as raw text, and the labelled class allows you to do that.
 
 ```{r, echo = TRUE,  eval = FALSE}
-select(cc, year, case_id, pid3) %>% 
+select(cc, year, case_id, pid3) |> 
   filter(pid3 == 1)
 ```
 ```{r, echo = FALSE,  eval = TRUE}
-select(cc, year, case_id, pid3) %>% 
-  filter(pid3 == 1) %>% 
+select(cc, year, case_id, pid3) |> 
+  filter(pid3 == 1) |> 
   print(n = 5)
 ```
 
@@ -341,19 +341,19 @@ print_tab(year)
 `r descrip(starttime)`
 
 ```{r, results = "asis", echo = FALSE}
-cc %>% 
-  group_by(year) %>% 
+cc |> 
+  group_by(year) |> 
   summarize(earliest = as.Date(min(starttime)),
             latest = as.Date(max(starttime)), 
-            .groups = "drop") %>% 
-  mutate(year = as.character(year)) %>% 
+            .groups = "drop") |> 
+  mutate(year = as.character(year)) |> 
   kable(format = "latex", 
         align = c("l", "r", "r"),
         col.names = c("", "Earliest Date", "Latest Date"), 
         format.args = list(big.mark = ','),
         linesep = c(rep('', n_distinct(cc$year))),
-        booktabs = TRUE) %>% 
-  kable_styling(full_width = FALSE) %>% 
+        booktabs = TRUE) |> 
+  kable_styling(full_width = FALSE) |> 
   cat()
 ```
 * Years: `r in_years(starttime)`
@@ -396,15 +396,15 @@ print_numeric(weight_cumulative)
 ```
 
 * Years: `r in_years(weight_cumulative)`
-* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the  year-specific factors shown in the following table.  For example, all weights in the 2016 common content are divided by about `r filter(rsc, year == 2016) %>% pull(size_factor) %>% round(., 2)`, because it has about twice as many observations as the other datasets.
+* Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the  year-specific factors shown in the following table.  For example, all weights in the 2016 common content are divided by about `r filter(rsc, year == 2016) |> pull(size_factor) |> round(2)`, because it has about twice as many observations as the other datasets.
 * This transformation means that this simple cumulative weight makes sense when all years should be re-weighted to have the same sample size, even if that means doubling the weights. For analyses that are done year by year, using `weight` and `weight_cumulative` are equivalent.
 
 
 \begin{center}
 
 ```{r, fig.align = 'center'}
-rsc %>% 
-  mutate(size  = formatC(size, format = "d", big.mark = ",")) %>% 
+rsc |> 
+  mutate(size  = formatC(size, format = "d", big.mark = ",")) |> 
   kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
         linesep = rep('', nrow(rsc)))
 
@@ -426,7 +426,7 @@ print_numeric(weight_post)
 * To use the `weight_post` for years it is available but `weight` for where it is not, one could coalesce into a new variable. 
 
 ```{r, eval = FALSE, echo = FALSE}
-cc %>% 
+cc |> 
   mutate(weight_combined = coalesce(weight_post, weight))
 ```
 
@@ -479,10 +479,10 @@ A series of variables for the respondent's location:
 * `r nam(county_fips)`: `r descrip(county_fips)`
 
 ```{r}
-cc %>%
-  mutate(is_2012 = year == 2012) %>%
-  arrange(desc(is_2012)) %>%
-  select(matches("(state|^st(|_post)$|dist|cd|zipcode|county_fips)")) %>% 
+cc |>
+  mutate(is_2012 = year == 2012) |>
+  arrange(desc(is_2012)) |>
+  select(matches("(state|^st(|_post)$|dist|cd|zipcode|county_fips)")) |> 
   glimpse()
 ```
 
@@ -1265,8 +1265,8 @@ The unique identifiers can be used to join with other databases to append additi
 The text responses that the respondent chose in each of the `intent_` / `voted_` questions, if the respondent was a candidate. For example, respondent with `case_id = 163051575` in the 2012 CCES chose the first option in the House representative preference question. `intent_rep_chosen` shows that this particular respondent preferred voting for Maxine Waters, one of the two Democrats in the race.
 
 ```{r, echo = TRUE}
-cc %>% 
-  filter(year == 2012, st == "CA", dist_up == 43) %>% 
+cc |> 
+  filter(year == 2012, st == "CA", dist_up == 43) |> 
   select(matches("intent_rep")) 
 ```
 

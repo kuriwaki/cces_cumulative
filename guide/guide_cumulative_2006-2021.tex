@@ -336,8 +336,8 @@ with \texttt{"CC16\_351"} and the case-identifier is called
 \NormalTok{cc16\_rc }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(cc16, V101, }\FunctionTok{matches}\NormalTok{(}\StringTok{"CC16\_351"}\NormalTok{))}
 
 \CommentTok{\# join on case ID}
-\NormalTok{cc\_rc }\OtherTok{\textless{}{-}}\NormalTok{ cc }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2016}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{cc\_rc }\OtherTok{\textless{}{-}}\NormalTok{ cc }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2016}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{left\_join}\NormalTok{(cc16\_rc, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"case\_id"} \OtherTok{=} \StringTok{"V101"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
@@ -393,7 +393,7 @@ labelled class.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(haven)}
-\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{\%\textgreater{}\%} 
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pid3\_fct =} \FunctionTok{as\_factor}\NormalTok{(pid3))}
 \end{Highlighting}
 \end{Shaded}
@@ -417,7 +417,7 @@ do that.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{\%\textgreater{}\%} 
+\FunctionTok{select}\NormalTok{(cc, year, case\_id, pid3) }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{filter}\NormalTok{(pid3 }\SpecialCharTok{==} \DecValTok{1}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -3046,8 +3046,8 @@ Democrats in the race.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, st }\SpecialCharTok{==} \StringTok{"CA"}\NormalTok{, dist\_up }\SpecialCharTok{==} \DecValTok{43}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{cc }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, st }\SpecialCharTok{==} \StringTok{"CA"}\NormalTok{, dist\_up }\SpecialCharTok{==} \DecValTok{43}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{select}\NormalTok{(}\FunctionTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
 \end{Highlighting}
 \end{Shaded}
