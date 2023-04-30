@@ -34,6 +34,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         pew_religimp = relig_importance,
         pew_bornagain = born_again,
         religpew_protestant = relig_protestant,
+        pew_churatd = church_attendence,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -227,7 +228,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
-  # 2014 -2015 -------
+  # 2014 - 2015 -------
   if (identical(cces_year, 2014L)) {
     tbl <- tbl %>% rename(
       approval_pres = CC14_308a,
@@ -273,7 +274,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
-  # 2016 -2017  ----
+  # 2016 - 2017  ----
   if (identical(cces_year, 2016L)) {
     tbl <- tbl %>%
       rename(
@@ -331,7 +332,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2018, 2019 ------
+  # 2018 - 2019 ------
   if (identical(cces_year, 2018L)) {
     
     tbl <- tbl %>%
@@ -396,7 +397,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2020, 2021 ----
+  # 2020 - 2021 ----
   if (identical(cces_year, 2020L)) {
     
     tbl <- tbl %>%
@@ -1112,7 +1113,8 @@ bornagain <- find_stack(ccs, pew_bornagain, make_labelled = TRUE) %>%
   rename(relig_bornagain = pew_bornagain)
 protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) |> 
   rename(relig_protestant = religpew_protestant)
-
+churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |> 
+  rename(relig_church = pew_churatd)
 
 # president -------
 i_pres08 <- find_stack(ccs, intent_pres_08)
@@ -1345,6 +1347,7 @@ ccc <- geo %>%
   left_join(religimp) %>%
   left_join(bornagain) %>%
   left_join(protestant) %>%
+  left_join(churatd) %>%
   left_join(econ) %>%
   left_join(newsint) %>%
   left_join(apvpres) %>%

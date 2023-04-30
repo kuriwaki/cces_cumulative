@@ -602,7 +602,7 @@ print_tab(relig_imp)
 ```
 
 * Years: `r in_years(relig_imp)`
-
+* In common content, often named `pew_religimp`
 
 ### `r nam(relig_bornagain)`
 
@@ -614,7 +614,7 @@ print_tab(relig_bornagain)
 ```
 
 * Years: `r in_years(relig_bornagain)`
-
+* In common content, often named `pew_bornagain`
 
 ### `r nam(relig_protestant)`
 
@@ -626,6 +626,20 @@ print_tab(relig_protestant)
 ```
 
 * Years: `r in_years(relig_protestant)`
+* In common content, often named `religpew_protestant`
+
+### `r nam(relig_church)`
+
+`r descrip(relig_church)`
+
+
+```{r, results = "asis"}
+print_tab(relig_church)
+```
+
+* Years: `r in_years(relig_church)`
+* In common content, often named `pew_churatd`
+
 
 
 ## Family Status
