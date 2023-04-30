@@ -1134,8 +1134,7 @@ v_pres08 <- v_pres08 %>%
 v_pres12 <- v_pres12 %>% 
   mutate(voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- v_pres16 %>%
-  mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
-         voted_pres_16 = clps_pres16(voted_pres_16),
+  mutate(voted_pres_16 = clps_pres16(voted_pres_16),
          voted_pres_16 = replace(voted_pres_16, year %in% 2019:2021 & voted_pres_16 == "Did not Vote for this Office", NA))
 v_pres20 <- v_pres20 %>%
   mutate(voted_pres_20 = clps_pres20(voted_pres_20),
