@@ -151,14 +151,14 @@ of the Cooperative (Congressional) Election Study}}
 Kuriwaki\thanks{Department of Political Science, Yale University.
 Website: \url{https://www.shirokuriwaki.com}. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander
-Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan
-Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor,
-Brian Schaffner, and Gerlad Wright for their suggestions and
+Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard
+Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew,
+Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and
 contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{Guide last updated: 2022-03-24}
+\date{Guide last updated: 2023-04-30}
 
 \begin{document}
 
@@ -371,8 +371,8 @@ makes it immediately obvious which value is associated with which label:
 
 \begin{verbatim}
 # A tibble: 557,455 x 3
-    year case_id            pid3
-   <int>   <int>       <int+lbl>
+    year case_id pid3           
+   <int>   <int> <int+lbl>      
  1  2006  439219 1 [Democrat]   
  2  2006  439224 4 [Other]      
  3  2006  439228 1 [Democrat]   
@@ -383,7 +383,7 @@ makes it immediately obvious which value is associated with which label:
  8  2006  439254 1 [Democrat]   
  9  2006  439255 1 [Democrat]   
 10  2006  439263 1 [Democrat]   
-# ... with 557,445 more rows
+# i 557,445 more rows
 \end{verbatim}
 
 \noindent Labels can be made explicit by coercing the labelled vector
@@ -400,14 +400,14 @@ labelled class.
 
 \begin{verbatim}
 # A tibble: 557,455 x 4
-   year case_id         pid3 pid3_fct
-  <int>   <int>    <int+lbl> <fct>   
+   year case_id pid3         pid3_fct
+  <int>   <int> <int+lbl>    <fct>   
 1  2006  439219 1 [Democrat] Democrat
 2  2006  439224 4 [Other]    Other   
 3  2006  439228 1 [Democrat] Democrat
 4  2006  439237 1 [Democrat] Democrat
 5  2006  439238 1 [Democrat] Democrat
-# ... with 557,450 more rows
+# i 557,450 more rows
 \end{verbatim}
 
 \noindent Unlike factors, labelled variables can be referenced by their
@@ -424,14 +424,14 @@ do that.
 
 \begin{verbatim}
 # A tibble: 202,454 x 3
-   year case_id         pid3
-  <int>   <int>    <int+lbl>
+   year case_id pid3        
+  <int>   <int> <int+lbl>   
 1  2006  439219 1 [Democrat]
 2  2006  439228 1 [Democrat]
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# ... with 202,449 more rows
+# i 202,449 more rows
 \end{verbatim}
 
 \indent In this cumulative R dataset, some variables are of class
@@ -491,7 +491,7 @@ individuals.
  8  2006  439254 NV    [Democrat / Candidate 1] Democratic      Jack Carter (D) 
  9  2006  439255 TX    [Democrat / Candidate 1] Democratic      Barbara Ann Rad~
 10  2006  439263 MD    I Did Not Vote In This ~ <NA>            <NA>            
-# ... with 557,445 more rows
+# i 557,445 more rows
 \end{verbatim}
 
 \hypertarget{crunch}{%
@@ -1185,11 +1185,139 @@ Something Else & 34,412\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2007-2021
 \item
   The response options have stayed largely consistent and follow that of
   Pew.
+\end{itemize}
+
+\hypertarget{relig_imp-importance-of-religion}{%
+\subsubsection{\texorpdfstring{\texttt{relig\_imp}: Importance of
+religion}{relig\_imp: Importance of religion}}\label{relig_imp-importance-of-religion}}
+
+``How important is religion in your life?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Very Important & 199,606\\
+Somewhat Important & 131,120\\
+Not Too Important & 74,134\\
+Not at All Important & 99,379\\
+(Missing) & 53,216\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2008-2021
+\item
+  In common content, often named \texttt{pew\_religimp}
+\end{itemize}
+
+\hypertarget{relig_bornagain-evangelical-christian}{%
+\subsubsection{\texorpdfstring{\texttt{relig\_bornagain}: Evangelical
+Christian}{relig\_bornagain: Evangelical Christian}}\label{relig_bornagain-evangelical-christian}}
+
+``Would you describe yourself as a born-again or evangelical Christian,
+or not?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Yes & 160,044\\
+No & 377,576\\
+(Missing) & 19,835\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2021 except 2007
+\item
+  In common content, often named \texttt{pew\_bornagain}
+\end{itemize}
+
+\hypertarget{relig_protestant-branch-of-protestantism}{%
+\subsubsection{\texorpdfstring{\texttt{relig\_protestant}: Branch of
+Protestantism}{relig\_protestant: Branch of Protestantism}}\label{relig_protestant-branch-of-protestantism}}
+
+``To which Protestant church or group do you belong?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Baptist & 60,521\\
+Methodist & 27,765\\
+Nondenominational or Independent Church & 41,787\\
+Lutheran & 21,362\\
+Presbyterian & 13,434\\
+Pentecostal & 12,853\\
+Episcopalian & 9,427\\
+Church of Christ or Disciples of Christ & 7,462\\
+Congregational or United Church of Christ & 4,800\\
+Holiness & 1,860\\
+Reformed & 1,753\\
+Adventist & 1,936\\
+Jehovah's Witness & 2,162\\
+Something Else & 12,387\\
+(Missing) & 337,946\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2007-2021
+\item
+  In common content, often named \texttt{religpew\_protestant}
+\end{itemize}
+
+\hypertarget{relig_church-church-attendance}{%
+\subsubsection{\texorpdfstring{\texttt{relig\_church}: Church
+Attendance}{relig\_church: Church Attendance}}\label{relig_church-church-attendance}}
+
+``Aside from weddings and funerals, how often do you attend religious
+services?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+More Than Once a Week & 44,602\\
+Once a Week & 92,728\\
+Once or Twice a Month & 40,938\\
+A Few Times a Year & 72,356\\
+Seldom & 117,825\\
+Never & 135,094\\
+Don't Know & 6,785\\
+(Missing) & 47,127\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2008-2021
+\item
+  In common content, often named \texttt{pew\_churatd}
 \end{itemize}
 
 \hypertarget{family-status}{%
@@ -1279,8 +1407,7 @@ No & 382,035\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021
+  Years: All of 2008-2021
 \end{itemize}
 
 \hypertarget{no_milstat-military-status-none}{%
@@ -1306,8 +1433,7 @@ No & 315,491\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2006-2021 except 2007
 \item
   The original question is of the form ``We'd like to know whether you
   or someone in your immediate family is currently serving or has ever
@@ -1803,8 +1929,7 @@ Other & 13,232\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2006-2021 except 2007
 \end{itemize}
 
 \hypertarget{no_healthins-uninsured}{%
@@ -1979,8 +2104,7 @@ Don't Know & 13,937\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2007-2021
 \item
   Limitations: Not asked in 2006. Similar questions about watching TV
   news was asked in 2006, but not included in this cumulative file.
@@ -2254,9 +2378,9 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \midrule
 Democratic & 201,604\\
 Republican & 171,542\\
-Other Candidate & 20,890\\
-Did not Vote & 25,244\\
-(Missing) & 138,175\\
+Other Candidate & 21,240\\
+Did not Vote & 25,236\\
+(Missing) & 137,833\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2264,8 +2388,7 @@ Did not Vote & 25,244\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021
+  Years: All of 2008-2021
 \item
   Note: In a presidential election year, this asks the vote of
   \emph{that} year. The vote choice of the presidential election 4 years
@@ -2467,7 +2590,7 @@ Other / Someone Else & 5,872\\
 Did not Vote & 217\\
 Did not Vote for this Office & 2,602\\
 Not Sure / Don't Recall & 1,990\\
-I Did not Vote & 8\\
+Other & 8\\
 (Missing) & 399,483\\
 \bottomrule
 \end{tabular}
@@ -2505,7 +2628,7 @@ Donald Trump & 74,767\\
 Other / Someone Else & 17,559\\
 Did not Vote for this Office & 617\\
 Not Sure / Don't Recall & 287\\
-Not Sure & 229\\
+Other & 229\\
 (Missing) & 374,301\\
 \bottomrule
 \end{tabular}
@@ -2539,7 +2662,8 @@ Donald Trump & 26,205\\
 Other / Someone Else & 2,142\\
 Did not Vote for President & 3,716\\
 Not Sure & 190\\
-(Missing) & 486,217\\
+Other & 113\\
+(Missing) & 486,104\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2942,7 +3066,7 @@ Democrats in the race.
  8 [Republican / Candidate 2] Democratic       Bob Flores (D)   
  9 [Republican / Candidate 2] Democratic       Bob Flores (D)   
 10 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
-# ... with 81 more rows
+# i 81 more rows
 \end{verbatim}
 
 The name and party are those as provided in the CCES datasets (e.g., in
@@ -3009,6 +3133,19 @@ assigns version numbers by incrementing a full number if any of the
 datasets change, and an incrementing decimal when the description
 changes.
 
+\hypertarget{version-8.0}{%
+\subsubsection{Version 8.0}\label{version-8.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2023-05-01}
+\item
+  Added more religion variables (\texttt{relig\_imp},
+  \texttt{relig\_bornagain}, \texttt{relig\_protestant},
+  \texttt{relig\_church}).
+\end{itemize}
+
 \hypertarget{version-7.0}{%
 \subsubsection{Version 7.0}\label{version-7.0}}
 
@@ -3019,7 +3156,7 @@ changes.
 \item
   Enter 2021 Common Content (up to n = 557,455)
 \item
-  Enter 2020 voter file match
+  Enter 2020 validated vote variables
 \item
   Corrects error in 2010 3 point Party ID which had used the
   post-election wave rather than the pre-election wave used in the other

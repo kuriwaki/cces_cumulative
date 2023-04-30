@@ -31,6 +31,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         newsint = news_interest,
         marstat = marriage_status,
         religpew = religion,
+        pew_religimp = relig_importance,
+        pew_bornagain = born_again,
+        religpew_protestant = relig_protestant,
+        pew_churatd = church_attendence,
         voted_pres_08 = vote_pres_08,
         voted_rep = vote_house,
         voted_sen = vote_sen,
@@ -224,7 +228,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
-  # 2014 -2015 -------
+  # 2014 - 2015 -------
   if (identical(cces_year, 2014L)) {
     tbl <- tbl %>% rename(
       approval_pres = CC14_308a,
@@ -270,7 +274,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   }
   
-  # 2016 -2017  ----
+  # 2016 - 2017  ----
   if (identical(cces_year, 2016L)) {
     tbl <- tbl %>%
       rename(
@@ -328,7 +332,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2018, 2019 ------
+  # 2018 - 2019 ------
   if (identical(cces_year, 2018L)) {
     
     tbl <- tbl %>%
@@ -393,7 +397,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2020, 2021 ----
+  # 2020 - 2021 ----
   if (identical(cces_year, 2020L)) {
     
     tbl <- tbl %>%
@@ -590,6 +594,7 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
                                         .x = .data[[num_var_name]],
                                         .y = .data[["year"]], 
                                         .fun = median2,
+                                        .na_rm = FALSE,
                                         .desc = FALSE)) %>% 
       select(year, case_id, !!var_name)
   }
@@ -1041,7 +1046,7 @@ inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) %>%
 faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>% 
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
          faminc_num = coalesce(family_income_old, family_income)) %>% 
-  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num))
+  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
 
 # union ----
 union <- find_stack(ccs, union, make_labelled = TRUE) %>% 
@@ -1102,7 +1107,14 @@ healthins <- bind_rows(hi_most, hi_18) %>%
 # religion -----
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
   rename(religion = religpew)
-
+religimp <- find_stack(ccs, pew_religimp, type = "factor") %>% 
+  rename(relig_imp = pew_religimp)
+bornagain <- find_stack(ccs, pew_bornagain, make_labelled = TRUE) %>%
+  rename(relig_bornagain = pew_bornagain)
+protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) |> 
+  rename(relig_protestant = religpew_protestant)
+churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |> 
+  rename(relig_church = pew_churatd)
 
 # president -------
 i_pres08 <- find_stack(ccs, intent_pres_08)
@@ -1124,8 +1136,7 @@ v_pres08 <- v_pres08 %>%
 v_pres12 <- v_pres12 %>% 
   mutate(voted_pres_12 = clps_pres12(voted_pres_12))
 v_pres16 <- v_pres16 %>%
-  mutate(voted_pres_16 = na_if(voted_pres_16, "9"),
-         voted_pres_16 = clps_pres16(voted_pres_16),
+  mutate(voted_pres_16 = clps_pres16(voted_pres_16),
          voted_pres_16 = replace(voted_pres_16, year %in% 2019:2021 & voted_pres_16 == "Did not Vote for this Office", NA))
 v_pres20 <- v_pres20 %>%
   mutate(voted_pres_20 = clps_pres20(voted_pres_20),
@@ -1333,6 +1344,10 @@ ccc <- geo %>%
   left_join(ownhome) %>%
   left_join(milstat) %>%
   left_join(relig) %>%
+  left_join(religimp) %>%
+  left_join(bornagain) %>%
+  left_join(protestant) %>%
+  left_join(churatd) %>%
   left_join(econ) %>%
   left_join(newsint) %>%
   left_join(apvpres) %>%
