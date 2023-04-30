@@ -151,14 +151,14 @@ of the Cooperative (Congressional) Election Study}}
 Kuriwaki\thanks{Department of Political Science, Yale University.
 Website: \url{https://www.shirokuriwaki.com}. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander
-Agadjanian, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan
-Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor,
-Brian Schaffner, and Gerlad Wright for their suggestions and
+Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard
+Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew,
+Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and
 contributions. Thanks to Joe Williams at YouGov, and Jon Keane, Mike
 Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{Guide last updated: 2022-10-23}
+\date{Guide last updated: 2023-04-30}
 
 \begin{document}
 
@@ -383,7 +383,7 @@ makes it immediately obvious which value is associated with which label:
  8  2006  439254 1 [Democrat]   
  9  2006  439255 1 [Democrat]   
 10  2006  439263 1 [Democrat]   
-# ... with 557,445 more rows
+# i 557,445 more rows
 \end{verbatim}
 
 \noindent Labels can be made explicit by coercing the labelled vector
@@ -407,7 +407,7 @@ labelled class.
 3  2006  439228 1 [Democrat] Democrat
 4  2006  439237 1 [Democrat] Democrat
 5  2006  439238 1 [Democrat] Democrat
-# ... with 557,450 more rows
+# i 557,450 more rows
 \end{verbatim}
 
 \noindent Unlike factors, labelled variables can be referenced by their
@@ -431,7 +431,7 @@ do that.
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# ... with 202,449 more rows
+# i 202,449 more rows
 \end{verbatim}
 
 \indent In this cumulative R dataset, some variables are of class
@@ -479,19 +479,19 @@ individuals.
 
 \begin{verbatim}
 # A tibble: 557,455 x 6
-    year case_id st    voted_sen                   voted_sen_party voted_sen_c~1
-   <int>   <int> <chr> <fct>                       <fct>           <chr>        
- 1  2006  439219 NC    <NA>                        <NA>            <NA>         
- 2  2006  439224 OH    [Democrat / Candidate 1]    Democratic      Sherrod C. B~
- 3  2006  439228 NJ    [Democrat / Candidate 1]    Democratic      Robert Menen~
- 4  2006  439237 IL    <NA>                        <NA>            <NA>         
- 5  2006  439238 NY    [Democrat / Candidate 1]    Democratic      Hillary Rodh~
- 6  2006  439242 TX    I Did Not Vote In This Race <NA>            <NA>         
- 7  2006  439251 MN    [Republican / Candidate 2]  Republican      Mark Kennedy~
- 8  2006  439254 NV    [Democrat / Candidate 1]    Democratic      Jack Carter ~
- 9  2006  439255 TX    [Democrat / Candidate 1]    Democratic      Barbara Ann ~
-10  2006  439263 MD    I Did Not Vote In This Race <NA>            <NA>         
-# ... with 557,445 more rows, and abbreviated variable name 1: voted_sen_chosen
+    year case_id st    voted_sen                voted_sen_party voted_sen_chosen
+   <int>   <int> <chr> <fct>                    <fct>           <chr>           
+ 1  2006  439219 NC    <NA>                     <NA>            <NA>            
+ 2  2006  439224 OH    [Democrat / Candidate 1] Democratic      Sherrod C. Brow~
+ 3  2006  439228 NJ    [Democrat / Candidate 1] Democratic      Robert Menendez~
+ 4  2006  439237 IL    <NA>                     <NA>            <NA>            
+ 5  2006  439238 NY    [Democrat / Candidate 1] Democratic      Hillary Rodham ~
+ 6  2006  439242 TX    I Did Not Vote In This ~ <NA>            <NA>            
+ 7  2006  439251 MN    [Republican / Candidate~ Republican      Mark Kennedy (R)
+ 8  2006  439254 NV    [Democrat / Candidate 1] Democratic      Jack Carter (D) 
+ 9  2006  439255 TX    [Democrat / Candidate 1] Democratic      Barbara Ann Rad~
+10  2006  439263 MD    I Did Not Vote In This ~ <NA>            <NA>            
+# i 557,445 more rows
 \end{verbatim}
 
 \hypertarget{crunch}{%
@@ -1185,8 +1185,7 @@ Something Else & 34,412\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2007-2021
 \item
   The response options have stayed largely consistent and follow that of
   Pew.
@@ -1216,8 +1215,7 @@ Not at All Important & 99,379\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021
+  Years: All of 2008-2021
 \end{itemize}
 
 \hypertarget{relig_bornagain-evangelical-christian}{%
@@ -1243,8 +1241,7 @@ No & 377,576\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2006-2021 except 2007
 \end{itemize}
 
 \hypertarget{relig_protestant-branch-of-protestantism}{%
@@ -1281,8 +1278,7 @@ Something Else & 12,387\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2007-2021
 \end{itemize}
 
 \hypertarget{family-status}{%
@@ -1372,8 +1368,7 @@ No & 382,035\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021
+  Years: All of 2008-2021
 \end{itemize}
 
 \hypertarget{no_milstat-military-status-none}{%
@@ -1399,8 +1394,7 @@ No & 315,491\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2006-2021 except 2007
 \item
   The original question is of the form ``We'd like to know whether you
   or someone in your immediate family is currently serving or has ever
@@ -1896,8 +1890,7 @@ Other & 13,232\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2006-2021 except 2007
 \end{itemize}
 
 \hypertarget{no_healthins-uninsured}{%
@@ -2072,8 +2065,7 @@ Don't Know & 13,937\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021
+  Years: All of 2007-2021
 \item
   Limitations: Not asked in 2006. Similar questions about watching TV
   news was asked in 2006, but not included in this cumulative file.
@@ -2347,9 +2339,9 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \midrule
 Democratic & 201,604\\
 Republican & 171,542\\
-Other Candidate & 20,890\\
-Did not Vote & 25,244\\
-(Missing) & 138,175\\
+Other Candidate & 21,240\\
+Did not Vote & 25,236\\
+(Missing) & 137,833\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2357,8 +2349,7 @@ Did not Vote & 25,244\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021
+  Years: All of 2008-2021
 \item
   Note: In a presidential election year, this asks the vote of
   \emph{that} year. The vote choice of the presidential election 4 years
@@ -2560,7 +2551,7 @@ Other / Someone Else & 5,872\\
 Did not Vote & 217\\
 Did not Vote for this Office & 2,602\\
 Not Sure / Don't Recall & 1,990\\
-I Did not Vote & 8\\
+Other & 8\\
 (Missing) & 399,483\\
 \bottomrule
 \end{tabular}
@@ -2598,7 +2589,7 @@ Donald Trump & 74,767\\
 Other / Someone Else & 17,559\\
 Did not Vote for this Office & 617\\
 Not Sure / Don't Recall & 287\\
-Not Sure & 229\\
+Other & 229\\
 (Missing) & 374,301\\
 \bottomrule
 \end{tabular}
@@ -2632,7 +2623,8 @@ Donald Trump & 26,205\\
 Other / Someone Else & 2,142\\
 Did not Vote for President & 3,716\\
 Not Sure & 190\\
-(Missing) & 486,217\\
+Other & 113\\
+(Missing) & 486,104\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3035,7 +3027,7 @@ Democrats in the race.
  8 [Republican / Candidate 2] Democratic       Bob Flores (D)   
  9 [Republican / Candidate 2] Democratic       Bob Flores (D)   
 10 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
-# ... with 81 more rows
+# i 81 more rows
 \end{verbatim}
 
 The name and party are those as provided in the CCES datasets (e.g., in
@@ -3101,6 +3093,18 @@ below and old versions can be downloaded from Dataverse. Dataverse
 assigns version numbers by incrementing a full number if any of the
 datasets change, and an incrementing decimal when the description
 changes.
+
+\hypertarget{version-8.0}{%
+\subsubsection{Version 8.0}\label{version-8.0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Released \texttt{2023-05-01}
+\item
+  Added more religion variables (\texttt{relig\_imp},
+  \texttt{relig\_bornagain}, \texttt{relig\_protestant}).
+\end{itemize}
 
 \hypertarget{version-7.0}{%
 \subsubsection{Version 7.0}\label{version-7.0}}

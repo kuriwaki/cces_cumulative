@@ -105,6 +105,7 @@ bind_label <- function(tbl, carry_vars = ids) {
                                       .x = .data[[numname]], 
                                       .y = .data[["year"]], 
                                       .fun = median2,
+                                      .na_rm = FALSE,
                                       .desc = FALSE)) %>%
     select(!!carry_vars, !!varname)
 }
