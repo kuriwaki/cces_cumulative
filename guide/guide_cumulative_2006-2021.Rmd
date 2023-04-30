@@ -1300,7 +1300,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 ### Version 8.0 
 
 - Released `2023-05-01`
-- Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`).
+- Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
 
 ### Version 7.0
 
