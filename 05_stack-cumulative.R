@@ -1409,7 +1409,7 @@ ccc_sort <- ccc %>%
 
 
 # Write ----- 
-write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
+# write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
