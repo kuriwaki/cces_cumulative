@@ -593,6 +593,7 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
                                         .x = .data[[num_var_name]],
                                         .y = .data[["year"]], 
                                         .fun = median2,
+                                        .na_rm = FALSE,
                                         .desc = FALSE)) %>% 
       select(year, case_id, !!var_name)
   }
