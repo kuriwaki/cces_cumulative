@@ -1,11 +1,10 @@
 library(tidyverse)
 library(labelled)
 library(haven)
-library(foreach)
-library(stringr)
+suppressPackageStartupMessages(library(foreach))
 library(glue)
 library(lubridate)
-library(questionr)
+library(cli)
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
@@ -941,6 +940,8 @@ pres_names <- function(vec) {
     factor(levels = c("Democratic", "Republican", "Third Party", "Independent", "Other Candidate", "Did not Vote"))
 }
 
+cli_alert_success("Finished reading in functions")
+
 # READ ------
 if (!exists("cc22") & !exists("cc18") & !exists("cc06")) {
   load("data/output/01_responses/common_all.RData")
@@ -978,8 +979,7 @@ ccs <- list(
   "2021" = std_name(cc22)
 )
 
-
-
+cli_alert_success("Finished reaidng reading in data and standardizing names")
 
 
 # mutations to data -----
@@ -990,8 +990,8 @@ ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
   mutate(county_fips = as.character(county_fips))
 
 
-# Extract variable by variable iniitial version -----
-
+# Extract variable by variable initial version -----
+cli_h1("Joining admin")
 # admin ------
 wgt        <- find_stack(ccs, weight, "numeric")
 wgt_post   <- find_stack(ccs, weight_post, "numeric")
@@ -1013,6 +1013,7 @@ time <- find_stack(ccs, starttime, type = "datetime") %>%
   bind_rows(cc06_time, cc09_time)
 
 # pid -------
+cli_h1("Joining partisanship and demographics")
 pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
                  "Other" = 4, "Not Sure" = 5)
 
@@ -1053,6 +1054,7 @@ bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")
 
 # income wrangling -----
+cli_h1("Joining income and employmnet")
 inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) %>%
   mutate(faminc = recode(
     family_income_old,
@@ -1171,6 +1173,7 @@ churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |>
   rename(relig_church = pew_churatd)
 
 # president -------
+cli_h1("Joining vote choice")
 i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
@@ -1228,6 +1231,7 @@ v_gov <- find_stack(ccs, voted_gov, new_reorder = FALSE)
 
 
 # approval -----
+cli_h1("Joining opinion")
 apvpres <- find_stack(ccs, approval_pres, make_labelled = TRUE)
 apvrep  <- find_stack(ccs, approval_rep, make_labelled = FALSE)
 apvsen1 <- find_stack(ccs, approval_sen1, make_labelled = FALSE)
@@ -1278,6 +1282,7 @@ citizen <- find_stack(ccs, immstat) %>%
 
 
 # self reported turnout ----
+cli_h1("Joining turnout")
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
   mutate(intent_turnout_self = recode(
     intent_trn, 
@@ -1322,6 +1327,7 @@ cong_up    <- find_stack(ccs, cong_up, "integer")
 
 
 # geography ----
+cli_h1("Joining geography")
 state      <- find_stack(ccs, state, "character")
 state_post      <- find_stack(ccs, state_post, "character")
 st      <- find_stack(ccs, st, "character")
@@ -1348,6 +1354,7 @@ dist_up_post  <- find_stack(ccs, dist_up_post, "integer")
 cd_post       <- find_stack(ccs, cd_post, "character")
 cd_up_post    <- find_stack(ccs, cd_up_post, "character")
 
+cli_alert_success("Finished joining each variable. Now combining them")
 
 # format state and CD, then zipcode and county ----
 stcd <- left_join(state, st) %>%
@@ -1463,12 +1470,12 @@ ccc_sort <- ccc %>%
 
 
 # Write ----- 
+cli_alert_success("Finished combining, now saving")
 # write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
-
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 
-cat("Finished stacking vars for cumulative \n")
+cli_alert_success("Finished stacking vars for cumulative")
