@@ -4,6 +4,7 @@ library(glue)
 suppressPackageStartupMessages(library(stringdist))
 suppressPackageStartupMessages(library(foreach))
 suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(scales))
 library(dtplyr)
 library(cli)
 
@@ -47,6 +48,8 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
 #' @param var the variable in tbl to look at, which amounts to the office
 #' 
 match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
+  cli_div(theme = list(span.strong = list(color = "orange")))
+  cli_h2("Matching {.code {var}}")
   
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
@@ -56,8 +59,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   }
   if (var == "rep") mc_counts <- key |> group_by(congress, chamber, st, dist) |> tally()
   
-  key_uniq <- semi_join(key, filter(mc_counts, n == 1))
-  key_notu <- semi_join(key, filter(mc_counts, n != 1))
+  if (var %in% c("sen1", "sen2")) match_vars <- c("congress", "chamber", "st")
+  if (var == "rep") match_vars <- c("congress", "chamber", "st", "dist")
+  key_uniq <- semi_join(key, filter(mc_counts, n == 1), by = match_vars)
+  key_notu <- semi_join(key, filter(mc_counts, n != 1), by = match_vars)
   
   # vars to match on   
   if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st")
@@ -66,10 +71,8 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   # match on district
   uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
   persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
-  
-  cat(glue("Out of {nrow(tbl)} incumbent-rows,",
-           "{nrow(uniq_matched1)} ({round(100*nrow(uniq_matched1) / nrow(tbl))}",
-           " percent) matched uniquely by district"), "\n")
+  mr <- percent(nrow(uniq_matched1) / nrow(tbl))
+  cli_alert_info("Out of {comma(nrow(tbl))} incumbent-rows, {comma(nrow(uniq_matched1))} ({.strong {mr}}) matched uniquely by district")
   
   # for second round, extract last name
   persn_remain <- persn_unmatch |> 
@@ -93,12 +96,8 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
   persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
   
-  
-  cat(glue("Out of {nrow(persn_remain)} incumbent-rows that didn't match on first try, ",
-           "{nrow(uniq_matched2)} matched uniquely by district-lastname ", 
-           "(match rate up to ",
-           "{round(100*(nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))} percent)"), 
-      "\n")
+  mr2 <- percent((nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))
+  cli_alert_info("Out of {comma(nrow(persn_remain))} incumbent-rows that didn't match on first try, {comma(nrow(uniq_matched2))} matched uniquely by district-lastname (match rate up to {.strong {mr2}})")
   
   # check match rows
   stopifnot(nrow(persn_unmatch2) + nrow(uniq_matched2) + nrow(uniq_matched1) == nrow(tbl))
