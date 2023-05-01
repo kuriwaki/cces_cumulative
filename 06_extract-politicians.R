@@ -1,10 +1,11 @@
 library(tidyverse)
 library(haven)
 library(glue)
-library(stringdist)
-library(foreach)
-library(data.table)
+suppressPackageStartupMessages(library(stringdist))
+suppressPackageStartupMessages(library(foreach))
+suppressPackageStartupMessages(library(data.table))
 library(dtplyr)
+library(cli)
 
 #' take a case_id - candidate key and melt to a df keyed on case_id _and_ 
 #' candidate
@@ -198,12 +199,11 @@ std_ptylabel <- function(vec) {
 }
 
 # Variable Key ------
-
-
 # 2008, 2009, 2010, 2011 takes D and R so no party column. but note there is an 
 # "other party candidate for 2008, 2010
 
 # Data ------
+cli_h1("Load data")
 load("data/output/01_responses/common_all.RData")
 inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv", show_col_types = FALSE)
 inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv", show_col_types = FALSE) |> 
@@ -234,6 +234,7 @@ master$`2018_post` <- str_c(master$`2018`, "_post")
 master$`2020_post` <- str_c(master$`2020`, "_post")
 
 # trick functions that it uses post
+cli_h1("Rename variables")
 blend_post <- function(tbl) {
   mutate(tbl,
          st = st_post,
@@ -266,17 +267,19 @@ cclist <- list(`2006` = cc06,
                `2019` = cc19,
                `2020` = cc20,
                `2021` = cc21,
+               `2022` = cc22,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
                `2016_post` = blend_post(cc16),
                `2018_post` = blend_post(cc18),
-               `2020_post` = blend_post(cc20)
+               `2020_post` = blend_post(cc20),
+               `2022_post` = blend_post(cc22)
                )
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2022, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -322,13 +325,16 @@ df_current <- dfcc |>
 # unique by dataset
 carry_vars2 <- c("dataset", carry_vars)
 
+
 # wide to long cand-party df -----
+cli_h1("Format candidates")
 rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), carry_vars2)
 sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), carry_vars2)
 gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), carry_vars2)
 
 
 # create key of incumbent MC ----
+cli_h1("Format incumbents")
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
 ri_mc_match  <- match_MC(df_current, inc_H, "rep",  carry_vars2)
 s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars2)
@@ -346,10 +352,11 @@ gov_inc_match <- r_govinc |>
   
 
 # Save ---------
+cli_h1("Save formatted")
 save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
      file = "data/output/01_responses/incumbents_key.RData")
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 
 
-cat("Finished matching candidate info to identifiers\n")
+cli_alert_success("Finished matching candidate info to identifiers")
