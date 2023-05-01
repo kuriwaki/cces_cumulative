@@ -465,8 +465,54 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  # 2020 - 2021 ----
+  if (identical(cces_year, 2022L)) {
+    
+    tbl <- tbl %>%
+      # called "Two or more races" in 2020
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) %>%
+      # rename
+      rename(
+        weight = commonweight,
+        weight_post = commonpostweight,
+        # rvweight = vvweight,
+        # rvweight_post = vvweight_post,
+        # gender = gender4,
+        approval_pres = CC22_320a,
+        approval_rep = CC22_320f,
+        approval_sen1 = CC22_320g,
+        approval_sen2 = CC22_320h,
+        approval_gov = CC22_320d,
+        economy_retro = CC22_302,
+        faminc = faminc_new,
+        intent_trn = CC22_363,
+        intent_sen = CC22_365,
+        intent_senx = CC22_365_voted,
+        intent_gov = CC22_366,
+        intent_govx = CC22_366_voted,
+        intent_rep = CC22_367,
+        intent_repx = CC22_367_voted,
+        voted_trn = CC22_401,
+        voted_pres_16 = presvote16post,
+        voted_pres_20 = presvote20post,
+        voted_sen = CC22_411,
+        voted_rep = CC22_412,
+        voted_gov = CC22_413,
+        # vv_turnout_gvm = CL_2022gvm,
+        # vv_turnout_pvm = CL_2022pvm,
+        # vv_turnout_ppvm = CL_2022ppvm,
+        # vv_regstatus = CL_voter_status,
+        # vv_party_gen = CL_party,
+        # vv_party_prm = CL_2022pep,
+        # vv_st = CL_state
+      ) %>%
+      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
   # more standardization for post 2012 ------
-  if (cces_year[1] %in% c(2012:2021) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2022) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -477,6 +523,11 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(
         age = year - birthyr
       )
+  }
+  
+  if (cces_year[1] != 2022) {
+    tbl <- tbl %>% 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   return(tbl)
@@ -891,7 +942,9 @@ pres_names <- function(vec) {
 }
 
 # READ ------
-load("data/output/01_responses/common_all.RData")
+if (!exists("cc22") & !exists("cc18") & !exists("cc06")) {
+  load("data/output/01_responses/common_all.RData")
+}
 cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
@@ -900,7 +953,6 @@ cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_ty
   transmute(year = 2017, case_id = V101, countyfips)
 
 # execute name standardization -----
-
 # in list form
 ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
@@ -922,7 +974,8 @@ ccs <- list(
                                vvweight_post = NA)),
   "2019" = std_name(cc19),
   "2020" = std_name(cc20),
-  "2021" = std_name(cc21)
+  "2021" = std_name(cc21),
+  "2021" = std_name(cc22)
 )
 
 
@@ -947,10 +1000,11 @@ vwgt        <- find_stack(ccs, rvweight, "numeric")
 vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
-  mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | 
-                                          tookpost_num == 2 & year %in% c(2018, 2020)), # diff number in 2018
-                             labels = c("Took Post-Election Survey" = 1,
-                                        "Did Not Take Post-Election Survey" = 0))) %>% 
+  mutate(tookpost = labelled(
+    as.integer(tookpost_num == 1 & year < 2018 | 
+                 tookpost_num == 2 & year %in% c(2018, 2020, 2022)), # diff number in 2018
+    labels = c("Took Post-Election Survey" = 1,
+               "Did Not Take Post-Election Survey" = 0))) %>% 
   mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA)) %>% 
   select(year, case_id, tookpost)
 

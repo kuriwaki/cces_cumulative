@@ -73,6 +73,7 @@ master$`2020` <- master$`2018`
 # don't exist in 2020
 master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Name", "GovCand3Party"
 )] <- NA
+master$`2022` <- master$`2018`
 
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
