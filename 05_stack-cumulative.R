@@ -467,7 +467,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2020 - 2021 ----
+  # 2022 ----
   if (identical(cces_year, 2022L)) {
     
     tbl <- tbl %>%
