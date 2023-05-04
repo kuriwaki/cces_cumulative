@@ -58,7 +58,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_trn = replace(voted_trn, !year %in% c(2006, 2008, 2010), NA),
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
-        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
+        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) %>% #  % NA for odd years
+      # fix county misalignment
+      mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
+      mutate(county_fips = as.character(county_fips))
   }
   
   # 2008 -------
@@ -979,15 +982,8 @@ ccs <- list(
   "2022" = std_name(cc22)
 )
 
-cli_alert_success("Finished reaidng reading in data and standardizing names")
+cli_alert_success("Finished reading in data and standardizing names")
 
-
-# mutations to data -----
-
-# fix county misalignment
-ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
-  mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
-  mutate(county_fips = as.character(county_fips))
 
 
 # Extract variable by variable initial version -----
@@ -1047,6 +1043,7 @@ ideo5 <- find_stack(ccs, ideo5)
 # demographics ----
 
 gend <- find_stack(ccs, gender, make_labelled = TRUE)
+gend4 <- find_stack(ccs, gender4, make_labelled = TRUE)
 educ <- find_stack(ccs, educ, make_labelled = TRUE)
 race <- find_stack(ccs, race, make_labelled = TRUE)
 hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
