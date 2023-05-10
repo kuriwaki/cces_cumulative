@@ -119,7 +119,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2022, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V7. 
+> Kuriwaki, Shiro, 2023, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V8. 
 
 \medskip
 
@@ -1318,6 +1318,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 
 - Released `2023-05-01`
 - Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
+- Added `gender4` (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add `sex` for 2006-2020.
 
 ### Version 7.0
 
