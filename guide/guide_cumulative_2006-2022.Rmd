@@ -566,19 +566,30 @@ print_tab(race)
 ```
 
 * Years: `r in_years(race)`
-* Limitations: The "Hispanic" value may undercount self-identified Hispanics. See `hispanic`
+* Limitations: The "Hispanic" value may undercount self-identified Hispanics. See `hispanic` and `race_h`.
 
 ### `r nam(hispanic)`
 
 `r descrip(hispanic)`
-
 
 ```{r, results = "asis"}
 print_tab(hispanic)
 ```
 
 * Years: `r in_years(hispanic)`
-* In years in which this question was fielded, this question supplements the `race` variable by asking those who did _not_ respond "Hipsanic" in the `race` question.
+* In years in which this question was fielded, this question adds to the `race` variable by asking those who did _not_ respond "Hispanic" in the `race` question. For a combined version of `race` and `hispanic`, see `race_h` (any-part Hispanic)
+
+### `r nam(race_h)`
+
+`r descrip(race_h)`
+
+```{r, results = "asis"}
+print_tab(race_h)
+```
+
+* Years: `r in_years(race_h)`
+* This variable combines the `race` and `hispanic` variables in a single variable by coding "any-part Hispanic" as "Hispanic". For example, White Hispanics and Black Hispanics are coded as "Hispanic" in this definition and "White" voters consist of non-Hispanic Whites only. If a respondent identified as Hispanic in _either_ the `race` or `hispanic` question, they get coded as "Hispanic" in `race_h`.
+* For years that do not have a `hispanic` question, this variable falls back to the `race` values.
 
 ### `r nam(citizen)`
 
@@ -1317,8 +1328,9 @@ Routine edits add new rows, add new variables, and change the customization of e
 ### Version 8.0 
 
 - Released `2023-05-01`
-- Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
 - Added `gender4` (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add `sex` for 2006-2020.
+- Adds a "any-part Hispanic" variable, `race_h`, that combines `race` and `hispanic`.
+- Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
 
 ### Version 7.0
 

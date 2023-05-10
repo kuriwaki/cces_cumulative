@@ -1067,8 +1067,8 @@ hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
 race_key <- ccesMRPprep::race_key %>% distinct(.data$race_cces_chr, .data$race)
 race_anyh <- left_join(race, hisp, by = c("year", "case_id")) |> 
   mutate(race_chr = as.character(as_factor(race)),
-         race = replace(race, race_chr == "White" & hispanic == 1, race_cces_to_acs$race[3]),
-         race = replace(race, race_chr == "Black" & hispanic == 1, race_cces_to_acs$race[3]))
+         race_h = replace(race, race_chr != "Hispanic" & hispanic == 1, race_key$race[3])) |> 
+  select(year, case_id, race_h)
 
 bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")

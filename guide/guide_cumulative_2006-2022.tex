@@ -1140,7 +1140,7 @@ Middle Eastern & 1,011\\
   Years: All of 2006-2022
 \item
   Limitations: The ``Hispanic'' value may undercount self-identified
-  Hispanics. See \texttt{hispanic}
+  Hispanics. See \texttt{hispanic} and \texttt{race\_h}.
 \end{itemize}
 
 \hypertarget{hispanic-hispanic}{%
@@ -1169,9 +1169,53 @@ No & 465,141\\
   Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
   2020, 2021, 2022
 \item
-  In years in which this question was fielded, this question supplements
-  the \texttt{race} variable by asking those who did \emph{not} respond
-  ``Hipsanic'' in the \texttt{race} question.
+  In years in which this question was fielded, this question adds to the
+  \texttt{race} variable by asking those who did \emph{not} respond
+  ``Hispanic'' in the \texttt{race} question. For a combined version of
+  \texttt{race} and \texttt{hispanic}, see \texttt{race\_h} (any-part
+  Hispanic)
+\end{itemize}
+
+\hypertarget{race_h-race-any-part-hispanic}{%
+\subsubsection{\texorpdfstring{\texttt{race\_h}: Race (any-part
+Hispanic)}{race\_h: Race (any-part Hispanic)}}\label{race_h-race-any-part-hispanic}}
+
+``What racial or ethnic group best describes you? - combined with
+hispanic ethnicity''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+White & 443,480\\
+Black & 67,798\\
+Hispanic & 68,411\\
+Asian & 13,459\\
+Native American & 4,590\\
+Mixed & 9,199\\
+Other & 9,565\\
+Middle Eastern & 953\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2022
+\item
+  This variable combines the \texttt{race} and \texttt{hispanic}
+  variables in a single variable by coding ``any-part Hispanic'' as
+  ``Hispanic''. For example, White Hispanics and Black Hispanics are
+  coded as ``Hispanic'' in this definition and ``White'' voters consist
+  of non-Hispanic Whites only. If a respondent identified as Hispanic in
+  \emph{either} the \texttt{race} or \texttt{hispanic} question, they
+  get coded as ``Hispanic'' in \texttt{race\_h}.
+\item
+  For years that do not have a \texttt{hispanic} question, this variable
+  falls back to the \texttt{race} values.
 \end{itemize}
 
 \hypertarget{citizen-citizenship}{%
@@ -3198,13 +3242,16 @@ changes.
 \item
   Released \texttt{2023-05-01}
 \item
-  Added more religion variables (\texttt{relig\_imp},
-  \texttt{relig\_bornagain}, \texttt{relig\_protestant},
-  \texttt{relig\_church}).
-\item
   Added \texttt{gender4} (a variable for gender identification
   introduced in 2021), add back \texttt{gender} for 2021-2022, and add
   \texttt{sex} for 2006-2020.
+\item
+  Adds a ``any-part Hispanic'' variable, \texttt{race\_h}, that combines
+  \texttt{race} and \texttt{hispanic}.
+\item
+  Added more religion variables (\texttt{relig\_imp},
+  \texttt{relig\_bornagain}, \texttt{relig\_protestant},
+  \texttt{relig\_church}).
 \end{itemize}
 
 \hypertarget{version-7.0}{%

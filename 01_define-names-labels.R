@@ -115,6 +115,7 @@ ccc_meta <- tribble(
   "educ",                "categorical", "Education",                     "What is the highest level of education you have completed?",
   "race",                "categorical", "Race",                          "What racial or ethnic group best describes you?",
   "hispanic",            "categorical", "Hispanic",                      "Are you of Spanish, Latino, or Hispanic origin or descent? [Asked if response to race is not Hispanic]",
+  "race_h",              "categorical", "Race (any-part Hispanic)",     "What racial or ethnic group best describes you? - combined with hispanic ethnicity",
   "faminc",              "categorical", "Family Income",                 "Thinking back over the last year, what was your family's annual income? [Brackets coarsened]",
   "union",               "categorical", "Union membership",              "Are you a member of a union?",
   "union_hh",            "categorical", "Union membership in household", "Other than yourself, is any member of your household a union member?",
