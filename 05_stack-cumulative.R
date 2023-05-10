@@ -1,11 +1,10 @@
 library(tidyverse)
 library(labelled)
 library(haven)
-library(foreach)
-library(stringr)
+suppressPackageStartupMessages(library(foreach))
 library(glue)
 library(lubridate)
-library(questionr)
+library(cli)
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
@@ -59,7 +58,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_trn = replace(voted_trn, !year %in% c(2006, 2008, 2010), NA),
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
-        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) #  % NA for odd years
+        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) %>% #  % NA for odd years
+      # fix county misalignment
+      mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
+      mutate(county_fips = as.character(county_fips))
   }
   
   # 2008 -------
@@ -465,8 +467,54 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  # 2022 ----
+  if (identical(cces_year, 2022L)) {
+    
+    tbl <- tbl %>%
+      # called "Two or more races" in 2020
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) %>%
+      # rename
+      rename(
+        weight = commonweight,
+        weight_post = commonpostweight,
+        # rvweight = vvweight,
+        # rvweight_post = vvweight_post,
+        # gender = gender4,
+        approval_pres = CC22_320a,
+        approval_rep = CC22_320f,
+        approval_sen1 = CC22_320g,
+        approval_sen2 = CC22_320h,
+        approval_gov = CC22_320d,
+        economy_retro = CC22_302,
+        faminc = faminc_new,
+        intent_trn = CC22_363,
+        intent_sen = CC22_365,
+        intent_senx = CC22_365_voted,
+        intent_gov = CC22_366,
+        intent_govx = CC22_366_voted,
+        intent_rep = CC22_367,
+        intent_repx = CC22_367_voted,
+        voted_trn = CC22_401,
+        voted_pres_16 = presvote16post,
+        voted_pres_20 = presvote20post,
+        voted_sen = CC22_411,
+        voted_rep = CC22_412,
+        voted_gov = CC22_413,
+        # vv_turnout_gvm = CL_2022gvm,
+        # vv_turnout_pvm = CL_2022pvm,
+        # vv_turnout_ppvm = CL_2022ppvm,
+        # vv_regstatus = CL_voter_status,
+        # vv_party_gen = CL_party,
+        # vv_party_prm = CL_2022pep,
+        # vv_st = CL_state
+      ) %>%
+      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
   # more standardization for post 2012 ------
-  if (cces_year[1] %in% c(2012:2021) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2022) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -478,6 +526,24 @@ std_name <- function(tbl, is_panel = FALSE) {
         age = year - birthyr
       )
   }
+  
+  if (cces_year[1] != 2022) {
+    tbl <- tbl %>% 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
+  # gender ----
+  if (cces_year[1] %in% c(2021, 2022)) {
+    tbl <- tbl |> 
+      mutate(
+        gender = labelled(zap_labels(gender4), c("Male" = 1, "Female" = 2)),
+        gender = replace(gender, gender %in% 3:4, NA_real_)
+      )
+  } else {
+    tbl <- tbl |> 
+      mutate(sex = gender)
+  }
+  
   
   return(tbl)
 }
@@ -890,8 +956,12 @@ pres_names <- function(vec) {
     factor(levels = c("Democratic", "Republican", "Third Party", "Independent", "Other Candidate", "Did not Vote"))
 }
 
-# READ ------
-load("data/output/01_responses/common_all.RData")
+cli_alert_success("Finished reading in functions")
+
+# Read data ------
+if (!exists("cc22") & !exists("cc18") & !exists("cc06")) {
+  load("data/output/01_responses/common_all.RData")
+}
 cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
@@ -899,8 +969,7 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
   transmute(year = 2017, case_id = V101, countyfips)
 
-# execute name standardization -----
-
+# execute name standardization
 # in list form
 ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
@@ -922,24 +991,18 @@ ccs <- list(
                                vvweight_post = NA)),
   "2019" = std_name(cc19),
   "2020" = std_name(cc20),
-  "2021" = std_name(cc21)
+  "2021" = std_name(cc21),
+  "2022" = std_name(cc22)
 )
 
+cli_alert_success("Finished reading in data and standardizing names")
 
 
 
+# Extract variable by variable  -----
+cli_h1("Joining admin")
 
-# mutations to data -----
-
-# fix county misalignment
-ccs[["pettigrew"]] <- ccs[["pettigrew"]] %>%
-  mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
-  mutate(county_fips = as.character(county_fips))
-
-
-# Extract variable by variable iniitial version -----
-
-# admin ------
+## admin ------
 wgt        <- find_stack(ccs, weight, "numeric")
 wgt_post   <- find_stack(ccs, weight_post, "numeric")
 
@@ -947,10 +1010,11 @@ vwgt        <- find_stack(ccs, rvweight, "numeric")
 vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
-  mutate(tookpost = labelled(as.integer(tookpost_num == 1 & year < 2018 | 
-                                          tookpost_num == 2 & year %in% c(2018, 2020)), # diff number in 2018
-                             labels = c("Took Post-Election Survey" = 1,
-                                        "Did Not Take Post-Election Survey" = 0))) %>% 
+  mutate(tookpost = labelled(
+    as.integer(tookpost_num == 1 & year < 2018 | 
+                 tookpost_num == 2 & year %in% c(2018, 2020, 2022)), # diff number in 2018
+    labels = c("Took Post-Election Survey" = 1,
+               "Did Not Take Post-Election Survey" = 0))) %>% 
   mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA)) %>% 
   select(year, case_id, tookpost)
 
@@ -958,7 +1022,8 @@ time <- find_stack(ccs, starttime, type = "datetime") %>%
   filter(year != 2006, year != 2009) %>% 
   bind_rows(cc06_time, cc09_time)
 
-# pid -------
+## pid -------
+cli_h1("Joining partisanship and demographics")
 pid3_labels <- c("Democrat" = 1,  "Republican" = 2, "Independent" = 3,
                  "Other" = 4, "Not Sure" = 5)
 
@@ -989,16 +1054,20 @@ pid3_leaner <- pid7 %>%
 
 ideo5 <- find_stack(ccs, ideo5)
 
-# demographics ----
+## demographics ----
 
+sex <- find_stack(ccs, sex, make_labelled = TRUE)
 gend <- find_stack(ccs, gender, make_labelled = TRUE)
+gend4 <- find_stack(ccs, gender4, make_labelled = TRUE)
+
 educ <- find_stack(ccs, educ, make_labelled = TRUE)
 race <- find_stack(ccs, race, make_labelled = TRUE)
 hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
 bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")
 
-# income wrangling -----
+## income wrangling -----
+cli_h1("Joining income and employmnet")
 inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) %>%
   mutate(faminc = recode(
     family_income_old,
@@ -1048,7 +1117,7 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
          faminc_num = coalesce(family_income_old, family_income)) %>% 
   transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
 
-# union ----
+## union, employment, health ----
 union <- find_stack(ccs, union, make_labelled = TRUE) %>% 
   mutate(union = labelled(zap_label(union), 
                           c("Yes, Currently" = 1,
@@ -1077,7 +1146,6 @@ union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>%
   select(-unionhh)
 
 
-# employment, military, child, homeownership, healthins -------
 employ <- find_stack(ccs, employ)
 ownhome <- find_stack(ccs, ownhome)
 
@@ -1103,8 +1171,19 @@ healthins <- bind_rows(hi_most, hi_18) %>%
                                       No = "No", 
                                       `Not Selected` = "No"))
 
+## marriage status 
+marstat <- find_stack(ccs, marstat, make_labelled = TRUE) %>% 
+  remove_value_labels(marstat = 8) %>% 
+  mutate(marstat = na_if(marstat, 8)) %>% 
+  labelled::add_value_labels(marstat = c(`Single / Never Married` = 5))
 
-# religion -----
+# citizen - define by immstat
+citizen <- find_stack(ccs, immstat) %>% 
+  mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) %>% 
+  mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
+  select(-immstat)
+
+## religion -----
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
   rename(religion = religpew)
 religimp <- find_stack(ccs, pew_religimp, type = "factor") %>% 
@@ -1116,7 +1195,8 @@ protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) |>
 churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |> 
   rename(relig_church = pew_churatd)
 
-# president -------
+## pres, house, sen, gov -------
+cli_h1("Joining vote choice")
 i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
@@ -1164,7 +1244,6 @@ pres_party <- i_pres08 %>%
       coalesce(voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
   )
 
-# House, Sen, Gov -----
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
 i_sen <- find_stack(ccs, intent_sen, new_reorder = FALSE)
 i_gov <- find_stack(ccs, intent_gov, new_reorder = FALSE)
@@ -1173,14 +1252,15 @@ v_sen <- find_stack(ccs, voted_sen, new_reorder = FALSE)
 v_gov <- find_stack(ccs, voted_gov, new_reorder = FALSE)
 
 
-# approval -----
+## approval -----
+cli_h1("Joining opinion")
 apvpres <- find_stack(ccs, approval_pres, make_labelled = TRUE)
 apvrep  <- find_stack(ccs, approval_rep, make_labelled = FALSE)
 apvsen1 <- find_stack(ccs, approval_sen1, make_labelled = FALSE)
 apvsen2 <- find_stack(ccs, approval_sen2, make_labelled = FALSE)
 apvgov  <- find_stack(ccs, approval_gov, make_labelled = TRUE) 
 
-# economy -----
+## economy -----
 econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder = FALSE) %>% 
   mutate(economy_retro_char = recode(economy_retro_char,
                                      `Gotten Worse`           = "Gotten Worse / Somewhat Worse", 
@@ -1204,26 +1284,16 @@ econ <-  econ_char %>%
   select(year, case_id, economy_retro)
 
 
-# news interest ------
+## news interest 
 newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>% 
   remove_value_labels(newsint = 8) %>% 
   mutate(newsint = na_if(newsint, 8))
 
-# marriage status -----
-marstat <- find_stack(ccs, marstat, make_labelled = TRUE) %>% 
-  remove_value_labels(marstat = 8) %>% 
-  mutate(marstat = na_if(marstat, 8)) %>% 
-  labelled::add_value_labels(marstat = c(`Single / Never Married` = 5))
-
-# citizenship ----
-# define by immstat
-citizen <- find_stack(ccs, immstat) %>% 
-  mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) %>% 
-  mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
-  select(-immstat)
 
 
-# self reported turnout ----
+
+## turnout ----
+cli_h1("Joining turnout")
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
   mutate(intent_turnout_self = recode(
     intent_trn, 
@@ -1254,20 +1324,18 @@ count(voted_trn, voted_turnout_self, voted_trn)
 voted_trn$voted_trn <- NULL
 intent_trn$intent_trn <- NULL
 
-
-# validated vote turnout -----
+# validated vote turnout 
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
 vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
 vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
 vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
 vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
 
-# year -----
+# geography ----
 cong       <- find_stack(ccs, cong, "integer")
 cong_up    <- find_stack(ccs, cong_up, "integer")
 
-
-# geography ----
+cli_h1("Joining geography")
 state      <- find_stack(ccs, state, "character")
 state_post      <- find_stack(ccs, state_post, "character")
 st      <- find_stack(ccs, st, "character")
@@ -1294,8 +1362,9 @@ dist_up_post  <- find_stack(ccs, dist_up_post, "integer")
 cd_post       <- find_stack(ccs, cd_post, "character")
 cd_up_post    <- find_stack(ccs, cd_up_post, "character")
 
+cli_alert_success("Finished joining each variable. Now combining them")
 
-# format state and CD, then zipcode and county ----
+## format state and CD, then zipcode and county ----
 stcd <- left_join(state, st) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%
@@ -1314,8 +1383,7 @@ geo <- stcd %>%
   left_join(zipcode) %>%
   left_join(county_fips)
 
-
-# bind together ----
+# Join all vars ----
 ccc <- geo %>%
   left_join(tookpost) %>%
   left_join(wgt) %>%
@@ -1328,6 +1396,8 @@ ccc <- geo %>%
   left_join(pid7) %>%
   left_join(ideo5) %>%
   left_join(gend) %>%
+  left_join(sex) %>%
+  left_join(gend4) %>%
   left_join(bryr) %>%
   left_join(age) %>%
   left_join(race) %>%
@@ -1375,7 +1445,7 @@ ccc <- geo %>%
 
 stopifnot(nrow(ccc) == nrow(pid3))
 
-
+# Checks ---
 # check no accidental duplicate id's within 2012 or 2009
 foo_09 <- wgt %>% filter(year == 2009)
 stopifnot(nrow(foo_09) == nrow(distinct(foo_09, year, case_id)))
@@ -1384,7 +1454,7 @@ foo_12 <- wgt %>% filter(year == 2012)
 stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 
 
-# don't use panel rows for now -----
+# don't use panel rows for now
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
@@ -1409,12 +1479,12 @@ ccc_sort <- ccc %>%
 
 
 # Write ----- 
+cli_alert_success("Finished combining, now saving")
 # write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
-
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 
-cat("Finished stacking vars for cumulative \n")
+cli_alert_success("Finished stacking vars for cumulative")

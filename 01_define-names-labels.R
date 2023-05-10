@@ -73,6 +73,7 @@ master$`2020` <- master$`2018`
 # don't exist in 2020
 master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Name", "GovCand3Party"
 )] <- NA
+master$`2022` <- master$`2018`
 
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
@@ -106,7 +107,9 @@ ccc_meta <- tribble(
   "cd_up_post",          "categorical", "Congressional district in upcoming Congress, post-election",         "[Upcoming Congressional District, post-election]",
   "zipcode",             "text",        "Zipcode (lookupzip)", "[lookupzip in most years.] So that we can ask you about the news and events in your area, in what zip code do you currently reside?",
   "county_fips",         "text",        "County of residence",           "[County (Imputed from input zipcode)]",
-  "gender",              "categorical", "Gender",                        "Are you male or female?",
+  "gender",              "categorical", "Gender (binary)",               "Are you...? <1> Male <2> Female [2018-2020] Are you male or female? [2006-2016]",
+  "gender4",             "categorical", "Gender",                        "What is your gender?",
+  "sex",                 "categorical", "Sex",                           "Are you male or female? [2006-2016]",
   "birthyr",             "numeric",     "Year of birth",                 "In what year were you born?",
   "age",                 "numeric",     "Age",                           "[Approximate age computed from the year of survey minus Year of Birth]",
   "educ",                "categorical", "Education",                     "What is the highest level of education you have completed?",

@@ -8,7 +8,7 @@ title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
-thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -29,7 +29,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2022.rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -87,10 +87,10 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
   if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
-  if (identical(yrs_vec, 2006:2021)) return("All of 2006-2021")  
-  if (identical(yrs_vec, 2007:2021)) return("All of 2007-2021")  
-  if (identical(yrs_vec, 2008:2021)) return("All of 2008-2021")  
-  if (identical(yrs_vec, setdiff(c(2006:2021), 2007))) return("All of 2006-2021 except 2007")  
+  if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
+  if (identical(yrs_vec, 2007:2022)) return("All of 2007-2022")  
+  if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
+  if (identical(yrs_vec, setdiff(c(2006:2022), 2007))) return("All of 2006-2022 except 2007")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
@@ -119,7 +119,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2022, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V7. 
+> Kuriwaki, Shiro, 2023, "Cumulative CCES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V8. 
 
 \medskip
 
@@ -357,6 +357,7 @@ cc |>
   cat()
 ```
 * Years: `r in_years(starttime)`
+* Times are recorded in UTC (Greenwich mean time) for all respondents regardless of the location of the interview, at least for 2021.
 
 
 ### `r nam(tookpost)`
@@ -505,16 +506,32 @@ print_tab(gender)
 ```
 
 * Years: `r in_years(gender)`
+* Although called `gender` for historically, this is a question asking people's sex. Until 2020, only two choices were allowed. From 2021, the question was discontinued in favor of the question now called `gender4`. I have created a variable `sex` to more accurately capture what the `gender` question has asked 2006--2020. 
+* This `gender` maintains a binary variable for all years by making the following custom recodes for 2021 onwards: `Man` in `gender4` is recoded to `Male`, `Woman` in `gender4` is recoded to `Female`, and other categories are coded as missing.
+
+### `r nam(gender4)`
+`r descrip(gender4)`
+```{r}
+print_numeric(gender4)
+```
+* Years: `r in_years(gender4)`
+
+
+### `r nam(sex)`
+`r descrip(sex)`
+```{r}
+print_numeric(sex)
+```
+* Years: `r in_years(sex)`
+
 
 ### `r nam(birthyr)`
 
 `r descrip(birthyr)`
 
-
 ```{r}
 print_numeric(birthyr)
 ```
-
 * Years: `r in_years(birthyr)`
 
 ### `r nam(age)`
@@ -1301,6 +1318,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 
 - Released `2023-05-01`
 - Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
+- Added `gender4` (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add `sex` for 2006-2020.
 
 ### Version 7.0
 

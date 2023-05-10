@@ -1,10 +1,12 @@
 library(tidyverse)
 library(haven)
 library(glue)
-library(stringdist)
-library(foreach)
-library(data.table)
+suppressPackageStartupMessages(library(stringdist))
+suppressPackageStartupMessages(library(foreach))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(scales))
 library(dtplyr)
+library(cli)
 
 #' take a case_id - candidate key and melt to a df keyed on case_id _and_ 
 #' candidate
@@ -46,6 +48,8 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
 #' @param var the variable in tbl to look at, which amounts to the office
 #' 
 match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
+  cli_div(theme = list(span.strong = list(color = "orange")))
+  cli_h2("Matching {.code {var}}")
   
   # variables that define a constituency 
   # mcs that are unique and not unique wrt district
@@ -55,8 +59,10 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   }
   if (var == "rep") mc_counts <- key |> group_by(congress, chamber, st, dist) |> tally()
   
-  key_uniq <- semi_join(key, filter(mc_counts, n == 1))
-  key_notu <- semi_join(key, filter(mc_counts, n != 1))
+  if (var %in% c("sen1", "sen2")) match_vars <- c("congress", "chamber", "st")
+  if (var == "rep") match_vars <- c("congress", "chamber", "st", "dist")
+  key_uniq <- semi_join(key, filter(mc_counts, n == 1), by = match_vars)
+  key_notu <- semi_join(key, filter(mc_counts, n != 1), by = match_vars)
   
   # vars to match on   
   if (var %in% c("sen1", "sen2")) match_vars <- c("cong" = "congress", "st")
@@ -65,10 +71,8 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   # match on district
   uniq_matched1 <- inner_join(tbl, key_uniq, by = match_vars)
   persn_unmatch <- anti_join(tbl, key_uniq, by = match_vars)
-  
-  cat(glue("Out of {nrow(tbl)} incumbent-rows,",
-           "{nrow(uniq_matched1)} ({round(100*nrow(uniq_matched1) / nrow(tbl))}",
-           " percent) matched uniquely by district"), "\n")
+  mr <- percent(nrow(uniq_matched1) / nrow(tbl))
+  cli_alert_info("Out of {comma(nrow(tbl))} incumbent-rows, {comma(nrow(uniq_matched1))} ({.strong {mr}}) matched uniquely by district")
   
   # for second round, extract last name
   persn_remain <- persn_unmatch |> 
@@ -92,12 +96,8 @@ match_MC <- function(tbl, key, var, ids = carry_vars, remove_regex = suffixes) {
   uniq_matched2 <- inner_join(persn_remain, key_notu_dedup, by = match_vars)
   persn_unmatch2 <- anti_join(persn_remain, key_notu_dedup, by = match_vars)
   
-  
-  cat(glue("Out of {nrow(persn_remain)} incumbent-rows that didn't match on first try, ",
-           "{nrow(uniq_matched2)} matched uniquely by district-lastname ", 
-           "(match rate up to ",
-           "{round(100*(nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))} percent)"), 
-      "\n")
+  mr2 <- percent((nrow(uniq_matched1) + nrow(uniq_matched2)) / nrow(tbl))
+  cli_alert_info("Out of {comma(nrow(persn_remain))} incumbent-rows that didn't match on first try, {comma(nrow(uniq_matched2))} matched uniquely by district-lastname (match rate up to {.strong {mr2}})")
   
   # check match rows
   stopifnot(nrow(persn_unmatch2) + nrow(uniq_matched2) + nrow(uniq_matched1) == nrow(tbl))
@@ -198,12 +198,11 @@ std_ptylabel <- function(vec) {
 }
 
 # Variable Key ------
-
-
 # 2008, 2009, 2010, 2011 takes D and R so no party column. but note there is an 
 # "other party candidate for 2008, 2010
 
 # Data ------
+cli_h1("Load data")
 load("data/output/01_responses/common_all.RData")
 inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv", show_col_types = FALSE)
 inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv", show_col_types = FALSE) |> 
@@ -232,8 +231,10 @@ master$`2014_post` <- str_c(master$`2014`, "_post")
 master$`2016_post` <- str_c(master$`2016`, "_post")
 master$`2018_post` <- str_c(master$`2018`, "_post")
 master$`2020_post` <- str_c(master$`2020`, "_post")
+master$`2022_post` <- str_c(master$`2022`, "_post")
 
 # trick functions that it uses post
+cli_h1("Rename variables")
 blend_post <- function(tbl) {
   mutate(tbl,
          st = st_post,
@@ -266,17 +267,19 @@ cclist <- list(`2006` = cc06,
                `2019` = cc19,
                `2020` = cc20,
                `2021` = cc21,
+               `2022` = cc22,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
                `2016_post` = blend_post(cc16),
                `2018_post` = blend_post(cc18),
-               `2020_post` = blend_post(cc20)
+               `2020_post` = blend_post(cc20),
+               `2022_post` = blend_post(cc22)
                )
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2022, str_c(seq(2010, 2022, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -300,11 +303,10 @@ for (yr in c(2006:2021, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) {
 # bind ------
 dfcc <- map_dfr(cclist, .f = clean_out, cvars = carry_vars, m = master, .id = "dataset")
 
-# hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
 # gov_inc = CurrentGovName, # KY, LA, MS Gov
-# standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 
+# standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
   replace(vec, yrvec %in% c(2008:2011) & !is.na(candvec), pty)
 }
@@ -322,13 +324,16 @@ df_current <- dfcc |>
 # unique by dataset
 carry_vars2 <- c("dataset", carry_vars)
 
+
 # wide to long cand-party df -----
+cli_h1("Format candidates")
 rc_key <- melt_cand(df_current, c("rep_can", "rep_pty"), carry_vars2)
 sc_key <- melt_cand(df_current, c("sen_can", "sen_pty"), carry_vars2)
 gc_key <- melt_cand(df_current, c("gov_can", "gov_pty"), carry_vars2)
 
 
 # create key of incumbent MC ----
+cli_h1("Format incumbents")
 # Incumbents, by CCES variable (not by respondent -- so key sen1 and sen2 separate)
 ri_mc_match  <- match_MC(df_current, inc_H, "rep",  carry_vars2)
 s1i_mc_match <- match_MC(df_current, inc_S, "sen1", carry_vars2)
@@ -346,10 +351,11 @@ gov_inc_match <- r_govinc |>
   
 
 # Save ---------
+cli_h1("Save formatted")
 save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
      file = "data/output/01_responses/incumbents_key.RData")
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 
 
-cat("Finished matching candidate info to identifiers\n")
+cli_alert_success("Finished matching candidate info to identifiers")

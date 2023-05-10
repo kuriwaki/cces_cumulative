@@ -1,7 +1,7 @@
 library(tidyverse)
-library(rcces)
 library(haven)
 library(lubridate)
+library(cli)
 
 # helper data ---
 statecode <- read_csv("data/source/statecode.csv", show_col_types = FALSE)
@@ -24,6 +24,7 @@ std_dv <- function(path, guess_year = TRUE) {
   
   ## guess ID
   cnames <- colnames(tbl)
+  if ("case_id" %in% cnames) orig_key <- "case_id"
   if ("caseid" %in% cnames) orig_key <- "caseid"
   if ("V101" %in% cnames) orig_key <- "V101"
   if ("V100" %in% cnames) orig_key <- "V100"
@@ -88,7 +89,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   
   # guess variable based on year
   statevar <- case_when(
-    guessed_yr %in% c(2007, 2012:2021) ~ "inputstate",
+    guessed_yr %in% c(2007, 2012:2022) ~ "inputstate",
     guessed_yr %in% c(2008, 2010:2011) ~ "V206",
     guessed_yr %in% 2009 ~ "v259",
     guessed_yr %in% 2006 ~ "v1002"
@@ -132,7 +133,7 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
   }
   
   statevar <- case_when(
-    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020) ~ "inputstate_post",
+    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020, 2022) ~ "inputstate_post",
     guessed_yr %in% c(2010) ~ "V206_post",
     guessed_yr %in% 2008 ~ "V259"
   )
@@ -176,9 +177,10 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     
     # district in the upcoming election
     distupvar <- distvar
-    if (guessed_yr == 2012) distupvar <- "cdid113"
-    if (guessed_yr == 2016) distupvar <- "cdid115"
+    if (guessed_yr == 2022) distupvar <- "cdid118"
     if (guessed_yr == 2018) distupvar <- "cdid116"
+    if (guessed_yr == 2016) distupvar <- "cdid115"
+    if (guessed_yr == 2012) distupvar <- "cdid113"
     
     if (!guessed_yr %in% c(2006, 2007)) {
       
@@ -241,6 +243,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
   
   if (guess_year && guessed_yr != 2006) {
     distvar <- case_when(
+      guessed_yr %in% c(2022) ~ "cdid117_post",
       guessed_yr %in% c(2020) ~ "cdid116_post",
       guessed_yr %in% c(2018) ~ "cdid115_post",
       guessed_yr %in% c(2016) ~ "cdid113_post",
@@ -250,6 +253,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     )
     
     distupvar <- distvar
+    if (guessed_yr == 2022) distupvar <- "cdid118_post"
     if (guessed_yr == 2018) distupvar <- "cdid116_post"
     if (guessed_yr == 2016) distupvar <- "cdid115_post"
     if (guessed_yr == 2012) distupvar <- "cdid113_post"
@@ -327,6 +331,10 @@ cc18_cnew <- anti_join(cc18_comp, select(cc18, year, case_id))
 cc19 <- std_dv("data/source/cces/2019_cc.dta")
 cc20 <- std_dv("data/source/cces/2020_cc.dta")
 cc21 <- std_dv("data/source/cces/2021_cc.dta")
+cc22 <- std_dv("data/source/cces/2022_cc.dta") |> 
+  mutate(across(matches("(start|end)time"),
+         ~ as_datetime(as.POSIXct(.x/1000, origin = "1960-01-01"))
+  ))
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
@@ -334,6 +342,7 @@ hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
 hua18 <- std_dv("data/source/cces/2018_hua.dta")
 hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
+cli_alert_success("Standardized all datasets.")
 
 # additional moduels ---------
 # 2006 module addition
@@ -373,15 +382,17 @@ check_pre_post(cc12)
 check_pre_post(cc14)
 check_pre_post(cc16)
 check_pre_post(cc18)
+check_pre_post(cc22)
 
 # save ----
+cli_alert_info("Started to save all datasets into {.file common_all.RData}")
 save(
   ccp, 
   cc06, cc07, cc08, cc09, 
   cc10, cc11, cc12, cc13, 
   cc14, cc15, cc16, cc17, 
   cc18, cc18_cnew, cc19, 
-  cc20, cc21,
+  cc20, cc21, cc22,
   panel12, 
   mit06_add,
   hu08,  hu09, 
@@ -390,6 +401,6 @@ save(
 )
 
 
-cat("Finished standardizing input\n")
+cli_alert_success("Finished standardizing input.")
 
 # write_rds(mit_fmt, "~/Dropbox/CCES_representation/data/source/cces/2006_mit_fmt.rds")
