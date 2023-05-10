@@ -8,7 +8,7 @@ title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
-thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for their suggestions and contributions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -29,7 +29,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2021.rds"))
+cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2022.rds"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -87,10 +87,10 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
   if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
-  if (identical(yrs_vec, 2006:2021)) return("All of 2006-2021")  
-  if (identical(yrs_vec, 2007:2021)) return("All of 2007-2021")  
-  if (identical(yrs_vec, 2008:2021)) return("All of 2008-2021")  
-  if (identical(yrs_vec, setdiff(c(2006:2021), 2007))) return("All of 2006-2021 except 2007")  
+  if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
+  if (identical(yrs_vec, 2007:2022)) return("All of 2007-2022")  
+  if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
+  if (identical(yrs_vec, setdiff(c(2006:2022), 2007))) return("All of 2006-2022 except 2007")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
