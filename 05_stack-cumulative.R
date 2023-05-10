@@ -532,6 +532,19 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  # gender ----
+  if (cces_year[1] %in% c(2021, 2022)) {
+    tbl <- tbl |> 
+      mutate(
+        gender = labelled(zap_labels(gender4), c("Male" = 1, "Female" = 2)),
+        gender = replace(gender, gender %in% 3:4, NA_real_)
+      )
+  } else {
+    tbl <- tbl |> 
+      mutate(sex = gender)
+  }
+  
+  
   return(tbl)
 }
 
@@ -1042,8 +1055,10 @@ ideo5 <- find_stack(ccs, ideo5)
 
 # demographics ----
 
+sex <- find_stack(ccs, sex, make_labelled = TRUE)
 gend <- find_stack(ccs, gender, make_labelled = TRUE)
 gend4 <- find_stack(ccs, gender4, make_labelled = TRUE)
+
 educ <- find_stack(ccs, educ, make_labelled = TRUE)
 race <- find_stack(ccs, race, make_labelled = TRUE)
 hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
@@ -1386,6 +1401,8 @@ ccc <- geo %>%
   left_join(pid7) %>%
   left_join(ideo5) %>%
   left_join(gend) %>%
+  left_join(sex) %>%
+  left_join(gend4) %>%
   left_join(bryr) %>%
   left_join(age) %>%
   left_join(race) %>%
