@@ -231,6 +231,7 @@ master$`2014_post` <- str_c(master$`2014`, "_post")
 master$`2016_post` <- str_c(master$`2016`, "_post")
 master$`2018_post` <- str_c(master$`2018`, "_post")
 master$`2020_post` <- str_c(master$`2020`, "_post")
+master$`2022_post` <- str_c(master$`2022`, "_post")
 
 # trick functions that it uses post
 cli_h1("Rename variables")
@@ -278,7 +279,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2022, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2022, str_c(seq(2010, 2022, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -302,11 +303,10 @@ for (yr in c(2006:2022, str_c(seq(2010, 2020, 2), "_post"), "2012p", "2018c")) {
 # bind ------
 dfcc <- map_dfr(cclist, .f = clean_out, cvars = carry_vars, m = master, .id = "dataset")
 
-# hou_can1 = , # 2010 vote, D/R
 # gov_inc = CurrentGovName) # NJ and VA Gov
 # gov_inc = CurrentGovName, # KY, LA, MS Gov
-# standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 
+# standardize party label add (without checking) D/R if in 2008, 2010 ----- 
 assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
   replace(vec, yrvec %in% c(2008:2011) & !is.na(candvec), pty)
 }
