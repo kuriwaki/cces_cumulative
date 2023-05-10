@@ -180,12 +180,13 @@ Harvard Dataverse, V8.
 
 \medskip
 
-This dataset combines 16 years (2006 -- 2021) of the Cooperative
+This dataset combines 17 years (2006 -- 2022) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
-questions on political behavior and public opinion. Its principal
-investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+questions on political behavior and public opinion. Its current
+principal investigators are Stephen Ansolabehere, Brian Schaffner, and
+Marissa Shih.
 
 \medskip
 
@@ -264,13 +265,13 @@ it can also be used without tidyverse.
 \end{Shaded}
 
 \noindent  A Stata dta version is provided as well.
-\texttt{cumulative\_2006-2021.dta} can be read by Stata, or in R by the
+\texttt{cumulative\_2006-2022.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(haven)}
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2021.dta"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2022.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -292,7 +293,7 @@ without downloading the file to one's computer. The recent version of
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
-  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2021.dta"}\NormalTok{,}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2022.dta"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
