@@ -357,6 +357,7 @@ cc |>
   cat()
 ```
 * Years: `r in_years(starttime)`
+* Times are recorded in UTC (Greenwich mean time) for all respondents regardless of the location of the interview, at least for 2021.
 
 
 ### `r nam(tookpost)`
