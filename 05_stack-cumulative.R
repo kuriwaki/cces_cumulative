@@ -1061,8 +1061,15 @@ gend <- find_stack(ccs, gender, make_labelled = TRUE)
 gend4 <- find_stack(ccs, gender4, make_labelled = TRUE)
 
 educ <- find_stack(ccs, educ, make_labelled = TRUE)
+
 race <- find_stack(ccs, race, make_labelled = TRUE)
 hisp <- find_stack(ccs, hispanic, make_labelled = TRUE)
+race_key <- ccesMRPprep::race_key %>% distinct(.data$race_cces_chr, .data$race)
+race_anyh <- left_join(race, hisp, by = c("year", "case_id")) |> 
+  mutate(race_chr = as.character(as_factor(race)),
+         race = replace(race, race_chr == "White" & hispanic == 1, race_cces_to_acs$race[3]),
+         race = replace(race, race_chr == "Black" & hispanic == 1, race_cces_to_acs$race[3]))
+
 bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")
 
@@ -1402,6 +1409,7 @@ ccc <- geo %>%
   left_join(age) %>%
   left_join(race) %>%
   left_join(hisp) %>%
+  left_join(race_anyh) %>%
   left_join(citizen) %>%
   left_join(educ) %>%
   left_join(marstat) %>%
