@@ -506,16 +506,32 @@ print_tab(gender)
 ```
 
 * Years: `r in_years(gender)`
+* Although called `gender` for historically, this is a question asking people's sex. Until 2020, only two choices were allowed. From 2021, the question was discontinued in favor of the question now called `gender4`. I have created a variable `sex` to more accurately capture what the `gender` question has asked 2006--2020. 
+* This `gender` maintains a binary variable for all years by making the following custom recodes for 2021 onwards: `Man` in `gender4` is recoded to `Male`, `Woman` in `gender4` is recoded to `Female`, and other categories are coded as missing.
+
+### `r nam(gender4)`
+`r descrip(gender4)`
+```{r}
+print_numeric(gender4)
+```
+* Years: `r in_years(gender4)`
+
+
+### `r nam(sex)`
+`r descrip(sex)`
+```{r}
+print_numeric(sex)
+```
+* Years: `r in_years(sex)`
+
 
 ### `r nam(birthyr)`
 
 `r descrip(birthyr)`
 
-
 ```{r}
 print_numeric(birthyr)
 ```
-
 * Years: `r in_years(birthyr)`
 
 ### `r nam(age)`
