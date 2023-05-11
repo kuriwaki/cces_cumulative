@@ -67,3 +67,11 @@ write_rds(cc09_time, "data/output/01_responses/cc09_datetime.Rds")
 write_rds(cc06_interest, "data/output/01_responses/cc06_newsintnum.Rds")
 # fs::file_copy("data/output/01_responses/cc06_newsintnum.Rds",
 #               "~/Dropbox/CCES_representation/data/output/intermediate", overwrite = TRUE)
+
+
+# 2009 split sample distinction
+p09_recontact <- read_dta("~/Dropbox/CCES_SDA/2009/Data/HUM/cces09_harvard_recontact_output.dta") %>% 
+  mutate(year = 2009, samp = "recontact", case_id = v100) %>% 
+  select(year, samp, everything()) %>% 
+  select(-case_id)
+write_dta(p09_recontact, "~/Dropbox/cces_cumulative/data/source/cces/2009_hum_recontact.dta")
