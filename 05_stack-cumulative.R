@@ -544,6 +544,45 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(sex = gender)
   }
   
+  # hispanic origin ----
+  ## 20-22: "_hisp_", CC20_asian_1
+  ## 16: "Hispanic_origin", Asian_Origin
+  ## 15, 17-19: variants of CC15_354ax
+  if (cces_year[1] >= 2015) {
+    # regex to find the variables
+    hisp_regex <- "(_hisp|Hispanic_origin|CC15_354ax|CC17_353a|CC18_354a|CC19_353a)_[0-9]"
+    qlb_regex <- "(Country ancestry|Latin Heritage|Hispanic Origin|Hispanic_origin) - "
+    hisp_key <-
+      tbl |> 
+      select(matches(hisp_regex)) |> 
+      map_chr(\(x) attr(x, "label")) |> enframe() |> 
+      transmute(
+        name, 
+        lab = str_squish(str_remove_all(value, regex(qlb_regex, ignore_case = TRUE))))
+    
+    # do not concatenate these
+    rm_values <- c("No country in particular", 
+                   "No Country in Particular",
+                   "Not Latino, Hispanic", 
+                   "I am not of Latino, Hispanic or Spanish heritage",
+                   "I am not of Latino, Hispanic or Spanish Heritage",
+                   "Other") 
+    
+    # reshape, recode, and concatenate
+    hisp_origin <- tbl |> 
+      select(case_id, matches(hisp_regex)) |> 
+      pivot_longer(-case_id) |> 
+      left_join(hisp_key) |> 
+      mutate(lab = replace(lab, lab %in% rm_values, NA_character_)) |> 
+      filter(!is.na(value) & value != 9 & value == 1 & !is.na(lab)) |> 
+      arrange(name) |> 
+      summarize(hisp_origin = str_c(lab, collapse = "!!"), .by = case_id)
+    
+    tbl <- tbl |> 
+      left_join(hisp_origin, by = "case_id")
+  }
+  
+  
   
   return(tbl)
 }
@@ -956,6 +995,7 @@ pres_names <- function(vec) {
     factor(levels = c("Democratic", "Republican", "Third Party", "Independent", "Other Candidate", "Did not Vote"))
 }
 
+
 cli_alert_success("Finished reading in functions")
 
 # Read data ------
@@ -1069,6 +1109,7 @@ race_anyh <- left_join(race, hisp, by = c("year", "case_id")) |>
   mutate(race_chr = as.character(as_factor(race)),
          race_h = replace(race, race_chr != "Hispanic" & hispanic == 1, race_key$race[3])) |> 
   select(year, case_id, race_h)
+hisp_origin <- find_stack(ccs, hisp_origin, make_labelled = FALSE)
 
 bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")
@@ -1410,6 +1451,7 @@ ccc <- geo %>%
   left_join(race) %>%
   left_join(hisp) %>%
   left_join(race_anyh) %>%
+  left_join(hisp_origin) %>%
   left_join(citizen) %>%
   left_join(educ) %>%
   left_join(marstat) %>%

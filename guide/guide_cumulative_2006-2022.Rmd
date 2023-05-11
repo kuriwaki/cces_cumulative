@@ -577,7 +577,9 @@ print_tab(hispanic)
 ```
 
 * Years: `r in_years(hispanic)`
-* In years in which this question was fielded, this question adds to the `race` variable by asking those who did _not_ respond "Hispanic" in the `race` question. For a combined version of `race` and `hispanic`, see `race_h` (any-part Hispanic)
+* In years in which this question was fielded, this question adds to the `race` variable by asking those who did _not_ respond "Hispanic" in the `race` question. For a combined version of `race` and `hispanic`, see `race_h` (any-part Hispanic).
+* See `hisp_origin` for more details on hispanic origin
+
 
 ### `r nam(race_h)`
 
@@ -590,6 +592,41 @@ print_tab(race_h)
 * Years: `r in_years(race_h)`
 * This variable combines the `race` and `hispanic` variables in a single variable by coding "any-part Hispanic" as "Hispanic". For example, White Hispanics and Black Hispanics are coded as "Hispanic" in this definition and "White" voters consist of non-Hispanic Whites only. If a respondent identified as Hispanic in _either_ the `race` or `hispanic` question, they get coded as "Hispanic" in `race_h`.
 * For years that do not have a `hispanic` question, this variable falls back to the `race` values.
+
+### `r nam(hisp_origin)`
+
+`r descrip(hisp_origin)`
+
+```{r, results = "asis"}
+tal <- cc |> 
+    select(hisp_origin) |> 
+    separate_wider_delim(hisp_origin, names_sep = "_", delim = "!!", 
+                   too_few = "align_start") |> 
+    pivot_longer(everything(), values_drop_na = TRUE) |> count(value, sort = TRUE) |> 
+  mutate_at(vars(1), as.character)
+
+dframe <- as.data.frame(tal)
+
+kbl(dframe, 
+    format = "latex", 
+    align = c("l", "r"),
+    col.names = c("", "n (choose all that apply)"), 
+    format.args = list(big.mark = ','),
+    linesep = c(rep('', nrow(dframe))),
+    position = "!H",
+    booktabs = TRUE) |> 
+  kable_styling(full_width = FALSE, latex_options = "HOLD_position") |> 
+  str_replace_all("\\[(?=(D|R|O))", "{[") |> 
+  str_replace_all("(?<=[1-4])\\]", "]}") |> 
+  cat()
+```
+
+* Years: `r in_years(hisp_origin)`
+* This is a multichoice question that is then concatenated into a single character. The sequence `"!!"` is used as a delimiter. For example, `"United States!!Cuba"` indicates that the respondent chose both "United States" and "Cuba" as responses in this multi-choice question. 
+* In the above table, we separately count the occurence of each of the options. For example, the respondent in the above example will be counted twice in the table.
+* This question is asked only to those who identify as any-part Hispanic in the `race` and `hispanic` questions, with a few exceptions in 2016 and 2018 for multi-racial candidates.
+* To make the text manageable, the following response options are *not* considered and extracted from each year's common content when making this variable: `"Other"`, `"Not Hispanic or Latino"`, `"No country in particular"`. Open-text responses in the `"Other"` responses are not used either. See each year's common content for these data.
+
 
 ### `r nam(citizen)`
 
@@ -1330,6 +1367,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 - Released `2023-05-01`
 - Added `gender4` (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add `sex` for 2006-2020.
 - Adds a "any-part Hispanic" variable, `race_h`, that combines `race` and `hispanic`.
+- Adds a "Hispanic origin" variable, `hisp_origin`, which concatenates the responses to the hispanic question.
 - Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
 
 ### Version 7.0
