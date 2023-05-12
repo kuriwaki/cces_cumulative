@@ -8,7 +8,7 @@ title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
-thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -166,7 +166,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2021.rds")
+cc <- readRDS("cumulative_2006-2022.rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -275,7 +275,7 @@ Beyond stacking together each year's common content, the cumulative dataset prov
 
 ## Unified Variable Names
 
-Most variables in this dataset come straight from each year's CCES/CES. However, it renames and standardizes variable names, making them accessible in one place.  Please see the rest of this guide or the Crunch dataset for a full list and description of variables. 
+Most variables in this dataset come straight from each year's CCES/CES. However, it renames and standardizes variable names, making them accessible in one place.  Please see the rest of this guide or the     Crunch dataset for a full list and description of variables. 
 
 
 ## Chosen Candidate Names and Identifiers
@@ -492,7 +492,7 @@ cc |>
 * `zipcode` mostly relies on the variable often called `lookupzip` in each year's CCES. This is the zipcode of voter registration, or if not available, the residential zipcode, of the respondent. It is called lookup because it is used to look up the congressional district and other geographies of the respondent. For more information on zipcodes, see the CCES question.
 * Limitations: Some years do not provide the variable relevant to `dist_up`, in which case the current district (`dist`) is assigned automatically. Thus, `dist_up` may not reflect district changes in off-cycle redistricting.  Only residence (not registration) geographies included here; see individual years' for registration geographies.
 
-\newpage
+
 
 ## Demographics
 
@@ -506,24 +506,26 @@ print_tab(gender)
 ```
 
 * Years: `r in_years(gender)`
-* Although called `gender` for historically, this is a question asking people's sex. Until 2020, only two choices were allowed. From 2021, the question was discontinued in favor of the question now called `gender4`. I have created a variable `sex` to more accurately capture what the `gender` question has asked 2006--2020. 
-* This `gender` maintains a binary variable for all years by making the following custom recodes for 2021 onwards: `Man` in `gender4` is recoded to `Male`, `Woman` in `gender4` is recoded to `Female`, and other categories are coded as missing.
+* Although named `gender` historically, this question's wording is such that it asks people's sex. Until 2020, only two choices were allowed. From 2021, the question was discontinued in favor of the question now called `gender4` (see below). 
+* The cumulative file has, as of V8, kept the `gender` variable and relabelled it as a "standardized" binary variable for all years by making the following custom recodes for 2021 onwards: `Man` in `gender4` is recoded to `Male`, `Woman` in `gender4` is recoded to `Female`, and other categories are coded as missing.
+* The cumulative file has created a variable `sex` to more accurately capture what the `gender` question has asked 2006--2020 (see below).
+* Some years ask respondents if they identify as transsexual. These are currently not included in the cumulative common content.
 
 ### `r nam(gender4)`
 `r descrip(gender4)`
-```{r}
-print_numeric(gender4)
+```{r, results = "asis"}
+print_tab(gender4)
 ```
 * Years: `r in_years(gender4)`
-
+* See the explanation under `gender`
 
 ### `r nam(sex)`
 `r descrip(sex)`
-```{r}
-print_numeric(sex)
+```{r, results = "asis"}
+print_tab(sex)
 ```
 * Years: `r in_years(sex)`
-
+* See the explanation under `gender`
 
 ### `r nam(birthyr)`
 
@@ -756,10 +758,8 @@ print_tab(no_milstat)
 * Years: `r in_years(no_milstat)`
 * The original question is of the form "We'd like to know whether you or someone in your immediate family is currently serving or has ever served in the U.S. military. Immediate family is defined as your parents, siblings, spouse, and children. Please check all boxes that apply.", where respondents can pick more than one of the options including the following: "I served personally", "Family served previously".  The entry in the cumulative response only selects the "None" option. A value of `no_milstat == "Yes"` means that a respondent indicated they had neither served nor had an immediate family member who has served.   To see the other responses, see the individual year's CCES.
 
-\newpage
 
-
-## Validations 
+## Validated Turnout and Registration
 
 Observations in even years include indicators for validated voting, which means that YouGov has matched survey respondents' personal identifiable information to public voter files, which in turn officially record whether a person has voted or not. Validation is often completed in the summer following the election. For more information, see [Ansolabehere and Hersh (2012)](
 https://doi.org/10.1093/pan/mps023). 
@@ -801,8 +801,6 @@ print_tab(vv_party_prm)
 * Limitations: Not available for some even years
 
 
-\newpage
-
 
 ## Turnout 
 
@@ -815,7 +813,7 @@ print_tab(vv_party_prm)
 print_tab(vv_turnout_gvm)
 ```
 
-* Years: `r in_years(vv_turnout_gvm)`
+* Years: `r in_years(vv_turnout_gvm)` (2022 validated vote to be released in Version 9).
 * Limitations: Collapses most response options. For example, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting _method_. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
 
 ### `r nam(vv_turnout_pvm)`
@@ -854,8 +852,6 @@ print_tab(voted_turnout_self)
 
 * Years: `r in_years(voted_turnout_self)`
 * Limitations: Collapses reasons for not voting into a single "No". Actual responses distinguish between "Did not vote" and "Tried to vote but could not" in some years, for example. To standardize across years, the cumulative dataset lumps these levels and others together. See the individual year's datasets for details. The cumulative dataset also does not include responses for odd years even though in some odd years this question is asked.
-
-\newpage
 
 
 ## Partisan Identity
@@ -1362,32 +1358,26 @@ glimpse(select(cc, matches("_party$")))
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
 
-### Version 8.0 
+### Version 8.0  (released `2023-05-12`)
+- Adds 2022 Common Content (before vote validation), up to n = 617,455
+- Adds **`gender4`** (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add **`sex`** for 2006-2020.
+- Adds a "any-part Hispanic" variable, **`race_h`**, that combines `race` and `hispanic`.
+- Adds a "Hispanic origin" variable, **`hisp_origin`**, which concatenates the responses to the hispanic question.
+- Added more religion variables (**`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`**).
 
-- Released `2023-05-01`
-- Added `gender4` (a variable for gender identification introduced in 2021), add back `gender` for 2021-2022, and add `sex` for 2006-2020.
-- Adds a "any-part Hispanic" variable, `race_h`, that combines `race` and `hispanic`.
-- Adds a "Hispanic origin" variable, `hisp_origin`, which concatenates the responses to the hispanic question.
-- Added more religion variables (`relig_imp`, `relig_bornagain`, `relig_protestant`, `relig_church`).
-
-### Version 7.0
-
-- Released `2022-03-24`
+### Version 7.0 (released `2022-03-24`)
 - Enter 2021 Common Content (up to n = 557,455)
 - Enter 2020 validated vote variables
 - Corrects error in 2010 3 point Party ID which had used the post-election wave rather than the pre-election wave used in the other years (Thanks to Gerald Wright).
 - Adds variables for:  **self reported turnout**
 
-### Version 6.0
-
-- Released `2021-04-06`
+### Version 6.0 (released `2021-04-06`)
 - Enter 2020 common content (preliminary, before voter file match), pre-election (up to n = 531,755). 
 - Distinguished between third party Presidential vote (thanks to Valerie Bradley)
 - Added further explanation to usage of weights where post-election weights are not available (thanks to Alexander Agadjanian)
 - Added usage example of the R `dataverse` package
 
-### Version 5.0 
-- Released `2020-10-04`
+### Version 5.0 (released `2020-10-04`)
 - Enter 2019 common content (up to n = 470,755)
 - Adds variables for: __employment, union membership, religion, citizenship, children, homeownership, lack of insurance, and lack of military members in immediate family__. (thanks to Brian Schaffner)
 - Add a separate variable for the post-election wave values of `state`, `st`, `dist`, `cd`, and `cd_up`.  Between the pre-post waves, about 0.9 percent of respondents appear to move CDs and 0.4 percent move states.
@@ -1396,23 +1386,19 @@ Routine edits add new rows, add new variables, and change the customization of e
 - Add leading zeros to congressional districts in the first digits (e.g., `"MA-1"` is now `"MA-01"`), and create a variable `cd_up` similar to `dist_up`.
 - Modify prepositions of value labels to lower case (e.g., `Not At All` to `Not at All`)
 
-### Version 4.0 
-- Released `2019-09-09`
+### Version 4.0 (released `2019-09-09`)
 - Enter 2018 vote validation
 - Coalesce straight party ticket vote into vote choice entries
 - Remove FEC identifiers
 
-### Version 3.0
-- Released `2019-04-29`
+### Version 3.0 (released `2019-04-29`)
 - Add 2018 Common Content before vote validation (up to n = 452,755)
 
-### Version 2.0 
-- Released `2018-04-16`
+### Version 2.0 (released `2018-04-16`)
 - Add 2017 Common Content (up to n = 392,755)
 - Corrects 2016 validated vote entries inherited from Common Content.
 - Consolidates weights to a single column, using post-vote validation weights for even years.
 - Adds `hispanic` and `faminc` variables (thanks to Bernard Fraga)
 
-### Version 1.0
-- Released `2018-01-24`
+### Version 1.0 (released `2018-01-24`)
 - First upload, covering 2006 - 2016 (n = 374,556)
