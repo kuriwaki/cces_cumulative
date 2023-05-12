@@ -60,6 +60,17 @@
 \usepackage{titlesec}
 \titleformat*{\section}{\Huge\bfseries}
 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\rightmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\subsectionmark}[1]{%
+  \markright{\textit{#1}}%
+}
+
+
 % Dash 
 \renewcommand\labelitemi{--}
 
@@ -151,14 +162,15 @@ of the Cooperative (Congressional) Election Study}}
 Kuriwaki\thanks{Department of Political Science, Yale University.
 Website: \url{https://www.shirokuriwaki.com}. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander
-Agadjanian, Jeremiah Cha, Steve Ansolabehere, Stephen DiMauro, Bernard
-Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew,
-Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and
-providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,
-Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
+Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen
+DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik,
+Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for
+finding errors and providing suggestions. Thanks to Joe Williams at
+YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
+their help.}}
 
 
-\date{Guide last updated: 2023-05-10}
+\date{Guide last updated: 2023-05-12}
 
 \begin{document}
 
@@ -173,19 +185,20 @@ Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2023, ``Cumulative CCES Common Content'',
+Kuriwaki, Shiro, 2023, ``Cumulative CES Common Content'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
 Harvard Dataverse, V8.
 \end{quote}
 
 \medskip
 
-This dataset combines 16 years (2006 -- 2021) of the Cooperative
+This dataset combines 17 years (2006 -- 2022) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
-questions on political behavior and public opinion. Its principal
-investigators are Stephen Ansolabehere, Sam Luks, and Brian Schaffner.
+questions on political behavior and public opinion. Its current
+principal investigators are Stephen Ansolabehere, Brian Schaffner, and
+Marissa Shih.
 
 \medskip
 
@@ -249,7 +262,7 @@ and labelled variables.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2021.rds"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2022.rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -264,13 +277,13 @@ it can also be used without tidyverse.
 \end{Shaded}
 
 \noindent  A Stata dta version is provided as well.
-\texttt{cumulative\_2006-2021.dta} can be read by Stata, or in R by the
+\texttt{cumulative\_2006-2022.dta} can be read by Stata, or in R by the
 \texttt{haven} package
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(haven)}
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2021.dta"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2022.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -279,6 +292,12 @@ R is free software and, if necessary, the \texttt{haven} and
 other formats such as plain-text csv or SPSS sav files. Plain-text
 formats are somewhat less convenient because they do not preserve value
 labels.
+
+Version 8.0 includes an experimental \texttt{.feather} format. This is a
+format compatible in both R and Python, and reads and writes faster. For
+example, in R, use the function \texttt{read\_feather} from the
+\texttt{arrow} package. However, reading the Stata file in Python via
+pandas may retain more of the variable labels than the python file.
 
 \hypertarget{data-download}{%
 \subsection{Data Download}\label{data-download}}
@@ -292,7 +311,7 @@ without downloading the file to one's computer. The recent version of
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
-  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2021.dta"}\NormalTok{,}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2022.dta"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
@@ -967,14 +986,12 @@ $ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", "37~
   registration geographies.
 \end{itemize}
 
-\newpage
-
 \hypertarget{demographics}{%
 \subsection{Demographics}\label{demographics}}
 
-\hypertarget{gender-gender-binary}{%
-\subsubsection{\texorpdfstring{\texttt{gender}: Gender
-(binary)}{gender: Gender (binary)}}\label{gender-gender-binary}}
+\hypertarget{gender-sex-standardized}{%
+\subsubsection{\texorpdfstring{\texttt{gender}: Sex
+(standardized)}{gender: Sex (standardized)}}\label{gender-sex-standardized}}
 
 ``Are you\ldots? \textless1\textgreater{} Male \textless2\textgreater{}
 Female {[}2018-2020{]} Are you male or female? {[}2006-2016{]}''
@@ -997,18 +1014,24 @@ Female & 334,430\\
 \item
   Years: All of 2006-2022
 \item
-  Although called \texttt{gender} for historically, this is a question
-  asking people's sex. Until 2020, only two choices were allowed. From
-  2021, the question was discontinued in favor of the question now
-  called \texttt{gender4}. I have created a variable \texttt{sex} to
-  more accurately capture what the \texttt{gender} question has asked
-  2006--2020.
+  Although named \texttt{gender} historically, this question's wording
+  is such that it asks people's sex. Until 2020, only two choices were
+  allowed. From 2021, the question was discontinued in favor of the
+  question now called \texttt{gender4} (see below).
 \item
-  This \texttt{gender} maintains a binary variable for all years by
-  making the following custom recodes for 2021 onwards: \texttt{Man} in
-  \texttt{gender4} is recoded to \texttt{Male}, \texttt{Woman} in
+  The cumulative file has, as of V8, kept the \texttt{gender} variable
+  and relabelled it as a ``standardized'' binary variable for all years
+  by making the following custom recodes for 2021 onwards: \texttt{Man}
+  in \texttt{gender4} is recoded to \texttt{Male}, \texttt{Woman} in
   \texttt{gender4} is recoded to \texttt{Female}, and other categories
   are coded as missing.
+\item
+  The cumulative file has created a variable \texttt{sex} to more
+  accurately capture what the \texttt{gender} question has asked
+  2006--2020 (see below).
+\item
+  Some years ask respondents if they identify as transsexual. These are
+  currently not included in the cumulative common content.
 \end{itemize}
 
 \hypertarget{gender4-gender}{%
@@ -1017,15 +1040,27 @@ Gender}{gender4: Gender}}\label{gender4-gender}}
 
 ``What is your gender?''
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    1.0     1.0     2.0     1.6     2.0     4.0  531755 
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Man & 38,500\\
+Woman & 46,415\\
+Non-Binary & 618\\
+Other & 167\\
+(Missing) & 531,755\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
   Years: 2021, 2022
+\item
+  See the explanation under \texttt{gender}
 \end{itemize}
 
 \hypertarget{sex-sex}{%
@@ -1034,15 +1069,25 @@ Sex}{sex: Sex}}\label{sex-sex}}
 
 ``Are you male or female? {[}2006-2016{]}''
 
-\begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   1.00    1.00    2.00    1.54    2.00    2.00   85700 
-\end{verbatim}
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Male & 243,740\\
+Female & 288,015\\
+(Missing) & 85,700\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \tightlist
 \item
   Years: All of 2006-2020
+\item
+  See the explanation under \texttt{gender}
 \end{itemize}
 
 \hypertarget{birthyr-year-of-birth}{%
@@ -1139,7 +1184,7 @@ Middle Eastern & 1,011\\
   Years: All of 2006-2022
 \item
   Limitations: The ``Hispanic'' value may undercount self-identified
-  Hispanics. See \texttt{hispanic}
+  Hispanics. See \texttt{hispanic} and \texttt{race\_h}.
 \end{itemize}
 
 \hypertarget{hispanic-hispanic}{%
@@ -1168,9 +1213,109 @@ No & 465,141\\
   Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
   2020, 2021, 2022
 \item
-  In years in which this question was fielded, this question supplements
-  the \texttt{race} variable by asking those who did \emph{not} respond
-  ``Hipsanic'' in the \texttt{race} question.
+  In years in which this question was fielded, this question adds to the
+  \texttt{race} variable by asking those who did \emph{not} respond
+  ``Hispanic'' in the \texttt{race} question. For a combined version of
+  \texttt{race} and \texttt{hispanic}, see \texttt{race\_h} (any-part
+  Hispanic).
+\item
+  See \texttt{hisp\_origin} for more details on hispanic origin
+\end{itemize}
+
+\hypertarget{race_h-race-any-part-hispanic}{%
+\subsubsection{\texorpdfstring{\texttt{race\_h}: Race (any-part
+Hispanic)}{race\_h: Race (any-part Hispanic)}}\label{race_h-race-any-part-hispanic}}
+
+{[}race (What racial or ethnic group best describes you?) combined with
+hispanic ethnicity{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+White & 443,480\\
+Black & 67,798\\
+Hispanic & 68,411\\
+Asian & 13,459\\
+Native American & 4,590\\
+Mixed & 9,199\\
+Other & 9,565\\
+Middle Eastern & 953\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: All of 2006-2022
+\item
+  This variable combines the \texttt{race} and \texttt{hispanic}
+  variables in a single variable by coding ``any-part Hispanic'' as
+  ``Hispanic''. For example, White Hispanics and Black Hispanics are
+  coded as ``Hispanic'' in this definition and ``White'' voters consist
+  of non-Hispanic Whites only. If a respondent identified as Hispanic in
+  \emph{either} the \texttt{race} or \texttt{hispanic} question, they
+  get coded as ``Hispanic'' in \texttt{race\_h}.
+\item
+  For years that do not have a \texttt{hispanic} question, this variable
+  falls back to the \texttt{race} values.
+\end{itemize}
+
+\hypertarget{hisp_origin-hispanic-origin}{%
+\subsubsection{\texorpdfstring{\texttt{hisp\_origin}: Hispanic
+origin}{hisp\_origin: Hispanic origin}}\label{hisp_origin-hispanic-origin}}
+
+``From which country or region do you trace your heritage or ancestry?
+(Check all that apply) {[}asked if any-part Hispanic{]}''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n (choose all that apply)\\
+\midrule
+Mexico & 16,159\\
+United States & 15,308\\
+Spain & 7,023\\
+Puerto Rico & 6,438\\
+South America & 3,290\\
+Cuba & 2,411\\
+Central America & 2,075\\
+Dominican Republic & 1,191\\
+Caribbean & 590\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
+\item
+  This is a multichoice question that is then concatenated into a single
+  character. The sequence \texttt{"!!"} is used as a delimiter. For
+  example, \texttt{"United\ States!!Cuba"} indicates that the respondent
+  chose both ``United States'' and ``Cuba'' as responses in this
+  multi-choice question.
+\item
+  In the above table, we separately count the occurence of each of the
+  options. For example, the respondent in the above example will be
+  counted twice in the table.
+\item
+  This question is asked only to those who identify as any-part Hispanic
+  in the \texttt{race} and \texttt{hispanic} questions, with a few
+  exceptions in 2016 and 2018 for multi-racial candidates.
+\item
+  To make the text manageable, the following response options are
+  \emph{not} considered and extracted from each year's common content
+  when making this variable: \texttt{"Other"},
+  \texttt{"Not\ Hispanic\ or\ Latino"},
+  \texttt{"No\ country\ in\ particular"}. Open-text responses in the
+  \texttt{"Other"} responses are not used either. See each year's common
+  content for these data.
 \end{itemize}
 
 \hypertarget{citizen-citizenship}{%
@@ -1502,10 +1647,9 @@ No & 344,946\\
   individual year's CCES.
 \end{itemize}
 
-\newpage
-
-\hypertarget{validations}{%
-\subsection{Validations}\label{validations}}
+\hypertarget{validated-turnout-and-registration}{%
+\subsection{Validated Turnout and
+Registration}\label{validated-turnout-and-registration}}
 
 Observations in even years include indicators for validated voting,
 which means that YouGov has matched survey respondents' personal
@@ -1626,8 +1770,6 @@ Independent Party & 1\\
   Limitations: Not available for some even years
 \end{itemize}
 
-\newpage
-
 \hypertarget{turnout}{%
 \subsection{Turnout}\label{turnout}}
 
@@ -1656,7 +1798,8 @@ No Voter File & 1,733\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020 (2022 validated
+  vote to be released in Version 9).
 \item
   Limitations: Collapses most response options. For example, the
   particular voting method is collapsed into one category, even though
@@ -1714,8 +1857,7 @@ wave)}{intent\_turnout\_self: Self-reported turnout (pre-election wave)}}\label{
 Yes, definitely & 243,948\\
 Probably & 28,654\\
 I already voted (early or absentee) & 27,088\\
-Plan to vote early & 6,541\\
-I Plan to Vote Before November 8th & 1,668\\
+Plan to vote early & 8,209\\
 No & 27,341\\
 Undecided & 19,922\\
 (Missing) & 262,293\\
@@ -1770,8 +1912,6 @@ No & 47,904\\
   also does not include responses for odd years even though in some odd
   years this question is asked.
 \end{itemize}
-
-\newpage
 
 \hypertarget{partisan-identity}{%
 \subsection{Partisan Identity}\label{partisan-identity}}
@@ -3189,30 +3329,38 @@ assigns version numbers by incrementing a full number if any of the
 datasets change, and an incrementing decimal when the description
 changes.
 
-\hypertarget{version-8.0}{%
-\subsubsection{Version 8.0}\label{version-8.0}}
+\hypertarget{version-8.0-released-2023-05-12}{%
+\subsubsection{\texorpdfstring{Version 8.0 (released
+\texttt{2023-05-12})}{Version 8.0 (released 2023-05-12)}}\label{version-8.0-released-2023-05-12}}
 
 \begin{itemize}
 \tightlist
 \item
-  Released \texttt{2023-05-01}
+  Adds 2022 Common Content (before vote validation), up to n = 617,455
 \item
-  Added more religion variables (\texttt{relig\_imp},
-  \texttt{relig\_bornagain}, \texttt{relig\_protestant},
-  \texttt{relig\_church}).
-\item
-  Added \texttt{gender4} (a variable for gender identification
+  Adds \textbf{\texttt{gender4}} (a variable for gender identification
   introduced in 2021), add back \texttt{gender} for 2021-2022, and add
-  \texttt{sex} for 2006-2020.
+  \textbf{\texttt{sex}} for 2006-2020.
+\item
+  Adds a ``any-part Hispanic'' variable, \textbf{\texttt{race\_h}}, that
+  combines \texttt{race} and \texttt{hispanic}.
+\item
+  Adds a ``Hispanic origin'' variable, \textbf{\texttt{hisp\_origin}},
+  which concatenates the responses to the hispanic question.
+\item
+  Added more religion variables (\textbf{\texttt{relig\_imp},
+  \texttt{relig\_bornagain}, \texttt{relig\_protestant},
+  \texttt{relig\_church}}).
+\item
+  Added feather version of the data
 \end{itemize}
 
-\hypertarget{version-7.0}{%
-\subsubsection{Version 7.0}\label{version-7.0}}
+\hypertarget{version-7.0-released-2022-03-24}{%
+\subsubsection{\texorpdfstring{Version 7.0 (released
+\texttt{2022-03-24})}{Version 7.0 (released 2022-03-24)}}\label{version-7.0-released-2022-03-24}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2022-03-24}
 \item
   Enter 2021 Common Content (up to n = 557,455)
 \item
@@ -3225,13 +3373,12 @@ changes.
   Adds variables for: \textbf{self reported turnout}
 \end{itemize}
 
-\hypertarget{version-6.0}{%
-\subsubsection{Version 6.0}\label{version-6.0}}
+\hypertarget{version-6.0-released-2021-04-06}{%
+\subsubsection{\texorpdfstring{Version 6.0 (released
+\texttt{2021-04-06})}{Version 6.0 (released 2021-04-06)}}\label{version-6.0-released-2021-04-06}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2021-04-06}
 \item
   Enter 2020 common content (preliminary, before voter file match),
   pre-election (up to n = 531,755).
@@ -3245,13 +3392,12 @@ changes.
   Added usage example of the R \texttt{dataverse} package
 \end{itemize}
 
-\hypertarget{version-5.0}{%
-\subsubsection{Version 5.0}\label{version-5.0}}
+\hypertarget{version-5.0-released-2020-10-04}{%
+\subsubsection{\texorpdfstring{Version 5.0 (released
+\texttt{2020-10-04})}{Version 5.0 (released 2020-10-04)}}\label{version-5.0-released-2020-10-04}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2020-10-04}
 \item
   Enter 2019 common content (up to n = 470,755)
 \item
@@ -3278,13 +3424,12 @@ changes.
   \texttt{Not\ At\ All} to \texttt{Not\ at\ All})
 \end{itemize}
 
-\hypertarget{version-4.0}{%
-\subsubsection{Version 4.0}\label{version-4.0}}
+\hypertarget{version-4.0-released-2019-09-09}{%
+\subsubsection{\texorpdfstring{Version 4.0 (released
+\texttt{2019-09-09})}{Version 4.0 (released 2019-09-09)}}\label{version-4.0-released-2019-09-09}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2019-09-09}
 \item
   Enter 2018 vote validation
 \item
@@ -3293,24 +3438,22 @@ changes.
   Remove FEC identifiers
 \end{itemize}
 
-\hypertarget{version-3.0}{%
-\subsubsection{Version 3.0}\label{version-3.0}}
+\hypertarget{version-3.0-released-2019-04-29}{%
+\subsubsection{\texorpdfstring{Version 3.0 (released
+\texttt{2019-04-29})}{Version 3.0 (released 2019-04-29)}}\label{version-3.0-released-2019-04-29}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2019-04-29}
 \item
   Add 2018 Common Content before vote validation (up to n = 452,755)
 \end{itemize}
 
-\hypertarget{version-2.0}{%
-\subsubsection{Version 2.0}\label{version-2.0}}
+\hypertarget{version-2.0-released-2018-04-16}{%
+\subsubsection{\texorpdfstring{Version 2.0 (released
+\texttt{2018-04-16})}{Version 2.0 (released 2018-04-16)}}\label{version-2.0-released-2018-04-16}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2018-04-16}
 \item
   Add 2017 Common Content (up to n = 392,755)
 \item
@@ -3323,13 +3466,12 @@ changes.
   Bernard Fraga)
 \end{itemize}
 
-\hypertarget{version-1.0}{%
-\subsubsection{Version 1.0}\label{version-1.0}}
+\hypertarget{version-1.0-released-2018-01-24}{%
+\subsubsection{\texorpdfstring{Version 1.0 (released
+\texttt{2018-01-24})}{Version 1.0 (released 2018-01-24)}}\label{version-1.0-released-2018-01-24}}
 
 \begin{itemize}
 \tightlist
-\item
-  Released \texttt{2018-01-24}
 \item
   First upload, covering 2006 - 2016 (n = 374,556)
 \end{itemize}

@@ -247,10 +247,11 @@ ccc_df <- ccc_cand |>
   mutate_at(vars(year, case_id), as.integer) |> 
   mutate_if(is.factor, fct_drop) # drop unused values
 
-# make char variables for IDs and numerous categories a factor so crunch knows it's a categorical
+# make char variables for IDs for Stata
+# change a few categories a factor so crunch knows it's a categorical
 ccc_fac <- ccc_df |> 
   mutate(case_id = as.character(case_id)) |> # better this than let crunch think its a numeric
-  mutate_at(vars(matches("_icpsr$")), as.character) |>
+  mutate_at(vars(matches("(_icpsr$|hisp_origin)")), as.character) |>
   mutate_at(vars(matches("(^cong)")), as.factor)
 
 
@@ -293,7 +294,7 @@ for (v in colnames(ccc_common)) {
 write_rds(ccc_common, "data/output/cumulative_2006-2022_factor.rds")
 
 write_dta(ccc_common, "data/release/cumulative_2006-2022.dta", version = 14)
-
+arrow::write_feather(ccc_common, "data/release/cumulative_2006-2022.feather")
 
 # might write to crunch
 if (writeToCrunch) {

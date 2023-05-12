@@ -107,7 +107,7 @@ ccc_meta <- tribble(
   "cd_up_post",          "categorical", "Congressional district in upcoming Congress, post-election",         "[Upcoming Congressional District, post-election]",
   "zipcode",             "text",        "Zipcode (lookupzip)", "[lookupzip in most years.] So that we can ask you about the news and events in your area, in what zip code do you currently reside?",
   "county_fips",         "text",        "County of residence",           "[County (Imputed from input zipcode)]",
-  "gender",              "categorical", "Gender (binary)",               "Are you...? <1> Male <2> Female [2018-2020] Are you male or female? [2006-2016]",
+  "gender",              "categorical", "Sex (standardized)",            "Are you...? <1> Male <2> Female [2018-2020] Are you male or female? [2006-2016]",
   "gender4",             "categorical", "Gender",                        "What is your gender?",
   "sex",                 "categorical", "Sex",                           "Are you male or female? [2006-2016]",
   "birthyr",             "numeric",     "Year of birth",                 "In what year were you born?",
@@ -115,6 +115,8 @@ ccc_meta <- tribble(
   "educ",                "categorical", "Education",                     "What is the highest level of education you have completed?",
   "race",                "categorical", "Race",                          "What racial or ethnic group best describes you?",
   "hispanic",            "categorical", "Hispanic",                      "Are you of Spanish, Latino, or Hispanic origin or descent? [Asked if response to race is not Hispanic]",
+  "race_h",              "categorical", "Race (any-part Hispanic)",      "[race (What racial or ethnic group best describes you?) combined with hispanic ethnicity]",
+  "hisp_origin",         "categorical", "Hispanic origin",               "From which country or region do you trace your heritage or ancestry? (Check all that apply) [asked if any-part Hispanic]",
   "faminc",              "categorical", "Family Income",                 "Thinking back over the last year, what was your family's annual income? [Brackets coarsened]",
   "union",               "categorical", "Union membership",              "Are you a member of a union?",
   "union_hh",            "categorical", "Union membership in household", "Other than yourself, is any member of your household a union member?",
@@ -236,4 +238,4 @@ stopifnot(n_distinct(iss_meta$alias) == nrow(iss_meta) &&
 saveRDS(ccc_meta, "data/output/02_questions/cumulative_vartable.Rds")
 saveRDS(iss_meta, "data/output/02_questions/issuevars_vartable.Rds")
 
-cat("Finished naming and describing variables")
+cli::cli_alert_success("Finished naming and describing variables")
