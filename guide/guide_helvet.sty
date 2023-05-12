@@ -60,6 +60,17 @@
 \usepackage{titlesec}
 \titleformat*{\section}{\Huge\bfseries}
 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\rightmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\subsectionmark}[1]{%
+  \markright{\textit{#1}}%
+}
+
+
 % Dash 
 \renewcommand\labelitemi{--}
 
