@@ -294,7 +294,7 @@ for (v in colnames(ccc_common)) {
 write_rds(ccc_common, "data/output/cumulative_2006-2022_factor.rds")
 
 write_dta(ccc_common, "data/release/cumulative_2006-2022.dta", version = 14)
-
+arrow::write_feather(ccc_common, "data/release/cumualtive_2006-2022.feather")
 
 # might write to crunch
 if (writeToCrunch) {
