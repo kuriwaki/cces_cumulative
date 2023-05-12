@@ -1349,7 +1349,8 @@ intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>%
     `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
     `I Plan to Vote Before November 3rd` = "Plan to vote early",
     `I Plan to Vote Before November 4th` = "Plan to vote early",
-    `I Plan to Vote Before November 6th` = "Plan to vote early"))
+    `I Plan to Vote Before November 6th` = "Plan to vote early",
+    `I Plan to Vote Before November 8th` = "Plan to vote early"))
 
 voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
   mutate(voted_turnout_self = case_when(
