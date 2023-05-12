@@ -185,7 +185,7 @@ their help.}}
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2023, ``Cumulative CCES Common Content'',
+Kuriwaki, Shiro, 2023, ``Cumulative CES Common Content'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
 Harvard Dataverse, V8.
 \end{quote}
@@ -292,6 +292,12 @@ R is free software and, if necessary, the \texttt{haven} and
 other formats such as plain-text csv or SPSS sav files. Plain-text
 formats are somewhat less convenient because they do not preserve value
 labels.
+
+Version 8.0 includes an experimental \texttt{.feather} format. This is a
+format compatible in both R and Python, and reads and writes faster. For
+example, in R, use the function \texttt{read\_feather} from the
+\texttt{arrow} package. However, reading the Stata file in Python via
+pandas may retain more of the variable labels than the python file.
 
 \hypertarget{data-download}{%
 \subsection{Data Download}\label{data-download}}
@@ -3345,6 +3351,8 @@ changes.
   Added more religion variables (\textbf{\texttt{relig\_imp},
   \texttt{relig\_bornagain}, \texttt{relig\_protestant},
   \texttt{relig\_church}}).
+\item
+  Added feather version of the data
 \end{itemize}
 
 \hypertarget{version-7.0-released-2022-03-24}{%
