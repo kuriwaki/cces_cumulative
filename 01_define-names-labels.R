@@ -238,4 +238,4 @@ stopifnot(n_distinct(iss_meta$alias) == nrow(iss_meta) &&
 saveRDS(ccc_meta, "data/output/02_questions/cumulative_vartable.Rds")
 saveRDS(iss_meta, "data/output/02_questions/issuevars_vartable.Rds")
 
-cat("Finished naming and describing variables")
+cli::cli_alert_success("Finished naming and describing variables")
