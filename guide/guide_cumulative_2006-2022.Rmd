@@ -29,7 +29,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2022.rds"))
+cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2022.feather"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -119,7 +119,7 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2023, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V8. 
+> Kuriwaki, Shiro, 2024, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V9. 
 
 \medskip
 
@@ -1359,6 +1359,10 @@ glimpse(select(cc, matches("_party$")))
 # Version History of Dataverse Releases
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
+
+### Version 9.0 (released `XXXX-XX-XX`)
+
+- Adds 2022 vote validation
 
 ### Version 8.0  (released `2023-05-12`)
 - Adds 2022 Common Content (before vote validation), up to n = 617,455
