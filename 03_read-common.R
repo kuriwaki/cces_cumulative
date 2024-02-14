@@ -331,10 +331,7 @@ cc18_cnew <- anti_join(cc18_comp, select(cc18, year, case_id))
 cc19 <- std_dv("data/source/cces/2019_cc.dta")
 cc20 <- std_dv("data/source/cces/2020_cc.dta")
 cc21 <- std_dv("data/source/cces/2021_cc.dta")
-cc22 <- std_dv("data/source/cces/2022_cc.dta") |> 
-  mutate(across(matches("(start|end)time"),
-         ~ as_datetime(as.POSIXct(.x/1000, origin = "1960-01-01"))
-  ))
+cc22 <- std_dv("data/source/cces/2022_cc.dta")
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")

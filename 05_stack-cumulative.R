@@ -5,6 +5,7 @@ suppressPackageStartupMessages(library(foreach))
 library(glue)
 library(lubridate)
 library(cli)
+library(arrow)
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
@@ -541,7 +542,7 @@ ccc_sort <- ccc %>%
   left_join(select(size_year, year, size_factor)) %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
-  select(year, case_id, weight, weight_cumulative, everything())
+  relocate(year, case_id, weight, weight_cumulative)
 
 
 # Write ----- 
@@ -549,7 +550,7 @@ cli_alert_success("Finished combining, now saving")
 # write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
-saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
+write_feather(ccc_sort, "data/output/01_responses/cumulative_stacked.feather")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 

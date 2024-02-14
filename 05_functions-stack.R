@@ -490,13 +490,12 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_sen = CC22_411,
         voted_rep = CC22_412,
         voted_gov = CC22_413,
-        # vv_turnout_gvm = CL_2022gvm,
-        # vv_turnout_pvm = CL_2022pvm,
-        # vv_turnout_ppvm = CL_2022ppvm,
-        # vv_regstatus = CL_voter_status,
-        # vv_party_gen = CL_party,
-        # vv_party_prm = CL_2022pep,
-        # vv_st = CL_state
+        vv_turnout_gvm = TS_g2022,
+        vv_turnout_pvm = TS_p2022,
+        vv_regstatus = TS_voterstatus,
+        vv_party_gen = TS_partyreg,
+        vv_party_prm = TS_p2022_party,
+        vv_st = TS_state
       ) %>%
       mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
@@ -805,12 +804,16 @@ std_vvv <- function (vec, varname, yrvec) {
     recoded <- recode(vec,
                       `Polling` = vtd,
                       `polling` = vtd,
+                      `polling place` = vtd,
                       `Absentee` = vtd,
                       `absentee` = vtd,
                       `Early` = vtd,
+                      `early` = vtd,
                       `earlyVote` = vtd,
                       `mail` = vtd,
                       `Mail` = vtd,
+                      `provisional` = vtd,
+                      `voted by unknown method` = vtd,
                       `unknown` = vtd,
                       `Unknown` = vtd,
                       `UnknownMethod` = vtd,

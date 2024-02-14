@@ -2,6 +2,7 @@ library(tidyverse)
 library(haven)
 library(glue)
 library(tigris)
+library(arrow)
 library(cli)
 
 writeToCrunch <- FALSE # to change the crunch dataset
@@ -176,7 +177,7 @@ cli_h1("Load datasets")
 load("data/output/01_responses/vote_responses.RData")
 load("data/output/01_responses/incumbents_key.RData")
 load("data/output/01_responses/candidates_key.RData")
-ccc <- readRDS("data/output/01_responses/cumulative_stacked.Rds")
+ccc <- read_feather("data/output/01_responses/cumulative_stacked.feather")
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
 panel_ids <- readRDS("data/output/01_responses/addon_ids.Rds")
 bs_stata <- read_dta("data/source/cces/schaffner_issues.dta")
@@ -280,7 +281,6 @@ write_rds(ccc_df, "data/release/cumulative_2006-2022_addon.rds")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2022.rds", compress = "xz")
 
 
 # remove panel cases
@@ -289,12 +289,14 @@ ccc_common <- anti_join(ccc_factor, panel_charid, by = c("year", "case_id"))
 # Write to dta with var labels
 for (v in colnames(ccc_common)) {
   attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+  attributes(ccc_df[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
 write_rds(ccc_common, "data/output/cumulative_2006-2022_factor.rds")
 
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2022.rds", compress = "xz")
 write_dta(ccc_common, "data/release/cumulative_2006-2022.dta", version = 14)
-arrow::write_feather(ccc_common, "data/release/cumulative_2006-2022.feather")
+write_feather(ccc_df, "data/release/cumulative_2006-2022.feather")
 
 # might write to crunch
 if (writeToCrunch) {
