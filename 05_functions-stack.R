@@ -456,7 +456,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2022 ----
+  # 2022-2023 ----
   if (identical(cces_year, 2022L)) {
     
     tbl <- tbl %>%
@@ -501,8 +501,28 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  if (identical(cces_year, 2023L)) {
+    tbl <- tbl %>%
+      # called "Two or more races" in 2020-2021
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) %>%
+      rename(
+        weight = commonweight,
+        approval_pres = CC23_312a,
+        approval_rep = CC23_312f,
+        approval_sen1 = CC23_312g,
+        approval_sen2 = CC23_312h,
+        approval_gov = CC23_312d,
+        economy_retro = CC23_301,
+        faminc = faminc_new,
+        voted_pres_20 = presvote20post
+      ) %>%
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
+  
+  
   # more standardization for post 2012 ------
-  if (cces_year[1] %in% c(2012:2022) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2023) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
         reg_self = votereg,
@@ -521,7 +541,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   }
   
   # gender ----
-  if (cces_year[1] %in% c(2021, 2022)) {
+  if (cces_year[1] %in% c(2021:2023)) {
     tbl <- tbl |> 
       mutate(
         gender = labelled(zap_labels(gender4), c("Male" = 1, "Female" = 2)),
