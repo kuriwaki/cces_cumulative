@@ -48,7 +48,8 @@ ccs <- list(
   "2019" = std_name(cc19),
   "2020" = std_name(cc20),
   "2021" = std_name(cc21),
-  "2022" = std_name(cc22)
+  "2022" = std_name(cc22),
+  "2023" = std_name(cc23)
 )
 
 cli_alert_success("Finished reading in data and standardizing names")
