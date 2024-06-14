@@ -57,24 +57,24 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (identical(cces_year, 2008L)) {
     tbl <- tbl %>%
       rename(
-        approval_pres = CC335BUSH,
-        approval_rep = CC335REP,
-        approval_sen1 = CC335SEN1,
-        approval_sen2 = CC335SEN2,
-        approval_gov = CC335GOV,
+        approval_pres = CC335bush,
+        approval_rep = CC335rep,
+        approval_sen1 = CC335sen1,
+        approval_sen2 = CC335sen2,
+        approval_gov = CC335gov,
         economy_retro = CC302,
         family_income_old = V246,
         marstat = V214,
         starttime = V300,
         intent_trn = CC326,
-        voted_trn = CC401,
+        voted_trn = CC403,
         intent_rep = CC339,
         intent_sen  = CC335,
         intent_gov  = CC336,
         intent_pres_08 = CC327,
         voted_pres_08 = CC410,
         pid3 = CC307,
-        pid7 = CC307A,
+        pid7 = CC307a,
         ideo5 = V243,
         weight = V201,
         educ = V213,
@@ -456,7 +456,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
-  # 2022-2023 ----
+  # 2022 - 2023 ----
   if (identical(cces_year, 2022L)) {
     
     tbl <- tbl %>%
@@ -728,7 +728,7 @@ set_to_label <- function(df, numvarname, varname) {
   label_key <- select(df, -year, -case_id) %>%
     distinct() %>%
     select(matches("_char"), matches("_num")) %>%
-    arrange(!!sym(numvarname)) %>% 
+    arrange(!!sym(numvarname)) %>%
     deframe()
   
   df %>%

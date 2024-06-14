@@ -272,11 +272,17 @@ v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 v_pres20 <- find_stack(ccs, voted_pres_20)
 
+# v_pres08
+v_pres08_08 <- find_stack(list(std_name(cc08)), voted_pres_08)
+
 # quick consolidations for multiple years (Asked in the past)
-v_pres08 <- v_pres08 %>%
-  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
+v_pres08 <- v_pres08 |> 
+  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) |> 
+  left_join(v_pres08_08, by = c("year", "case_id"), suffix = c("", "_alt")) |> 
+  mutate(voted_pres_08 = replace(voted_pres_08, is.na(voted_pres_08_alt) & year == 2008,  NA)) |> 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08),
-         voted_pres_08 = replace(voted_pres_08, year %in% 2008:2011 & voted_pres_08 == "Did not Vote for this Office", NA))
+         voted_pres_08 = replace(voted_pres_08, year %in% 2008:2011 & voted_pres_08 == "Did not Vote for this Office", NA)) |> 
+  select(-voted_pres_08_alt)
 
 v_pres12 <- v_pres12 %>% 
   mutate(voted_pres_12 = clps_pres12(voted_pres_12))
