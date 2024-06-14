@@ -171,7 +171,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{2024-06-13}
+\date{2024-06-14}
 
 \begin{document}
 
@@ -506,59 +506,6 @@ individuals.
 # i 672,662 more rows
 \end{verbatim}
 
-\subsection{Crunch}\label{crunch}
-
-A version of the dataset is also included in Crunch, a database platform
-that makes it easy to view and analyze survey regardless of programming
-experience.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Obtain Access: The Crunch interface currently does not allow users to
-  sign up to a particular dataset on their own. For free view access to
-  the dataset, please sign up via the sign-up link in the CES
-  \href{https://cces.gov.harvard.edu/explore}{website}. For questions
-  and more access, please contact the CES Team.
-\end{enumerate}
-
-\newpage
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Browse: Crunch offers a web GUI for quickly browsing variables:
-\end{enumerate}
-
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.05\linewidth]{01_crunch_browse.png}}
-\end{figure}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
-\tightlist
-\item
-  Analyze: The crunch interface allows Viewers to make cross-tabs and
-  bar graphs quickly.\\
-
-  \begin{figure}[H]
-  \centering
-  \centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
-  \end{figure}
-\end{enumerate}
-
-Crunch datasets can also be manipulated from a R package,
-\texttt{crunch}. To learn more about the features, please take a look at
-their homepage \href{https://crunch.io}{crunch.io} or their
-\href{https://www.youtube.com/watch?v=zA7N_Q1EpSs}{5-minute demo video}.
-
-\newpage
-
 \section{Variables}\label{variables}
 
 The sections below provide summary statistics and more information on
@@ -664,8 +611,7 @@ time}{starttime: Start time}}\label{starttime-start-time}
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Times are recorded in UTC (Greenwich mean time) for all respondents
   regardless of the location of the interview, at least for 2021.
@@ -712,8 +658,7 @@ Took Post-Election Survey & 409,018\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   In even years, they are re-computed after vote validation has been
   computed and those re-computed weights are taken here when available.
@@ -746,8 +691,7 @@ year to make years comparable{]}
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: Only a simple transformation of \texttt{weight}.
   Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
@@ -950,8 +894,7 @@ $ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", "37~
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Note the distinction between \texttt{dist} and \texttt{dist\_up},
   especially in 2012. The former should generally be used for linking
@@ -1002,8 +945,7 @@ Female & 362,733\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Although named \texttt{gender} historically, this question's wording
   is such that it asks people's sex. Until 2020, only two choices were
@@ -1074,8 +1016,7 @@ Female & 302,938\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020
+  Years: All of 2006-2020
 \item
   See the explanation under \texttt{gender}
 \end{itemize}
@@ -1093,8 +1034,7 @@ birth}{birthyr: Year of birth}}\label{birthyr-year-of-birth}
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{age}:
@@ -1111,8 +1051,7 @@ Birth{]}
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{educ}:
@@ -1140,8 +1079,7 @@ Post-Grad & 83,123\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{race}:
@@ -1170,8 +1108,7 @@ Middle Eastern & 1,108\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: The ``Hispanic'' value may undercount self-identified
   Hispanics. See \texttt{hispanic} and \texttt{race\_h}.
@@ -1238,8 +1175,7 @@ Middle Eastern & 1,046\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   This variable combines the \texttt{race} and \texttt{hispanic}
   variables in a single variable by coding ``any-part Hispanic'' as
@@ -1400,8 +1336,7 @@ Not at All Important & 125,302\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2008-2023
 \item
   In common content, often named \texttt{pew\_religimp}
 \end{itemize}
@@ -1420,7 +1355,8 @@ or not?''
 \midrule
 Yes & 191,848\\
 No & 457,855\\
-(Missing) & 22,969\\
+8 & 39\\
+(Missing) & 22,930\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1428,8 +1364,7 @@ No & 457,855\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023 except 2007
 \item
   In common content, often named \texttt{pew\_bornagain}
 \end{itemize}
@@ -1492,7 +1427,8 @@ A Few Times a Year & 86,196\\
 Seldom & 142,998\\
 Never & 170,711\\
 Don't Know & 8,949\\
-(Missing) & 50,254\\
+8 & 28\\
+(Missing) & 50,226\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1500,8 +1436,7 @@ Don't Know & 8,949\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2008-2023
 \item
   In common content, often named \texttt{pew\_churatd}
 \end{itemize}
@@ -1533,8 +1468,7 @@ Domestic Partnership & 33,185\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   The option ``Single'' was used till 2016, which was then replaced by
   ``Never Married'' in 2017 and 2018.
@@ -1590,8 +1524,7 @@ No & 468,686\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2008-2023
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{no\_milstat}: Military Status
@@ -1616,8 +1549,7 @@ No & 373,410\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023 except 2007
 \item
   The original question is of the form ``We'd like to know whether you
   or someone in your immediate family is currently serving or has ever
@@ -1928,8 +1860,7 @@ Not Sure & 32,749\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: Response options offer slightly by year. For example, the
   \texttt{Not\ Sure} option is not a response option in years 2006 and
@@ -1966,8 +1897,7 @@ Don't Know & 3\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -1997,8 +1927,7 @@ Not Sure & 20,080\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -2028,8 +1957,7 @@ Not Sure & 47,951\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \end{itemize}
 
 \subsection{Economics and Income}\label{economics-and-income}
@@ -2068,8 +1996,7 @@ Skipped & 12\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: The income brackets provided changed slightly over time.
   The brackets in this cumulative dataset coarsen certain original
@@ -2110,8 +2037,7 @@ Other & 15,664\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023 except 2007
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{no\_healthins}:
@@ -2242,8 +2168,7 @@ Not sure & 17,654\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: Response options vary by year. Some are collapsed into
   one category (e.g., \texttt{Gotten\ Better}, presented in some years,
@@ -2316,8 +2241,7 @@ Neither Approve nor Disapprove & 443\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -2355,8 +2279,7 @@ Neither Approve nor Disapprove & 1,798\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -2396,8 +2319,7 @@ Neither Approve nor Disapprove & 1,413\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: Response options varies by year. Some are collapsed into
   one category (e.g., \texttt{Approve}, presented in some years, and
@@ -2466,8 +2388,7 @@ Neither Approve nor Disapprove & 1,414\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: See \texttt{approval\_pres}
 \item
@@ -2554,8 +2475,8 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 Democratic & 252,250\\
 Republican & 213,102\\
 Other Candidate & 24,611\\
-Did not Vote & 40,760\\
-(Missing) & 141,949\\
+Did not Vote & 31,969\\
+(Missing) & 150,740\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2563,8 +2484,7 @@ Did not Vote & 40,760\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2008-2023
 \item
   Note: In a presidential election year, this asks the vote of
   \emph{that} year. The vote choice of the presidential election 4 years
@@ -2722,9 +2642,9 @@ vote? {[}see guide for wording in all years{]}''
 Barack Obama & 83,891\\
 John McCain & 78,462\\
 Other / Someone Else & 4,742\\
-Did not Vote & 18,244\\
+Did not Vote & 9,453\\
 Not Sure / Don't Recall & 1,864\\
-(Missing) & 485,469\\
+(Missing) & 494,260\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3178,8 +3098,7 @@ $ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, 403~
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015,
-  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2006-2023
 \item
   Limitations: Please note there may be some incorrect merges,
   especially for nontraditional names and representatives who were
