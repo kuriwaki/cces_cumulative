@@ -729,6 +729,7 @@ set_to_label <- function(df, numvarname, varname) {
     distinct() %>%
     select(matches("_char"), matches("_num")) %>%
     arrange(!!sym(numvarname)) %>%
+    drop_na() |> 
     deframe()
   
   df %>%
