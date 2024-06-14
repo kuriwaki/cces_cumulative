@@ -13,7 +13,7 @@ library(cli)
 #' 
 #' @param tbl the wide dataset
 #' @param measure_regex the office-party columns to  melt
-#' @param ids thethe identifying variables to keep
+#' @param ids the identifying variables to keep
 #' @param remove_regex regex to remove from the names -- suffix that would hinder 
 #' the last name extraction
 #' 
