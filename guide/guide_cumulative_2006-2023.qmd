@@ -1,9 +1,9 @@
 ---
-output:
-  pdf_document:
-    latex_engine: xelatex
+format:
+  pdf:
+    engine: xelatex
     template: guide_helvet.sty
-    keep_tex: TRUE
+    keep-tex: TRUE
 title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = FALSE, comment = "", fig.pos = "H")
 ```{r, include = FALSE}
 library(glue)
 library(tidyverse)
+library(english)
 library(haven)
 library(knitr)
 library(kableExtra)
@@ -29,7 +30,7 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
-cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2022.feather"))
+cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2023.feather"))
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -80,7 +81,8 @@ in_years <- function(var, tbl = cc) {
     filter(!is.na(!!var)) |> 
     distinct(year) |> 
     arrange(year) |>
-    pull() 
+    pull() |> 
+    zap_label()
   
   if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
   if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
@@ -90,7 +92,9 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
   if (identical(yrs_vec, 2007:2022)) return("All of 2007-2022")  
   if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
-  if (identical(yrs_vec, setdiff(c(2006:2022), 2007))) return("All of 2006-2022 except 2007")  
+  if (identical(yrs_vec, 2006:2023)) return("All of 2006-2023")  
+  if (identical(yrs_vec, 2008:2023)) return("All of 2008-2023")  
+  if (identical(yrs_vec, setdiff(c(2006:2023), 2007))) return("All of 2006-2023 except 2007")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
@@ -166,7 +170,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 The `.rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2022.rds")
+cc <- readRDS("cumulative_2006-2023.rds")
 ```
 
 \noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
@@ -179,7 +183,7 @@ cc
 
 ```{r, eval = FALSE, echo = TRUE}
 library(haven)
-cc <- read_dta("cumulative_2006-2022.dta")
+cc <- read_dta("cumulative_2006-2023.dta")
 ```
 
 R is free software and, if necessary, the `haven`  and `readr` package can be used to export the CCES/CES datasets in other formats such as plain-text csv or SPSS sav files. Plain-text formats are somewhat less convenient because they do not preserve value labels.
@@ -193,7 +197,7 @@ Version 8.0 includes an experimental `.feather` format. This is a format compati
 ```{r, eval = FALSE, echo = TRUE}
 library(dataverse)
 cc <- get_dataframe_by_name(
-  filename = "cumulative_2006-2022.dta",
+  filename = "cumulative_2006-2023.dta",
   dataset = "10.7910/DVN/II2DB6",
   original = TRUE,
   .f = haven::read_dta,
@@ -290,30 +294,6 @@ select(cc, year, case_id, st, matches("voted_sen"))
 ```
 
 
-## Crunch
-
-A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey regardless of programming experience. 
-
-1. Obtain Access: The Crunch interface currently does not allow users to sign up to a particular dataset on their own. For free view access to the dataset, please sign up via the sign-up link in the CES [website](https://cces.gov.harvard.edu/explore). For questions and more access, please contact the CES Team.
-
-\newpage
-
-2. Browse: Crunch offers a web GUI for quickly browsing variables:
-
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.05\linewidth]{01_crunch_browse.png}}
-\end{figure}
-
-3. Analyze: The crunch interface allows Viewers to make cross-tabs and bar graphs quickly.  
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.05\linewidth]{02_crunch_tab.png}}
-\end{figure}
-
-Crunch datasets can also be manipulated from a R package, `crunch`. To learn more about the features, please take a look at their homepage [crunch.io](https://crunch.io) or their [5-minute demo video](https://www.youtube.com/watch?v=zA7N_Q1EpSs).
-
-\newpage
 
 # Variables
 
@@ -1362,6 +1342,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 
 ### Version 9.0 (released `XXXX-XX-XX`)
 
+- Adds 2023 Common Content, up to n = 672,672
 - Adds 2022 vote validation
 
 ### Version 8.0  (released `2023-05-12`)

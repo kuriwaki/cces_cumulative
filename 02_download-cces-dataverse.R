@@ -12,7 +12,7 @@ dir_create("data/source/cces")
 dir_create("data/output")
 dir_create("data/release")
 
-for (yr in 2006:2022) {
+for (yr in 2006:2023) {
   filedir <- "data/source/cces"
   
   filename <- glue("{yr}_cc.dta")

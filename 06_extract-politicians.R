@@ -13,7 +13,7 @@ library(cli)
 #' 
 #' @param tbl the wide dataset
 #' @param measure_regex the office-party columns to  melt
-#' @param ids thethe identifying variables to keep
+#' @param ids the identifying variables to keep
 #' @param remove_regex regex to remove from the names -- suffix that would hinder 
 #' the last name extraction
 #' 
@@ -268,6 +268,7 @@ cclist <- list(`2006` = cc06,
                `2020` = cc20,
                `2021` = cc21,
                `2022` = cc22,
+               `2023` = cc23,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
@@ -279,7 +280,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2022, str_c(seq(2010, 2022, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2023, str_c(seq(2010, 2022, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var

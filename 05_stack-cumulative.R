@@ -5,6 +5,7 @@ suppressPackageStartupMessages(library(foreach))
 library(glue)
 library(lubridate)
 library(cli)
+library(arrow)
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
@@ -47,7 +48,8 @@ ccs <- list(
   "2019" = std_name(cc19),
   "2020" = std_name(cc20),
   "2021" = std_name(cc21),
-  "2022" = std_name(cc22)
+  "2022" = std_name(cc22),
+  "2023" = std_name(cc23)
 )
 
 cli_alert_success("Finished reading in data and standardizing names")
@@ -270,11 +272,17 @@ v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 v_pres20 <- find_stack(ccs, voted_pres_20)
 
+# v_pres08
+v_pres08_08 <- find_stack(list(std_name(cc08)), voted_pres_08)
+
 # quick consolidations for multiple years (Asked in the past)
-v_pres08 <- v_pres08 %>%
-  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) %>% 
+v_pres08 <- v_pres08 |> 
+  mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) |> 
+  left_join(v_pres08_08, by = c("year", "case_id"), suffix = c("", "_alt")) |> 
+  mutate(voted_pres_08 = replace(voted_pres_08, is.na(voted_pres_08_alt) & year == 2008,  NA)) |> 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08),
-         voted_pres_08 = replace(voted_pres_08, year %in% 2008:2011 & voted_pres_08 == "Did not Vote for this Office", NA))
+         voted_pres_08 = replace(voted_pres_08, year %in% 2008:2011 & voted_pres_08 == "Did not Vote for this Office", NA)) |> 
+  select(-voted_pres_08_alt)
 
 v_pres12 <- v_pres12 %>% 
   mutate(voted_pres_12 = clps_pres12(voted_pres_12))
@@ -541,7 +549,7 @@ ccc_sort <- ccc %>%
   left_join(select(size_year, year, size_factor)) %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
-  select(year, case_id, weight, weight_cumulative, everything())
+  relocate(year, case_id, weight, weight_cumulative)
 
 
 # Write ----- 
@@ -549,7 +557,7 @@ cli_alert_success("Finished combining, now saving")
 # write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
-saveRDS(ccc_sort, "data/output/01_responses/cumulative_stacked.Rds")
+write_feather(ccc_sort, "data/output/01_responses/cumulative_stacked.feather")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 

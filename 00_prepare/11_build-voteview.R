@@ -1,3 +1,4 @@
+library(stringr)
 library(dplyr)
 library(readr)
 library(foreach)
