@@ -292,7 +292,12 @@ for (v in colnames(ccc_common)) {
   attributes(ccc_df[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
 }
 
+
+if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
+  cli::cli_abort("Found Duplicate case IDs")
+
 write_rds(ccc_common, "data/output/cumulative_2006-2023_factor.rds")
+
 
 write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2023.rds", compress = "xz")
 write_dta(ccc_common, "data/release/cumulative_2006-2023.dta", version = 14)
