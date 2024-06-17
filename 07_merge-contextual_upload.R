@@ -255,7 +255,6 @@ ccc_fac <- ccc_df |>
   mutate_at(vars(matches("(_icpsr$|hisp_origin)")), as.character) |>
   mutate_at(vars(matches("(^cong)")), as.factor)
 
-
 # FIPS-state key 
 fips_key <-  tigris::fips_codes |> 
   as_tibble() |> 
@@ -264,7 +263,7 @@ fips_key <-  tigris::fips_codes |>
 
 fips_key_post <- rename(fips_key, st_post = st, state_post = state)
 
-ccc_factor <-   ccc_fac |> 
+ccc_factor <- ccc_fac |> 
   left_join(fips_key) |>
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
          st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) |> 
@@ -297,11 +296,11 @@ if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
   cli::cli_abort("Found Duplicate case IDs")
 
 write_rds(ccc_common, "data/output/cumulative_2006-2023_factor.rds")
+write_dta(ccc_common, "data/release/cumulative_2006-2023.dta", version = 14)
 
 
 write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2023.rds", compress = "xz")
-write_dta(ccc_common, "data/release/cumulative_2006-2023.dta", version = 14)
-write_feather(ccc_df, "data/release/cumulative_2006-2023.feather")
+write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2023.feather")
 
 # might write to crunch
 if (writeToCrunch) {

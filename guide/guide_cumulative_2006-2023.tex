@@ -54,6 +54,7 @@
 
 % Spacing
 \usepackage{setspace}
+\usepackage{placeins}
 
 % Sectioing
 \setcounter{secnumdepth}{0} % fix starting with "0.1"
@@ -73,19 +74,6 @@
 
 % Dash 
 \renewcommand\labelitemi{--}
-
-% Theorems
-\usepackage{etoolbox}
-\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lem}{Lemma}
-\newtheorem{assump}{Assumption}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\AtEndEnvironment{definition}{\null\hfill\qedsymbol}%
-\newtheorem{example}{Example}
-\newtheorem{error}{Common Error}
-\AtEndEnvironment{error}{\null\hfill\qedsymbol}%
 
 % Math
 \newcommand{\var}{\textnormal{Var}}
@@ -171,7 +159,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{2024-06-14}
+\date{2024-06-17}
 
 \begin{document}
 
@@ -193,13 +181,13 @@ Harvard Dataverse, V9.
 
 \medskip
 
-This dataset combines 17 years (2006 -- 2022) of the Cooperative
+This dataset combines 18 years (2006 -- 2023) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
 questions on political behavior and public opinion. Its current
-principal investigators are Stephen Ansolabehere, Brian Schaffner, and
-Marissa Shih.
+principal investigators are Stephen Ansolabehere, Jeremy Pope, Brian
+Schaffner, and Marissa Shih.
 
 \medskip
 
@@ -217,9 +205,7 @@ I constructed this dataset from each year's full CCES/CES, all of them
 publicly available as separate datasets on
 \href{cces.gov.harvard.edu}{Dataverse}.The final product is a
 \texttt{tibble}-style data frame (built in R) that is also available as
-a Stata \texttt{dta} file. In addition, the same dataset is available on
-\texttt{Crunch}, an analytics interface optimized for survey datasets.
-The source code is open-source.
+a Stata \texttt{dta} file.
 
 \medskip
 
@@ -255,55 +241,64 @@ questions, readers should consult the guides for each year.
 
 \subsection{Data Read-in}\label{data-read-in}
 
-The \texttt{.rds} format can be read into R. This format preserves
-dataset properties such as the distinction between integers and doubles,
-and labelled variables.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"cumulative\_2006{-}2023.rds"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\noindent The dataset in R is best viewed with \texttt{dplyr}, although
-it can also be used without tidyverse.
+\noindent The dataset in R is best viewed with the tidyverse suite of
+packages, as well as the package for converting and reading Stata files,
+\texttt{haven}. Although we provide three file formats of the same
+content, we recommend using the Stata (\texttt{.dta}) file along with
+the \texttt{haven} package's \texttt{read\_dta} function most of the
+time, and using the \texttt{.feather} file when speed is a priority.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(tidyverse)}
-\NormalTok{cc}
-\end{Highlighting}
-\end{Shaded}
-
-\noindent  A Stata dta version is provided as well.
-\texttt{cumulative\_2006-2022.dta} can be read by Stata, or in R by the
-\texttt{haven} package
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(haven)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2023.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-R is free software and, if necessary, the \texttt{haven} and
-\texttt{readr} package can be used to export the CCES/CES datasets in
-other formats such as plain-text csv or SPSS sav files. Plain-text
-formats are somewhat less convenient because they do not preserve value
-labels.
+Loading the \texttt{haven} package allows using labelled variables in
+versatile ways (see the section ``Labelled variables''). Plain-text
+formats are less useful because they do not preserve value labels.
 
-Version 8.0 includes an experimental \texttt{.feather} format. This is a
-format compatible in both R and Python, and reads and writes faster. For
-example, in R, use the function \texttt{read\_feather} from the
-\texttt{arrow} package. However, reading the Stata file in Python via
-pandas may retain more of the variable labels than the python file.
+We also provide a \texttt{.rds} format that is specific to R:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_rds}\NormalTok{(}\StringTok{"cumulative\_2006{-}2023.rds"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+This format preserves dataset properties such as the distinction between
+integers and doubles, as well as the labelled variables. Between the
+\texttt{.rds} and \texttt{.dta} versions, there is some difference in
+whether variables are saved as characters (rds) or labelled variables
+(dta), but the content is the same.
+
+From version 8.0 and onwards, we also include a \texttt{.feather}
+format. This is a format that is optimized for speed: it reads and
+writes faster than the others. Its content is identical to the
+\texttt{.rds} version. For example, in R, use the function
+\texttt{read\_feather} from the \texttt{arrow} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(arrow)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_feather}\NormalTok{(}\StringTok{"cumulative\_2006{-}2023.feather"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In one example, I found that R read the \texttt{.feather} file in 0.3
+seconds, and it took the \texttt{.rds} format more than 10 times slower
+(3.5 seconds) and the \texttt{.dta} format to be an additional 5 times
+slower than the \texttt{.rds} fomrat (16 seconds).
 
 \subsection{Data Download}\label{data-download}
 
-\noindent \emph{Downloading the data via R.} In some cases, it may be
-convenient to download the dataset directly into an R environment
-without downloading the file to one's computer. The recent version of
-\texttt{dataverse} (version 0.3.0 or later) allows this by the function:
+\noindent \emph{Downloading the data via the dataverse package.} In some
+cases, it may be convenient to download the dataset directly into an R
+environment without downloading the file to one's computer. The recent
+version of \texttt{dataverse} (version 0.3.0 or later) allows this by
+the function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -385,7 +380,7 @@ makes it immediately obvious which value is associated with which label:
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 672,672 x 3
+# A tibble: 641,955 x 3
     year case_id pid3           
    <int>   <int> <int+lbl>      
  1  2006  439219 1 [Democrat]   
@@ -398,7 +393,7 @@ makes it immediately obvious which value is associated with which label:
  8  2006  439254 1 [Democrat]   
  9  2006  439255 1 [Democrat]   
 10  2006  439263 1 [Democrat]   
-# i 672,662 more rows
+# i 641,945 more rows
 \end{verbatim}
 
 \noindent Labels can be made explicit by coercing the labelled vector
@@ -414,7 +409,7 @@ labelled class.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 672,672 x 4
+# A tibble: 641,955 x 4
    year case_id pid3         pid3_fct
   <int>   <int> <int+lbl>    <fct>   
 1  2006  439219 1 [Democrat] Democrat
@@ -422,7 +417,7 @@ labelled class.
 3  2006  439228 1 [Democrat] Democrat
 4  2006  439237 1 [Democrat] Democrat
 5  2006  439238 1 [Democrat] Democrat
-# i 672,667 more rows
+# i 641,950 more rows
 \end{verbatim}
 
 \noindent Unlike factors, labelled variables can be referenced by their
@@ -438,7 +433,7 @@ do that.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 245,411 x 3
+# A tibble: 234,545 x 3
    year case_id pid3        
   <int>   <int> <int+lbl>   
 1  2006  439219 1 [Democrat]
@@ -446,7 +441,7 @@ do that.
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# i 245,406 more rows
+# i 234,540 more rows
 \end{verbatim}
 
 \indent In this cumulative R dataset, some variables are of class
@@ -490,7 +485,7 @@ individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 672,672 x 6
+# A tibble: 641,955 x 6
     year case_id st    voted_sen                voted_sen_party voted_sen_chosen
    <int>   <int> <chr> <fct>                    <fct>           <chr>           
  1  2006  439219 NC    <NA>                     <NA>            <NA>            
@@ -503,7 +498,7 @@ individuals.
  8  2006  439254 NV    [Democrat / Candidate 1] Democratic      Jack Carter (D) 
  9  2006  439255 TX    [Democrat / Candidate 1] Democratic      Barbara Ann Rad~
 10  2006  439263 MD    I Did Not Vote In This ~ <NA>            <NA>            
-# i 672,662 more rows
+# i 641,945 more rows
 \end{verbatim}
 
 \section{Variables}\label{variables}
@@ -556,16 +551,16 @@ year}{year: CCES year}}\label{year-cces-year}
 2006 & 36,421\\
 2007 & 9,999\\
 2008 & 32,800\\
-2009 & 16,800\\
+2009 & 13,800\\
 2010 & 55,400\\
 2011 & 20,150\\
-2012 & 74,035\\
+2012 & 54,535\\
 2013 & 16,400\\
 2014 & 56,200\\
 2015 & 14,250\\
 2016 & 64,600\\
 2017 & 18,200\\
-2018 & 68,217\\
+2018 & 60,000\\
 2019 & 18,000\\
 2020 & 61,000\\
 2021 & 25,700\\
@@ -589,7 +584,7 @@ time}{starttime: Start time}}\label{starttime-start-time}
 2006 & 2006-10-07 & 2006-11-08\\
 2007 & 2007-11-09 & 2007-12-10\\
 2008 & 2008-10-08 & 2008-11-03\\
-2009 & NA & NA\\
+2009 & 2009-11-05 & 2009-12-14\\
 2010 & 2010-10-01 & 2010-11-01\\
 2011 & 2011-11-09 & 2012-01-07\\
 2012 & 2012-10-01 & 2012-11-05\\
@@ -629,9 +624,9 @@ survey (in even years){]}
 \toprule
  & n\\
 \midrule
-Did Not Take Post-Election Survey & 80,155\\
-Took Post-Election Survey & 409,018\\
-(Missing) & 183,499\\
+Did Not Take Post-Election Survey & 77,532\\
+Took Post-Election Survey & 403,424\\
+(Missing) & 160,999\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -643,6 +638,8 @@ Took Post-Election Survey & 409,018\\
   (Post-election wave only exists for even years)
 \end{itemize}
 
+\FloatBarrier
+
 \subsection{Weights}\label{weights}
 
 \subsubsection{\texorpdfstring{\texttt{weight}: Survey weight
@@ -651,8 +648,8 @@ Took Post-Election Survey & 409,018\\
 {[}weights for pre-election survey of each year{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  0.000   0.444   0.732   1.000   1.157  15.061    8717 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.4505  0.7349  1.0000  1.1611 15.0614 
 \end{verbatim}
 
 \begin{itemize}
@@ -684,8 +681,8 @@ weight
 year to make years comparable{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  0.000   0.270   0.493   0.818   0.952  21.429    8717 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.2747  0.4960  0.8201  0.9574 21.4290 
 \end{verbatim}
 
 \begin{itemize}
@@ -711,29 +708,37 @@ year to make years comparable{]}
 
 
 ::: {.cell layout-align="center"}
-::: {.cell-output-display}
+::: {.cell-output .cell-output-stdout}
 
-
-| Year| Observations| Factor|
-|----:|------------:|------:|
-| 2006|       36,421|   1.25|
-| 2007|        9,999|   0.34|
-| 2008|       32,800|   1.12|
-| 2009|       13,800|   0.47|
-| 2010|       55,400|   1.89|
-| 2011|       20,150|   0.69|
-| 2012|       54,535|   1.86|
-| 2013|       16,400|   0.56|
-| 2014|       56,200|   1.92|
-| 2015|       14,250|   0.49|
-| 2016|       64,600|   2.21|
-| 2017|       18,200|   0.62|
-| 2018|       60,000|   2.05|
-| 2019|       18,000|   0.62|
-| 2020|       61,000|   2.09|
-| 2021|       25,700|   0.88|
-| 2022|       60,000|   2.05|
-| 2023|       24,500|   0.84|
+```
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{rrr}
+\toprule
+Year & Observations & Factor\\
+\midrule
+2006 & 36,421 & 1.25\\
+2007 & 9,999 & 0.34\\
+2008 & 32,800 & 1.12\\
+2009 & 13,800 & 0.47\\
+2010 & 55,400 & 1.89\\
+2011 & 20,150 & 0.69\\
+2012 & 54,535 & 1.86\\
+2013 & 16,400 & 0.56\\
+2014 & 56,200 & 1.92\\
+2015 & 14,250 & 0.49\\
+2016 & 64,600 & 2.21\\
+2017 & 18,200 & 0.62\\
+2018 & 60,000 & 2.05\\
+2019 & 18,000 & 0.62\\
+2020 & 61,000 & 2.09\\
+2021 & 25,700 & 0.88\\
+2022 & 60,000 & 2.05\\
+2023 & 24,500 & 0.84\\
+\bottomrule
+\end{tabular}
+\end{table}
+```
 
 
 :::
@@ -750,7 +755,7 @@ the even years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.4     0.7     1.0     1.1    15.5  420556 
+    0.0     0.4     0.7     1.0     1.1    15.5  389839 
 \end{verbatim}
 
 \begin{itemize}
@@ -781,7 +786,7 @@ voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.6     0.8     1.0     1.2    16.3  589588 
+    0.0     0.6     0.8     1.0     1.2    16.3  558871 
 \end{verbatim}
 
 \begin{itemize}
@@ -810,7 +815,7 @@ wave{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.5     0.8     1.0     1.2    15.0  596709 
+    0.0     0.5     0.8     1.0     1.2    15.0  565992 
 \end{verbatim}
 
 \begin{itemize}
@@ -873,7 +878,7 @@ A series of variables for the respondent's location:
 \end{itemize}
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 14
 $ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas", ~
 $ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "CA~
@@ -935,8 +940,8 @@ Female {[}2018-2020{]} Are you male or female? {[}2006-2016{]}''
 \toprule
  & n\\
 \midrule
-Male & 308,875\\
-Female & 362,733\\
+Male & 293,081\\
+Female & 347,810\\
 (Missing) & 1,064\\
 \bottomrule
 \end{tabular}
@@ -982,7 +987,7 @@ Man & 49,341\\
 Woman & 59,795\\
 Non-Binary & 842\\
 Other & 222\\
-(Missing) & 562,472\\
+(Missing) & 531,755\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1006,8 +1011,8 @@ Sex}{sex: Sex}}\label{sex-sex}
 \toprule
  & n\\
 \midrule
-Male & 259,534\\
-Female & 302,938\\
+Male & 243,740\\
+Female & 288,015\\
 (Missing) & 110,200\\
 \bottomrule
 \end{tabular}
@@ -1028,7 +1033,7 @@ birth}{birthyr: Year of birth}}\label{birthyr-year-of-birth}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1900    1952    1963    1965    1980    2005 
+   1900    1952    1963    1966    1980    2005 
 \end{verbatim}
 
 \begin{itemize}
@@ -1045,7 +1050,7 @@ Birth{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  18.00   36.00   52.00   49.74   63.00  109.00 
+  18.00   35.00   51.00   49.54   63.00  109.00 
 \end{verbatim}
 
 \begin{itemize}
@@ -1065,12 +1070,12 @@ Education}{educ: Education}}\label{educ-education}
 \toprule
  & n\\
 \midrule
-No HS & 22,207\\
-High School Graduate & 183,876\\
-Some College & 161,588\\
-2-Year & 67,712\\
-4-Year & 154,099\\
-Post-Grad & 83,123\\
+No HS & 21,662\\
+High School Graduate & 177,252\\
+Some College & 154,019\\
+2-Year & 64,370\\
+4-Year & 145,621\\
+Post-Grad & 78,964\\
 (Missing) & 67\\
 \bottomrule
 \end{tabular}
@@ -1093,14 +1098,14 @@ Race}{race: Race}}\label{race-race}
 \toprule
  & n\\
 \midrule
-White & 492,395\\
-Black & 75,294\\
-Hispanic & 57,517\\
-Asian & 15,603\\
-Native American & 5,425\\
-Mixed & 14,046\\
-Other & 11,284\\
-Middle Eastern & 1,108\\
+White & 468,573\\
+Black & 72,695\\
+Hispanic & 55,240\\
+Asian & 15,080\\
+Native American & 5,209\\
+Mixed & 13,422\\
+Other & 10,675\\
+Middle Eastern & 1,061\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1126,9 +1131,9 @@ response to race is not Hispanic{]}''
 \toprule
  & n\\
 \midrule
-Yes & 23,456\\
-No & 511,131\\
-(Missing) & 138,085\\
+Yes & 22,731\\
+No & 485,348\\
+(Missing) & 133,876\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1160,14 +1165,14 @@ hispanic ethnicity{]}
 \toprule
  & n\\
 \midrule
-White & 481,917\\
-Black & 73,583\\
-Hispanic & 75,711\\
-Asian & 15,201\\
-Native American & 4,922\\
-Mixed & 9,950\\
-Other & 10,342\\
-Middle Eastern & 1,046\\
+White & 458,542\\
+Black & 71,033\\
+Hispanic & 72,709\\
+Asian & 14,693\\
+Native American & 4,721\\
+Mixed & 9,477\\
+Other & 9,779\\
+Middle Eastern & 1,001\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1201,15 +1206,15 @@ origin}{hisp\_origin: Hispanic origin}}\label{hisp_origin-hispanic-origin}
 \toprule
  & n (choose all that apply)\\
 \midrule
-Mexico & 18,230\\
-United States & 17,686\\
-Spain & 7,857\\
-Puerto Rico & 7,208\\
-South America & 3,674\\
-Cuba & 2,778\\
-Central America & 2,339\\
-Dominican Republic & 1,332\\
-Caribbean & 667\\
+Mexico & 17,828\\
+United States & 17,223\\
+Spain & 7,666\\
+Puerto Rico & 7,036\\
+South America & 3,591\\
+Cuba & 2,639\\
+Central America & 2,278\\
+Dominican Republic & 1,307\\
+Caribbean & 657\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1225,13 +1230,13 @@ Caribbean & 667\\
   chose both ``United States'' and ``Cuba'' as responses in this
   multi-choice question.
 \item
-  In the above table, we separately count the occurence of each of the
+  In the above table, we separately count the occurrence of each of the
   options. For example, the respondent in the above example will be
   counted twice in the table.
 \item
   This question is asked only to those who identify as any-part Hispanic
   in the \texttt{race} and \texttt{hispanic} questions, with a few
-  exceptions in 2016 and 2018 for multi-racial candidates.
+  exceptions in 2016 and 2018 for multi-racial respondents.
 \item
   To make the text manageable, the following response options are
   \emph{not} considered and extracted from each year's common content
@@ -1253,9 +1258,9 @@ Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}
 \toprule
  & n\\
 \midrule
-Citizen & 633,427\\
-Non-Citizen & 9,954\\
-(Missing) & 29,291\\
+Citizen & 606,084\\
+Non-Citizen & 9,686\\
+(Missing) & 26,185\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1286,19 +1291,19 @@ Religion}{religion: Religion}}\label{religion-religion}
 \toprule
  & n\\
 \midrule
-Protestant & 233,182\\
-Roman Catholic & 129,505\\
-Mormon & 9,112\\
-Eastern or Greek Orthodox & 3,395\\
-Jewish & 16,012\\
-Muslim & 3,664\\
-Buddhist & 5,449\\
-Hindu & 1,881\\
-Atheist & 33,670\\
-Agnostic & 37,299\\
-Nothing in Particular & 117,150\\
-Something Else & 41,713\\
-(Missing) & 40,640\\
+Protestant & 221,928\\
+Roman Catholic & 123,285\\
+Mormon & 8,709\\
+Eastern or Greek Orthodox & 3,232\\
+Jewish & 15,131\\
+Muslim & 3,555\\
+Buddhist & 5,228\\
+Hindu & 1,819\\
+Atheist & 32,794\\
+Agnostic & 35,761\\
+Nothing in Particular & 112,632\\
+Something Else & 40,353\\
+(Missing) & 37,528\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1306,8 +1311,7 @@ Something Else & 41,713\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2007-2023
 \item
   The response options have stayed largely consistent and follow that of
   Pew.
@@ -1324,11 +1328,11 @@ religion}{relig\_imp: Importance of religion}}\label{relig_imp-importance-of-rel
 \toprule
  & n\\
 \midrule
-Very Important & 240,232\\
-Somewhat Important & 159,504\\
-Not Too Important & 91,303\\
-Not at All Important & 125,302\\
-(Missing) & 56,331\\
+Very Important & 229,087\\
+Somewhat Important & 152,331\\
+Not Too Important & 87,130\\
+Not at All Important & 120,159\\
+(Missing) & 53,248\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1353,10 +1357,10 @@ or not?''
 \toprule
  & n\\
 \midrule
-Yes & 191,848\\
-No & 457,855\\
+Yes & 184,074\\
+No & 438,000\\
 8 & 39\\
-(Missing) & 22,930\\
+(Missing) & 19,842\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1380,21 +1384,21 @@ Protestantism}{relig\_protestant: Branch of Protestantism}}\label{relig_protesta
 \toprule
  & n\\
 \midrule
-Baptist & 72,691\\
-Methodist & 32,996\\
-Nondenominational or Independent Church & 50,987\\
-Lutheran & 25,721\\
-Presbyterian & 15,996\\
-Pentecostal & 15,679\\
-Episcopalian & 11,258\\
-Church of Christ or Disciples of Christ & 9,185\\
-Congregational or United Church of Christ & 5,790\\
-Holiness & 2,271\\
-Reformed & 2,164\\
-Adventist & 2,344\\
-Jehovah's Witness & 2,681\\
-Something Else & 18,312\\
-(Missing) & 404,597\\
+Baptist & 69,727\\
+Methodist & 31,242\\
+Nondenominational or Independent Church & 48,570\\
+Lutheran & 24,171\\
+Presbyterian & 15,099\\
+Pentecostal & 15,124\\
+Episcopalian & 10,568\\
+Church of Christ or Disciples of Christ & 8,786\\
+Congregational or United Church of Christ & 5,434\\
+Holiness & 2,180\\
+Reformed & 2,038\\
+Adventist & 2,243\\
+Jehovah's Witness & 2,595\\
+Something Else & 17,474\\
+(Missing) & 386,704\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1402,8 +1406,7 @@ Something Else & 18,312\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2007-2023
 \item
   In common content, often named \texttt{religpew\_protestant}
 \end{itemize}
@@ -1420,15 +1423,15 @@ services?''
 \toprule
  & n\\
 \midrule
-More Than Once a Week & 53,060\\
-Once a Week & 111,710\\
-Once or Twice a Month & 48,794\\
-A Few Times a Year & 86,196\\
-Seldom & 142,998\\
-Never & 170,711\\
-Don't Know & 8,949\\
+More Than Once a Week & 50,529\\
+Once a Week & 106,303\\
+Once or Twice a Month & 46,627\\
+A Few Times a Year & 82,411\\
+Seldom & 136,517\\
+Never & 163,772\\
+Don't Know & 8,630\\
 8 & 28\\
-(Missing) & 50,226\\
+(Missing) & 47,138\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1454,13 +1457,13 @@ Status}{marstat: Marital Status}}\label{marstat-marital-status}
 \toprule
  & n\\
 \midrule
-Married & 357,558\\
-Separated & 11,548\\
-Divorced & 74,149\\
-Widowed & 32,993\\
-Single / Never Married & 161,606\\
-Domestic Partnership & 33,185\\
-(Missing) & 1,633\\
+Married & 338,976\\
+Separated & 11,074\\
+Divorced & 70,595\\
+Widowed & 31,562\\
+Single / Never Married & 156,255\\
+Domestic Partnership & 31,869\\
+(Missing) & 1,624\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1488,10 +1491,10 @@ Ownership}{ownhome: Home Ownership}}\label{ownhome-home-ownership}
 \toprule
  & n\\
 \midrule
-Own & 401,273\\
-Rent & 195,136\\
-Other & 28,020\\
-(Missing) & 48,243\\
+Own & 380,990\\
+Rent & 188,659\\
+Other & 27,154\\
+(Missing) & 45,152\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1514,9 +1517,9 @@ Children}{has\_child: Parent of Young Children}}\label{has_child-parent-of-young
 \toprule
  & n\\
 \midrule
-Yes & 153,420\\
-No & 468,686\\
-(Missing) & 50,566\\
+Yes & 147,723\\
+No & 446,731\\
+(Missing) & 47,501\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1539,9 +1542,9 @@ immediate family has served{]}
 \toprule
  & n\\
 \midrule
-Yes & 286,167\\
-No & 373,410\\
-(Missing) & 13,095\\
+Yes & 275,112\\
+No & 356,749\\
+(Missing) & 10,094\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1589,13 +1592,13 @@ unmatched are labeled as a no record.{]}
 \toprule
  & n\\
 \midrule
-Active & 308,479\\
-No Record of Registration & 110,992\\
-Unregistered & 18,316\\
-Dropped & 8,606\\
-Inactive & 4,149\\
-Multiple Appearances & 2,210\\
-(Missing) & 219,920\\
+Active & 303,115\\
+No Record of Registration & 108,666\\
+Unregistered & 18,070\\
+Dropped & 8,433\\
+Inactive & 4,086\\
+Multiple Appearances & 2,165\\
+(Missing) & 197,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1620,30 +1623,30 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 \toprule
  & n\\
 \midrule
-No Record of Party Registration & 138,710\\
-Unknown & 89,672\\
-Democratic Party & 51,756\\
-Republican Party & 38,464\\
-No Party Affiliation & 18,941\\
+No Record of Party Registration & 136,093\\
+Unknown & 87,810\\
+Democratic Party & 50,181\\
+Republican Party & 37,148\\
+No Party Affiliation & 18,380\\
 Dem & 10,591\\
 Rep & 6,912\\
-Declined to State & 3,207\\
-Other & 2,339\\
-Independent Party & 1,897\\
-Libertarian Party & 746\\
+Declined to State & 3,093\\
+Other & 2,259\\
+Independent Party & 1,851\\
+Libertarian Party & 726\\
 Ind & 504\\
-Green Party & 357\\
+Green Party & 341\\
 Libertarian & 172\\
-Cns & 84\\
+Cns & 77\\
 Green & 76\\
-Constitution Party & 48\\
-Wor & 21\\
+Constitution Party & 47\\
+Wor & 19\\
 Cons & 17\\
 Reform Party & 13\\
 Peace and Freedom & 9\\
 Working Fam & 9\\
 Socialist Party & 7\\
-(Missing) & 308,120\\
+(Missing) & 285,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1670,20 +1673,20 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
 \toprule
  & n\\
 \midrule
-No Record of Party Registration & 314,752\\
-Democratic Party & 21,894\\
-Republican Party & 19,186\\
+No Record of Party Registration & 307,577\\
+Democratic Party & 21,325\\
+Republican Party & 18,723\\
 Dem & 4,500\\
 Rep & 4,121\\
-Libertarian Party & 33\\
-No Party Affiliation & 29\\
+Libertarian Party & 29\\
+No Party Affiliation & 27\\
 Other & 19\\
-Green Party & 9\\
+Green Party & 6\\
 Ind & 3\\
 Libertarian & 3\\
-Independent Party & 2\\
+Independent Party & 1\\
 Green & 1\\
-(Missing) & 308,120\\
+(Missing) & 285,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1711,10 +1714,10 @@ etc..) are aggregated as a vote.{]}
 \toprule
  & n\\
 \midrule
-Voted & 280,288\\
-No Record of Voting & 207,152\\
+Voted & 275,737\\
+No Record of Voting & 203,486\\
 No Voter File & 1,733\\
-(Missing) & 183,499\\
+(Missing) & 160,999\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1747,10 +1750,10 @@ turnout Primary Election
 \toprule
  & n\\
 \midrule
-No Record of Voting & 305,591\\
-Voted & 145,798\\
+No Record of Voting & 300,091\\
+Voted & 143,081\\
 No Voter File & 1,363\\
-(Missing) & 219,920\\
+(Missing) & 197,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1776,13 +1779,13 @@ wave)}{intent\_turnout\_self: Self-reported turnout (pre-election wave)}}\label{
 \toprule
  & n\\
 \midrule
-Yes, definitely & 249,690\\
-Probably & 29,437\\
-I already voted (early or absentee) & 27,640\\
-Plan to vote early & 8,324\\
-No & 27,901\\
-Undecided & 20,383\\
-(Missing) & 309,297\\
+Yes, definitely & 243,948\\
+Probably & 28,654\\
+I already voted (early or absentee) & 27,088\\
+Plan to vote early & 8,209\\
+No & 27,341\\
+Undecided & 19,922\\
+(Missing) & 286,793\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1813,9 +1816,9 @@ wave)}{voted\_turnout\_self: Self-reported turnout (post-election wave)}}\label{
 \toprule
  & n\\
 \midrule
-Yes & 348,499\\
-No & 48,416\\
-(Missing) & 275,757\\
+Yes & 343,700\\
+No & 47,904\\
+(Missing) & 250,351\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1847,12 +1850,12 @@ point)}{pid3: Partisan identity (3 point)}}\label{pid3-partisan-identity-3-point
 \toprule
  & n\\
 \midrule
-Democrat & 245,411\\
-Republican & 177,717\\
-Independent & 189,487\\
-Other & 27,055\\
-Not Sure & 32,749\\
-(Missing) & 253\\
+Democrat & 234,545\\
+Republican & 168,467\\
+Independent & 180,863\\
+Other & 25,975\\
+Not Sure & 31,864\\
+(Missing) & 241\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1880,16 +1883,16 @@ point)}{pid7: Partisan identity (7 point)}}\label{pid7-partisan-identity-7-point
 \toprule
  & n\\
 \midrule
-Strong Democrat & 164,875\\
-Not Very Strong Democrat & 79,846\\
-Lean Democrat & 66,995\\
-Independent & 93,283\\
-Lean Republican & 67,383\\
-Not Very Strong Republican & 62,982\\
-Strong Republican & 114,049\\
-Not Sure & 20,080\\
+Strong Democrat & 157,214\\
+Not Very Strong Democrat & 76,687\\
+Lean Democrat & 64,250\\
+Independent & 89,697\\
+Lean Republican & 63,689\\
+Not Very Strong Republican & 60,096\\
+Strong Republican & 107,732\\
+Not Sure & 19,555\\
 Don't Know & 3\\
-(Missing) & 3,176\\
+(Missing) & 3,032\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1915,11 +1918,11 @@ towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
 \toprule
  & n\\
 \midrule
-Democrat (Including Leaners) & 311,716\\
-Republican (Including Leaners) & 244,414\\
-Independent (Excluding Leaners) & 93,283\\
-Not Sure & 20,080\\
-(Missing) & 3,179\\
+Democrat (Including Leaners) & 298,151\\
+Republican (Including Leaners) & 231,517\\
+Independent (Excluding Leaners) & 89,697\\
+Not Sure & 19,555\\
+(Missing) & 3,035\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1943,13 +1946,13 @@ point)}{ideo5: Ideology (5 point)}}\label{ideo5-ideology-5-point}
 \toprule
  & n\\
 \midrule
-Very Liberal & 67,719\\
-Liberal & 119,180\\
-Moderate & 209,891\\
-Conservative & 147,294\\
-Very Conservative & 78,630\\
-Not Sure & 47,951\\
-(Missing) & 2,007\\
+Very Liberal & 64,986\\
+Liberal & 113,830\\
+Moderate & 201,224\\
+Conservative & 139,570\\
+Very Conservative & 73,947\\
+Not Sure & 46,512\\
+(Missing) & 1,886\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1974,21 +1977,21 @@ income? {[}Brackets coarsened{]}''
 \toprule
  & n\\
 \midrule
-Less than 10k & 31,428\\
-10k - 20k & 49,180\\
-20k - 30k & 67,385\\
-30k - 40k & 67,551\\
-40k - 50k & 60,118\\
-50k - 60k & 59,044\\
-60k - 70k & 43,897\\
-70k - 80k & 48,506\\
-80k - 100k & 55,760\\
-100k - 120k & 41,051\\
-120k - 150k & 34,988\\
-150k+ & 42,032\\
-Prefer not to say & 69,895\\
+Less than 10k & 30,485\\
+10k - 20k & 47,367\\
+20k - 30k & 64,851\\
+30k - 40k & 64,603\\
+40k - 50k & 57,312\\
+50k - 60k & 56,307\\
+60k - 70k & 41,738\\
+70k - 80k & 46,105\\
+80k - 100k & 52,984\\
+100k - 120k & 38,930\\
+120k - 150k & 33,247\\
+150k+ & 39,889\\
+Prefer not to say & 66,500\\
 Skipped & 12\\
-(Missing) & 1,825\\
+(Missing) & 1,625\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2020,16 +2023,16 @@ status?''
 \toprule
  & n\\
 \midrule
-Full-Time & 262,900\\
-Part-Time & 69,842\\
-Temporarily Laid Off & 5,607\\
-Unemployed & 44,116\\
-Retired & 146,450\\
-Permanently Disabled & 40,043\\
-Homemaker & 46,614\\
-Student & 28,093\\
-Other & 15,664\\
-(Missing) & 13,343\\
+Full-Time & 251,591\\
+Part-Time & 67,011\\
+Temporarily Laid Off & 5,478\\
+Unemployed & 42,536\\
+Retired & 138,999\\
+Permanently Disabled & 38,452\\
+Homemaker & 45,068\\
+Student & 27,581\\
+Other & 14,898\\
+(Missing) & 10,341\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2052,9 +2055,9 @@ insurance options given{]}
 \toprule
  & n\\
 \midrule
-Yes & 62,320\\
-No & 528,066\\
-(Missing) & 82,286\\
+Yes & 59,633\\
+No & 503,038\\
+(Missing) & 79,284\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2062,8 +2065,7 @@ No & 528,066\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-  2019, 2020, 2021, 2022, 2023
+  Years: All of 2009-2023
 \item
   The original question is of the form ``Do you currently have health
   insurance? (check all that apply)'', where respondents can pick more
@@ -2087,10 +2089,10 @@ membership}{union: Union membership}}\label{union-union-membership}
 \toprule
  & n\\
 \midrule
-Yes, Currently & 42,170\\
-Yes, Formerly & 121,881\\
-No, Never & 437,008\\
-(Missing) & 71,613\\
+Yes, Currently & 39,951\\
+Yes, Formerly & 114,947\\
+No, Never & 418,462\\
+(Missing) & 68,595\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2120,11 +2122,11 @@ household}{union\_hh: Union membership in household}}\label{union_hh-union-membe
 \toprule
  & n\\
 \midrule
-Yes, Currently & 53,227\\
-Yes, Formerly & 85,508\\
-No, Never & 450,706\\
+Yes, Currently & 50,728\\
+Yes, Formerly & 81,063\\
+No, Never & 430,152\\
 Not Sure & 8,578\\
-(Missing) & 74,653\\
+(Missing) & 71,434\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2154,13 +2156,13 @@ economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospecti
 \toprule
  & n\\
 \midrule
-Gotten much better & 44,385\\
-Gotten better / somewhat better & 135,379\\
-Stayed about the same & 152,860\\
-Gotten worse / somewhat worse & 168,898\\
-Gotten much worse & 149,311\\
-Not sure & 17,654\\
-(Missing) & 4,185\\
+Gotten much better & 42,043\\
+Gotten better / somewhat better & 127,393\\
+Stayed about the same & 146,589\\
+Gotten worse / somewhat worse & 162,165\\
+Gotten much worse & 145,423\\
+Not sure & 17,186\\
+(Missing) & 1,156\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2193,12 +2195,12 @@ in government and public affairs ..''
 \toprule
  & n\\
 \midrule
-Most of the time & 338,492\\
-Some of the time & 162,160\\
-Only now and then & 77,366\\
-Hardly at all & 40,263\\
-Don't Know & 17,128\\
-(Missing) & 37,263\\
+Most of the time & 318,598\\
+Some of the time & 155,682\\
+Only now and then & 74,887\\
+Hardly at all & 39,081\\
+Don't Know & 16,555\\
+(Missing) & 37,152\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2206,8 +2208,7 @@ Don't Know & 17,128\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-  2017, 2018, 2019, 2020, 2021, 2022, 2023
+  Years: All of 2007-2023
 \item
   Limitations: Not asked in 2006. Similar questions about watching TV
   news was asked in 2006, but not included in this cumulative file.
@@ -2227,13 +2228,13 @@ Incumbent President{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 140,084\\
-Approve / Somewhat Approve & 153,036\\
-Disapprove / Somewhat Disapprove & 67,676\\
-Strongly Disapprove & 291,536\\
-Never Heard / Not Sure & 18,963\\
+Strongly Approve & 132,935\\
+Approve / Somewhat Approve & 146,447\\
+Disapprove / Somewhat Disapprove & 65,318\\
+Strongly Disapprove & 277,458\\
+Never Heard / Not Sure & 18,478\\
 Neither Approve nor Disapprove & 443\\
-(Missing) & 934\\
+(Missing) & 876\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2263,15 +2264,14 @@ Incumbent Representative's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 100,626\\
-Approve / Somewhat Approve & 197,342\\
-Disapprove / Somewhat Disapprove & 107,333\\
-Strongly Disapprove & 113,185\\
-Never Heard / Not Sure & 115,143\\
-Never Heard of Person & 1,138\\
-Never Heard of this Person & 26,769\\
+Strongly Approve & 95,419\\
+Approve / Somewhat Approve & 186,599\\
+Disapprove / Somewhat Disapprove & 101,391\\
+Strongly Disapprove & 107,284\\
+Never Heard / Not Sure & 114,923\\
+Never Heard of this Person & 25,762\\
 Neither Approve nor Disapprove & 1,798\\
-(Missing) & 9,338\\
+(Missing) & 8,779\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2303,15 +2303,14 @@ Incumbent Senator 1's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 91,760\\
-Approve / Somewhat Approve & 198,203\\
-Disapprove / Somewhat Disapprove & 123,434\\
-Strongly Disapprove & 145,290\\
-Never Heard / Not Sure & 88,352\\
-Never Heard of Person & 682\\
-Never Heard of this Person & 18,053\\
+Strongly Approve & 87,318\\
+Approve / Somewhat Approve & 187,802\\
+Disapprove / Somewhat Disapprove & 116,898\\
+Strongly Disapprove & 137,938\\
+Never Heard / Not Sure & 88,189\\
+Never Heard of this Person & 17,210\\
 Neither Approve nor Disapprove & 1,413\\
-(Missing) & 5,485\\
+(Missing) & 5,187\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2343,15 +2342,14 @@ Incumbent Senator 2's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 101,205\\
-Approve / Somewhat Approve & 190,251\\
-Disapprove / Somewhat Disapprove & 116,435\\
-Strongly Disapprove & 146,865\\
-Never Heard / Not Sure & 90,567\\
-Never Heard of Person & 907\\
-Never Heard of this Person & 18,990\\
+Strongly Approve & 95,700\\
+Approve / Somewhat Approve & 180,171\\
+Disapprove / Somewhat Disapprove & 110,294\\
+Strongly Disapprove & 140,178\\
+Never Heard / Not Sure & 90,315\\
+Never Heard of this Person & 18,184\\
 Neither Approve nor Disapprove & 1,158\\
-(Missing) & 6,294\\
+(Missing) & 5,955\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2374,13 +2372,13 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 \toprule
  & n\\
 \midrule
-Strongly Approve & 113,413\\
-Approve / Somewhat Approve & 205,102\\
-Disapprove / Somewhat Disapprove & 116,966\\
-Strongly Disapprove & 175,978\\
-Never Heard / Not Sure & 56,787\\
+Strongly Approve & 107,873\\
+Approve / Somewhat Approve & 195,622\\
+Disapprove / Somewhat Disapprove & 111,641\\
+Strongly Disapprove & 167,346\\
+Never Heard / Not Sure & 55,201\\
 Neither Approve nor Disapprove & 1,414\\
-(Missing) & 3,012\\
+(Missing) & 2,858\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2444,12 +2442,12 @@ party}{intent\_pres\_party: President preference party}}\label{intent_pres_party
 \toprule
  & n\\
 \midrule
-Democratic & 95,432\\
-Republican & 81,174\\
+Democratic & 87,200\\
+Republican & 72,264\\
 Third Party & 5,412\\
 Independent & 209\\
-Other Candidate & 6,002\\
-(Missing) & 484,443\\
+Other Candidate & 5,402\\
+(Missing) & 471,468\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2472,11 +2470,11 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \toprule
  & n\\
 \midrule
-Democratic & 252,250\\
-Republican & 213,102\\
-Other Candidate & 24,611\\
-Did not Vote & 31,969\\
-(Missing) & 150,740\\
+Democratic & 239,508\\
+Republican & 199,701\\
+Other Candidate & 23,472\\
+Did not Vote & 22,695\\
+(Missing) & 156,579\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2516,7 +2514,7 @@ Cynthia Mckinney & 74\\
 Other & 352\\
 I Won't Vote in this Election & 851\\
 Not Sure & 1,697\\
-(Missing) & 642,477\\
+(Missing) & 611,760\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2542,13 +2540,12 @@ voting)}{intent\_pres\_12: 2012 President preference (before voting)}}\label{int
 \toprule
  & n\\
 \midrule
-Mitt Romney (Republican) & 29,648\\
-Barack Obama (Democratic) & 32,633\\
-Other & 2,381\\
+Mitt Romney (Republican) & 20,738\\
+Barack Obama (Democratic) & 24,401\\
+Other & 1,781\\
 I Will not Vote in this Election & 1,467\\
-I Won't Vote in this Election & 304\\
-Not Sure & 4,565\\
-(Missing) & 601,674\\
+Not Sure & 3,856\\
+(Missing) & 589,712\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2581,7 +2578,7 @@ Jill Stein (Green) & 1,400\\
 Other & 1,880\\
 I Won't Vote in this Election & 3,312\\
 Not Sure & 6,536\\
-(Missing) & 609,670\\
+(Missing) & 578,953\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2612,7 +2609,7 @@ Joe Biden (Democrat) & 22,400\\
 Other & 1,389\\
 I Won't Vote in this Election & 2,390\\
 Not Sure & 3,791\\
-(Missing) & 623,725\\
+(Missing) & 593,008\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2639,12 +2636,12 @@ vote? {[}see guide for wording in all years{]}''
 \toprule
  & n\\
 \midrule
-Barack Obama & 83,891\\
-John McCain & 78,462\\
-Other / Someone Else & 4,742\\
-Did not Vote & 9,453\\
-Not Sure / Don't Recall & 1,864\\
-(Missing) & 494,260\\
+Barack Obama & 73,986\\
+John McCain & 68,398\\
+Other / Someone Else & 4,204\\
+Did not Vote & 251\\
+Not Sure / Don't Recall & 1,787\\
+(Missing) & 493,329\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2655,7 +2652,10 @@ Not Sure / Don't Recall & 1,864\\
   Years: 2008, 2009, 2010, 2011, 2012
 \item
   Limitations: Response options offer slightly by year; some are
-  collapsed into one.
+  collapsed into one. In most years (2008-2010) this question is asked
+  only to those who respondent saying they voted (those who said they
+  did not vote are given a missing value). In 2011, there was no such
+  branching.
 \item
   See \texttt{voted\_pres\_party} for vote choice in the most recent
   preceding presidential election into one party column.
@@ -2675,14 +2675,14 @@ guide for wording in all years{]}''
 \toprule
  & n\\
 \midrule
-Barack Obama & 90,912\\
-Mitt Romney & 73,935\\
-Other / Someone Else & 6,351\\
+Barack Obama & 82,543\\
+Mitt Romney & 64,740\\
+Other / Someone Else & 5,872\\
 Did not Vote & 217\\
-Did not Vote for this Office & 2,627\\
-Not Sure / Don't Recall & 2,031\\
-Other & 9\\
-(Missing) & 496,590\\
+Did not Vote for this Office & 2,602\\
+Not Sure / Don't Recall & 1,990\\
+Other & 8\\
+(Missing) & 483,983\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2713,13 +2713,13 @@ United States? {[}Post-election{]}''
 \toprule
  & n\\
 \midrule
-Hilary Clinton & 113,996\\
-Donald Trump & 95,761\\
-Other / Someone Else & 22,095\\
-Did not Vote for this Office & 15,132\\
-Not Sure / Don't Recall & 313\\
+Hilary Clinton & 110,974\\
+Donald Trump & 92,760\\
+Other / Someone Else & 21,511\\
+Did not Vote for this Office & 15,068\\
+Not Sure / Don't Recall & 287\\
 Other & 229\\
-(Missing) & 425,146\\
+(Missing) & 401,126\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2752,7 +2752,7 @@ Other / Someone Else & 4,373\\
 Did not Vote for President & 19,135\\
 Not Sure & 190\\
 Other & 113\\
-(Missing) & 517,621\\
+(Missing) & 486,904\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2782,11 +2782,11 @@ area, who do you prefer?''
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 179,739\\
-{}{[Republican / Candidate 2]} & 159,852\\
-{}{[Other / Candidate 3]} & 5,185\\
-\$HouseCand4Name (\$HouseCand4Party) & 101\\
-Other & 3,499\\
+{}{[Democrat / Candidate 1]} & 169,617\\
+{}{[Republican / Candidate 2]} & 148,870\\
+{}{[Other / Candidate 3]} & 5,034\\
+\$HouseCand4Name (\$HouseCand4Party) & 100\\
+Other & 3,136\\
 \$HouseCand5Name (\$HouseCand5Party) & 29\\
 I Won't Vote in this Election & 2,269\\
 \$HouseCand6Name (\$HouseCand6Party) & 74\\
@@ -2795,9 +2795,9 @@ I Won't Vote in this Election & 2,269\\
 \$HouseCand8Name (\$HouseCand8Party) & 24\\
 \$HouseCand10Name (\$HouseCand10Party) & 1\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
-No One & 28,244\\
-Not Sure & 92,313\\
-(Missing) & 201,300\\
+No One & 27,070\\
+Not Sure & 88,739\\
+(Missing) & 196,950\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2838,15 +2838,15 @@ voting)}{intent\_sen: Senate preference (before voting)}}\label{intent_sen-senat
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 134,253\\
-{}{[Republican / Candidate 2]} & 112,480\\
-{}{[Other / Candidate 3]} & 4,840\\
+{}{[Democrat / Candidate 1]} & 125,646\\
+{}{[Republican / Candidate 2]} & 104,431\\
+{}{[Other / Candidate 3]} & 4,701\\
 \$SenCand4Name (\$SenCand4Party) & 89\\
-Other & 2,486\\
-Not Sure & 49,700\\
-No One & 17,606\\
+Other & 2,299\\
+Not Sure & 47,599\\
+No One & 16,789\\
 I Won't Vote in this Election & 1,145\\
-(Missing) & 350,073\\
+(Missing) & 339,256\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2877,14 +2877,14 @@ voting)}{intent\_gov: Governor preference (before voting)}}\label{intent_gov-gov
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 100,836\\
-{}{[Republican / Candidate 2]} & 86,963\\
-{}{[Other / Candidate 3]} & 4,292\\
-Other & 2,010\\
-Not Sure & 30,657\\
-No One & 11,313\\
+{}{[Democrat / Candidate 1]} & 97,089\\
+{}{[Republican / Candidate 2]} & 83,393\\
+{}{[Other / Candidate 3]} & 4,218\\
+Other & 1,929\\
+Not Sure & 29,620\\
+No One & 10,968\\
 I Won't Vote in this Election & 466\\
-(Missing) & 436,135\\
+(Missing) & 414,272\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2913,23 +2913,23 @@ voting)}{voted\_rep: House vote choice (after voting)}}\label{voted_rep-house-vo
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 173,851\\
-{}{[Republican / Candidate 2]} & 155,957\\
-{}{[Other / Candidate 3]} & 3,328\\
-\$HouseCand4Name (\$HouseCand4Party) & 70\\
+{}{[Democrat / Candidate 1]} & 163,560\\
+{}{[Republican / Candidate 2]} & 144,795\\
+{}{[Other / Candidate 3]} & 3,163\\
+\$HouseCand4Name (\$HouseCand4Party) & 69\\
 \$HouseCand7Name (\$HouseCand7Party) & 37\\
-Other & 4,760\\
-I Did Not Vote In This Race & 12,937\\
+Other & 4,306\\
+I Did Not Vote In This Race & 12,362\\
 \$HouseCand5Name (\$HouseCand5Party) & 28\\
-Not Sure & 6,049\\
-\$HouseCand6Name (\$HouseCand6Party) & 67\\
+Not Sure & 5,810\\
+\$HouseCand6Name (\$HouseCand6Party) & 66\\
 I Did not Vote in this Race & 2,045\\
 I Did not Vote & 345\\
 \$HouseCand8Name (\$HouseCand8Party) & 16\\
 \$HouseCand9Name (\$HouseCand9Party) & 2\\
 \$HouseCand10Name (\$HouseCand10Party) & 2\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
-(Missing) & 313,175\\
+(Missing) & 305,346\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2959,15 +2959,15 @@ voting)}{voted\_sen: Senate vote choice (after voting)}}\label{voted_sen-senate-
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 125,079\\
-{}{[Republican / Candidate 2]} & 107,232\\
-{}{[Other / Candidate 3]} & 3,357\\
+{}{[Democrat / Candidate 1]} & 116,544\\
+{}{[Republican / Candidate 2]} & 98,985\\
+{}{[Other / Candidate 3]} & 3,232\\
 \$SenCand4Name (\$SenCand4Party) & 64\\
-Other & 2,495\\
+Other & 2,317\\
 I Did not Vote & 28\\
-Not Sure & 2,590\\
-I Did Not Vote In This Race & 5,656\\
-(Missing) & 426,171\\
+Not Sure & 2,495\\
+I Did Not Vote In This Race & 5,564\\
+(Missing) & 412,726\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2996,15 +2996,15 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 87,824\\
-{}{[Republican / Candidate 2]} & 77,754\\
-{}{[Other / Candidate 3]} & 2,755\\
+{}{[Democrat / Candidate 1]} & 84,672\\
+{}{[Republican / Candidate 2]} & 74,674\\
+{}{[Other / Candidate 3]} & 2,724\\
 I Did not Vote in this Race & 238\\
 I Did not Vote & 62\\
-Other & 2,384\\
-I Did Not Vote In This Race & 3,618\\
-Not Sure & 1,340\\
-(Missing) & 496,697\\
+Other & 2,289\\
+I Did Not Vote In This Race & 3,576\\
+Not Sure & 1,301\\
+(Missing) & 472,419\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3031,7 +3031,7 @@ YouGov panel respondent with different identifiers; for example the 2007
 CCES draws from the 2006 CCES respondents.
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 2
 $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 20~
 $ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439254~
@@ -3055,7 +3055,7 @@ Because of the changes in naming by year, users should not assume that
 respondent should be named the same way.
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Rober~
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menendez~
@@ -3088,7 +3088,7 @@ district, by district and last name, or both:
 \end{itemize}
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 3
 $ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, 205~
 $ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, 493~
@@ -3126,13 +3126,13 @@ Democrats in the race.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{cc }\SpecialCharTok{|\textgreater{}} 
-  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, st }\SpecialCharTok{==} \StringTok{"CA"}\NormalTok{, dist\_up }\SpecialCharTok{==} \DecValTok{43}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, }\FunctionTok{as\_factor}\NormalTok{(st) }\SpecialCharTok{==} \StringTok{"CA"}\NormalTok{, dist\_up }\SpecialCharTok{==} \DecValTok{43}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{select}\NormalTok{(}\FunctionTok{matches}\NormalTok{(}\StringTok{"intent\_rep"}\NormalTok{)) }
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 129 x 3
+# A tibble: 91 x 3
    intent_rep                 intent_rep_party intent_rep_chosen
    <fct>                      <fct>            <chr>            
  1 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
@@ -3145,7 +3145,7 @@ Democrats in the race.
  8 [Republican / Candidate 2] Democratic       Bob Flores (D)   
  9 [Republican / Candidate 2] Democratic       Bob Flores (D)   
 10 [Democrat / Candidate 1]   Democratic       Maxine Waters (D)
-# i 119 more rows
+# i 81 more rows
 \end{verbatim}
 
 The name and party are those as provided in the CCES datasets (e.g., in
@@ -3154,7 +3154,7 @@ the form \texttt{HouseCand1Name}).
 \subsection{Name of Chosen Candidate}\label{name-of-chosen-candidate}
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 6
 $ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (D)"~
 $ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)", N~
@@ -3176,7 +3176,7 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D)",~
 \subsection{Party of Chosen Candidate}\label{party-of-chosen-candidate}
 
 \begin{verbatim}
-Rows: 672,672
+Rows: 641,955
 Columns: 8
 $ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
 $ voted_pres_party  <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
@@ -3205,19 +3205,26 @@ Releases}\label{version-history-of-dataverse-releases}
 Routine edits add new rows, add new variables, and change the
 customization of existing variables. The version history is explained
 below and old versions can be downloaded from Dataverse. Dataverse
-assigns version numbers by incrementing a full number if any of the
-datasets change, and an incrementing decimal when the description
-changes.
+assigns version numbers by incrementing by a full number if any of the
+datasets change, and by incrementing by a decimal when only the
+description/metadata changes.
 
 \subsubsection{\texorpdfstring{Version 9.0 (released
-\texttt{XXXX-XX-XX})}{Version 9.0 (released XXXX-XX-XX)}}\label{version-9.0-released-xxxx-xx-xx}
+\texttt{2024-06-17})}{Version 9.0 (released 2024-06-17)}}\label{version-9.0-released-2024-06-17}
 
 \begin{itemize}
 \tightlist
 \item
-  Adds 2023 Common Content, up to n = 672,672
+  Adds 2023 Common Content, up to n = 641,955
 \item
   Adds 2022 vote validation
+\item
+  Fixes and modifies issues in 2008 presidential vote ``did not vote''
+  (\href{https://github.com/kuriwaki/cces_cumulative/issues/63}{issue
+  63} on Github)
+\item
+  Missing values in Stata are no longer large negative numbers (Thanks
+  to Peter Wielhouwer)
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 8.0 (released

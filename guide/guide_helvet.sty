@@ -54,6 +54,7 @@
 
 % Spacing
 \usepackage{setspace}
+\usepackage{placeins}
 
 % Sectioing
 \setcounter{secnumdepth}{0} % fix starting with "0.1"
@@ -73,19 +74,6 @@
 
 % Dash 
 \renewcommand\labelitemi{--}
-
-% Theorems
-\usepackage{etoolbox}
-\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lem}{Lemma}
-\newtheorem{assump}{Assumption}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\AtEndEnvironment{definition}{\null\hfill\qedsymbol}%
-\newtheorem{example}{Example}
-\newtheorem{error}{Common Error}
-\AtEndEnvironment{error}{\null\hfill\qedsymbol}%
 
 % Math
 \newcommand{\var}{\textnormal{Var}}
