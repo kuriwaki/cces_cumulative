@@ -9,16 +9,17 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(haven)
 library(rprojroot)
 ```
 
-This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2020). 
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2022). 
 
 
 
 * [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
 * [*Current Guide*]( 
-https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2021.pdf)
+https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2022.pdf)
 
 Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
@@ -26,24 +27,27 @@ Please feel free to file any questions or requests about the cumulative file as 
 
 # Getting Started 
 
-Start by downloading either the `.Rds` or `.dta` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but please contact  me  for the newest version. The `.Rds` format can be read into R. 
+Start by downloading either the `.dta`, `.Rds`, or `.feather` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but feel free to contact me if you need the newest version not on Dataverse. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-df <- readRDS(find_rstudio_root_file("data/release/cumulative_2006-2020.Rds"))
+# dat <- readRDS(here("data/release/cumulative_2006-2022.Rds"))
+dat <- arrow::read_feather(here::here("data/release/cumulative_2006-2022.feather"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-df <- readRDS("cumulative_2006-2020.Rds")
+dat <- readRDS("cumulative_2006-2022.Rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
 
 ```{r}
 library(tidyverse)
-df
+dat
 ```
 
-A Stata `.dta` can also be read in by Stata, or in R through `haven::read_dta()`. 
+A Stata `.dta` can also be read in by Stata, or in R through `haven::read_dta()`.  You will need the `haven` package loaded.
+
+The arrow files can be loaded with `arrow::read_feather()`. They are currently modeled so that it would give the same output as reading the dta file.
 
 Each row is a respondent, and each variable is information associated with that respondent. Note that this cumulative dataset extracts only a couple of key variables from each year's CCES, which has hundreds of columns. 
 
@@ -60,7 +64,7 @@ Most variables in this dataset come straight from each year's CCES. However, it 
 The cumulative file has added candidate name and identifiers that a respondent chose. In the original year-specific datasets, the response values for a vote choice question is usually a generic label, e.g. `Candidate1` and `Candidate2` (with separate look-up variables appended). The cumulative dataset shows both the generic label _and_ the chosen candidate's name, party, and identifier, which will vary across individuals. 
 
 ```{r, echo = TRUE}
-select(df, year, case_id, matches("voted_sen"))
+select(dat, year, case_id, matches("voted_sen"))
 ```
 
 
