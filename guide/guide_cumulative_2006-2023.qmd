@@ -30,7 +30,10 @@ library(rprojroot)
 
 
 ```{r, include = FALSE, cache = FALSE}
+tictoc::tic()
 cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2023.feather"))
+tictoc::toc()
+
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
 rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale_by-year.csv"))
 ```
@@ -90,10 +93,11 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
   if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
   if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
-  if (identical(yrs_vec, 2007:2022)) return("All of 2007-2022")  
+  if (identical(yrs_vec, 2007:2023)) return("All of 2007-2023")  
   if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
   if (identical(yrs_vec, 2006:2023)) return("All of 2006-2023")  
   if (identical(yrs_vec, 2008:2023)) return("All of 2008-2023")  
+  if (identical(yrs_vec, 2009:2023)) return("All of 2009-2023")  
   if (identical(yrs_vec, setdiff(c(2006:2023), 2007))) return("All of 2006-2023 except 2007")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
@@ -127,7 +131,7 @@ nam <- function(var, tbl = meta) {
 
 \medskip
 
-This dataset combines `r english::english(2022 - 2006 + 1)` years (2006 -- 2022) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Stephen Ansolabehere, Brian Schaffner, and Marissa Shih.
+This dataset combines `r english::english(2023 - 2006 + 1)` years (2006 -- 2023) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Stephen Ansolabehere, Jeremy Pope, Brian Schaffner, and Marissa Shih.
 
 \medskip
 
@@ -135,7 +139,7 @@ Each year's CCES/CES asks hundreds of questions, many of which change from year 
 
 \medskip
 
-I constructed this dataset from each year's full CCES/CES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file. In addition, the same dataset is available on `Crunch`, an analytics interface optimized for survey datasets. The source code is open-source. 
+I constructed this dataset from each year's full CCES/CES, all of them publicly available as separate datasets on [Dataverse](cces.gov.harvard.edu).The final product is a `tibble`-style data frame (built in R) that is also available as a Stata `dta` file.  
 
 \medskip
 
@@ -167,32 +171,38 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 ## Data Read-in
 
-The `.rds` format can be read into R. This format preserves dataset properties such as the distinction between integers and doubles, and labelled variables. 
+\noindent The dataset in R is best viewed with the tidyverse suite of packages, as well as the package for converting and reading Stata files, `haven`. Although we provide three file formats of the same content, we recommend using the Stata (`.dta`) file along with the `haven` package's `read_dta` function most of the time, and using the `.feather` file when speed is a priority. 
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- readRDS("cumulative_2006-2023.rds")
-```
-
-\noindent The dataset in R is best viewed with `dplyr`, although it can also be used without tidyverse.
-```{r, echo = TRUE, eval = FALSE}
 library(tidyverse)
-cc
-```
-
-\noindent  A Stata dta version is provided as well. `cumulative_2006-2022.dta` can be read by Stata, or in R by the `haven` package 
-
-```{r, eval = FALSE, echo = TRUE}
 library(haven)
 cc <- read_dta("cumulative_2006-2023.dta")
 ```
 
-R is free software and, if necessary, the `haven`  and `readr` package can be used to export the CCES/CES datasets in other formats such as plain-text csv or SPSS sav files. Plain-text formats are somewhat less convenient because they do not preserve value labels.
+Loading the `haven` package allows using labelled variables in versatile ways (see the section "Labelled variables"). Plain-text formats are less useful because they do not preserve value labels.
 
-Version 8.0 includes an experimental `.feather` format. This is a format compatible in both R and Python, and reads and writes faster. For example, in R, use the function `read_feather` from the `arrow` package. However, reading the Stata file in Python via pandas may retain more of the variable labels than the python file.
+We also provide a `.rds` format that is specific to R:
+
+```{r, eval = FALSE, echo = TRUE}
+cc <- read_rds("cumulative_2006-2023.rds")
+```
+
+This format preserves dataset properties such as the distinction between integers and doubles, as well as the labelled variables. Between the `.rds` and `.dta` versions, there is some difference in whether variables are saved as characters (rds) or labelled variables (dta), but the content is the same.
+
+
+From version 8.0 and onwards, we also include a `.feather` format. This is a format that is optimized for speed: it reads and writes faster than the others. Its content is identical to the `.rds` version. For example, in R, use the function `read_feather` from the `arrow` package. 
+
+```{r, eval = FALSE, echo = TRUE}
+library(arrow)
+cc <- read_feather("cumulative_2006-2023.feather")
+```
+
+In one example, I found that R read the `.feather` file in 0.3 seconds, and it took the `.rds` format more than 10 times slower (3.5 seconds) and the `.dta` format to be an additional 5 times slower than the `.rds` fomrat (16 seconds).
+
 
 ## Data Download
 
-\noindent \emph{Downloading the data via R.} In some cases, it may be convenient to download the dataset directly into an R environment without downloading the file to one's computer. The recent version of `dataverse` (version 0.3.0 or later) allows this by the function:
+\noindent \emph{Downloading the data via the dataverse package.} In some cases, it may be convenient to download the dataset directly into an R environment without downloading the file to one's computer. The recent version of `dataverse` (version 0.3.0 or later) allows this by the function:
 
 ```{r, eval = FALSE, echo = TRUE}
 library(dataverse)
@@ -354,6 +364,7 @@ print_tab(tookpost)
 
 
 
+\FloatBarrier
 
 ## Weights 
 ### `r nam(weight)`
@@ -388,9 +399,16 @@ print_numeric(weight_cumulative)
 ```{r, fig.align = 'center'}
 rsc |> 
   mutate(size  = formatC(size, format = "d", big.mark = ",")) |> 
-  kable(col.names = c("Year", "Observations", "Factor"), digits = 2, align = c("r", "r", "r"), booktab = TRUE,
-        linesep = rep('', nrow(rsc)))
-
+  kbl(
+    col.names = c("Year", "Observations", "Factor"), 
+    digits = 2, 
+    align = c("r", "r", "r"), 
+    booktab = TRUE,
+    linesep = rep('', nrow(rsc)),
+    format = "latex",
+    position = "!H") |> 
+      kable_styling(full_width = FALSE, latex_options = "HOLD_position") |> 
+  cat()
 ```
 \end{center}
 
@@ -607,8 +625,8 @@ kbl(dframe,
 
 * Years: `r in_years(hisp_origin)`
 * This is a multichoice question that is then concatenated into a single character. The sequence `"!!"` is used as a delimiter. For example, `"United States!!Cuba"` indicates that the respondent chose both "United States" and "Cuba" as responses in this multi-choice question. 
-* In the above table, we separately count the occurence of each of the options. For example, the respondent in the above example will be counted twice in the table.
-* This question is asked only to those who identify as any-part Hispanic in the `race` and `hispanic` questions, with a few exceptions in 2016 and 2018 for multi-racial candidates.
+* In the above table, we separately count the occurrence of each of the options. For example, the respondent in the above example will be counted twice in the table.
+* This question is asked only to those who identify as any-part Hispanic in the `race` and `hispanic` questions, with a few exceptions in 2016 and 2018 for multi-racial respondents.
 * To make the text manageable, the following response options are *not* considered and extracted from each year's common content when making this variable: `"Other"`, `"Not Hispanic or Latino"`, `"No country in particular"`. Open-text responses in the `"Other"` responses are not used either. See each year's common content for these data.
 
 
@@ -1136,7 +1154,7 @@ print_tab(voted_pres_08)
 ```
 
 * Years: `r in_years(voted_pres_08)`
-* Limitations: Response options offer slightly by year; some are collapsed into one. 
+* Limitations: Response options offer slightly by year; some are collapsed into one. In most years (2008-2010) this question is asked only to those who respondent saying they voted (those who said they did not vote are given a missing value). In 2011, there was no such branching. 
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_12)`
@@ -1309,7 +1327,7 @@ The text responses that the respondent chose in each of the `intent_` / `voted_`
 
 ```{r, echo = TRUE}
 cc |> 
-  filter(year == 2012, st == "CA", dist_up == 43) |> 
+  filter(year == 2012, as_factor(st) == "CA", dist_up == 43) |> 
   select(matches("intent_rep")) 
 ```
 
@@ -1338,12 +1356,14 @@ glimpse(select(cc, matches("_party$")))
 
 # Version History of Dataverse Releases
 
-Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing a full number if any of the datasets change, and an incrementing decimal when the description changes.
+Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
 
-### Version 9.0 (released `XXXX-XX-XX`)
+### Version 9.0 (released `2024-06-17`)
 
-- Adds 2023 Common Content, up to n = 672,672
+- Adds 2023 Common Content, up to n = 641,955
 - Adds 2022 vote validation
+- Fixes and modifies issues in 2008 presidential vote "did not vote" ([issue 63](https://github.com/kuriwaki/cces_cumulative/issues/63) on Github)
+- Missing values in Stata are no longer large negative numbers (Thanks to Peter Wielhouwer)
 
 ### Version 8.0  (released `2023-05-12`)
 - Adds 2022 Common Content (before vote validation), up to n = 617,455
