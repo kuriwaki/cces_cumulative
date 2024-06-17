@@ -53,6 +53,32 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(county_fips = as.character(county_fips))
   }
   
+  # 2006 ------
+  if (identical(cces_year, 2006L)) {
+    tbl <- tbl %>%
+      rename(
+        approval_pres = gwbapp,
+        approval_rep = congmanapp,
+        approval_sen1 = sen1app,
+        approval_sen2 = sen2app,
+        approval_gov = govapp,
+        economy_retro = natleconyear,
+        family_income_old = income,
+        zipcode = inputzip,
+        county_fips = profile_fips,
+        intent_trn = vote2006,
+        voted_trn = v4004,
+        intent_rep = profile_housevote_coded,
+        intent_sen  = profile_senvote_coded,
+        intent_gov  = profile_govvote_coded,
+        vv_turnout_gvm = g2006
+      ) %>% 
+      mutate(marstat = coalesce(profile_marstat, marstat)) %>% 
+      labelled::add_value_labels(race = c("Other" = 7)) %>% 
+      labelled::add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
+                                          "Not Very Strong Republican" = 6))
+  }
+  
   # 2008 -------
   if (identical(cces_year, 2008L)) {
     tbl <- tbl %>%
@@ -87,32 +113,6 @@ std_name <- function(tbl, is_panel = FALSE) {
       mutate(zipcode = as.character(as_factor(V202)))
   }
   
-  # 2006 ------
-  if (identical(cces_year, 2006L)) {
-    tbl <- tbl %>%
-      rename(
-        approval_pres = gwbapp,
-        approval_rep = congmanapp,
-        approval_sen1 = sen1app,
-        approval_sen2 = sen2app,
-        approval_gov = govapp,
-        economy_retro = natleconyear,
-        family_income_old = income,
-        zipcode = inputzip,
-        county_fips = profile_fips,
-        intent_trn = vote2006,
-        voted_trn = v4004,
-        intent_rep = profile_housevote_coded,
-        intent_sen  = profile_senvote_coded,
-        intent_gov  = profile_govvote_coded,
-        vv_turnout_gvm = g2006
-      ) %>% 
-      mutate(marstat = coalesce(profile_marstat, marstat)) %>% 
-      labelled::add_value_labels(race = c("Other" = 7)) %>% 
-      labelled::add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
-                                          "Not Very Strong Republican" = 6))
-  }
-  
   # 2009 --------
   if (identical(cces_year, 2009L)) {
     tbl <- tbl %>%
@@ -139,6 +139,26 @@ std_name <- function(tbl, is_panel = FALSE) {
       ) %>% 
       mutate(zipcode = as.character(as_factor(v253)),
              county_fips = as.character(as_factor(v269)))
+  }
+  
+  # 2010 - 2011 ----
+  # only those necessary for custom fix
+  if (identical(cces_year, 2010L)) {
+    tbl <- tbl |> 
+      rename(
+        gender = V208,
+        marstat = V214,
+        voted_pres_08 = CC317
+      )
+  }
+  
+  if (identical(cces_year, 2011L)) {
+    tbl <- tbl |> 
+      rename(
+        gender = V208,
+        marstat = V214,
+        voted_pres_08 = CC331
+      )
   }
   
   # 2012 ----------
