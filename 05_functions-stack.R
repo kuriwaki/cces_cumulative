@@ -569,7 +569,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_sen = CC24_411,
         voted_gov = CC24_413,
         voted_pres_16 = presvote16post,
-        voted_pres_20 = presvote20post
+        voted_pres_20 = presvote20post,
+        voted_pres_24 = CC24_410
       ) %>%
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -1049,12 +1050,37 @@ clps_pres20 <- function(vec) {
     fct_lump(n = 5)
 }
 
+clps_pres24 <- function(vec) {
+  fct_collapse(
+    vec, 
+    `Kamala Harris` = c(
+      "Kamala Harris", 
+      "Kamala Harris (Democrat)"),
+    `Donald Trump` = c(
+      "Donald Trump", 
+      "Donald Trump (Republican)"),
+    `Other / Someone Else` = c(
+      "Other", 
+      "Someone Else", 
+      "Jill Stein", 
+      "Cornel West", 
+      "Chase Oliver"),
+    `Did not Vote for this Office` = c(
+      "I Did not Vote in this Race",
+      "I Did not Vote",
+      "Did Not Vote for President"),
+    `Not Sure / Don't Recall` = c("I'm not Sure")
+  ) %>% 
+    fct_relevel("Kamala Harris", "Donald Trump") %>% 
+    fct_lump(n = 5)
+}
+
 #' give pres party from chars of pres names
 pres_names <- function(vec) {
   case_when(
-    str_detect(vec, regex("(Obama|Clinton|Biden)", ignore_case = TRUE)) ~ "Democratic",
+    str_detect(vec, regex("(Obama|Clinton|Biden|Harris)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
-    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Johnson)", ignore_case = TRUE)) ~ "Third Party",
+    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Johnson|West|Oliver|Kennedy)", ignore_case = TRUE)) ~ "Third Party",
     str_detect(vec, regex("(McMullin|Nader)", ignore_case = TRUE)) ~ "Independent",
     str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
     str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did not Vote",

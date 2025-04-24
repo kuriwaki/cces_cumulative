@@ -267,11 +267,13 @@ i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
 i_pres20 <- find_stack(ccs, intent_pres_20)
+i_pres24 <- find_stack(ccs, intent_pres_24)
 
 v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 v_pres20 <- find_stack(ccs, voted_pres_20)
+v_pres24 <- find_stack(ccs, voted_pres_24)
 
 # v_pres08
 v_pres08_08_11 <- list(std_name(cc08), std_name(cc09), std_name(cc10), std_name(cc11)) |> 
@@ -294,6 +296,9 @@ v_pres16 <- v_pres16 %>%
 v_pres20 <- v_pres20 %>%
   mutate(voted_pres_20 = clps_pres20(voted_pres_20),
          voted_pres_20 = replace(voted_pres_20, voted_pres_20 == "Did not Vote for this Office", NA))
+v_pres24 <- v_pres24 %>%
+  mutate(voted_pres_24 = clps_pres24(voted_pres_24),
+         voted_pres_24 = replace(voted_pres_24, voted_pres_24 == "Did not Vote for this Office", NA))
 
 # coalesce
 pres_party <- i_pres08 %>% 
@@ -304,6 +309,7 @@ pres_party <- i_pres08 %>%
   left_join(v_pres12, by = c("year", "case_id")) %>% 
   left_join(v_pres16, by = c("year", "case_id")) %>% 
   left_join(v_pres20, by = c("year", "case_id")) %>% 
+  left_join(v_pres24, by = c("year", "case_id")) %>% 
   mutate_if(is.factor, as.character) %>% 
   # NA for previous election
   mutate(voted_pres_08 = replace(voted_pres_08, year == 2012, NA),
@@ -312,9 +318,9 @@ pres_party <- i_pres08 %>%
   transmute(
     year, case_id,
     intent_pres_party = pres_names(
-      coalesce(intent_pres_20, intent_pres_16, intent_pres_12, intent_pres_08)),
+      coalesce(intent_pres_24, intent_pres_20, intent_pres_16, intent_pres_12, intent_pres_08)),
     voted_pres_party  = pres_names(
-      coalesce(voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
+      coalesce(voted_pres_24, voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
   )
 
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
