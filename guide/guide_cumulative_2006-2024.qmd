@@ -31,7 +31,7 @@ library(rprojroot)
 
 ```{r, include = FALSE, cache = FALSE}
 tictoc::tic()
-cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2023.feather"))
+cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2024.feather"))
 tictoc::toc()
 
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
@@ -93,12 +93,12 @@ in_years <- function(var, tbl = cc) {
   if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
   if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
   if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
-  if (identical(yrs_vec, 2007:2023)) return("All of 2007-2023")  
+  if (identical(yrs_vec, 2007:2024)) return("All of 2007-2024")  
   if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
-  if (identical(yrs_vec, 2006:2023)) return("All of 2006-2023")  
-  if (identical(yrs_vec, 2008:2023)) return("All of 2008-2023")  
-  if (identical(yrs_vec, 2009:2023)) return("All of 2009-2023")  
-  if (identical(yrs_vec, setdiff(c(2006:2023), 2007))) return("All of 2006-2023 except 2007")  
+  if (identical(yrs_vec, 2006:2024)) return("All of 2006-2024")  
+  if (identical(yrs_vec, 2008:2024)) return("All of 2008-2024")  
+  if (identical(yrs_vec, 2009:2024)) return("All of 2009-2024")  
+  if (identical(yrs_vec, setdiff(c(2006:2024), 2007))) return("All of 2006-2024 except 2007")  
   if (!(identical(yrs_vec, 2006:2019) | 
         identical(yrs_vec, 2006:2018) | 
         identical(yrs_vec, 2006:2017))) {
@@ -176,7 +176,7 @@ Please note that this cumulative dataset makes some modifications to the origina
 ```{r, eval = FALSE, echo = TRUE}
 library(tidyverse)
 library(haven)
-cc <- read_dta("cumulative_2006-2023.dta")
+cc <- read_dta("cumulative_2006-2024.dta")
 ```
 
 Loading the `haven` package allows using labelled variables in versatile ways (see the section "Labelled variables"). Plain-text formats are less useful because they do not preserve value labels.
@@ -184,7 +184,7 @@ Loading the `haven` package allows using labelled variables in versatile ways (s
 We also provide a `.rds` format that is specific to R:
 
 ```{r, eval = FALSE, echo = TRUE}
-cc <- read_rds("cumulative_2006-2023.rds")
+cc <- read_rds("cumulative_2006-2024.rds")
 ```
 
 This format preserves dataset properties such as the distinction between integers and doubles, as well as the labelled variables. Between the `.rds` and `.dta` versions, there is some difference in whether variables are saved as characters (rds) or labelled variables (dta), but the content is the same.
@@ -194,7 +194,7 @@ From version 8.0 and onwards, we also include a `.feather` format. This is a for
 
 ```{r, eval = FALSE, echo = TRUE}
 library(arrow)
-cc <- read_feather("cumulative_2006-2023.feather")
+cc <- read_feather("cumulative_2006-2024.feather")
 ```
 
 In one example, I found that R read the `.feather` file in 0.3 seconds, and it took the `.rds` format more than 10 times slower (3.5 seconds) and the `.dta` format to be an additional 5 times slower than the `.rds` fomrat (16 seconds).
@@ -207,7 +207,7 @@ In one example, I found that R read the `.feather` file in 0.3 seconds, and it t
 ```{r, eval = FALSE, echo = TRUE}
 library(dataverse)
 cc <- get_dataframe_by_name(
-  filename = "cumulative_2006-2023.dta",
+  filename = "cumulative_2006-2024.dta",
   dataset = "10.7910/DVN/II2DB6",
   original = TRUE,
   .f = haven::read_dta,
