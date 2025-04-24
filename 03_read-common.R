@@ -89,7 +89,7 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   
   # guess variable based on year
   statevar <- case_when(
-    guessed_yr %in% c(2007, 2012:2023) ~ "inputstate",
+    guessed_yr %in% c(2007, 2012:2024) ~ "inputstate",
     guessed_yr %in% c(2008, 2010:2011) ~ "V206",
     guessed_yr %in% 2009 ~ "v259",
     guessed_yr %in% 2006 ~ "v1002"
@@ -133,7 +133,7 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
   }
   
   statevar <- case_when(
-    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020, 2022) ~ "inputstate_post",
+    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020, 2022, 2024) ~ "inputstate_post",
     guessed_yr %in% c(2010) ~ "V206_post",
     guessed_yr %in% 2008 ~ "V259"
   )
@@ -178,6 +178,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     
     # district in the upcoming election
     distupvar <- distvar
+    if (guessed_yr == 2024) distupvar <- "cdid119"
     if (guessed_yr == 2022) distupvar <- "cdid118"
     if (guessed_yr == 2018) distupvar <- "cdid116"
     if (guessed_yr == 2016) distupvar <- "cdid115"
@@ -244,6 +245,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
   
   if (guess_year && guessed_yr != 2006) {
     distvar <- case_when(
+      guessed_yr %in% c(2024) ~ "cdid118_post",
       guessed_yr %in% c(2022) ~ "cdid117_post",
       guessed_yr %in% c(2020) ~ "cdid116_post",
       guessed_yr %in% c(2018) ~ "cdid115_post",
@@ -254,6 +256,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     )
     
     distupvar <- distvar
+    if (guessed_yr == 2024) distupvar <- "cdid119_post"
     if (guessed_yr == 2022) distupvar <- "cdid118_post"
     if (guessed_yr == 2018) distupvar <- "cdid116_post"
     if (guessed_yr == 2016) distupvar <- "cdid115_post"
@@ -334,6 +337,7 @@ cc20 <- std_dv("data/source/cces/2020_cc.dta")
 cc21 <- std_dv("data/source/cces/2021_cc.dta")
 cc22 <- std_dv("data/source/cces/2022_cc.dta")
 cc23 <- std_dv("data/source/cces/2023_cc.dta")
+cc24 <- std_dv("data/source/cces/2024_cc.dta")
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
@@ -392,6 +396,7 @@ save(
   cc14, cc15, cc16, cc17, 
   cc18, cc18_cnew, cc19, 
   cc20, cc21, cc22, cc23,
+  cc24,
   panel12, 
   mit06_add,
   hu08,  hu09, 

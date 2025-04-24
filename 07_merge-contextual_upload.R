@@ -276,7 +276,7 @@ ccc_factor <- ccc_fac |>
 # Save ---------
 cli_h1("Save Final data")
 # write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-write_rds(ccc_df, "data/release/cumulative_2006-2023_addon.rds")
+write_rds(ccc_df, "data/release/cumulative_2006-2024_addon.rds")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
@@ -295,12 +295,12 @@ for (v in colnames(ccc_common)) {
 if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
   cli::cli_abort("Found Duplicate case IDs")
 
-write_rds(ccc_common, "data/output/cumulative_2006-2023_factor.rds")
-write_dta(ccc_common, "data/release/cumulative_2006-2023.dta", version = 14)
+write_rds(ccc_common, "data/output/cumulative_2006-2024_factor.rds")
+write_dta(ccc_common, "data/release/cumulative_2006-2024.dta", version = 14)
 
 
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2023.rds", compress = "xz")
-write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2023.feather")
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.rds", compress = "xz")
+write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.feather")
 
 # might write to crunch
 if (writeToCrunch) {

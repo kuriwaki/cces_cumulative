@@ -49,7 +49,8 @@ ccs <- list(
   "2020" = std_name(cc20),
   "2021" = std_name(cc21),
   "2022" = std_name(cc22),
-  "2023" = std_name(cc23)
+  "2023" = std_name(cc23),
+  "2024" = std_name(cc24)
 )
 
 cli_alert_success("Finished reading in data and standardizing names")
@@ -69,7 +70,7 @@ vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
   mutate(tookpost = labelled(
     as.integer(tookpost_num == 1 & year < 2018 | 
-                 tookpost_num == 2 & year %in% c(2018, 2020, 2022)), # diff number in 2018
+                 tookpost_num == 2 & year %in% c(2018, 2020, 2022, 2024)), # diff number in 2018
     labels = c("Took Post-Election Survey" = 1,
                "Did Not Take Post-Election Survey" = 0))) %>% 
   mutate(tookpost  = replace(tookpost, year %% 2 == 1, NA)) %>% 

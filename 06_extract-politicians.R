@@ -232,6 +232,7 @@ master$`2016_post` <- str_c(master$`2016`, "_post")
 master$`2018_post` <- str_c(master$`2018`, "_post")
 master$`2020_post` <- str_c(master$`2020`, "_post")
 master$`2022_post` <- str_c(master$`2022`, "_post")
+master$`2024_post` <- str_c(master$`2024`, "_post")
 
 # trick functions that it uses post
 cli_h1("Rename variables")
@@ -269,18 +270,20 @@ cclist <- list(`2006` = cc06,
                `2021` = cc21,
                `2022` = cc22,
                `2023` = cc23,
+               `2024` = cc24,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
                `2016_post` = blend_post(cc16),
                `2018_post` = blend_post(cc18),
                `2020_post` = blend_post(cc20),
-               `2022_post` = blend_post(cc22)
+               `2022_post` = blend_post(cc22),
+               `2024_post` = blend_post(cc24)
                )
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2023, str_c(seq(2010, 2022, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2024, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
