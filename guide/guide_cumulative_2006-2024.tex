@@ -116,7 +116,7 @@
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
@@ -126,7 +126,7 @@
 \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
 \newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
 \newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
 \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
@@ -159,7 +159,7 @@ YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
 their help.}}
 
 
-\date{2024-06-17}
+\date{2025-04-24}
 
 \begin{document}
 
@@ -694,7 +694,7 @@ year to make years comparable{]}
   Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
   by the year-specific factors shown in the following table. For
   example, all weights in the 2016 common content are divided by about
-  2.21, because it has about twice as many observations as the other
+  1.97, because it has about twice as many observations as the other
   datasets.
 \item
   This transformation means that this simple cumulative weight makes
@@ -707,6 +707,7 @@ year to make years comparable{]}
 \begin{center}
 
 
+
 ::: {.cell layout-align="center"}
 ::: {.cell-output .cell-output-stdout}
 
@@ -717,24 +718,25 @@ year to make years comparable{]}
 \toprule
 Year & Observations & Factor\\
 \midrule
-2006 & 36,421 & 1.25\\
-2007 & 9,999 & 0.34\\
-2008 & 32,800 & 1.12\\
-2009 & 13,800 & 0.47\\
-2010 & 55,400 & 1.89\\
-2011 & 20,150 & 0.69\\
-2012 & 54,535 & 1.86\\
-2013 & 16,400 & 0.56\\
-2014 & 56,200 & 1.92\\
-2015 & 14,250 & 0.49\\
-2016 & 64,600 & 2.21\\
-2017 & 18,200 & 0.62\\
-2018 & 60,000 & 2.05\\
-2019 & 18,000 & 0.62\\
-2020 & 61,000 & 2.09\\
-2021 & 25,700 & 0.88\\
-2022 & 60,000 & 2.05\\
-2023 & 24,500 & 0.84\\
+2006 & 36,421 & 1.11\\
+2007 & 9,999 & 0.30\\
+2008 & 32,800 & 1.00\\
+2009 & 13,800 & 0.42\\
+2010 & 55,400 & 1.69\\
+2011 & 20,150 & 0.61\\
+2012 & 54,535 & 1.66\\
+2013 & 16,400 & 0.50\\
+2014 & 56,200 & 1.71\\
+2015 & 14,250 & 0.43\\
+2016 & 64,600 & 1.97\\
+2017 & 18,200 & 0.55\\
+2018 & 60,000 & 1.83\\
+2019 & 18,000 & 0.55\\
+2020 & 61,000 & 1.86\\
+2021 & 25,700 & 0.78\\
+2022 & 60,000 & 1.83\\
+2023 & 24,500 & 0.75\\
+2024 & 60,000 & 1.83\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -743,6 +745,7 @@ Year & Observations & Factor\\
 
 :::
 :::
+
 
 \end{center}
 
