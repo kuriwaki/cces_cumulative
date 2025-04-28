@@ -261,19 +261,64 @@ protestant <- find_stack(ccs, religpew_protestant, make_labelled = TRUE) |>
 churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |> 
   rename(relig_church = pew_churatd)
 
+
+
+
+## turnout ----
+cli_h1("Joining turnout")
+reg_self <- find_stack(ccs, reg_self)
+intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
+  mutate(intent_turnout_self = recode(
+    intent_trn, 
+    `Yes, Definitely` = "Yes, definitely",
+    `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
+    `I Plan to Vote Before November 3rd` = "Plan to vote early",
+    `I Plan to Vote Before November 4th` = "Plan to vote early",
+    `I Plan to Vote Before November 6th` = "Plan to vote early",
+    `I Plan to Vote Before November 8th` = "Plan to vote early"))
+
+voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
+  mutate(voted_turnout_self = case_when(
+    str_detect(voted_trn, regex("Definitely Voted", ignore_case = TRUE)) ~ "Yes",
+    str_detect(voted_trn, regex("yes", ignore_case = TRUE)) ~ "Yes",
+    str_detect(voted_trn, regex("no", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("not sure", ignore_case = TRUE)) ~ "Not Sure",
+    str_detect(voted_trn, regex("Did Not Vote", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("didn't Vote", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But couldn't", ignore_case = TRUE)) ~ "No",
+    str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
+    TRUE ~ NA_character_)
+  ) %>% 
+  mutate(voted_turnout_self = fct_relevel(voted_turnout_self, "Yes", "No"))
+
+# checks before deleting
+count(intent_trn, intent_turnout_self, intent_trn)
+count(voted_trn, voted_turnout_self, voted_trn)
+voted_trn$voted_trn <- NULL
+intent_trn$intent_trn <- NULL
+
+# validated vote turnout 
+vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
+vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
+vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
+vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
+vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
+
+
 ## pres, house, sen, gov -------
 cli_h1("Joining vote choice")
 i_pres08 <- find_stack(ccs, intent_pres_08)
 i_pres12 <- find_stack(ccs, intent_pres_12)
 i_pres16 <- find_stack(ccs, intent_pres_16)
 i_pres20 <- find_stack(ccs, intent_pres_20)
-i_pres24 <- find_stack(ccs, intent_pres_24)
+i_pres24 <- i_pres24_orig <- find_stack(ccs, intent_pres_24)
 
 v_pres08 <- find_stack(ccs, voted_pres_08)
 v_pres12 <- find_stack(ccs, voted_pres_12)
 v_pres16 <- find_stack(ccs, voted_pres_16)
 v_pres20 <- find_stack(ccs, voted_pres_20)
-v_pres24 <- find_stack(ccs, voted_pres_24)
+v_pres24 <- v_pres24_orig <- find_stack(ccs, voted_pres_24)
 
 # v_pres08
 v_pres08_08_11 <- list(std_name(cc08), std_name(cc09), std_name(cc10), std_name(cc11)) |> 
@@ -305,6 +350,7 @@ pres_party <- i_pres08 %>%
   left_join(i_pres12, by = c("year", "case_id")) %>% 
   left_join(i_pres16, by = c("year", "case_id")) %>% 
   left_join(i_pres20, by = c("year", "case_id")) %>% 
+  left_join(i_pres24, by = c("year", "case_id")) %>% 
   left_join(v_pres08, by = c("year", "case_id")) %>% 
   left_join(v_pres12, by = c("year", "case_id")) %>% 
   left_join(v_pres16, by = c("year", "case_id")) %>% 
@@ -314,14 +360,24 @@ pres_party <- i_pres08 %>%
   # NA for previous election
   mutate(voted_pres_08 = replace(voted_pres_08, year == 2012, NA),
          voted_pres_12 = replace(voted_pres_12, year == 2016, NA),
-         voted_pres_16 = replace(voted_pres_16, year == 2020, NA)) %>%  
+         voted_pres_16 = replace(voted_pres_16, year == 2020, NA),
+         voted_pres_20 = replace(voted_pres_20, year == 2024, NA),
+         ) %>%  
+  left_join(voted_trn, by = c("year", "case_id")) |> 
+  mutate(across(starts_with("voted_pres_"), 
+                ~ if_else(year %% 2 == 0 & voted_turnout_self == "No", "Did not Vote", .x))) |> 
   transmute(
     year, case_id,
     intent_pres_party = pres_names(
       coalesce(intent_pres_24, intent_pres_20, intent_pres_16, intent_pres_12, intent_pres_08)),
     voted_pres_party  = pres_names(
       coalesce(voted_pres_24, voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
-  )
+  ) |> 
+  ## NA if not in post
+  left_join(tookpost) |> 
+  mutate(across(starts_with("voted_pres_"), 
+                ~ if_else(tookpost == 0 & year %% 2 == 0, NA, .x))) |> 
+  select(-tookpost)
 
 i_rep <- find_stack(ccs, intent_rep, new_reorder = FALSE)
 i_sen <- find_stack(ccs, intent_sen, new_reorder = FALSE)
@@ -368,48 +424,6 @@ newsint <- find_stack(ccs, newsint, make_labelled = TRUE) %>%
   remove_value_labels(newsint = 8) %>% 
   mutate(newsint = na_if(newsint, 8))
 
-
-
-
-## turnout ----
-cli_h1("Joining turnout")
-intent_trn <- find_stack(ccs, intent_trn, type = "factor") %>% 
-  mutate(intent_turnout_self = recode(
-    intent_trn, 
-    `Yes, Definitely` = "Yes, definitely",
-    `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
-    `I Plan to Vote Before November 3rd` = "Plan to vote early",
-    `I Plan to Vote Before November 4th` = "Plan to vote early",
-    `I Plan to Vote Before November 6th` = "Plan to vote early",
-    `I Plan to Vote Before November 8th` = "Plan to vote early"))
-
-voted_trn <- find_stack(ccs, voted_trn, type = "factor")  %>% 
-  mutate(voted_turnout_self = case_when(
-    str_detect(voted_trn, regex("Definitely Voted", ignore_case = TRUE)) ~ "Yes",
-    str_detect(voted_trn, regex("yes", ignore_case = TRUE)) ~ "Yes",
-    str_detect(voted_trn, regex("no", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("not sure", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("Did Not Vote", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("didn't Vote", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But couldn't", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
-    TRUE ~ NA_character_)
-  ) %>% 
-  mutate(voted_turnout_self = fct_relevel(voted_turnout_self, "Yes", "No"))
-
-# checks before deleting
-count(intent_trn, intent_turnout_self, intent_trn)
-count(voted_trn, voted_turnout_self, voted_trn)
-voted_trn$voted_trn <- NULL
-intent_trn$intent_trn <- NULL
-
-# validated vote turnout 
-vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
-vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
-vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
-vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
-vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
 
 # geography ----
 cong       <- find_stack(ccs, cong, "integer")
@@ -511,11 +525,14 @@ ccc <- geo %>%
   left_join(i_pres12) %>%
   left_join(i_pres16) %>%
   left_join(i_pres20) %>%
+  left_join(i_pres24) %>%
   left_join(v_pres08) %>%
   left_join(v_pres12) %>%
   left_join(v_pres16) %>%
   left_join(v_pres20) %>%
+  left_join(v_pres24) %>%
   left_join(pres_party) %>%
+  left_join(reg_self) %>%
   left_join(intent_trn) %>%
   left_join(voted_trn) %>%
   left_join(vv_regstatus) %>%

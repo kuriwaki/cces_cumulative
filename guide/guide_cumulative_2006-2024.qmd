@@ -1105,7 +1105,6 @@ print_tab(intent_pres_08)
 ```
 
 * Years: `r in_years(intent_pres_08)`
-* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_12)`
 
@@ -1117,7 +1116,6 @@ print_tab(intent_pres_12)
 ```
 
 * Years: `r in_years(intent_pres_12)`
-* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_16)`
 
@@ -1129,7 +1127,6 @@ print_tab(intent_pres_16)
 ```
 
 * Years: `r in_years(intent_pres_16)`
-* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_20)`
 
@@ -1141,7 +1138,17 @@ print_tab(intent_pres_20)
 ```
 
 * Years: `r in_years(intent_pres_20)`
-* See `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
+
+### `r nam(intent_pres_24)`
+
+`r descrip(intent_pres_24)`
+
+```{r, results = "asis"}
+print_tab(intent_pres_24)
+```
+
+* Years: `r in_years(intent_pres_24)`
+* Also see: `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
 ### `r nam(voted_pres_08)`
@@ -1189,7 +1196,17 @@ print_tab(voted_pres_20)
 ```
 
 * Years: `r in_years(voted_pres_20)`
-* See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
+
+### `r nam(voted_pres_24)`
+
+`r descrip(voted_pres_24)`
+
+```{r, results = "asis"}
+print_tab(voted_pres_24)
+```
+
+* Years: `r in_years(voted_pres_24)`
+* Also see: `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
 ## House, Senate and Governor Vote
@@ -1357,6 +1374,12 @@ glimpse(select(cc, matches("_party$")))
 # Version History of Dataverse Releases
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
+
+### Version 10.0 (released)
+
+- Adds 2024 Common Content
+- Fixes a bug in `voted_pres_party` where past election vote was being filled in for some respondents who did not take the post-election wave in that year. Add "Did not vote" (turnout) and undervoting in Presidential vote
+- Added self-reported registration (`reg_self`)
 
 ### Version 9.0 (released `2024-06-17`)
 

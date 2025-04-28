@@ -967,7 +967,7 @@ clps_pres08 <- function(vec) {
       `John McCain` = c("John McCain (Republican)", 
                         "John McCain"),
       `Other / Someone Else` = c("Someone Else"), 
-      `Did not Vote` = c("Did not Vote"),
+      `Undervote` = c("Did not Vote"),
       `Not Sure / Don't Recall` = c("Don't Recall")
     ) %>% 
     fct_relevel("Barack Obama", "John McCain", "Other / Someone Else", "Did not Vote") %>% 
@@ -986,11 +986,11 @@ clps_pres12 <- function(vec) {
       "Mitt Romney", 
       "Mitt Romney (Republican)", 
       "Vote for Mitt Romney"),
-    `Other / Someone Else` = c(
+    `Other` = c(
       "Someone Else", 
       "Vote for Someone Else", 
       "Other"),
-    `Did not Vote for this Office` = c(
+    `Undervote` = c(
       "Did Not Vote", 
       "I Did Not Vote", 
       "Not Vote", 
@@ -1009,12 +1009,12 @@ clps_pres16 <- function(vec) {
     `Donald Trump` = c(
       "Donald Trump", 
       "Donald Trump (Republican)"),
-    `Other / Someone Else` = c(
-      "Gary Johnson (Libertarian)", "Gary Johnson",
-      "Evan Mcmullin (Independent)", "Evan Mcmullin",
-      "Jill Stein (Green)", "Jill Stein",
+    `Gary Johnson` = c("Gary Johnson (Libertarian)", "Gary Johnson"),
+    `Evan McMullin` = c("Evan Mcmullin (Independent)", "Evan Mcmullin"),
+    `Jill Stein` = c("Jill Stein (Green)", "Jill Stein"),
+    `Other` = c(
       "Other", "Someone Else"),
-    `Did not Vote for this Office` = c(
+    `Undervote` = c(
       "I Didn't Vote in this Election",
       "Did not Vote for President",
       "I Did not Cast a Vote for President"),
@@ -1022,7 +1022,7 @@ clps_pres16 <- function(vec) {
       "I'm not Sure", "I Don't Recall")
   ) %>% 
     fct_relevel("Hilary Clinton", "Donald Trump") %>% 
-    fct_lump(n = 5)
+    fct_lump(n = 6)
 }
 
 clps_pres20 <- function(vec) {
@@ -1035,19 +1035,19 @@ clps_pres20 <- function(vec) {
       "Donald Trump", 
       "Donald Trump (Republican)", 
       "Donald J. Trump (Republican)"),
-    `Other / Someone Else` = c(
+    `Jo Jorgensen` = "Jo Jorgensen",
+    `Howie Hawkins` = "Howie Hawkins",
+    `Other` = c(
       "Other", 
-      "Someone Else", 
-      "Jo Jorgensen", 
-      "Howie Hawkins"),
-    `Did not Vote for this Office` = c(
+      "Someone Else"),
+    `Undervote` = c(
       "I Did not Vote in this Race",
       "I Did not Vote",
       "Did Not Vote for President"),
     `Not Sure / Don't Recall` = c("I'm not Sure")
   ) %>% 
     fct_relevel("Joe Biden", "Donald Trump") %>% 
-    fct_lump(n = 5)
+    fct_lump(n = 6)
 }
 
 clps_pres24 <- function(vec) {
@@ -1061,18 +1061,18 @@ clps_pres24 <- function(vec) {
       "Donald Trump (Republican)"),
     `Other / Someone Else` = c(
       "Other", 
-      "Someone Else", 
-      "Jill Stein", 
-      "Cornel West", 
-      "Chase Oliver"),
-    `Did not Vote for this Office` = c(
+      "Someone Else"),
+    `Jill Stein` = "Jill Stein", 
+    `Cornel West` = "Cornel West", 
+    `Chase Oliver` = "Chase Oliver",
+    `Undervote` = c(
       "I Did not Vote in this Race",
       "I Did not Vote",
-      "Did Not Vote for President"),
+      "Did not Vote for President"),
     `Not Sure / Don't Recall` = c("I'm not Sure")
   ) %>% 
     fct_relevel("Kamala Harris", "Donald Trump") %>% 
-    fct_lump(n = 5)
+    fct_lump(n = 6)
 }
 
 #' give pres party from chars of pres names
@@ -1080,7 +1080,7 @@ pres_names <- function(vec) {
   case_when(
     str_detect(vec, regex("(Obama|Clinton|Biden|Harris)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
-    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Johnson|West|Oliver|Kennedy)", ignore_case = TRUE)) ~ "Third Party",
+    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Jorgensen|Johnson|West|Oliver|Kennedy)", ignore_case = TRUE)) ~ "Third Party",
     str_detect(vec, regex("(McMullin|Nader)", ignore_case = TRUE)) ~ "Independent",
     str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
     str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did not Vote",
