@@ -217,7 +217,7 @@ cc <- get_dataframe_by_name(
 
 To download the `arrow` dataset, replace the `filename` argument with `cumulative_2006-2024.feather` and the `.f` argument with `arrow::read_feather`.
 
-Downloading datasets that are hundreds of megabytes large can take multiple minutes each time. The total time it takes to download is a combinaiton of the (1) download time, and (2) time for reading the downloaded file into R. As of 2025, R users can skip the step 1 after the first time by asking the dataverse package to save a cache of the data to the computer.
+Downloading datasets that are hundreds of megabytes large can take multiple minutes each time. The total time it takes to download is a combination of the (1) download time, and (2) time for reading the downloaded file into R. As of 2025, R users can skip the step 1 after the first time by asking the dataverse package to save a cache of the data to the computer.
 
 To do this:
 
@@ -1107,10 +1107,14 @@ print_tab(approval_gov)
 
 \paragraph{A note on the terms "\texttt{intent}" and "\texttt{voted}":} In this dataset we make the distinction between "intent" / "preference" vs. "voted" / "vote choice". "Intent" (or "preference") refers to the response to the prospective question of the sort "who would you vote for?" in the \emph{pre-election} wave. "Vote choice" refers to the response to the retrospective question of the sort "in the election this November, who did you vote for?" 
 
-Response to the vote choice questions (in contrast to the intent questions) come from the post-election wave only.  It no longer coalesces pre-election respondents who reported having already voted early, as it did before V5 of this dataset. In 2018, it also coalesces the responses to the straight ticket party option (`CC18_409`), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.
+Response to the vote choice questions (in contrast to the intent questions) come from the post-election wave only.  As of V5, I do not coalesce pre-election respondents who reported having already voted early.\footnote{In 2018, it also coalesces the responses to the straight ticket party option (CC18\_409), so that those who selected the Republican straight party ticket in the applicable states will appear to have voted for the Republican candidate in all offices. The straight ticket party option was not asked in other years.}
 
+\paragraph{A note on missingness, undervotes, and not voting:} As of V10 (2025), people **who self-report not turning out or not voting in a year's election at all have a missing (NA) value** for the variables starting with **`voted_pres_`**. 
+In prior versions, these cases were given the value "Did not Vote", but it became too confusing to maintain this distinction because coding between years are inconsistent. 
+Also as of V10, we provide the value **Undervoted** to indicate "I turned out to vote in the election but I skipped the office of President."
+However, a missing value can also mean that the respondent did not take the post-election wave, where this data comes from.
 
-Be careful of the category "Did not Vote" when making cross-year comparisons. That category is recorded only when the respondent is _asked_ a vote choice question and selects that option. In some years, the vote choice question is not asked to those who report not turning out at all in a preceding question. In those years, having a value of "Did not Vote" could mean that "I voted in the election but not for that office."  In some years, the cumulative version changes the values of did not vote to missing values to be consistent with the same variable in other years. In short, respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. For turnout in the election, see the section on turnout.
+In short, respondents who have missing values for intent or vote choice can also be non-voters for a variety of reasons. When estimating voteshares, users should also look at the year-specific variables, turnout variables, and possibly the individual CES datasets. For turnout in the election, see the section on turnout.
 
 
 ## Presidential Vote
@@ -1135,7 +1139,10 @@ print_tab(voted_pres_party)
 ```
 
 * Years: `r in_years(voted_pres_party)`
-* Note: In a presidential election year, this asks the vote of _that_ year. The vote choice of the presidential election 4 years prior might be recorded separately. For example, for respondents in 2012, `voted_pres_party` corresponds to their 2012 vote, while `voted_pres_party_08` corresponds to their 2008 vote (which was asked in the same 2012 survey). 
+* See the variables for separate years (e.g. `voted_pres_16`, `voted_pres_20`, etc..) for more detailed breakdowns between third-party candidates.
+* Note that `NA` values can be a result of not answering the post-election wave, OR self-reporting that they did not turn out in the election (as of V10). See note above.
+* If a respondent reports that they did not turn out to vote (`voted_turnout_self`) but gives a candidate in `voted_pres_**`, then we set `voted_pres_party` to NA, while leaving the `voted_pres_**` as is. This only happens, e.g. in about 20-30 cases in 2024.
+* Note: In a presidential election year, this asks the vote of _that_ year. The vote choice of the presidential election 4 years prior might be recorded separately. For example, for respondents in 2012, `voted_pres_party` corresponds to their 2012 vote, while `voted_pres_08` corresponds to their 2008 vote (which was asked in the same 2012 survey). For respondents in odd years, this represents their recollection of their vote in the last presidential election. For example, `voted_pres_party` for a respondent in 2023 indicates how they reported (in 2023) voting in the **2020** election. 
 
 
 ### `r nam(intent_pres_08)`
@@ -1148,6 +1155,7 @@ print_tab(intent_pres_08)
 ```
 
 * Years: `r in_years(intent_pres_08)`
+* Also see: `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_12)`
 
@@ -1159,6 +1167,7 @@ print_tab(intent_pres_12)
 ```
 
 * Years: `r in_years(intent_pres_12)`
+* Also see: `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_16)`
 
@@ -1170,6 +1179,7 @@ print_tab(intent_pres_16)
 ```
 
 * Years: `r in_years(intent_pres_16)`
+* Also see: `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_20)`
 
@@ -1181,6 +1191,7 @@ print_tab(intent_pres_20)
 ```
 
 * Years: `r in_years(intent_pres_20)`
+* Also see: `intent_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(intent_pres_24)`
 
@@ -1217,6 +1228,7 @@ print_tab(voted_pres_12)
 
 * Years: `r in_years(voted_pres_12)`
 * Limitations: Response options offer slightly by year; some are collapsed into one. 
+* Note that `NA` values can be a result of not answering the post-election wave, OR self-reporting that they did not turn out in the election (as of V10). See note on Presidential vote.
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_16)`
@@ -1228,6 +1240,7 @@ print_tab(voted_pres_16)
 ```
 
 * Years: `r in_years(voted_pres_16)`
+* Note that `NA` values can be a result of not answering the post-election wave, OR self-reporting that they did not turn out in the election (as of V10). See note on Presidential vote.
 * See `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 ### `r nam(voted_pres_20)`
@@ -1249,6 +1262,7 @@ print_tab(voted_pres_24)
 ```
 
 * Years: `r in_years(voted_pres_24)`
+* Note that `NA` values can be a result of not answering the post-election wave, OR self-reporting that they did not turn out in the election (as of V10). See note on Presidential vote.
 * Also see: `voted_pres_party` for vote choice in the most recent preceding presidential election into one party column.
 
 
@@ -1293,7 +1307,7 @@ print_tab(intent_gov)
 ```
 
 * Years: `r in_years(intent_gov)`
-* Limitations: See `intent_rep`. For governor elections in odd years, see individual year's CCES.
+* Limitations: See `intent_rep`. Here we only record even-year races. For governor elections in odd years, see individual year's CCES.
 * See `intent_gov_party` for the party affiliation of the chosen candidate.
 
 
@@ -1333,6 +1347,39 @@ print_tab(voted_gov)
 * Years: `r in_years(voted_gov)`
 * See `voted_gov_party` for party affiliation.
 
+
+### `r nam(voted_rep_party)`
+
+`r descrip(voted_rep_party)`
+
+```{r, results = "asis"}
+print_tab(voted_rep_party)
+```
+
+* Years: `r in_years(voted_rep_party)`
+* Similar to `voted_pres_party`. See `voted_rep_chosen` for the name of the candidate, and `intent_rep_party` for the pre-election version of this variable.
+
+### `r nam(voted_sen_party)`
+
+`r descrip(voted_sen_party)`
+
+```{r, results = "asis"}
+print_tab(voted_sen_party)
+```
+
+* Years: `r in_years(voted_sen_party)`
+* Similar to `voted_pres_party`. See `voted_sen_chosen` for the name of the candidate, and `intent_sen_party` for the pre-election version of this variable.
+
+### `r nam(voted_gov_party)`
+
+`r descrip(voted_gov_party)`
+
+```{r, results = "asis"}
+print_tab(voted_gov_party)
+```
+
+* Years: `r in_years(voted_gov_party)`
+* Similar to `voted_pres_party`. See `voted_gov_chosen` for the name of the candidate, and `intent_gov_party` for the pre-election version of this variable.
 
 
 \newpage
@@ -1401,16 +1448,8 @@ glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 
 * Years: `r in_years(intent_rep_chosen)`
 * Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
+* See the variables that replace `_chosen` with `_party` for the party of the candidate. 
 
-## Party of Chosen Candidate
-
-
-```{r}
-glimpse(select(cc, matches("_party$")))
-```
-
-* Years: varies by office
-* Early years may mislabel the candidate's party, especially when the two candidates are of the same party (as in top-two primary states)
 
 \newpage
 
@@ -1418,14 +1457,14 @@ glimpse(select(cc, matches("_party$")))
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
 
-### Version 11.0, _planned_
+### Version 11.0, _PLANNED_
 
 - This version will include vote validation for 2024. It may also include new variables on voter knowledge and voter activity.  Historically, vote validation files are released about a year after the initial release. Please contact me for any questions.
 
 ### Version 10.0 (released `2024-05-21`)
 
 - Adds 2024 Common Content (before vote validation), up to n = 701,955
-- Fixes a bug in `voted_pres_party` where past election vote was being filled in for some respondents who did not take the post-election wave in that year. Add "Did not vote" (turnout) and undervoting in Presidential vote
+- Fixes a bug in `voted_pres_party` where past election vote was being filled in for some respondents who did not take the post-election wave in that year. Created a new value, "undervote", to distinguish between not turning out at all, and changed self-reported no turnout to NA
 - Added self-reported registration (`reg_self`)
 - Added sexual orientation (`sexuality`) and investor status (`investor`)
 
