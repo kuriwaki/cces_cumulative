@@ -131,6 +131,8 @@ ccc_meta <- tribble(
   "no_healthins",        "categorical", "Uninsured",                     "[Based on health insurance question; respondent has none of the insurance options given]", 
   "no_milstat",          "categorical", "Military Status (None)",        "[Based on military household question; neither respondent nor immediate family has served]", 
   "employ",              "categorical", "Employment Status",             "Which of the following best describes your current employment status?", 
+  "sexuality",           "categorical", "Sexual Orientation",            "Which of the following describes your sexuality?", 
+  "investor",            "categorical", "Investor",                      "Do you personally (or jointly with a spouse), have any money invested in the stock market right now, either in an individual stock or in a mutual fund?", 
   "ownhome",             "categorical", "Home Ownership",                "Do you own your home or pay rent?", 
   "has_child",           "categorical", "Parent of Young Children",      "Are you the parent or guardian of any children under the age of 18?", 
   "pid3",                "categorical", "Partisan identity (3 point)",   "Generally speaking, do you think of yourself as a ...?",

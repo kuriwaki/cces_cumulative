@@ -54,7 +54,7 @@ ccs <- list(
 )
 
 cli_alert_success("Finished reading in data and standardizing names")
-
+ 
 
 
 # Extract variable by variable  -----
@@ -117,6 +117,8 @@ ideo5 <- find_stack(ccs, ideo5)
 sex <- find_stack(ccs, sex, make_labelled = TRUE)
 gend <- find_stack(ccs, gender, make_labelled = TRUE)
 gend4 <- find_stack(ccs, gender4, make_labelled = TRUE)
+sexor <- find_stack(ccs, sexuality)
+
 
 educ <- find_stack(ccs, educ, make_labelled = TRUE)
 
@@ -214,6 +216,7 @@ union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) %>%
 
 employ <- find_stack(ccs, employ)
 ownhome <- find_stack(ccs, ownhome)
+invst <- find_stack(ccs, investor)
 
 child18 <- find_stack(ccs, child18) %>% 
   rename(has_child = child18)
@@ -248,6 +251,7 @@ citizen <- find_stack(ccs, immstat) %>%
   mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) %>% 
   mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) %>% 
   select(-immstat)
+
 
 ## religion -----
 relig <- find_stack(ccs, religpew, make_labelled = TRUE) %>% 
@@ -314,10 +318,10 @@ i_pres16 <- find_stack(ccs, intent_pres_16)
 i_pres20 <- find_stack(ccs, intent_pres_20)
 i_pres24 <- i_pres24_orig <- find_stack(ccs, intent_pres_24)
 
-v_pres08 <- find_stack(ccs, voted_pres_08)
-v_pres12 <- find_stack(ccs, voted_pres_12)
-v_pres16 <- find_stack(ccs, voted_pres_16)
-v_pres20 <- find_stack(ccs, voted_pres_20)
+v_pres08_orig <- find_stack(ccs, voted_pres_08)
+v_pres12_orig <- find_stack(ccs, voted_pres_12)
+v_pres16_orig <- find_stack(ccs, voted_pres_16)
+v_pres20_orig <- find_stack(ccs, voted_pres_20)
 v_pres24 <- v_pres24_orig <- find_stack(ccs, voted_pres_24)
 
 # v_pres08
@@ -325,7 +329,7 @@ v_pres08_08_11 <- list(std_name(cc08), std_name(cc09), std_name(cc10), std_name(
   find_stack(voted_pres_08)
 
 # quick consolidations for multiple years (Asked in the past)
-v_pres08 <- v_pres08 |> 
+v_pres08 <- v_pres08_orig |> 
   mutate(voted_pres_08 = replace(voted_pres_08, year < 2008, NA)) |> 
   left_join(v_pres08_08_11, by = c("year", "case_id"), suffix = c("", "_alt")) |> 
   mutate(voted_pres_08 = clps_pres08(voted_pres_08),
@@ -333,15 +337,15 @@ v_pres08 <- v_pres08 |>
          voted_pres_08 = replace(voted_pres_08, year %in% 2008:2011 & voted_pres_08 == "Did not Vote for this Office", NA)) |> 
   select(-voted_pres_08_alt)
 
-v_pres12 <- v_pres12 %>% 
+v_pres12 <- v_pres12_orig %>% 
   mutate(voted_pres_12 = clps_pres12(voted_pres_12))
-v_pres16 <- v_pres16 %>%
+v_pres16 <- v_pres16_orig %>%
   mutate(voted_pres_16 = clps_pres16(voted_pres_16),
          voted_pres_16 = replace(voted_pres_16, year %in% 2019:2021 & voted_pres_16 == "Did not Vote for this Office", NA))
-v_pres20 <- v_pres20 %>%
+v_pres20 <- v_pres20_orig %>%
   mutate(voted_pres_20 = clps_pres20(voted_pres_20),
          voted_pres_20 = replace(voted_pres_20, voted_pres_20 == "Did not Vote for this Office", NA))
-v_pres24 <- v_pres24 %>%
+v_pres24 <- v_pres24_orig %>%
   mutate(voted_pres_24 = clps_pres24(voted_pres_24),
          voted_pres_24 = replace(voted_pres_24, voted_pres_24 == "Did not Vote for this Office", NA))
 
@@ -357,15 +361,19 @@ pres_party <- i_pres08 %>%
   left_join(v_pres20, by = c("year", "case_id")) %>% 
   left_join(v_pres24, by = c("year", "case_id")) %>% 
   mutate_if(is.factor, as.character) %>% 
-  # NA for previous election
-  mutate(voted_pres_08 = replace(voted_pres_08, year == 2012, NA),
-         voted_pres_12 = replace(voted_pres_12, year == 2016, NA),
-         voted_pres_16 = replace(voted_pres_16, year == 2020, NA),
+  # NA to anticipate later coalesce.
+  # We will coalesce (24, 20, 16). In year = 2024, if voted24=NA, then we
+  # don't want years 20 and 16 to get in to pres_party. So we zap those out beforehand
+  # In year 2023, we only want to use the 2020 data, not 2016. So we need to zap voted16
+  # In year 2016-2019, we only want to use 2016 variables, not 2012. So we need to zap votes12 
+  mutate(voted_pres_08 = replace(voted_pres_08, year %in% c(2012:2016), NA),
+         voted_pres_12 = replace(voted_pres_12, year %in% c(2016:2024), NA),
+         voted_pres_16 = replace(voted_pres_16, year %in% c(2020:2024), NA),
          voted_pres_20 = replace(voted_pres_20, year == 2024, NA),
          ) %>%  
   left_join(voted_trn, by = c("year", "case_id")) |> 
   mutate(across(starts_with("voted_pres_"), 
-                ~ if_else(year %% 2 == 0 & voted_turnout_self == "No", "Did not Vote", .x))) |> 
+                ~ if_else(year %% 4 == 0 & voted_turnout_self == "No", NA, .x))) |> 
   transmute(
     year, case_id,
     intent_pres_party = pres_names(
@@ -492,6 +500,7 @@ ccc <- geo %>%
   left_join(gend) %>%
   left_join(sex) %>%
   left_join(gend4) %>%
+  left_join(sexor) %>%
   left_join(bryr) %>%
   left_join(age) %>%
   left_join(race) %>%
@@ -506,6 +515,7 @@ ccc <- geo %>%
   left_join(union_hh) %>%
   left_join(employ) %>%
   left_join(healthins) %>%
+  left_join(invst) %>%
   left_join(child18) %>%
   left_join(ownhome) %>%
   left_join(milstat) %>%
@@ -583,6 +593,7 @@ cli_alert_success("Finished combining, now saving")
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 write_feather(ccc_sort, "data/output/01_responses/cumulative_stacked.feather")
+# write_dta(ccc_sort, "~/Downloads/temp.dta")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 

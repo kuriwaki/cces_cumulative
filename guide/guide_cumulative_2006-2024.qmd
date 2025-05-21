@@ -8,7 +8,7 @@ title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
-thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and Gerlad Wright for finding errors and providing suggestions. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -127,11 +127,11 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2024, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V9. 
+> Kuriwaki, Shiro, 2025, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V10. 
 
 \medskip
 
-This dataset combines `r english::english(2023 - 2006 + 1)` years (2006 -- 2023) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Stephen Ansolabehere, Jeremy Pope, Brian Schaffner, and Marissa Shih.
+This dataset combines `r english::english(2024 - 2006 + 1)` years (2006 -- 2024) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Brian Schaffner, Stephen Ansolabehere, Jeremy Pope, and Marissa Shih.
 
 \medskip
 
@@ -153,9 +153,9 @@ Please note that this cumulative dataset makes some modifications to the origina
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://tischcollege.tufts.edu/research-faculty/research-centers/cooperative-election-study}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/E9N6PH}{recent Common Content's} codebook.
+\item \textbf{To understand the survey methodology, } consult the \href{https://tischcollege.tufts.edu/research-faculty/research-centers/cooperative-election-study/cooperative-election-study-faqs}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/E9N6PH}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -214,6 +214,30 @@ cc <- get_dataframe_by_name(
   server = "dataverse.harvard.edu"
 )
 ```
+
+To download the `arrow` dataset, replace the `filename` argument with `cumulative_2006-2024.feather` and the `.f` argument with `arrow::read_feather`.
+
+Downloading datasets that are hundreds of megabytes large can take multiple minutes each time. The total time it takes to download is a combinaiton of the (1) download time, and (2) time for reading the downloaded file into R. As of 2025, R users can skip the step 1 after the first time by asking the dataverse package to save a cache of the data to the computer.
+
+To do this:
+
+* Make sure you are using the `dataverse` package that is version 0.3.15 or above (releasd on [CRAN](https://cran.r-project.org/web/packages/dataverse/index.html) in May 2025)
+* Specify the version of the dataset you want to download using the `version` argument of `get_dataframe_by_name`.
+
+For example, to download version 10 of the feather verison of the dataset, the R code is the following:
+
+```{r, eval = FALSE, echo = TRUE}
+library(dataverse)
+cc <- get_dataframe_by_name(
+  filename = "cumulative_2006-2024.feather",
+  version = "10",
+  dataset = "10.7910/DVN/II2DB6",
+  original = TRUE,
+  .f = arrow::read_feather,
+  server = "dataverse.harvard.edu"
+)
+```
+
 
 
 
@@ -391,12 +415,12 @@ print_numeric(weight_cumulative)
 
 * Years: `r in_years(weight_cumulative)`
 * Limitations: Only a simple transformation of `weight`. Specifically, `weight_cumulative` is `weight` divided by the  year-specific factors shown in the following table.  For example, all weights in the 2016 common content are divided by about `r filter(rsc, year == 2016) |> pull(size_factor) |> round(2)`, because it has about twice as many observations as the other datasets.
-* This transformation means that this simple cumulative weight makes sense when all years should be re-weighted to have the same sample size, even if that means doubling the weights. For analyses that are done year by year, using `weight` and `weight_cumulative` are equivalent.
+* Therefore, this cumulative weight simply _re-weights all years to have the same sample size_. This means that, if both odd years and even years are included in the weighted average, every even-year observation is down-weighted by a factor of about 2. For analyses that are done year by year, using `weight` and `weight_cumulative` are equivalent.
 
 
 \begin{center}
 
-```{r, fig.align = 'center'}
+```{r, results = "asis"}
 rsc |> 
   mutate(size  = formatC(size, format = "d", big.mark = ",")) |> 
   kbl(
@@ -527,6 +551,15 @@ print_tab(sex)
 * Years: `r in_years(sex)`
 * See the explanation under `gender`
 
+
+### `r nam(sexuality)`
+`r descrip(sexuality)`
+```{r, results = "asis"}
+print_tab(sexuality)
+```
+* Years: `r in_years(sexuality)`
+
+
 ### `r nam(birthyr)`
 
 `r descrip(birthyr)`
@@ -640,7 +673,7 @@ print_tab(citizen)
 ```
 
 * Years: `r in_years(citizen)`
-* These come from the immigration status questions, which ask respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
+* These come from the immigration status questions (often called `immstat`), which ask respondents between first, second, and third generation citizens, and other foreign-born citizens. Here we mark anyone who does not answer the last category to be a citizen.
 * Limitation: Most of the missingness comes from 2007 and 2015, when the immigration status question does not appear to have been asked.
 
 
@@ -963,6 +996,16 @@ print_tab(union_hh)
 * Question wording and response options have been reworded to be harmonized across years. Please see each individual CCES for exact wording.
 * The 2008 CCES in its common content has a union question that roughly combines both the `union` and `union_hh` question. 
 
+
+### `r nam(investor)`
+
+`r descrip(investor)`
+
+```{r, results = "asis"}
+print_tab(investor)
+```
+
+* Years: `r in_years(investor)`
 
 ### `r nam(economy_retro)`
 
@@ -1375,11 +1418,16 @@ glimpse(select(cc, matches("_party$")))
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
 
-### Version 10.0 (released)
+### Version 11.0, _planned_
 
-- Adds 2024 Common Content
+- This version will include vote validation for 2024. It may also include new variables on voter knowledge and voter activity.  Historically, vote validation files are released about a year after the initial release. Please contact me for any questions.
+
+### Version 10.0 (released `2024-05-21`)
+
+- Adds 2024 Common Content (before vote validation), up to n = 701,955
 - Fixes a bug in `voted_pres_party` where past election vote was being filled in for some respondents who did not take the post-election wave in that year. Add "Did not vote" (turnout) and undervoting in Presidential vote
 - Added self-reported registration (`reg_self`)
+- Added sexual orientation (`sexuality`) and investor status (`investor`)
 
 ### Version 9.0 (released `2024-06-17`)
 

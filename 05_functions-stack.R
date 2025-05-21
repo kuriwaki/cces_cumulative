@@ -958,6 +958,7 @@ std_vvv <- function (vec, varname, yrvec) {
 #' Fix for voted08
 clps_pres08 <- function(vec) {
   vec %>% 
+    na_if("Did not Vote") %>%  # means did not turnout until 2011 and 2012
     as.character() %>% 
     str_trim() %>% 
     as_factor() %>% 
@@ -966,16 +967,17 @@ clps_pres08 <- function(vec) {
                          "Barack Obama (Democratic)"),
       `John McCain` = c("John McCain (Republican)", 
                         "John McCain"),
-      `Other / Someone Else` = c("Someone Else"), 
-      `Undervote` = c("Did not Vote"),
-      `Not Sure / Don't Recall` = c("Don't Recall")
+      `Other` = c("Someone Else"), 
+      `Not Sure` = c("Don't Recall")
     ) %>% 
-    fct_relevel("Barack Obama", "John McCain", "Other / Someone Else", "Did not Vote") %>% 
+    fct_relevel("Barack Obama", "John McCain", "Other") %>% 
     fct_drop()
 }
 
 #' Quick fix for 2012 voted, where labels are too mixed to fix automatically
 clps_pres12 <- function(vec) {
+  vec |> 
+    na_if("Not Vote") |>  # means did not turnout in 2015
   fct_collapse(
     vec, 
     `Barack Obama` = c(
@@ -992,17 +994,19 @@ clps_pres12 <- function(vec) {
       "Other"),
     `Undervote` = c(
       "Did Not Vote", 
+      "Did not Vote",
       "I Did Not Vote", 
-      "Not Vote", 
+      "I Did not Vote", 
       "Not Vote for this Office", 
       "I Did not Vote in this Race"),
-    `Not Sure / Don't Recall` = c("Not Sure", "Don't Recall")
-  ) %>% 
-    fct_lump(n = 6)
+    `Not Sure` = c("Not Sure", "Don't Recall")
+  ) |> 
+    fct_relevel("Barack Obama", "Mitt Romney", "Other", "Undervote")
 }
 clps_pres16 <- function(vec) {
+  vec |> 
+  na_if("Did not Vote for President") |>  # these only occur post-2016 and are "did not turn out"
   fct_collapse(
-    vec, 
     `Hilary Clinton` = c(
       "Hillary Clinton", 
       "Hillary Clinton (Democrat)"),
@@ -1016,19 +1020,19 @@ clps_pres16 <- function(vec) {
       "Other", "Someone Else"),
     `Undervote` = c(
       "I Didn't Vote in this Election",
-      "Did not Vote for President",
       "I Did not Cast a Vote for President"),
-    `Not Sure / Don't Recall` = c(
+    `Not Sure` = c(
       "I'm not Sure", "I Don't Recall")
   ) %>% 
-    fct_relevel("Hilary Clinton", "Donald Trump") %>% 
-    fct_lump(n = 6)
+    fct_relevel("Hilary Clinton", "Donald Trump", "Gary Johnson", "Evan McMullin",
+                "Jill Stein", "Other", "Undervote")
 }
 
 clps_pres20 <- function(vec) {
-  fct_collapse(
-    vec, 
-    `Joe Biden` = c(
+  vec |> 
+    na_if("Did not Vote for President") |>  # these mean did not turnout
+    fct_collapse(
+      `Joe Biden` = c(
       "Joe Biden", 
       "Joe Biden (Democrat)"),
     `Donald Trump` = c(
@@ -1042,12 +1046,11 @@ clps_pres20 <- function(vec) {
       "Someone Else"),
     `Undervote` = c(
       "I Did not Vote in this Race",
-      "I Did not Vote",
-      "Did Not Vote for President"),
-    `Not Sure / Don't Recall` = c("I'm not Sure")
+      "I Did not Vote"),
+    `Not Sure` = c("I'm not Sure")
   ) %>% 
-    fct_relevel("Joe Biden", "Donald Trump") %>% 
-    fct_lump(n = 6)
+    fct_relevel("Joe Biden", "Donald Trump", "Jo Jorgensen",
+                "Howie Hawkins", "Other", "Undervote")
 }
 
 clps_pres24 <- function(vec) {
@@ -1059,20 +1062,21 @@ clps_pres24 <- function(vec) {
     `Donald Trump` = c(
       "Donald Trump", 
       "Donald Trump (Republican)"),
-    `Other / Someone Else` = c(
-      "Other", 
-      "Someone Else"),
     `Jill Stein` = "Jill Stein", 
     `Cornel West` = "Cornel West", 
     `Chase Oliver` = "Chase Oliver",
+    `Other` = c(
+      "Other", 
+      "Someone Else"),
     `Undervote` = c(
       "I Did not Vote in this Race",
       "I Did not Vote",
-      "Did not Vote for President"),
+      "Did not Vote for President"), # in 2024 this seems to mean undervote
     `Not Sure / Don't Recall` = c("I'm not Sure")
   ) %>% 
-    fct_relevel("Kamala Harris", "Donald Trump") %>% 
-    fct_lump(n = 6)
+    fct_relevel("Kamala Harris", "Donald Trump", "Jill Stein",
+                "Robert F. Kennedy, Jr.", "Cornel West", "Chase Oliver",
+                "Other", "Undervote")
 }
 
 #' give pres party from chars of pres names
@@ -1080,11 +1084,12 @@ pres_names <- function(vec) {
   case_when(
     str_detect(vec, regex("(Obama|Clinton|Biden|Harris)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
-    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Jorgensen|Johnson|West|Oliver|Kennedy)", ignore_case = TRUE)) ~ "Third Party",
-    str_detect(vec, regex("(McMullin|Nader)", ignore_case = TRUE)) ~ "Independent",
-    str_detect(vec, regex("Other", ignore_case = TRUE)) ~ "Other Candidate",
-    str_detect(vec, regex("Did Not", ignore_case = TRUE)) ~ "Did not Vote",
+    str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Jorgensen|Johnson|Hawkins|West|Oliver|Kennedy|McMullin|Nader)", ignore_case = TRUE)) ~ "Third Party",
+    str_detect(vec, regex("Other|Sure|Recall", ignore_case = TRUE)) ~ "Other", 
+    str_detect(vec, regex("Undervote", ignore_case = TRUE)) ~ "Undervote",
     TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican", "Third Party", "Independent", "Other Candidate", "Did not Vote"))
+    factor(levels = c("Democratic", "Republican", 
+                      "Third Party", "Other", 
+                      "Undervote", "Did not Vote"))
 }
 

@@ -116,7 +116,7 @@
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
@@ -126,7 +126,7 @@
 \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
 \newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
 \newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
 \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
@@ -153,13 +153,13 @@ Website: \url{https://www.shirokuriwaki.com}. ORCID:
 \url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander
 Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen
 DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik,
-Stephen Pettigrew, Boris Shor, Brian Schaffner, and Gerlad Wright for
-finding errors and providing suggestions. Thanks to Joe Williams at
-YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for
-their help.}}
+Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and
+Gerlad Wright for finding errors and providing suggestions. Thanks to
+Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
+at Crunch for their help.}}
 
 
-\date{2025-04-28}
+\date{2025-05-21}
 
 \begin{document}
 
@@ -174,20 +174,20 @@ their help.}}
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2024, ``Cumulative CES Common Content'',
+Kuriwaki, Shiro, 2025, ``Cumulative CES Common Content'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
-Harvard Dataverse, V9.
+Harvard Dataverse, V10.
 \end{quote}
 
 \medskip
 
-This dataset combines 18 years (2006 -- 2023) of the Cooperative
+This dataset combines 19 years (2006 -- 2024) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
 questions on political behavior and public opinion. Its current
-principal investigators are Stephen Ansolabehere, Jeremy Pope, Brian
-Schaffner, and Marissa Shih.
+principal investigators are Brian Schaffner, Stephen Ansolabehere,
+Jeremy Pope, and Marissa Shih.
 
 \medskip
 
@@ -223,9 +223,9 @@ questions, readers should consult the guides for each year.
 
 \item \textbf{To see the source code, } report a bug, or ask a question about the data, please feel free to file an issue from the \href{https://github.com/kuriwaki/cces_cumulative}{source code repository}. Alternatively, please contact me by email.
 
-\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://cces.gov.harvard.edu/}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
+\item \textbf{To obtain the individual year's CCES/CES datasets, } search the \href{https://dataverse.harvard.edu/dataverse/cces}{CES dataverse} or access the \href{https://tischcollege.tufts.edu/research-faculty/research-centers/cooperative-election-study}{CES homepage}. Sign-up to the Crunch dataset from the homepage as well.
 
-\item \textbf{To understand the survey methodology, } consult the \href{https://cces.gov.harvard.edu/frequently-asked-questions}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/E9N6PH}{recent Common Content's} codebook.
+\item \textbf{To understand the survey methodology, } consult the \href{https://tischcollege.tufts.edu/research-faculty/research-centers/cooperative-election-study/cooperative-election-study-faqs}{Frequently Asked Questions} page of the CES homepage or the methodology section of a \href{https://doi.org/10.7910/DVN/E9N6PH}{recent Common Content's} codebook.
 \end{itemize}
 \end{minipage}
 }
@@ -308,6 +308,48 @@ the function:
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
+  \AttributeTok{server =} \StringTok{"dataverse.harvard.edu"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+To download the \texttt{arrow} dataset, replace the \texttt{filename}
+argument with \texttt{cumulative\_2006-2024.feather} and the \texttt{.f}
+argument with \texttt{arrow::read\_feather}.
+
+Downloading datasets that are hundreds of megabytes large can take
+multiple minutes each time. The total time it takes to download is a
+combinaiton of the (1) download time, and (2) time for reading the
+downloaded file into R. As of 2025, R users can skip the step 1 after
+the first time by asking the dataverse package to save a cache of the
+data to the computer.
+
+To do this:
+
+\begin{itemize}
+\tightlist
+\item
+  Make sure you are using the \texttt{dataverse} package that is version
+  0.3.15 or above (releasd on
+  \href{https://cran.r-project.org/web/packages/dataverse/index.html}{CRAN}
+  in May 2025)
+\item
+  Specify the version of the dataset you want to download using the
+  \texttt{version} argument of \texttt{get\_dataframe\_by\_name}.
+\end{itemize}
+
+For example, to download version 10 of the feather verison of the
+dataset, the R code is the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dataverse)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2024.feather"}\NormalTok{,}
+  \AttributeTok{version =} \StringTok{"10"}\NormalTok{,}
+  \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
+  \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{.f =}\NormalTok{ arrow}\SpecialCharTok{::}\NormalTok{read\_feather,}
   \AttributeTok{server =} \StringTok{"dataverse.harvard.edu"}
 \NormalTok{)}
 \end{Highlighting}
@@ -699,21 +741,17 @@ year to make years comparable{]}
   1.97, because it has about twice as many observations as the other
   datasets.
 \item
-  This transformation means that this simple cumulative weight makes
-  sense when all years should be re-weighted to have the same sample
-  size, even if that means doubling the weights. For analyses that are
-  done year by year, using \texttt{weight} and
+  Therefore, this cumulative weight simply \emph{re-weights all years to
+  have the same sample size}. This means that, if both odd years and
+  even years are included in the weighted average, every even-year
+  observation is down-weighted by a factor of about 2. For analyses that
+  are done year by year, using \texttt{weight} and
   \texttt{weight\_cumulative} are equivalent.
 \end{itemize}
 
 \begin{center}
 
 
-
-::: {.cell layout-align="center"}
-::: {.cell-output .cell-output-stdout}
-
-```
 \begin{table}[H]
 \centering
 \begin{tabular}[t]{rrr}
@@ -742,12 +780,6 @@ Year & Observations & Factor\\
 \bottomrule
 \end{tabular}
 \end{table}
-```
-
-
-:::
-:::
-
 
 \end{center}
 
@@ -1031,6 +1063,34 @@ Female & 288,015\\
   See the explanation under \texttt{gender}
 \end{itemize}
 
+\subsubsection{\texorpdfstring{\texttt{sexuality}: Sexual
+Orientation}{sexuality: Sexual Orientation}}\label{sexuality-sexual-orientation}
+
+``Which of the following describes your sexuality?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Heterosexual / Straight & 331,854\\
+Lesbian / Gay Woman & 5,417\\
+Gay Man & 11,113\\
+Bisexual & 18,348\\
+Other & 5,248\\
+Prefer not to Say & 8,797\\
+(Missing) & 321,178\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+\end{itemize}
+
 \subsubsection{\texorpdfstring{\texttt{birthyr}: Year of
 birth}{birthyr: Year of birth}}\label{birthyr-year-of-birth}
 
@@ -1276,10 +1336,10 @@ Non-Citizen & 10,472\\
   Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017,
   2018, 2019, 2020, 2021, 2022, 2023, 2024
 \item
-  These come from the immigration status questions, which ask
-  respondents between first, second, and third generation citizens, and
-  other foreign-born citizens. Here we mark anyone who does not answer
-  the last category to be a citizen.
+  These come from the immigration status questions (often called
+  \texttt{immstat}), which ask respondents between first, second, and
+  third generation citizens, and other foreign-born citizens. Here we
+  mark anyone who does not answer the last category to be a citizen.
 \item
   Limitation: Most of the missingness comes from 2007 and 2015, when the
   immigration status question does not appear to have been asked.
@@ -2151,6 +2211,33 @@ Not Sure & 13,357\\
   combines both the \texttt{union} and \texttt{union\_hh} question.
 \end{itemize}
 
+\subsubsection{\texorpdfstring{\texttt{investor}:
+Investor}{investor: Investor}}\label{investor-investor}
+
+``Do you personally (or jointly with a spouse), have any money invested
+in the stock market right now, either in an individual stock or in a
+mutual fund?''
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+Yes & 215,180\\
+No & 283,957\\
+(Missing) & 202,818\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+  2022, 2024
+\end{itemize}
+
 \subsubsection{\texorpdfstring{\texttt{economy\_retro}: Retrospective
 economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospective-economy}
 
@@ -2450,10 +2537,9 @@ party}{intent\_pres\_party: President preference party}}\label{intent_pres_party
 \midrule
 Democratic & 111,184\\
 Republican & 92,029\\
-Third Party & 5,412\\
-Independent & 209\\
-Other Candidate & 7,058\\
-(Missing) & 486,063\\
+Third Party & 5,621\\
+Other & 25,937\\
+(Missing) & 467,184\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2476,12 +2562,12 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \toprule
  & n\\
 \midrule
-Democratic & 241,151\\
-Republican & 202,931\\
-Third Party & 5,508\\
-Other Candidate & 17,278\\
-Did not Vote & 60,972\\
-(Missing) & 174,115\\
+Democratic & 251,401\\
+Republican & 209,625\\
+Third Party & 6,658\\
+Other & 19,954\\
+Undervote & 1,545\\
+(Missing) & 212,772\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2489,7 +2575,7 @@ Did not Vote & 60,972\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024 except 2007
+  Years: All of 2008-2024
 \item
   Note: In a presidential election year, this asks the vote of
   \emph{that} year. The vote choice of the presidential election 4 years
@@ -2664,10 +2750,9 @@ vote? {[}see guide for wording in all years{]}''
 \midrule
 Barack Obama & 73,986\\
 John McCain & 68,398\\
-Other / Someone Else & 4,204\\
-Undervote & 251\\
-Not Sure / Don't Recall & 1,787\\
-(Missing) & 553,329\\
+Other & 4,204\\
+Not Sure & 1,787\\
+(Missing) & 553,580\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2703,11 +2788,10 @@ guide for wording in all years{]}''
 \midrule
 Barack Obama & 82,543\\
 Mitt Romney & 64,740\\
-Did not Vote & 217\\
-Undervote & 2,602\\
-Not Sure / Don't Recall & 1,990\\
-Other & 5,880\\
-(Missing) & 543,983\\
+Other & 5,872\\
+Undervote & 704\\
+Not Sure & 1,990\\
+(Missing) & 546,106\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2741,10 +2825,12 @@ United States? {[}Post-election{]}''
 Hilary Clinton & 131,931\\
 Donald Trump & 110,839\\
 Gary Johnson & 8,370\\
-Undervote & 60,003\\
+Evan McMullin & 1,282\\
 Jill Stein & 4,589\\
-Other & 12,690\\
-(Missing) & 373,533\\
+Other & 10,892\\
+Undervote & 617\\
+Not Sure & 516\\
+(Missing) & 432,919\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2775,9 +2861,10 @@ Joe Biden & 103,825\\
 Donald Trump & 73,790\\
 Jo Jorgensen & 2,182\\
 Howie Hawkins & 783\\
-Did not Vote for President & 31,056\\
-Other & 3,371\\
-(Missing) & 486,948\\
+Other & 3,068\\
+Undervote & 113\\
+Not Sure & 190\\
+(Missing) & 518,004\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2804,10 +2891,11 @@ the United States? {[}Post-election{]}
 Kamala Harris & 23,527\\
 Donald Trump & 18,501\\
 Jill Stein & 376\\
+Cornel West & 92\\
 Chase Oliver & 288\\
-Other / Someone Else & 574\\
+Other & 574\\
 Undervote & 260\\
-Other & 286\\
+Robert F. Kennedy, Jr. & 194\\
 (Missing) & 658,143\\
 \bottomrule
 \end{tabular}
@@ -3235,7 +3323,7 @@ $ voted_gov_chosen  <chr> NA, "Ted Strickland (D)", NA, "Rod Blagojevich (D)",~
 Rows: 701,955
 Columns: 8
 $ intent_pres_party <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ voted_pres_party  <fct> NA, NA, NA, NA, NA, Did not Vote, NA, NA, NA, Did no~
+$ voted_pres_party  <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
 $ intent_rep_party  <fct> Democratic, Democratic, Democratic, Democratic, Demo~
 $ voted_rep_party   <fct> Democratic, Democratic, Democratic, Democratic, Demo~
 $ intent_gov_party  <fct> NA, Democratic, NA, Democratic, Democratic, NA, Repu~
@@ -3265,12 +3353,25 @@ assigns version numbers by incrementing by a full number if any of the
 datasets change, and by incrementing by a decimal when only the
 description/metadata changes.
 
-\subsubsection{Version 10.0 (released)}\label{version-10.0-released}
+\subsubsection{\texorpdfstring{Version 11.0,
+\emph{planned}}{Version 11.0, planned}}\label{version-11.0-planned}
 
 \begin{itemize}
 \tightlist
 \item
-  Adds 2024 Common Content
+  This version will include vote validation for 2024. It may also
+  include new variables on voter knowledge and voter activity.
+  Historically, vote validation files are released about a year after
+  the initial release. Please contact me for any questions.
+\end{itemize}
+
+\subsubsection{\texorpdfstring{Version 10.0 (released
+\texttt{2024-05-21})}{Version 10.0 (released 2024-05-21)}}\label{version-10.0-released-2024-05-21}
+
+\begin{itemize}
+\tightlist
+\item
+  Adds 2024 Common Content (before vote validation), up to n = 701,955
 \item
   Fixes a bug in \texttt{voted\_pres\_party} where past election vote
   was being filled in for some respondents who did not take the
@@ -3278,6 +3379,9 @@ description/metadata changes.
   undervoting in Presidential vote
 \item
   Added self-reported registration (\texttt{reg\_self})
+\item
+  Added sexual orientation (\texttt{sexuality}) and investor status
+  (\texttt{investor})
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 9.0 (released
