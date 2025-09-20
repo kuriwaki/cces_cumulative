@@ -545,7 +545,19 @@ std_name <- function(tbl, is_panel = FALSE) {
     tbl <- tbl %>%
       mutate(race = sjlabelled::replace_labels(
         race, labels = c("Mixed" = 6))) %>%
-      mutate(across(matches("(start|end)time"), ~ as.POSIXct(.x/1000, origin = "1960-01-01"))) |> 
+      mutate(across(matches("TS_(g|p)2024"), 
+             \(x) labelled(
+               x,
+               labels = c(
+                "absentee" = 1,
+                "early" = 2,
+                "mail" = 3,
+                "polling place" = 4,
+                "provisional" = 5,
+                "voted by unknown method" = 6,
+                "did not vote" = 7
+             ))
+      )) |> 
       rename(
         weight = commonweight,
         approval_pres = CC24_312a,
@@ -570,7 +582,13 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_gov = CC24_413,
         voted_pres_16 = presvote16post,
         voted_pres_20 = presvote20post,
-        voted_pres_24 = CC24_410
+        voted_pres_24 = CC24_410,
+        vv_turnout_gvm = TS_g2024,
+        vv_turnout_pvm = TS_p2024,
+        vv_regstatus = TS_voterstatus,
+        vv_party_gen = TS_partyreg,
+        # vv_party_prm = TS_p2024_party,
+        vv_st = TS_state
       ) %>%
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -925,9 +943,11 @@ std_vvv <- function (vec, varname, yrvec) {
     
     recoded <- recode(vec,
                       `DEM` = dem,
+                      `dem` = dem,
                       `Democratic.Party` = dem,
                       `Democratic` = dem,
                       `REP` = gop,
+                      `rep` = gop,
                       `Republican.Party` = gop,
                       `Republican` = gop,
                       `NPA` = npa,
@@ -936,16 +956,24 @@ std_vvv <- function (vec, varname, yrvec) {
                       `CST` = "Constitution Party",
                       `Green.Party` = "Green Party",
                       `GRE` = "Green Party",
+                      `green` = "Green Party",
                       `Libertarian.Party` = "Libertarian Party",
+                      `libertarian` = "Libertarian Party",
                       `LIB` = "Libertarian Party",
                       `Independent.Party` = "Independent Party",
                       `IND` = "Independent Party",
+                      `ind` = "Independent Party",
                       `Reform.Party` = "Reform Party",
                       `REF` = "Reform Party",
                       `Socialist.Party` = "Socialist Party",
                       `SOC` = "Socialist Party",
+                      `cons` = "Conservative Party",
+                      `working fam` = "Working Family Party",
+                      `peace and freedom` = "Other",
                       `Declined.To.State` = "Declined to State",
                       `DTS` = "Declined to State",
+                      `OTH` = "Other",
+                      `other` = "Other",
                       `OTH` = "Other",
                       `UNK` = "Unknown"
     )

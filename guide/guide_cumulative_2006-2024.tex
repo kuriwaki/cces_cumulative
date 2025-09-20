@@ -116,7 +116,7 @@
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
 \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
@@ -126,7 +126,7 @@
 \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
 \newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
 \newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
 \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
@@ -159,7 +159,7 @@ Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
 at Crunch for their help.}}
 
 
-\date{2025-05-21}
+\date{2025-09-19}
 
 \begin{document}
 
@@ -751,7 +751,6 @@ year to make years comparable{]}
 
 \begin{center}
 
-
 \begin{table}[H]
 \centering
 \begin{tabular}[t]{rrr}
@@ -780,7 +779,6 @@ Year & Observations & Factor\\
 \bottomrule
 \end{tabular}
 \end{table}
-
 \end{center}
 
 \subsubsection{\texorpdfstring{\texttt{weight\_post}: Survey weight for
@@ -792,7 +790,7 @@ the even years.{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.4     0.7     1.0     1.1    15.5  449839 
+   0.00    0.45    0.69    1.00    1.07   15.50  449839 
 \end{verbatim}
 
 \begin{itemize}
@@ -823,7 +821,7 @@ voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.6     0.8     1.0     1.2    16.3  618871 
+   0.00    0.56    0.82    1.00    1.17   16.31  618871 
 \end{verbatim}
 
 \begin{itemize}
@@ -852,7 +850,7 @@ wave{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-    0.0     0.5     0.8     1.0     1.2    15.0  625992 
+   0.00    0.52    0.78    1.00    1.16   15.00  625992 
 \end{verbatim}
 
 \begin{itemize}
@@ -1657,13 +1655,13 @@ unmatched are labeled as a no record.{]}
 \toprule
  & n\\
 \midrule
-Active & 303,115\\
+Active & 342,915\\
 No Record of Registration & 108,666\\
 Unregistered & 18,070\\
 Dropped & 8,433\\
 Inactive & 4,086\\
 Multiple Appearances & 2,165\\
-(Missing) & 257,420\\
+(Missing) & 217,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1671,7 +1669,7 @@ Multiple Appearances & 2,165\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022
+  Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Collapses some response options
 \end{itemize}
@@ -1690,28 +1688,22 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 \midrule
 No Record of Party Registration & 136,093\\
 Unknown & 87,810\\
-Democratic Party & 50,181\\
-Republican Party & 37,148\\
+Democratic Party & 70,598\\
+Republican Party & 50,802\\
 No Party Affiliation & 18,380\\
-Dem & 10,591\\
-Rep & 6,912\\
 Declined to State & 3,093\\
-Other & 2,259\\
-Independent Party & 1,851\\
-Libertarian Party & 726\\
-Ind & 504\\
-Green Party & 341\\
-Libertarian & 172\\
+Independent Party & 2,829\\
+Other & 2,531\\
+Libertarian Party & 1,061\\
+Green Party & 479\\
 Cns & 77\\
-Green & 76\\
 Constitution Party & 47\\
+Conservative Party & 37\\
+Working Family Party & 29\\
 Wor & 19\\
-Cons & 17\\
 Reform Party & 13\\
-Peace and Freedom & 9\\
-Working Fam & 9\\
 Socialist Party & 7\\
-(Missing) & 345,620\\
+(Missing) & 328,050\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1719,7 +1711,7 @@ Socialist Party & 7\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Note that if the state's voter roll does not record party
   registration, this value will be missing. Not available for some even
@@ -1739,18 +1731,13 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
  & n\\
 \midrule
 No Record of Party Registration & 307,577\\
-Democratic Party & 21,325\\
-Republican Party & 18,723\\
-Dem & 4,500\\
-Rep & 4,121\\
-Libertarian Party & 29\\
+Democratic Party & 25,825\\
+Republican Party & 22,844\\
+Libertarian Party & 32\\
 No Party Affiliation & 27\\
 Other & 19\\
-Green Party & 6\\
-Ind & 3\\
-Libertarian & 3\\
-Independent Party & 1\\
-Green & 1\\
+Green Party & 7\\
+Independent Party & 4\\
 (Missing) & 345,620\\
 \bottomrule
 \end{tabular}
@@ -1779,10 +1766,10 @@ etc..) are aggregated as a vote.{]}
 \toprule
  & n\\
 \midrule
-Voted & 275,737\\
-No Record of Voting & 203,486\\
+Voted & 312,185\\
+No Record of Voting & 206,838\\
 No Voter File & 1,733\\
-(Missing) & 220,999\\
+(Missing) & 181,199\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1790,8 +1777,7 @@ No Voter File & 1,733\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022 (2022
-  validated vote to be released in Version 9).
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024.
 \item
   Limitations: Collapses most response options. For example, the
   particular voting method is collapsed into one category, even though
@@ -1815,10 +1801,10 @@ turnout Primary Election
 \toprule
  & n\\
 \midrule
-No Record of Voting & 300,091\\
-Voted & 143,081\\
+No Record of Voting & 320,490\\
+Voted & 162,482\\
 No Voter File & 1,363\\
-(Missing) & 257,420\\
+(Missing) & 217,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1826,7 +1812,7 @@ No Voter File & 1,363\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022
+  Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: See \texttt{vv\_turnout\_gvm}
 \end{itemize}

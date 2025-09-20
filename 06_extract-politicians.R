@@ -361,5 +361,8 @@ save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 
+ri_mc_match |> 
+  distinct(year, case_id, dataset) |> 
+  arrow::write_feather("~/Dropbox/CCES_representation/data/source/cces/cces_caseid_dataset_key.feather")
 
 cli_alert_success("Finished matching candidate info to identifiers")

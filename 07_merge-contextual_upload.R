@@ -275,13 +275,16 @@ ccc_factor <- ccc_fac |>
 
 # Save ---------
 cli_h1("Save Final data")
-# write sav first for crunch. save RDS and write to dta after applying variable labels in 05
-write_rds(ccc_df, "data/release/cumulative_2006-2024_addon.rds")
+# needed for CCES_representation (2025-09-19)
+write_feather(ccc_df, "data/release/cumulative_2006-2024_addon.feather")
+write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.feather")
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.rds", compress = "xz")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
 
 
+# write to dta after applying variable labels in 05
 # remove panel cases
 ccc_common <- anti_join(ccc_factor, panel_charid, by = c("year", "case_id"))
 
@@ -299,8 +302,6 @@ write_rds(ccc_common, "data/output/cumulative_2006-2024_factor.rds")
 write_dta(ccc_common, "data/release/cumulative_2006-2024.dta", version = 14)
 
 
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.rds", compress = "xz")
-write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.feather")
 
 # might write to crunch
 if (writeToCrunch) {

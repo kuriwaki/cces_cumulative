@@ -846,7 +846,7 @@ print_tab(vv_party_prm)
 print_tab(vv_turnout_gvm)
 ```
 
-* Years: `r in_years(vv_turnout_gvm)` (2022 validated vote to be released in Version 9).
+* Years: `r in_years(vv_turnout_gvm)`.
 * Limitations: Collapses most response options. For example, the particular voting method is collapsed into one category, even though `gvm` stands for General Election voting _method_. Also, the result of not matching to a voter file is collapsed with the result of matching to a voter file and having no indication of turning out to vote. The distinction is unclear in earlier years, and is thus collapsed for all years here. For finer distinctions, see the individual year's CCES.
 
 ### `r nam(vv_turnout_pvm)`
