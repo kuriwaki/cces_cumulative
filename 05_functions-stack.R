@@ -541,22 +541,36 @@ std_name <- function(tbl, is_panel = FALSE) {
   }
   
   # 2024 ------
+  to_str_empty <- \(x) replace_na(as.character(as_factor(x)), "missing_evenyear")
   if (identical(cces_year, 2024L)) {
     tbl <- tbl %>%
       mutate(race = sjlabelled::replace_labels(
         race, labels = c("Mixed" = 6))) %>%
-      mutate(across(matches("TS_(g|p)2024"), 
-             \(x) labelled(
-               x,
-               labels = c(
-                "absentee" = 1,
-                "early" = 2,
-                "mail" = 3,
-                "polling place" = 4,
-                "provisional" = 5,
-                "voted by unknown method" = 6,
-                "did not vote" = 7
-             ))
+      mutate(across(matches("TS_(g|p)2024$"), 
+             \(x) 
+             labelled(
+                   x,
+                   labels = c(
+                     "absentee" = 1,
+                     "early" = 2,
+                     "mail" = 3,
+                     "polling place" = 4,
+                     "provisional" = 5,
+                     "voted by unknown method" = 6,
+                     "did not vote" = 7
+                   ))
+      )) |> 
+      mutate(across(matches("TS_p2024_party$"), 
+             \(x) 
+                 labelled(
+                   x,
+                   labels = c(
+                     "dem" = 1,
+                     "ind" = 3,
+                     "libertarian" = 4,
+                     "other" = 5,
+                     "rep" = 6
+                   ))
       )) |> 
       rename(
         weight = commonweight,
@@ -587,9 +601,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_turnout_pvm = TS_p2024,
         vv_regstatus = TS_voterstatus,
         vv_party_gen = TS_partyreg,
-        # vv_party_prm = TS_p2024_party,
+        vv_party_prm = TS_p2024_party,
         vv_st = TS_state
       ) %>%
+      mutate(across(matches("vv_"), to_str_empty)) |> 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -631,7 +646,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   ## 15, 17-19: variants of CC15_354ax
   if (cces_year[1] >= 2015) {
     # regex to find the variables
-    hisp_regex <- "(_hisp|Hispanic_origin|CC15_354ax|CC17_353a|CC18_354a|CC19_353a)_[0-9]"
+    hisp_regex <- "(_hisp|Hispanic_origin|CC15_354ax|CC17_353a|CC18_354a|CC19_353a)_[0-9]|CC24_hisp_[1-9]+)"
     qlb_regex <- "(Country ancestry|Latin Heritage|Hispanic Origin|Hispanic_origin) - "
     hisp_key <-
       tbl |> 
@@ -710,7 +725,7 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
 #' 
 #' @param dflist a list of cces datasets. column names need to be standardized.
 #' @param var a NSE variable to find and stack
-#' @param type a string, "factor", "numeric", "integer", or "dattetime". If numeric or datetime
+#' @param type a string, "factor", "character", "numeric", "integer", or "dattetime". If numeric or datetime
 #'  that type is returned. if factor the label and values are returned separately as
 #'  different columns, unless labelled = TRUE
 #' @param make_labelled to bind the two _char and _num columns to a label. ONLY
@@ -894,7 +909,7 @@ std_vvv <- function (vec, varname, yrvec) {
   vtd <- "Voted"
   nov <- "No Record of Voting"
   # turnout
-  if (grepl("turnout", varname)) {
+  if (str_detect(varname, "turnout")) {
     recoded <- recode(vec,
                       `Polling` = vtd,
                       `polling` = vtd,
@@ -914,12 +929,14 @@ std_vvv <- function (vec, varname, yrvec) {
                       `validated record of voting in general election` = vtd,
                       `Virginia doesn't maintain vote history files` = "No Voter File",
                       `MatchedNoVote` = nov,
-                      .default  = nov
+                      missing_evenyear = nov,
+                      .default  = nov,
+                      .missing = NA_character_
     )
   }
   
   # regstatus
-  if (grepl("regstatus", varname)) {
+  if (str_detect(varname, "regstatus")) {
     recoded <- recode(vec,
                       inactiv = "Inactive",
                       multipl = "Multiple Appearances",
@@ -928,15 +945,16 @@ std_vvv <- function (vec, varname, yrvec) {
                       unregis = "unregistered",
                       MovedUnregistered = "unregistered",
                       dropped = "Dropped",
-                      NoVoterFileMatch = "No Record of Registration"
+                      NoVoterFileMatch = "No Record of Registration",
+                      missing_evenyear = "No Record of Registration"
     )
-    recoded <- replace(recoded, yrvec %in% c(2006, 2007, 2009, 2011), NA) # these should be missing
-    recoded <- replace(recoded, recoded == "", "No Record of Registration") 
+    recoded <- replace(recoded, yrvec %in% c(2006, seq(2007, 2031, by = 2)), NA) # these should be missing
+    recoded <- replace(recoded, recoded == "", "No Record of Registration")
   }
   
   
   # regparty
-  if (grepl("party", varname)) {
+  if (str_detect(varname, "party")) {
     dem <- "Democratic Party"
     gop <- "Republican Party"
     npa <- "No Party Affiliation"
@@ -975,7 +993,8 @@ std_vvv <- function (vec, varname, yrvec) {
                       `OTH` = "Other",
                       `other` = "Other",
                       `OTH` = "Other",
-                      `UNK` = "Unknown"
+                      `UNK` = "Unknown",
+                      missing_evenyear = "No Record of Party Registration"
     )
     recoded <- replace(recoded, recoded == "", "No Record of Party Registration") 
   }

@@ -150,6 +150,7 @@ ccc_meta <- tribble(
   "vv_party_prm",        "categorical", "Validated registered Primary party",                 "[Validation results. Only available for some states and years]",
   "vv_turnout_gvm",      "categorical", "Validated turnout General Election",                 "[Validation results. All vote methods (polling, mail, early, unknown, etc..) are aggregated as a vote.]",
   "vv_turnout_pvm",      "categorical", "Validated turnout Primary Election (Congressional)", "[Validation results. Congressional primaries.]",
+  "vv_state",            "categorical", "Validated state of registration", "[Validation results.]", 
   "intent_turnout_self", "categorical", "Self-reported turnout (pre-election wave)", "2020: Do you intend to vote in the 2020 general election on November 3rd?",
   "voted_turnout_self",  "categorical", "Self-reported turnout (post-election wave)", "2020: Which of the following statements best describes you?",
   "reg_self",  "categorical", "Self-reported Registration (votereg)", "Are you registered to vote?",

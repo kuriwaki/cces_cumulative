@@ -25,7 +25,7 @@ cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
 cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
   transmute(year = 2017, case_id = V101, countyfips)
 
-# execute name standardization
+# Create ccs object -----
 # in list form
 ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
@@ -302,12 +302,14 @@ count(voted_trn, voted_turnout_self, voted_trn)
 voted_trn$voted_trn <- NULL
 intent_trn$intent_trn <- NULL
 
-# validated vote turnout 
+## validated vote turnout -----
 vv_regstatus   <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
-vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE)
+vv_party_gen   <- find_stack(ccs, vv_party_gen, new_reorder = FALSE) 
 vv_party_prm   <- find_stack(ccs, vv_party_prm, new_reorder = FALSE)
 vv_turnout_gvm <- find_stack(ccs, vv_turnout_gvm, new_reorder = FALSE)
-vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE)
+vv_turnout_pvm <- find_stack(ccs, vv_turnout_pvm, new_reorder = FALSE) 
+vv_state <- find_stack(ccs, vv_st, new_reorder = FALSE, type = "character") |> 
+  rename(vv_state = vv_st)
 
 
 ## pres, house, sen, gov -------
@@ -549,8 +551,8 @@ ccc <- geo %>%
   left_join(vv_party_gen) %>%
   left_join(vv_party_prm) %>%
   left_join(vv_turnout_gvm) %>%
-  left_join(vv_turnout_pvm)
-
+  left_join(vv_turnout_pvm) %>%
+  left_join(vv_state)
 
 stopifnot(nrow(ccc) == nrow(pid3))
 

@@ -159,7 +159,7 @@ Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
 at Crunch for their help.}}
 
 
-\date{2025-09-19}
+\date{2025-10-03}
 
 \begin{document}
 
@@ -914,7 +914,7 @@ A series of variables for the respondent's location:
 
 \begin{verbatim}
 Rows: 701,955
-Columns: 14
+Columns: 15
 $ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas", ~
 $ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "CA~
 $ state_post   <chr> NA, "Pennsylvania", NA, "Texas", "Texas", "New York", NA,~
@@ -929,6 +929,7 @@ $ cd_post      <chr> NA, "PA-05", NA, "TX-19", "TX-06", "NY-28", NA, NA, "MA-0~
 $ cd_up_post   <chr> NA, "PA-03", NA, "TX-19", "TX-06", "NY-27", NA, NA, "MA-0~
 $ zipcode      <chr> "95969", "16255", "79924", "79423", "76123", "14131", "28~
 $ county_fips  <chr> "06007", "42031", "48141", "48303", "48439", "36063", "37~
+$ vv_state     <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N~
 \end{verbatim}
 
 \begin{itemize}
@@ -1656,12 +1657,12 @@ unmatched are labeled as a no record.{]}
  & n\\
 \midrule
 Active & 342,915\\
-No Record of Registration & 108,666\\
+No Record of Registration & 128,866\\
 Unregistered & 18,070\\
 Dropped & 8,433\\
 Inactive & 4,086\\
 Multiple Appearances & 2,165\\
-(Missing) & 217,620\\
+(Missing) & 197,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1672,6 +1673,11 @@ Multiple Appearances & 2,165\\
   Years: 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Collapses some response options
+\item
+  Note that the response categories changed from 2022, when CES started
+  using TargetSmart instead of Catalist for their voter match. The
+  TargetSmart matches do not distinguish between unregistered, dropped,
+  vs.~inactive registrants.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{vv\_party\_gen}: Validated
@@ -1686,7 +1692,7 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 \toprule
  & n\\
 \midrule
-No Record of Party Registration & 136,093\\
+No Record of Party Registration & 178,523\\
 Unknown & 87,810\\
 Democratic Party & 70,598\\
 Republican Party & 50,802\\
@@ -1703,7 +1709,7 @@ Working Family Party & 29\\
 Wor & 19\\
 Reform Party & 13\\
 Socialist Party & 7\\
-(Missing) & 328,050\\
+(Missing) & 285,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1730,15 +1736,15 @@ party}{vv\_party\_prm: Validated registered Primary party}}\label{vv_party_prm-v
 \toprule
  & n\\
 \midrule
-No Record of Party Registration & 307,577\\
-Democratic Party & 25,825\\
-Republican Party & 22,844\\
-Libertarian Party & 32\\
+No Record of Party Registration & 358,949\\
+Democratic Party & 30,329\\
+Republican Party & 26,932\\
+Libertarian Party & 40\\
+Other & 44\\
 No Party Affiliation & 27\\
-Other & 19\\
 Green Party & 7\\
-Independent Party & 4\\
-(Missing) & 345,620\\
+Independent Party & 7\\
+(Missing) & 285,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1746,7 +1752,83 @@ Independent Party & 4\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
+\item
+  Limitations: Not available for some even years
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\texttt{vv\_state}: Validated state of
+registration}{vv\_state: Validated state of registration}}\label{vv_state-validated-state-of-registration}
+
+{[}Validation results.{]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+ & n\\
+\midrule
+ & 110,960\\
+MD & 4,505\\
+CA & 21,083\\
+IN & 5,852\\
+NY & 14,060\\
+OH & 10,880\\
+NJ & 6,752\\
+TX & 17,423\\
+FL & 18,483\\
+KS & 2,157\\
+GA & 7,890\\
+MO & 6,024\\
+PA & 13,463\\
+CO & 4,523\\
+IL & 10,053\\
+OK & 2,435\\
+AZ & 6,313\\
+MN & 4,573\\
+MA & 5,132\\
+NE & 1,567\\
+TN & 5,361\\
+NV & 2,812\\
+OR & 4,514\\
+CT & 2,610\\
+UT & 1,776\\
+VA & 7,367\\
+WI & 5,373\\
+NH & 1,364\\
+HI & 761\\
+AK & 528\\
+AL & 3,523\\
+SC & 3,912\\
+WA & 6,072\\
+NC & 7,871\\
+NM & 1,710\\
+MS & 1,770\\
+VT & 588\\
+LA & 2,659\\
+MI & 8,843\\
+IA & 2,776\\
+WV & 1,813\\
+AR & 2,044\\
+KY & 3,818\\
+ME & 1,383\\
+SD & 704\\
+RI & 845\\
+MT & 1,038\\
+ID & 1,301\\
+DE & 958\\
+DC & 603\\
+ND & 566\\
+WY & 409\\
+(Missing) & 340,155\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  Years: 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Not available for some even years
 \end{itemize}
@@ -1767,9 +1849,9 @@ etc..) are aggregated as a vote.{]}
  & n\\
 \midrule
 Voted & 312,185\\
-No Record of Voting & 206,838\\
+No Record of Voting & 227,038\\
 No Voter File & 1,733\\
-(Missing) & 181,199\\
+(Missing) & 160,999\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1801,10 +1883,10 @@ turnout Primary Election
 \toprule
  & n\\
 \midrule
-No Record of Voting & 320,490\\
+No Record of Voting & 340,690\\
 Voted & 162,482\\
 No Voter File & 1,363\\
-(Missing) & 217,620\\
+(Missing) & 197,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3399,6 +3481,8 @@ district, by district and last name, or both:
 \item
   For Senators, we join entirely on \texttt{cong}, \texttt{st}, and last
   name
+\item
+  Missing for DC residents.
 \end{itemize}
 
 \begin{verbatim}
@@ -3502,20 +3586,19 @@ assigns version numbers by incrementing by a full number if any of the
 datasets change, and by incrementing by a decimal when only the
 description/metadata changes.
 
-\subsubsection{\texorpdfstring{Version 11.0,
-\emph{PLANNED}}{Version 11.0, PLANNED}}\label{version-11.0-planned}
+\subsubsection{\texorpdfstring{Version 11.0 (released
+\texttt{2025-10-05})}{Version 11.0 (released 2025-10-05)}}\label{version-11.0-released-2025-10-05}
 
 \begin{itemize}
 \tightlist
 \item
-  This version will include vote validation for 2024. It may also
-  include new variables on voter knowledge and voter activity.
-  Historically, vote validation files are released about a year after
-  the initial release. Please contact me for any questions.
+  Includes vote validation for 2024.
+\item
+  Adds vote validated registered state as variable
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 10.0 (released
-\texttt{2024-05-21})}{Version 10.0 (released 2024-05-21)}}\label{version-10.0-released-2024-05-21}
+\texttt{2025-05-21})}{Version 10.0 (released 2025-05-21)}}\label{version-10.0-released-2025-05-21}
 
 \begin{itemize}
 \tightlist

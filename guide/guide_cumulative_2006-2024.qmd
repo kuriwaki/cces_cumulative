@@ -807,6 +807,7 @@ print_tab(vv_regstatus)
 
 * Years: `r in_years(vv_regstatus)`
 * Limitations: Collapses some response options
+* Note that the response categories changed from 2022, when CES started using TargetSmart instead of Catalist for their voter match. The TargetSmart matches do not distinguish between unregistered, dropped, vs. inactive registrants.
 
 
 ### `r nam(vv_party_gen)`
@@ -831,6 +832,18 @@ print_tab(vv_party_prm)
 ```
 
 * Years: `r in_years(vv_party_prm)`
+* Limitations: Not available for some even years
+
+### `r nam(vv_state)`
+
+`r descrip(vv_state)`
+
+
+```{r, results = "asis"}
+print_tab(vv_state, tbl = mutate(cc, vv_state = as_factor(vv_state)))
+```
+
+* Years: `r in_years(vv_state)`
 * Limitations: Not available for some even years
 
 
@@ -1414,6 +1427,7 @@ The matching of identifiers to respondent occurs through matching by district, b
 
 * For House representatives, we join on `cong`, `st`, and  `dist` to a NOMINATE database that only consists of unique observations according to the key. For duplicates with regards to these three variables (e.g., in the rare case where a new representative comes into office mid-session), we match on `cong`, `st`, `dist` and last name.
 * For Senators, we join entirely on `cong`, `st`, and last name
+* Missing for DC residents.
 
 
 
@@ -1423,7 +1437,6 @@ glimpse(select(cc, matches("(rep|sen1|sen2|gov)_.*icpsr")))
 
 * Years: `r in_years(rep_icpsr)`
 * Limitations: Please note there may be some incorrect merges, especially for nontraditional names and representatives who were elected in special elections and may not be in some datasets. 
-
 
 The unique identifiers can be used to join with other databases to append additional information such as committee membership and ideology scores, such as 
 
@@ -1457,11 +1470,12 @@ glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
 
-### Version 11.0, _PLANNED_
+### Version 11.0 (released `2025-10-05`)
 
-- This version will include vote validation for 2024. It may also include new variables on voter knowledge and voter activity.  Historically, vote validation files are released about a year after the initial release. Please contact me for any questions.
+- Includes vote validation for 2024. 
+- Adds vote validated registered state as variable
 
-### Version 10.0 (released `2024-05-21`)
+### Version 10.0 (released `2025-05-21`)
 
 - Adds 2024 Common Content (before vote validation), up to n = 701,955
 - Fixes a bug in `voted_pres_party` where past election vote was being filled in for some respondents who did not take the post-election wave in that year. Created a new value, "undervote", to distinguish between not turning out at all, and changed self-reported no turnout to NA
