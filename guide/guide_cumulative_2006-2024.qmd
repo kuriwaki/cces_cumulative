@@ -1058,7 +1058,7 @@ print_tab(approval_pres)
 ```
 
 * Years: `r in_years(approval_pres)`
-* Limitations: `Neither approve nor disapprove` only included in 2007.
+* Limitations: `Neither approve nor disapprove` only included in 2007. 
 * This question is asked in a grid format, along with Governors, Congress, and Courts. 
 
 ### `r nam(approval_rep)`
@@ -1474,6 +1474,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 
 - Includes vote validation for 2024. 
 - Adds vote validated registered state as variable (`v_state`)
+- Standardize "Never Heard of this Person" in 2013-2014, 2018 to "Never Heard" like other years ([issue 71](https://github.com/kuriwaki/cces_cumulative/issues/71))
  
 ### Version 10.0 (released `2025-05-21`)
 
