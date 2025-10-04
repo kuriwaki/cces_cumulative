@@ -127,11 +127,11 @@ nam <- function(var, tbl = meta) {
 
 \noindent _Cite this dataset as:_
 
-> Kuriwaki, Shiro, 2025, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V10. 
+> Kuriwaki, Shiro, 2025, "Cumulative CES Common Content", \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}}, Harvard Dataverse, V11. 
 
 \medskip
 
-This dataset combines `r english::english(2024 - 2006 + 1)` years (2006 -- 2024) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Brian Schaffner, Stephen Ansolabehere, Jeremy Pope, and Marissa Shih.
+This dataset combines `r english::english(2024 - 2006 + 1)` years (2006 -- 2024) of the Cooperative Congressional Election Study (CCES), renamed the Cooperative Congressional Election Study (CES) from 2020. The CCES/CES is an online survey conducted around November of each year, asking a range of questions on political behavior and public opinion. Its current principal investigators are Brian Schaffner, Jeremy Pope, and Marissa Shih.
 
 \medskip
 
@@ -819,7 +819,7 @@ print_tab(vv_party_gen)
 ```
 
 * Years: `r in_years(vv_party_gen)`
-* Limitations: Note that if the state's voter roll does not record party registration, this value will be missing. Not available for some even years.
+* Limitations: Note that the response categories changed from 2022, when CES started using TargetSmart instead of Catalist for their voter match as of V11 of this dataverse replication, for example, TS did not report NPAs as a separate category in Florida.  [From 2018: Note that if the state's voter roll does not record party registration, this value will be missing.] Not available for some old even years.
 
 
 ### `r nam(vv_party_prm)`

@@ -844,7 +844,9 @@ recode_apv <- function(tbl, char_name) {
                                  `Somewhat Disapprove`  = "Disapprove / Somewhat Disapprove", 
                                  `Never Heard`          = "Never Heard / Not Sure",
                                  `Never Heard Of`       = "Never Heard / Not Sure",
+                                 `Never Heard of`       = "Never Heard / Not Sure",
                                  `Never Heard Of This Person` = "Never Heard / Not Sure",
+                                 `Never Heard of this Person` = "Never Heard / Not Sure",
                                  `Not Sure`             = "Never Heard / Not Sure"))
 }
 

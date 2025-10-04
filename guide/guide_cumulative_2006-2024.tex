@@ -159,7 +159,7 @@ Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
 at Crunch for their help.}}
 
 
-\date{2025-10-03}
+\date{2025-10-04}
 
 \begin{document}
 
@@ -176,7 +176,7 @@ at Crunch for their help.}}
 \begin{quote}
 Kuriwaki, Shiro, 2025, ``Cumulative CES Common Content'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
-Harvard Dataverse, V10.
+Harvard Dataverse, V11.
 \end{quote}
 
 \medskip
@@ -186,8 +186,8 @@ Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
 questions on political behavior and public opinion. Its current
-principal investigators are Brian Schaffner, Stephen Ansolabehere,
-Jeremy Pope, and Marissa Shih.
+principal investigators are Brian Schaffner, Jeremy Pope, and Marissa
+Shih.
 
 \medskip
 
@@ -1208,11 +1208,13 @@ No & 537,700\\
   Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
   2020, 2021, 2022, 2023, 2024
 \item
-  In years in which this question was fielded, this question adds to the
-  \texttt{race} variable by asking those who did \emph{not} respond
-  ``Hispanic'' in the \texttt{race} question. For a combined version of
-  \texttt{race} and \texttt{hispanic}, see \texttt{race\_h} (any-part
-  Hispanic).
+  Different years have treated this question differently. Until 2017,
+  this question was \emph{not} asked to those who responded ``Hispanic''
+  in the \texttt{race} question. From 2018-2022, this question was asked
+  to all respondents. From 2024, the value of these questions for all
+  those who said they were Hispanic appear to have been set to Yes. For
+  a combined version of \texttt{race} and \texttt{hispanic}, see
+  \texttt{race\_h} (any-part Hispanic), which is more stable version.
 \item
   See \texttt{hisp\_origin} for more details on hispanic origin
 \end{itemize}
@@ -1248,9 +1250,9 @@ Middle Eastern & 1,161\\
 \item
   This variable combines the \texttt{race} and \texttt{hispanic}
   variables in a single variable by coding ``any-part Hispanic'' as
-  ``Hispanic''. For example, White Hispanics and Black Hispanics are
-  coded as ``Hispanic'' in this definition and ``White'' voters consist
-  of non-Hispanic Whites only. If a respondent identified as Hispanic in
+  Hispanic. For example, White Hispanics and Black Hispanics are coded
+  as ``Hispanic'' in this definition and ``White'' voters consist of
+  non-Hispanic Whites only. If a respondent identified as Hispanic in
   \emph{either} the \texttt{race} or \texttt{hispanic} question, they
   get coded as ``Hispanic'' in \texttt{race\_h}.
 \item
@@ -1702,11 +1704,9 @@ Independent Party & 2,829\\
 Other & 2,531\\
 Libertarian Party & 1,061\\
 Green Party & 479\\
-Cns & 77\\
+Conservative Party & 114\\
+Working Family Party & 48\\
 Constitution Party & 47\\
-Conservative Party & 37\\
-Working Family Party & 29\\
-Wor & 19\\
 Reform Party & 13\\
 Socialist Party & 7\\
 (Missing) & 285,620\\
@@ -1719,9 +1719,12 @@ Socialist Party & 7\\
 \item
   Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
-  Limitations: Note that if the state's voter roll does not record party
-  registration, this value will be missing. Not available for some even
-  years.
+  Limitations: Note that the response categories changed from 2022, when
+  CES started using TargetSmart instead of Catalist for their voter
+  match as of V11 of this dataverse replication, for example, TS did not
+  report NPAs as a separate category in Florida. {[}From 2018: Note that
+  if the state's voter roll does not record party registration, this
+  value will be missing.{]} Not available for some old even years.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{vv\_party\_prm}: Validated
@@ -2429,8 +2432,7 @@ Strongly Approve & 105,671\\
 Approve / Somewhat Approve & 200,133\\
 Disapprove / Somewhat Disapprove & 107,892\\
 Strongly Disapprove & 119,160\\
-Never Heard / Not Sure & 132,399\\
-Never Heard of this Person & 25,762\\
+Never Heard / Not Sure & 158,161\\
 Neither Approve nor Disapprove & 1,798\\
 (Missing) & 9,140\\
 \bottomrule
@@ -2468,8 +2470,7 @@ Strongly Approve & 97,968\\
 Approve / Somewhat Approve & 200,775\\
 Disapprove / Somewhat Disapprove & 124,447\\
 Strongly Disapprove & 153,297\\
-Never Heard / Not Sure & 101,483\\
-Never Heard of this Person & 17,210\\
+Never Heard / Not Sure & 118,693\\
 Neither Approve nor Disapprove & 1,413\\
 (Missing) & 5,362\\
 \bottomrule
@@ -2507,8 +2508,7 @@ Strongly Approve & 106,848\\
 Approve / Somewhat Approve & 192,103\\
 Disapprove / Somewhat Disapprove & 116,303\\
 Strongly Disapprove & 156,110\\
-Never Heard / Not Sure & 105,122\\
-Never Heard of this Person & 18,184\\
+Never Heard / Not Sure & 123,306\\
 Neither Approve nor Disapprove & 1,158\\
 (Missing) & 6,127\\
 \bottomrule
@@ -3594,7 +3594,12 @@ description/metadata changes.
 \item
   Includes vote validation for 2024.
 \item
-  Adds vote validated registered state as variable
+  Adds vote validated registered state as variable (\texttt{v\_state})
+\item
+  Standardize ``Never Heard of this Person'' in 2013-2014, 2018 to
+  ``Never Heard'' like other years
+  (\href{https://github.com/kuriwaki/cces_cumulative/issues/71}{issue
+  71})
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 10.0 (released
