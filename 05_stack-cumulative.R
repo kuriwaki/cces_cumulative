@@ -15,7 +15,7 @@ source("05_functions-stack.R")
 cli_alert_success("Finished reading in functions")
 
 # Read data ------
-if (!exists("cc22") & !exists("cc18") & !exists("cc06")) {
+if (!exists("cc24") & !exists("cc18") & !exists("cc06")) {
   load("data/output/01_responses/common_all.RData")
 }
 cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
@@ -64,8 +64,8 @@ cli_h1("Joining admin")
 wgt        <- find_stack(ccs, weight, "numeric")
 wgt_post   <- find_stack(ccs, weight_post, "numeric")
 
-vwgt        <- find_stack(ccs, rvweight, "numeric")
-vwgt_post <- find_stack(ccs, rvweight_post, "numeric")
+vwgt        <- find_stack(ccs, vvweight, "numeric")
+vwgt_post <- find_stack(ccs, vvweight_post, "numeric")
 
 tookpost <- find_stack(ccs, tookpost, make_labelled =  FALSE, new_reorder = FALSE) %>% 
   mutate(tookpost = labelled(

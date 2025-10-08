@@ -159,7 +159,7 @@ Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
 at Crunch for their help.}}
 
 
-\date{2025-10-04}
+\date{2025-10-08}
 
 \begin{document}
 
@@ -192,20 +192,19 @@ Shih.
 \medskip
 
 Each year's CCES/CES asks hundreds of questions, many of which change
-from year to year. This cumulative file only includes \emph{a subset} of
-those questions that are standard and important. It standardizes
-(harmonizes) its values across years and creates a few new variables
-too. Users can still merge in their year-specific questions of interest
-easily into this cumulative file and take advantage of its standardized
-variables.
+from year to year. This cumulative file only includes a subset of those
+questions that are standard and important. It standardizes its values
+across years and creates a few new variables too. Users can still merge
+in their year-specific questions of interest easily into this cumulative
+file and take advantage of its standardized variables.
 
 \medskip
 
 I constructed this dataset from each year's full CCES/CES, all of them
 publicly available as separate datasets on
-\href{cces.gov.harvard.edu}{Dataverse}.The final product is a
-\texttt{tibble}-style data frame (built in R) that is also available as
-a Stata \texttt{dta} file.
+\href{https://dataverse.harvard.edu/dataverse/cces}{Dataverse}.The final
+product is a \texttt{tibble}-style data frame built in R that is also
+available as a Stata \texttt{dta} file and a \texttt{feather} file.
 
 \medskip
 
@@ -803,60 +802,57 @@ the even years.{]}
   To analyze the post-election wave responses for years that do not have
   a post-specific weight, the second-best option is to use the normal
   \texttt{weight} variable. These weights will not be designed for the
-  post-wave subset but they tend to correlate. When applying the weights
-  to a subset of the data, make sure that they are rescaled to mean 1 in
-  the non-missing subset (most statistical software will do this
-  automatically).
-\item
-  To use the \texttt{weight\_post} for years it is available but
-  \texttt{weight} for where it is not, one could coalesce into a new
-  variable.
+  post-wave subset but they tend to correlate.
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\texttt{rvweight}: Survey weights to
+\subsubsection{\texorpdfstring{\texttt{vvweight}: Survey weights to
 validated registered
-voters}{rvweight: Survey weights to validated registered voters}}\label{rvweight-survey-weights-to-validated-registered-voters}
+voters}{vvweight: Survey weights to validated registered voters}}\label{vvweight-survey-weights-to-validated-registered-voters}
 
 {[}weights to validated registered voter population{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.56    0.82    1.00    1.17   16.31  618871 
+   0.00    0.53    0.79    1.00    1.16   16.31  537396 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2018, 2020
+  Years: 2018, 2020, 2022, 2024
 \item
-  In 2018, YouGov computed weights after vote validation to weight to
-  the target population of registered voters. See the methodology
-  section of the \href{https://doi.org/10.7910/DVN/ZSBZ7K}{2018 Guide}
-  for details. For this reason, and to distinguish it from the previous
-  year's post-validation weights, the cumulative renames the 2018
-  \texttt{vvweight} into \texttt{rvweight}.
+  Note these weight are missing for anyone not validated as a actively
+  registered voters (\texttt{vv\_regstatus}). Not all actively
+  registered voters turn out (\texttt{vv\_turnout\_gvm}). Starting in
+  2018, YouGov computed weights after vote validation and weighted to
+  the target population of \emph{validated} registered voters. See the
+  methodology section of the
+  \href{https://doi.org/10.7910/DVN/ZSBZ7K}{2018 Guide} or the 2020,
+  2022, 2024 guide for details. Until Dataverse V10 of this dataset, the
+  cumulative called this variable \texttt{rvweight}, but from V11
+  onwards, we switched to calling it \texttt{vvweight}.
 \item
   Limitations: Only specific to each year. Built off of the entire
   pre-election wave sample, but not necessarily to adjust post-election
-  wave respondents. See \texttt{rvweight\_post}
+  wave respondents. See \texttt{vvweight\_post}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\texttt{rvweight\_post}: Survey weights
+\subsubsection{\texorpdfstring{\texttt{vvweight\_post}: Survey weights
 to validated registered voters, post-election
-wave}{rvweight\_post: Survey weights to validated registered voters, post-election wave}}\label{rvweight_post-survey-weights-to-validated-registered-voters-post-election-wave}
+wave}{vvweight\_post: Survey weights to validated registered voters, post-election wave}}\label{vvweight_post-survey-weights-to-validated-registered-voters-post-election-wave}
 
 {[}weights to validated registered voter population, post-election
 wave{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-   0.00    0.52    0.78    1.00    1.16   15.00  625992 
+   0.00    0.50    0.75    1.00    1.14   15.18  551380 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: 2018, 2020
+  Years: 2018, 2020, 2022, 2024
 \item
   Limitations: Only available for some even years.
 \end{itemize}
@@ -1721,10 +1717,12 @@ Socialist Party & 7\\
 \item
   Limitations: Note that the response categories changed from 2022, when
   CES started using TargetSmart instead of Catalist for their voter
-  match as of V11 of this dataverse replication, for example, TS did not
-  report NPAs as a separate category in Florida. {[}From 2018: Note that
-  if the state's voter roll does not record party registration, this
-  value will be missing.{]} Not available for some old even years.
+  match. As of V11 of this dataverse replication, for example, TS did
+  not report NPAs as a separate category in Florida. To identify NPA
+  registrants, a good substitute may be to identify those in party
+  registration states who are
+  \texttt{vv\_party\_gen\ =\ "No\ Record\ of\ Party\ Registration"} but
+  are active in \texttt{vv\_regstatus}.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{vv\_party\_prm}: Validated
@@ -3587,17 +3585,21 @@ datasets change, and by incrementing by a decimal when only the
 description/metadata changes.
 
 \subsubsection{\texorpdfstring{Version 11.0 (released
-\texttt{2025-10-05})}{Version 11.0 (released 2025-10-05)}}\label{version-11.0-released-2025-10-05}
+\texttt{2025-10-08})}{Version 11.0 (released 2025-10-08)}}\label{version-11.0-released-2025-10-08}
 
 \begin{itemize}
 \tightlist
 \item
-  Includes vote validation for 2024.
+  Includes vote validation for 2024. Value label numbering has changed
+  as a result.
 \item
-  Adds vote validated registered state as variable (\texttt{v\_state})
+  Adds vote validated registered state as variable (\texttt{vv\_state})
 \item
-  Standardize ``Never Heard of this Person'' in 2013-2014, 2018 to
-  ``Never Heard'' like other years
+  Renames what was previously \texttt{rvweight} as \texttt{vvweight} so
+  that it is consistent with the Common content
+\item
+  Fix: for \texttt{approval\_*}, Standardize ``Never Heard of this
+  Person'' in 2013-2014, 2018 to ``Never Heard'' like other years
   (\href{https://github.com/kuriwaki/cces_cumulative/issues/71}{issue
   71})
 \end{itemize}

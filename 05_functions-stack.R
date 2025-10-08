@@ -349,8 +349,8 @@ std_name <- function(tbl, is_panel = FALSE) {
     tbl <- tbl %>%
       rename(
         weight = commonweight,
-        rvweight = vvweight,
-        rvweight_post = vvweight_post,
+        vvweight = vvweight,
+        vvweight_post = vvweight_post,
         weight_post = commonpostweight,
         approval_pres = CC18_308a,
         approval_rep = CC18_311a,
@@ -388,7 +388,7 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_gov = replace(voted_gov, CC18_409 == 1, 1),
              voted_gov = replace(voted_gov, CC18_409 == 2, 2),
       ) %>%
-      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -418,8 +418,6 @@ std_name <- function(tbl, is_panel = FALSE) {
       # rename
       rename(
         weight = commonweight,
-        rvweight = vvweight,
-        rvweight_post = vvweight_post,
         weight_post = commonpostweight,
         approval_pres = CC20_320a,
         approval_rep = CC20_320f,
@@ -452,7 +450,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_pprm = CL_2020ppep,
         vv_st = CL_state
       ) %>% # combine early vote?
-      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -487,8 +485,6 @@ std_name <- function(tbl, is_panel = FALSE) {
       rename(
         weight = commonweight,
         weight_post = commonpostweight,
-        # rvweight = vvweight,
-        # rvweight_post = vvweight_post,
         # gender = gender4,
         approval_pres = CC22_320a,
         approval_rep = CC22_320f,
@@ -517,7 +513,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_prm = TS_p2022_party,
         vv_st = TS_state
       ) %>%
-      mutate_at(vars(matches("^vv")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -741,7 +737,7 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
       extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
     }
     
-    if (grepl("^vv_", chr_var_name)) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
+    if (str_detect(chr_var_name, "^vv_")) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
       
       list_yr <- mutate(list_yr, 
                         !!chr_var_name := std_vvv(.data[[chr_var_name]], varname = chr_var_name, yrvec = .data[["year"]]))
