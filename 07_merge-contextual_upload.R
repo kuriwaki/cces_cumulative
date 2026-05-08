@@ -5,7 +5,7 @@ library(tigris)
 library(arrow)
 library(cli)
 
-writeToCrunch <- FALSE # to change the crunch dataset
+# writeToCrunch <- FALSE # to change the crunch dataset (disabled)
 
 drop_post <- function(x) filter(x, !str_detect(dataset, "_post"))
 
@@ -180,7 +180,7 @@ load("data/output/01_responses/candidates_key.RData")
 ccc <- read_feather("data/output/01_responses/cumulative_stacked.feather")
 ccc_meta <- readRDS("data/output/02_questions/cumulative_vartable.Rds")
 panel_ids <- readRDS("data/output/01_responses/addon_ids.Rds")
-bs_stata <- read_dta("data/source/cces/schaffner_issues.dta")
+# bs_stata <- read_dta("data/source/cces/schaffner_issues.dta") # only needed for Crunch upload (disabled)
 
 
 
@@ -303,39 +303,40 @@ write_dta(ccc_common, "data/release/cumulative_2006-2024.dta", version = 14)
 
 
 
-# might write to crunch
-if (writeToCrunch) {
-  cli_h1("Writing to crunch")
-  library(crunch)
-  
-  # crunch var
-  bs_df <- bs_stata |> 
-    select(-religion) |> # already in 
-    mutate(case_id = as.character(case_id),
-           year = as.integer(year)) |>
-    select(year, case_id, everything())
-  
-  ccc_crunch <- ccc_common |> 
-    left_join(bs_df, by = c("year", "case_id")) |> 
-    mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) |> 
-    select(year, year_date, everything())
-  
-  write_sav(ccc_crunch, "data/release/cumulative_2006-2021_crunch.sav") 
-  
-  if (file.exists("data/release/cumulative_2006-2021_crunch.sav.gz")) {
-    file.remove("data/release/cumulative_2006-2021_crunch.sav.gz")
-    R.utils::gzip("data/release/cumulative_2006-2021_crunch.sav")
-  }
-  
-  # write to crunch
-  login()
-  deleteDataset("CCES Cumulative Common Dev")
-  newDataset("https://www.dropbox.com/s/p8cx49h82coqfcs/cumulative_2006_2018_crunch.sav?dl=0", 
-             "CCES Cumulative Common Dev")
-  logout()  
-}
+# Crunch upload is disabled in this build. The block below pushed the SPSS-formatted
+# data to Crunch.io and is not needed for the Dataverse release.
+# if (writeToCrunch) {
+#   cli_h1("Writing to crunch")
+#   library(crunch)
+#
+#   # crunch var
+#   bs_df <- bs_stata |>
+#     select(-religion) |> # already in
+#     mutate(case_id = as.character(case_id),
+#            year = as.integer(year)) |>
+#     select(year, case_id, everything())
+#
+#   ccc_crunch <- ccc_common |>
+#     left_join(bs_df, by = c("year", "case_id")) |>
+#     mutate(year_date = as.Date(str_c(as.character(year), "-11-01"), "%Y-%m-%d")) |>
+#     select(year, year_date, everything())
+#
+#   write_sav(ccc_crunch, "data/release/cumulative_2006-2021_crunch.sav")
+#
+#   if (file.exists("data/release/cumulative_2006-2021_crunch.sav.gz")) {
+#     file.remove("data/release/cumulative_2006-2021_crunch.sav.gz")
+#     R.utils::gzip("data/release/cumulative_2006-2021_crunch.sav")
+#   }
+#
+#   # write to crunch
+#   login()
+#   deleteDataset("CCES Cumulative Common Dev")
+#   newDataset("https://www.dropbox.com/s/p8cx49h82coqfcs/cumulative_2006_2018_crunch.sav?dl=0",
+#              "CCES Cumulative Common Dev")
+#   logout()
+# }
 
-cat("Finished merging candidate vars and the rest. Updated Rds and sav. Write to dta. Upload to crunch?\n")
+cat("Finished merging candidate vars and the rest. Updated Rds and dta.\n")
 
 
 
