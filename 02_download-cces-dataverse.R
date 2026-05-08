@@ -1,5 +1,5 @@
 library(ccesMRPprep)
-stopifnot(packageVersion("ccesMRPprep") >= "0.1.12")
+stopifnot(packageVersion("ccesMRPprep") >= "0.1.15")
 library(haven)
 library(glue)
 library(fs)
@@ -12,7 +12,7 @@ dir_create("data/source/cces")
 dir_create("data/output")
 dir_create("data/release")
 
-for (yr in 2006:2023) {
+for (yr in 2006:2025) {
   filedir <- "data/source/cces"
   
   filename <- glue("{yr}_cc.dta")
