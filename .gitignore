@@ -1,6 +1,7 @@
 # data
 ####################
 data/source/*
+!data/source/statecode.csv
 data/source/anes/*
 data/source/cces/*
 data/source/census_demog
