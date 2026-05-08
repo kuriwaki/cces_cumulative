@@ -13,13 +13,13 @@ library(haven)
 library(rprojroot)
 ```
 
-This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2022). 
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2024).
 
 
 
 * [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
-* [*Current Guide*]( 
-https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2022.pdf)
+* [*Current Guide*](
+https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2024.pdf)
 
 Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
@@ -30,12 +30,12 @@ Please feel free to file any questions or requests about the cumulative file as 
 Start by downloading either the `.dta`, `.Rds`, or `.feather` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but feel free to contact me if you need the newest version not on Dataverse. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-# dat <- readRDS(here("data/release/cumulative_2006-2022.Rds"))
-dat <- arrow::read_feather(here::here("data/release/cumulative_2006-2022.feather"))
+# dat <- readRDS(here("data/release/cumulative_2006-2024.rds"))
+dat <- arrow::read_feather(here::here("data/release/cumulative_2006-2024.feather"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-dat <- readRDS("cumulative_2006-2022.Rds")
+dat <- readRDS("cumulative_2006-2024.rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
@@ -69,46 +69,45 @@ select(dat, year, case_id, matches("voted_sen"))
 
 
 
-## Crunch
-
-A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience.  For access to View the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. Some features include:
-
-
-### A web GUI for quickly browsing variables
-
-![Browse Variables with Crunch](guide/01_crunch_browse.gif)
-
-### Quickly check cross-tabs and bar graphs, with customizable formatting
-
-![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
-
-### Sharable widgets.  
-
-
-For questions and more access, please contact the CCES Team.
-
-Crunch datasets can also be manipulated from a R package, `crunch`: <https://github.com/Crunch-io/rcrunch>. 
-
-```{r, eval = FALSE}
-install.packages("crunch")
-```
-
-
-For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a [short vignette in this repo](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/vignette_crunch.md). 
-
-
-
 # Organization of Scripts
 
-R scripts `01` - `07` reproduce the cumulative dataset starting from each year's CCES on dataverse. 
+R scripts `01` - `07` reproduce the cumulative dataset starting from each year's CCES on dataverse.
 
 - `01_define-names-labels.R` constructs two variable name tables -- one that names and describes each variable to be in the final dataset, and another that indicates which variables corresponds to the candidate columns in each year's CCES.
 - `02_download-cces-dataverse.R` indicates a (partial) way to download the component CCES data from dataverse  so that the rest of the code can be run.
 - `03_read-common.R` pulls out the common contents with minimal formatting (e.g. state, case identifier variable names)
 - `04_prepare-fixes.R` makes some fixes to variables in each year's datasets.
 - `05_stack-cumulative.R` pulls out the variables of interest from annual CCES files, we stack this into a long dataset where each row is a respondent from CCES.
-- `06_extract_politicians.R` pulls out the "contextual variables" at the respondent-level. information on candidates and representatives. It uses some long format voting tables from `05`.
-- `07_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves a `.Rds` and `sav` version. 
+- `06_extract-politicians.R` pulls out the "contextual variables" at the respondent-level. information on candidates and representatives. It uses some long format voting tables from `05`.
+- `07_merge-contextual_upload.R` combines all the variables together, essentially combining the output of `04` on `05`. Saves `.rds`, `.dta`, and `.feather` versions.
 - `08_format-crunch.R` logs into Crunch, and adds variable names, descriptions, groupings, and other Crunch attributes to the Crunch dataset. It also adds variables and exports a `.dta` version
 
-More scripts  are in `00_prepare`, they format other datasets like NOMINATE, CQ, and DIME. 
+More scripts  are in `00_prepare`, they format other datasets like NOMINATE, CQ, and DIME.
+
+
+# Crunch (No Longer Updated)
+
+A version of the dataset is also included in Crunch, a database platform that makes it easy to view and analyze survey data either with our without any programming experience.  For access to View the dataset (free), please sign up here: <https://harvard.az1.qualtrics.com/jfe/form/SV_066hQi4Eeco3Kap>. Some features include:
+
+
+## A web GUI for quickly browsing variables
+
+![Browse Variables with Crunch](guide/01_crunch_browse.gif)
+
+## Quickly check cross-tabs and bar graphs, with customizable formatting
+
+![Cross-tabulate Variables with Crunch](guide/02_crunch_tab.gif)
+
+## Sharable widgets.
+
+
+For questions and more access, please contact the CCES Team.
+
+Crunch datasets can also be manipulated from a R package, `crunch`: <https://github.com/Crunch-io/rcrunch>.
+
+```{r, eval = FALSE}
+install.packages("crunch")
+```
+
+
+For a bit more on using the R crunch package for your own purposes, see the crunch package vignettes, pkgdown website, or a [short vignette in this repo](https://github.com/kuriwaki/cces_cumulative/blob/master/guide/vignette_crunch.md).
