@@ -230,7 +230,7 @@ For example, to download version 10 of the feather verison of the dataset, the R
 library(dataverse)
 cc <- get_dataframe_by_name(
   filename = "cumulative_2006-2024.feather",
-  version = "10",
+  version = "11",
   dataset = "10.7910/DVN/II2DB6",
   original = TRUE,
   .f = arrow::read_feather,
@@ -1471,9 +1471,9 @@ Routine edits add new rows, add new variables, and change the customization of e
 
 ### Version 11.0 (released `2025-10-08`)
 
-- Includes vote validation for 2024. Value label numbering has changed as a result.
+- Includes vote validation variables for 2024 (`vv_regstatus`, `vv_turnout_gvm`, etc..). Value label numbering has changed as a result.
 - Adds vote validated registered state as variable (`vv_state`)
-- Renames what was previously `rvweight` as `vvweight` so that it is consistent with the Common content
+- Renames what was previously `rvweight` to `vvweight` so that it is consistent with the Common content
 - Fix: for `approval_*`, Standardize "Never Heard of this Person" in 2013-2014, 2018 to "Never Heard" like other years ([issue 71](https://github.com/kuriwaki/cces_cumulative/issues/71))
  
 ### Version 10.0 (released `2025-05-21`)

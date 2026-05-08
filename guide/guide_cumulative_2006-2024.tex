@@ -345,7 +345,7 @@ dataset, the R code is the following:
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
   \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2024.feather"}\NormalTok{,}
-  \AttributeTok{version =} \StringTok{"10"}\NormalTok{,}
+  \AttributeTok{version =} \StringTok{"11"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ arrow}\SpecialCharTok{::}\NormalTok{read\_feather,}
@@ -3590,12 +3590,13 @@ description/metadata changes.
 \begin{itemize}
 \tightlist
 \item
-  Includes vote validation for 2024. Value label numbering has changed
+  Includes vote validation variables for 2024 (\texttt{vv\_regstatus},
+  \texttt{vv\_turnout\_gvm}, etc..). Value label numbering has changed
   as a result.
 \item
   Adds vote validated registered state as variable (\texttt{vv\_state})
 \item
-  Renames what was previously \texttt{rvweight} as \texttt{vvweight} so
+  Renames what was previously \texttt{rvweight} to \texttt{vvweight} so
   that it is consistent with the Common content
 \item
   Fix: for \texttt{approval\_*}, Standardize ``Never Heard of this
