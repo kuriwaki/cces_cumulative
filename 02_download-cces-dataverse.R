@@ -1,5 +1,5 @@
 library(ccesMRPprep)
-stopifnot(packageVersion("ccesMRPprep") >= "0.1.15")
+stopifnot(packageVersion("ccesMRPprep") >= "0.1.15") # Adam 2025: can only get 0.1.14
 library(haven)
 library(glue)
 library(fs)
@@ -23,6 +23,6 @@ for (yr in 2006:2025) {
     next
   
   cli_alert_info("Will download and write {.file {filename}}.")
-  dataverse_dl <- get_cces_dataverse(name = yr)
+  dataverse_dl <- get_cces_dataverse(name = yr) # Adam 2025 - can't get 2025 DTA (from Dropbox)
   write_dta(dataverse_dl, path(filedir, filename))
 }

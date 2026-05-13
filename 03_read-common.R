@@ -23,13 +23,25 @@ std_dv <- function(path, guess_year = TRUE) {
   
   
   ## guess ID
-  cnames <- colnames(tbl)
-  if ("case_id" %in% cnames) orig_key <- "case_id"
-  if ("caseid" %in% cnames) orig_key <- "caseid"
-  if ("V101" %in% cnames) orig_key <- "V101"
-  if ("V100" %in% cnames) orig_key <- "V100"
-  if ("v100" %in% cnames) orig_key <- "v100"
-  if ("v1000" %in% cnames) orig_key <- "v1000"
+  cnames <- colnames(tbl) 
+  # Adam 2025 - possible solution for 2010 and 2011
+  orig_key <- recode_values(
+    cnames,
+    "case_id" ~ "case_id",
+    "caseid" ~ "caseid",
+    "V101" ~ "V101",
+    "V100" ~ "V100",
+    "v100" ~ "v100",
+    "v1000" ~ "v1000"
+                            ) |> 
+    keep(~ !is.na(.x)) |> 
+    first()
+  # if ("case_id" %in% cnames) orig_key <- "case_id" 
+  # if ("caseid" %in% cnames) orig_key <- "caseid"
+  # if ("V101" %in% cnames) orig_key <- "V101"
+  # if ("V100" %in% cnames) orig_key <- "V100"
+  # if ("v100" %in% cnames) orig_key <- "v100"
+  # if ("v1000" %in% cnames) orig_key <- "v1000"
   
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
@@ -310,17 +322,17 @@ check_pre_post <- function(tbl) {
 
 # Data -----------
 # 2012 and before (compiled by Stephen Pettigrew and others)
-ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
+ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE) 
 ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not existreturn(code
 
 
 # individual files versions from 2008, 2010, and 2012
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
-cc07 <- std_dv("data/source/cces/2007_cc.dta")
+cc07 <- std_dv("data/source/cces/2007_cc.sav") # Adam 2025 - SAV or DTA?
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
-cc10 <- std_dv("data/source/cces/2010_cc.dta")
-cc11 <- std_dv("data/source/cces/2011_cc.dta")
+cc10 <- std_dv("data/source/cces/2010_cc.dta") # Adam 2025 - has "case_id" and "V101" -> error for 'rename(case_id = !! orig_key)'
+cc11 <- std_dv("data/source/cces/2011_cc.dta") # Adam 2025 - has "case_id" and "V101" -> error for 'rename(case_id = !! orig_key)'
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
 panel12 <- std_dv("data/source/cces/2012_panel_h.dta")
 cc13 <- std_dv("data/source/cces/2013_cc.dta")

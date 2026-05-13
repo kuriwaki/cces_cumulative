@@ -50,7 +50,8 @@ ccs <- list(
   "2021" = std_name(cc21),
   "2022" = std_name(cc22),
   "2023" = std_name(cc23),
-  "2024" = std_name(cc24)
+  "2024" = std_name(cc24),
+  # "2025" = std_name(cc25) # Adam 2025 - requires editing function
 )
 
 cli_alert_success("Finished reading in data and standardizing names")

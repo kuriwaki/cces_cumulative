@@ -541,7 +541,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (identical(cces_year, 2024L)) {
     tbl <- tbl %>%
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) %>% # Adam 2025 - same for cc25
       mutate(across(matches("TS_(g|p)2024$"), 
              \(x) 
              labelled(
@@ -555,7 +555,7 @@ std_name <- function(tbl, is_panel = FALSE) {
                      "voted by unknown method" = 6,
                      "did not vote" = 7
                    ))
-      )) |> 
+      )) |> # Adam 2025 - different from cc25
       mutate(across(matches("TS_p2024_party$"), 
              \(x) 
                  labelled(
