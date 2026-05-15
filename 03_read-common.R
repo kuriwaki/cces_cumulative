@@ -354,43 +354,43 @@ cc24 <- std_dv("data/source/cces/2024_cc.dta")
 cc25 <- std_dv("data/source/cces/2025_cc.dta")
 
 # modules
-hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
+# hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
 hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
-hua18 <- std_dv("data/source/cces/2018_hua.dta")
-hub18 <- std_dv("data/source/cces/2018_hub.dta")
+# hua18 <- std_dv("data/source/cces/2018_hua.dta")
+# hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
 cli_alert_success("Standardized all datasets.")
 
-# additional moduels ---------
-# 2006 module addition
-# need for accountability paper 
-mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
-mit_fmt <- mit06_raw |>
-  mutate(year = 2006,
-         cong = 109L,
-         cong_up = 110L,
-         dist = as.integer(district),
-         dist_up = as.integer(district),
-         starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
-         fips  = zap_labels(inputstate),
-         state = NULL) |>
-  left_join(select(statecode, fips, state, st)) |> 
-  mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
-         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |> 
-  rename(case_id = caseid) |> 
-  select(year, case_id, state, st, cong, dist, dist_up, everything())
-mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
+# additional modules ---------
+# # 2006 module addition
+# # need for accountability paper 
+# mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
+# mit_fmt <- mit06_raw |>
+#   mutate(year = 2006,
+#          cong = 109L,
+#          cong_up = 110L,
+#          dist = as.integer(district),
+#          dist_up = as.integer(district),
+#          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
+#          fips  = zap_labels(inputstate),
+#          state = NULL) |>
+#   left_join(select(statecode, fips, state, st)) |> 
+#   mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
+#          dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |> 
+#   rename(case_id = caseid) |> 
+#   select(year, case_id, state, st, cong, dist, dist_up, everything())
+# mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
 
-# 2008 addition
-# (used above in std_dv, because that only takes a path)
-read_dta("data/source/cces/2008_hum.dta") |> 
-  rename_all(str_to_upper) |> 
-  select(-HUM302, -HUM304) |> # decimal labelled
-  write_dta("data/source/cces/2008_hum_allcapvars.dta")
-
-hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
-  mutate(V300 = as_datetime(V300))
+# # 2008 addition
+# # (used above in std_dv, because that only takes a path)
+# read_dta("data/source/cces/2008_hum.dta") |> 
+#   rename_all(str_to_upper) |> 
+#   select(-HUM302, -HUM304) |> # decimal labelled
+#   write_dta("data/source/cces/2008_hum_allcapvars.dta")
+# 
+# hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
+#   mutate(V300 = as_datetime(V300))
 
 
 check_pre_post(cc08)
@@ -412,9 +412,10 @@ save(
   cc20, cc21, cc22, cc23,
   cc24, cc25,
   panel12, 
-  mit06_add,
-  hu08,  hu09, 
-  hua18, hub18,
+  # mit06_add,
+  # hu08,  
+  hu09, 
+  # hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
 )
 
