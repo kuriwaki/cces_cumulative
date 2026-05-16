@@ -4,7 +4,9 @@ library(haven)
 library(glue)
 library(fs)
 library(cli)
+library(dataverse)
 
+Sys.setenv("DATAVERSE_SERVER" = "dataverse.harvard.edu")
 # this will not recreate all the datasets on my local project, but it gives a start.
 # Contact me if you need any data used in subsequent code but not available in Dataverse.
 
@@ -27,26 +29,23 @@ for (yr in 2006:2025) {
   write_dta(dataverse_dl, path(filedir, filename))
 }
 
-# Success!
-download.file(
-  "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/26451/1WJB6C", 
-  destfile = "data/source/cces/2006_2012_cumulative.dta"
-              )
+# Old CCES
+ccp <- get_dataframe_by_name(
+  filename = "cces_common_cumulative_4.dta", "10.7910/DVN/26451", version = "5.0",
+  .f = haven::read_dta, original = TRUE)
+write_dta(ccp, "data/source/cces/2006_2012_cumulative.dta")
 
 # Modules and panels ----------
+cc18_comp <- get_dataframe_by_name(
+  filename = "CCES18_CD_vv.dta", "10.7910/DVN/KDAWBM", version = "1",
+  .f = haven::read_dta, original = TRUE)
+write_dta(cc18_comp, "data/source/cces/2018_cc_competitive.dta")
 
-# read_dta("data/source/cces/2018_cc_competitive.dta") # doi:10.7910/DVN/IA9SND
-# This is the correct DOI but the download doesn't work
-download.file(
-  "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/IA9SND", 
-  destfile = "data/source/cces/2018_cc_competitive.dta"
-)
-
-# Can't find the corresponding DOI
-read_dta("data/source/cces/2012_panel_h.dta")
-
-# Can't find the corresponding DOI
-read_dta("data/source/cces/2009_hum_recontact.dta")
-
-
+# Remaining ones:
+# `2012_panel_h.dta`: "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", "10.7910/DVN/24416", version = "4.0", .f = haven::read_dta
+# `2009_hum_recontact.dta`: "cces09_harvard_output.tab", "10.7910/DVN/24416", version = "1.0", .f = haven::read_dta
+# `2008_hum.dta`: "cces08_harvard_output.dta", "10.7910/DVN/WXXXJO", version = "2.0", .f = haven::read_dta
+# `2006_mit_final_withcommon_validated_new.dta`: "mit_final_withcommon_validated_new.tab", "10.7910/DVN/EK9MGR", version = "2.0", .f = haven::read_dta
+# `2018_hua.dta` "CCES18_HUA_OUTPUT_vv.tab", "10.7910/DVN/ZLNSYN", version = "2", .f = haven:read_sav
+# `2018_hub.dta` "CCES18_HUB_OUTPUT_vv.tab", "10.7910/DVN/ZLNSYN", version = "2", .f = haven:read_sav
 
