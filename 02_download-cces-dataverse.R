@@ -41,6 +41,7 @@ write_dta(ccp, "data/source/cces/2006_2012_cumulative.dta")
 
 # Modules and panels ----------
 
+# TODO: This differs from the version on Dropbox
 cc18_comp <- get_dataframe_by_name(
   filename = "CCES18_CD_vv.dta", 
   "10.7910/DVN/KDAWBM", 
@@ -50,6 +51,7 @@ cc18_comp <- get_dataframe_by_name(
   )
 write_dta(cc18_comp, "data/source/cces/2018_cc_competitive.dta")
 
+# TODO: This differs from the version on Dropbox
 panel12 <- get_dataframe_by_name(
   filename = "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", 
   "10.7910/DVN/24416", 
@@ -75,11 +77,41 @@ recontact09 <- get_dataframe_by_name(
 )
 write_dta(recontact09, "data/source/cces/2009_hum_recontact.dta")
 
-# Remaining ones:
-# `2012_panel_h.dta`: "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", "10.7910/DVN/24416", version = "4.0", .f = haven::read_dta
-# `2009_hum_recontact.dta`: "cces09_harvard_output.tab", "10.7910/DVN/NLCNWR", version = "1.0", .f = haven::read_dta
-# `2008_hum.dta`: "cces08_harvard_output.dta", "10.7910/DVN/WXXXJO", version = "2.0", .f = haven::read_dta
-# `2006_mit_final_withcommon_validated_new.dta`: "mit_final_withcommon_validated_new.tab", "10.7910/DVN/EK9MGR", version = "2.0", .f = haven::read_dta
-# `2018_hua.dta` "CCES18_HUA_OUTPUT_vv.tab", "10.7910/DVN/ZLNSYN", version = "2", .f = haven:read_sav
-# `2018_hub.dta` "CCES18_HUB_OUTPUT_vv.tab", "10.7910/DVN/ZLNSYN", version = "2", .f = haven:read_sav
+# Possibly no longer used in pipeline
+hum08 <- get_dataframe_by_name(
+  filename = "cces08_harvard_output.dta", 
+  "10.7910/DVN/WXXXJO", 
+  version = "2.0",
+  .f = haven::read_dta, 
+  original = TRUE
+)
+write_dta(hum08, "data/source/cces/2008_hum.dta")
+
+# TODO: This file is either not a DTA, SAV, etc. and even the manual download seems to be corrupt: https://dataverse.harvard.edu/file.xhtml?fileId=4101243&datasetVersionId=212352
+mit06 <- get_dataframe_by_name(
+  filename = "mit_final_withcommon_validated_new.tab", 
+  "10.7910/DVN/EK9MGR", 
+  version = "2.0",
+  .f = haven::read_dta, 
+  original = TRUE
+)
+write_dta(mit06, "data/source/cces/2006_mit_final_withcommon_validated_new.dta")
+
+hua18 <- get_dataframe_by_name(
+  filename = "CCES18_HUA_OUTPUT_vv.tab", 
+  "10.7910/DVN/ZLNSYN", 
+  version = "2.0",
+  .f = haven::read_sav,
+  original = TRUE
+)
+write_sav(hua18, "data/source/cces/2018_hua.sav")
+
+hub18 <- get_dataframe_by_name(
+  filename = "CCES18_HUB_OUTPUT_vv.tab", 
+  "10.7910/DVN/ZLNSYN", 
+  version = "2.0",
+  .f = haven::read_sav, 
+  original = TRUE
+)
+write_sav(hub18, "data/source/cces/2018_hub.sav")
 
