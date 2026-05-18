@@ -328,7 +328,7 @@ ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does
 
 # individual files versions from 2008, 2010, and 2012
 cc06 <- std_dv("data/source/cces/2006_cc.dta")
-cc07 <- std_dv("data/source/cces/2007_cc.sav") # Adam 2025 - SAV or DTA?
+cc07 <- std_dv("data/source/cces/2007_cc.sav")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
 cc10 <- std_dv("data/source/cces/2010_cc.dta") # Adam 2025 - has "case_id" and "V101" -> error for 'rename(case_id = !! orig_key)'

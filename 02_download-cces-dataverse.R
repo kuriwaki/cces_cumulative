@@ -31,19 +31,53 @@ for (yr in 2006:2025) {
 
 # Old CCES
 ccp <- get_dataframe_by_name(
-  filename = "cces_common_cumulative_4.dta", "10.7910/DVN/26451", version = "5.0",
-  .f = haven::read_dta, original = TRUE)
+  filename = "cces_common_cumulative_4.dta", 
+  "10.7910/DVN/26451", 
+  version = "5.0",
+  .f = haven::read_dta, 
+  original = TRUE
+  )
 write_dta(ccp, "data/source/cces/2006_2012_cumulative.dta")
 
 # Modules and panels ----------
+
 cc18_comp <- get_dataframe_by_name(
-  filename = "CCES18_CD_vv.dta", "10.7910/DVN/KDAWBM", version = "1",
-  .f = haven::read_dta, original = TRUE)
+  filename = "CCES18_CD_vv.dta", 
+  "10.7910/DVN/KDAWBM", 
+  version = "1",
+  .f = haven::read_dta, 
+  original = TRUE
+  )
 write_dta(cc18_comp, "data/source/cces/2018_cc_competitive.dta")
+
+panel12 <- get_dataframe_by_name(
+  filename = "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", 
+  "10.7910/DVN/24416", 
+  version = "4.0",
+  .f = haven::read_dta, 
+  original = TRUE
+)
+# panel12 <- get_dataframe_by_name(
+#   filename = "CCES_Panel_Full3waves_VV_V4.dta", 
+#   "10.7910/DVN/TOE8I1", 
+#   version = "11",
+#   .f = haven::read_dta, 
+#   original = TRUE
+# )
+write_dta(panel12, "data/source/cces/2012_panel_h.dta")
+
+recontact09 <- get_dataframe_by_name(
+  filename = "cces09_harvard_output.tab", 
+  "10.7910/DVN/NLCNWR", 
+  version = "1.0",
+  .f = haven::read_dta, 
+  original = TRUE
+)
+write_dta(recontact09, "data/source/cces/2009_hum_recontact.dta")
 
 # Remaining ones:
 # `2012_panel_h.dta`: "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", "10.7910/DVN/24416", version = "4.0", .f = haven::read_dta
-# `2009_hum_recontact.dta`: "cces09_harvard_output.tab", "10.7910/DVN/24416", version = "1.0", .f = haven::read_dta
+# `2009_hum_recontact.dta`: "cces09_harvard_output.tab", "10.7910/DVN/NLCNWR", version = "1.0", .f = haven::read_dta
 # `2008_hum.dta`: "cces08_harvard_output.dta", "10.7910/DVN/WXXXJO", version = "2.0", .f = haven::read_dta
 # `2006_mit_final_withcommon_validated_new.dta`: "mit_final_withcommon_validated_new.tab", "10.7910/DVN/EK9MGR", version = "2.0", .f = haven::read_dta
 # `2018_hua.dta` "CCES18_HUA_OUTPUT_vv.tab", "10.7910/DVN/ZLNSYN", version = "2", .f = haven:read_sav
