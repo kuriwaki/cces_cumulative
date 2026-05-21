@@ -247,6 +247,7 @@ blend_post <- function(tbl) {
 }
 
 # list to store data with renamed variables
+cc07 <- zap_labels(cc07) # in order that `clean_out()` works
 cclist <- list(`2006` = cc06, 
                # `2006m` = mit06_add,
                `2007` = cc07, 
@@ -271,6 +272,7 @@ cclist <- list(`2006` = cc06,
                `2022` = cc22,
                `2023` = cc23,
                `2024` = cc24,
+               `2025` = cc25,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
@@ -283,7 +285,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2024, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -361,8 +363,8 @@ save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 
-ri_mc_match |> 
-  distinct(year, case_id, dataset) |> 
-  arrow::write_feather("~/Dropbox/CCES_representation/data/source/cces/cces_caseid_dataset_key.feather")
+# ri_mc_match |> 
+#   distinct(year, case_id, dataset) |> 
+#   arrow::write_feather("~/Dropbox/CCES_representation/data/source/cces/cces_caseid_dataset_key.feather")
 
 cli_alert_success("Finished matching candidate info to identifiers")

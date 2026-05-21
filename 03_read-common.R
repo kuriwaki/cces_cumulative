@@ -354,7 +354,7 @@ cc24 <- std_dv("data/source/cces/2024_cc.dta")
 cc25 <- std_dv("data/source/cces/2025_cc.dta")
 
 # modules
-# hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
+hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta") # used in 06_extract...
 hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
 # hua18 <- std_dv("data/source/cces/2018_hua.dta")
 # hub18 <- std_dv("data/source/cces/2018_hub.dta")
@@ -388,9 +388,10 @@ cli_alert_success("Standardized all datasets.")
 #   rename_all(str_to_upper) |> 
 #   select(-HUM302, -HUM304) |> # decimal labelled
 #   write_dta("data/source/cces/2008_hum_allcapvars.dta")
-# 
-# hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
-#   mutate(V300 = as_datetime(V300))
+
+# used later in 06_extract...
+hu08 <- anti_join(hu08, select(cc08, year, case_id)) |>
+  mutate(V300 = as_datetime(V300))
 
 
 check_pre_post(cc08)

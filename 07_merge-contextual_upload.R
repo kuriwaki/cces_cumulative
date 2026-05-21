@@ -276,9 +276,9 @@ ccc_factor <- ccc_fac |>
 # Save ---------
 cli_h1("Save Final data")
 # needed for CCES_representation (2025-09-19)
-write_feather(ccc_df, "data/release/cumulative_2006-2024_addon.feather")
-write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.feather")
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2024.rds", compress = "xz")
+write_feather(ccc_df, "data/release/cumulative_2006-2025_addon.feather")
+write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2025.feather")
+write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2025.rds", compress = "xz")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
@@ -298,8 +298,8 @@ for (v in colnames(ccc_common)) {
 if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
   cli::cli_abort("Found Duplicate case IDs")
 
-write_rds(ccc_common, "data/output/cumulative_2006-2024_factor.rds")
-write_dta(ccc_common, "data/release/cumulative_2006-2024.dta", version = 14)
+write_rds(ccc_common, "data/output/cumulative_2006-2025_factor.rds")
+write_dta(ccc_common, "data/release/cumulative_2006-2025.dta", version = 14)
 
 
 
