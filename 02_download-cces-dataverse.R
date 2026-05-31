@@ -77,6 +77,16 @@ recontact09 <- get_dataframe_by_name(
 )
 write_dta(recontact09, "data/source/cces/2009_hum_recontact.dta")
 
+# County lookups ----------
+county17 <- get_dataframe_by_name(
+  filename = "CCES17_Common_county.tab",
+  "10.7910/DVN/3STEZY",
+  version = "2.0",
+  .f = \(path) readr::read_tsv(path, show_col_types = FALSE),
+  original = TRUE
+)
+readr::write_csv(county17, "data/source/cces/CCES17_Common_county.csv")
+
 # Possibly no longer used in pipeline
 hum08 <- get_dataframe_by_name(
   filename = "cces08_harvard_output.dta", 
@@ -114,4 +124,3 @@ hub18 <- get_dataframe_by_name(
   original = TRUE
 )
 write_sav(hub18, "data/source/cces/2018_hub.sav")
-
