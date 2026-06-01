@@ -123,22 +123,35 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_sen2 = cc09_43c,
         approval_gov = cc09_43f,
         economy_retro = cc09_20,
-        voted_pres_08 = cc09_31,
-        pid3 = cc423,
-        pid7 = cc424,
-        ideo5 = v261,
-        weight = v200,
-        educ = v213,
-        newsint = v244,
-        marstat = v214,
-        family_income_old = v246,
-        gender = v208,
-        age = v288,
-        birthyr = v207,
-        race = v211,
-      ) %>% 
-      mutate(zipcode = as.character(as_factor(v253)),
-             county_fips = as.character(as_factor(v269)))
+        voted_pres_08 = cc09_31
+      )
+    
+    if ("v200" %in% colnames(tbl)) { # Old private 2009 Harvard recontact file
+      tbl <- tbl %>%
+        rename(
+          pid3 = cc423,
+          pid7 = cc424,
+          ideo5 = v261,
+          weight = v200,
+          educ = v213,
+          newsint = v244,
+          marstat = v214,
+          family_income_old = v246,
+          gender = v208,
+          age = v288,
+          birthyr = v207,
+          race = v211,
+        ) %>% 
+        mutate(zipcode = as.character(as_factor(v253)),
+               county_fips = as.character(as_factor(v269)))
+    } else { # Public 2009 Harvard module file
+      tbl <- tbl %>%
+        rename(
+          family_income_old = income
+        ) %>%
+        mutate(zipcode = as.character(as_factor(inputzip)),
+               county_fips = NA_character_)
+    }
   }
   
   # 2010 - 2011 ----

@@ -68,14 +68,14 @@ panel12 <- get_dataframe_by_name(
 # )
 write_dta(panel12, "data/source/cces/2012_panel_h.dta")
 
-recontact09 <- get_dataframe_by_name(
+hum09 <- get_dataframe_by_name(
   filename = "cces09_harvard_output.tab", 
   "10.7910/DVN/NLCNWR", 
   version = "1.0",
   .f = haven::read_dta, 
   original = TRUE
 )
-write_dta(recontact09, "data/source/cces/2009_hum_recontact.dta")
+write_dta(hum09, "data/source/cces/2009_hum.dta")
 
 # County lookups ----------
 county17 <- get_dataframe_by_name(

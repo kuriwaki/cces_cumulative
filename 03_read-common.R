@@ -20,6 +20,7 @@ std_dv <- function(path, guess_year = TRUE) {
   
   ## then
   tbl <- haven::read_dta(path, encoding = 'latin1')
+  is_public_hum09 <- FALSE
   
   
   ## guess ID
@@ -45,6 +46,12 @@ std_dv <- function(path, guess_year = TRUE) {
   
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
+  if (guess_year && str_detect(path, "2009_hum\\.dta$")) {
+    tbl <- tbl |>
+      mutate(v259 = inputstate,
+             v264 = cdid)
+    is_public_hum09 <- TRUE
+  }
   
   # add congressional session
   tbl_cong <- tbl |> 
@@ -65,6 +72,11 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year | guessed_yr %% 2 == 0)
     tbl_cd <- std_distpost(tbl_cd, guess_year, guessed_yr)
   
+  if (is_public_hum09) {
+    tbl_cd <- tbl_cd |>
+      select(-any_of(c("v259", "v264", "cdid")))
+  }
+
   # 2006 is special but just for CC
   if (!guess_year) {
     tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) |> 
@@ -355,7 +367,7 @@ cc25 <- std_dv("data/source/cces/2025_cc.dta")
 
 # modules
 hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta") # used in 06_extract...
-hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
+hu09 <- std_dv("data/source/cces/2009_hum.dta")
 # hua18 <- std_dv("data/source/cces/2018_hua.dta")
 # hub18 <- std_dv("data/source/cces/2018_hub.dta")
 

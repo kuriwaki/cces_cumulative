@@ -219,7 +219,7 @@ carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "co
 # Rename variables ----
 master <- readRDS("data/output/02_questions/variable_std_key.Rds")
 master$`2008h` <- master$`2008`
-master$`2009r` <- master$`2009`
+master$`2009hu` <- master$`2009`
 master$`2012p` <- master$`2012`
 master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
@@ -254,7 +254,7 @@ cclist <- list(`2006` = cc06,
                `2008` = cc08, 
                `2008h` = hu08, 
                `2009` = cc09, 
-               `2009r` = hu09,
+               `2009hu` = hu09,
                `2010` = cc10, 
                `2011` = cc11, 
                `2012` = cc12, 
@@ -285,7 +285,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009hu", "2012p"
   for (var in master$name) {
     
     # lookup this var
