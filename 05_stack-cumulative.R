@@ -181,7 +181,7 @@ inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) %>%
     `98` = "Skipped",
     `99` = "Not Asked"))
 
-faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>% 
+faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
          faminc_num = coalesce(family_income_old, family_income)) %>% 
   transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
@@ -441,7 +441,7 @@ cong       <- find_stack(ccs, cong, "integer")
 cong_up    <- find_stack(ccs, cong_up, "integer")
 
 cli_h1("Joining geography")
-state      <- find_stack(ccs, state, "character")
+state      <- find_stack(ccs, state, "character") # TODO: case_id 4998 in 2009 is duping DC with diff spellings...
 state_post      <- find_stack(ccs, state_post, "character")
 st      <- find_stack(ccs, st, "character")
 st_post      <- find_stack(ccs, st_post, "character")
@@ -470,6 +470,7 @@ cd_up_post    <- find_stack(ccs, cd_up_post, "character")
 cli_alert_success("Finished joining each variable. Now combining them")
 
 ## format state and CD, then zipcode and county ----
+# TODO: STOP HERE! There was a merge issue above, creating many dups...
 stcd <- left_join(state, st) %>%
   left_join(cong) %>%
   left_join(cong_up) %>%

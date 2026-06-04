@@ -124,7 +124,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = cc09_43f,
         economy_retro = cc09_20,
         voted_pres_08 = cc09_31
-      )
+      ) |> 
+      mutate(state = str_to_title(state))
     
     if ("v200" %in% colnames(tbl)) { # Old private 2009 Harvard recontact file
       tbl <- tbl %>%
