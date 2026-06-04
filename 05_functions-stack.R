@@ -221,8 +221,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_sen2 = CC12_315c,
         approval_gov = CC12_308d,
         economy_retro = CC12_302,
-        intent_pres_12 = CC12_354c,
-        intent_pres_12x = CC12_354b,
+        intent_pres_12 = CC12_354,
+        # intent_pres_12 = CC12_354c,
+        # TODO: unclear what intent_pres_12x means in the new version
+        # intent_pres_12x = CC12_354b,
         voted_pres_12 = CC12_410a,
         voted_pres_08 = CC12_317,
         voted_rep = CC12_412,
@@ -679,10 +681,15 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (cces_year[1] %in% c(2012:2025) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
-        reg_self = votereg,
-        family_income = faminc,
-        zipcode = lookupzip,
-        county_fips = countyfips
+        # reg_self = votereg,
+        reg_self = any_of(c("votereg_12", "votereg")),
+        # family_income = faminc,
+        family_income = any_of(c("faminc_12", "faminc")),
+        # zipcode = lookupzip,
+        zipcode = any_of(c("regzip_12_pre", "lookupzip")), # 2012 could also be regzip_12_post
+        # county_fips = countyfips
+        county_fips = any_of(c("countyfips_12", "countyfips")),
+        birthyr = any_of("birthyr_12")
       ) %>%
       mutate(
         age = year - birthyr
@@ -691,6 +698,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   
   if (cces_year[1] != 2022) {
     tbl <- tbl %>% 
+      rename(marstat = any_of("marstat_12")) |> 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
@@ -703,6 +711,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   } else {
     tbl <- tbl |> 
+      rename(gender = any_of("gender_12")) |> 
       mutate(sex = gender)
   }
   
