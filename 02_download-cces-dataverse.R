@@ -82,7 +82,7 @@ county17 <- get_dataframe_by_name(
   filename = "CCES17_Common_county.tab",
   "10.7910/DVN/3STEZY",
   version = "2.0",
-  .f = \(path) readr::read_tsv(path, show_col_types = FALSE),
+  .f = \(path) readr::read_csv(path, show_col_types = FALSE),
   original = TRUE
 )
 readr::write_csv(county17, "data/source/cces/CCES17_Common_county.csv")
