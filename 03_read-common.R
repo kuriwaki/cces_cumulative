@@ -378,24 +378,24 @@ hu09 <- std_dv("data/source/cces/2009_hum.dta")
 cli_alert_success("Standardized all datasets.")
 
 # additional modules ---------
-# # 2006 module addition
-# # need for accountability paper 
-# mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
-# mit_fmt <- mit06_raw |>
-#   mutate(year = 2006,
-#          cong = 109L,
-#          cong_up = 110L,
-#          dist = as.integer(district),
-#          dist_up = as.integer(district),
-#          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
-#          fips  = zap_labels(inputstate),
-#          state = NULL) |>
-#   left_join(select(statecode, fips, state, st)) |> 
-#   mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
-#          dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |> 
-#   rename(case_id = caseid) |> 
-#   select(year, case_id, state, st, cong, dist, dist_up, everything())
-# mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
+# 2006 module addition
+# need for accountability paper
+mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
+mit_fmt <- mit06_raw |>
+  mutate(year = 2006,
+         cong = 109L,
+         cong_up = 110L,
+         dist = as.integer(district),
+         dist_up = as.integer(district),
+         starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
+         fips  = zap_labels(inputstate),
+         state = NULL) |>
+  left_join(select(statecode, fips, state, st)) |>
+  mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
+         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |>
+  rename(case_id = caseid) |>
+  select(year, case_id, state, st, cong, dist, dist_up, everything())
+mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))
 
 
 # # 2008 addition
