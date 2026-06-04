@@ -113,7 +113,8 @@ std_state <- function(tbl, guess_year, guessed_yr) {
   
   # guess variable based on year
   statevar <- case_when(
-    guessed_yr %in% c(2007, 2012:2025) ~ "inputstate",
+    guessed_yr %in% 2012 ~ "inputstate_10", # or inputstate_12 (for "data/source/cces/2012_panel_h.dta")
+    guessed_yr %in% c(2007, 2013:2025) ~ "inputstate",
     guessed_yr %in% c(2008, 2010:2011) ~ "V206",
     guessed_yr %in% 2009 ~ "v259",
     guessed_yr %in% 2006 ~ "v1002"
@@ -157,7 +158,8 @@ std_statepost <- function(tbl, guess_year, guessed_yr) {
   }
   
   statevar <- case_when(
-    guessed_yr %in% c(2012, 2014, 2016, 2018, 2020, 2022, 2024) ~ "inputstate_post",
+    guessed_yr %in% 2012 ~ "inputstate_post_10", # or inputstate_post_12 (for "data/source/cces/2012_panel_h.dta")
+    guessed_yr %in% c(2014, 2016, 2018, 2020, 2022, 2024) ~ "inputstate_post",
     guessed_yr %in% c(2010) ~ "V206_post",
     guessed_yr %in% 2008 ~ "V259"
   )
@@ -193,7 +195,8 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
       guessed_yr %in% c(2019, 2020) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
-      guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
+      guessed_yr %in% 2012 ~ "cdid112_10", # or cdid112_12 or cdid113_12 (for "data/source/cces/2012_panel_h.dta")
+      guessed_yr %in% c(2015, 2014) ~ "cdid",
       guessed_yr %in% c(2010, 2011) ~ "V276",
       guessed_yr %in% 2009 ~ "v264",
       guessed_yr %in% 2008 ~ "V250",
@@ -207,7 +210,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
     if (guessed_yr == 2022) distupvar <- "cdid118"
     if (guessed_yr == 2018) distupvar <- "cdid116"
     if (guessed_yr == 2016) distupvar <- "cdid115"
-    if (guessed_yr == 2012) distupvar <- "cdid113"
+    if (guessed_yr == 2012) distupvar <- "cdid113_12" # for "data/source/cces/2012_panel_h.dta"
     
     if (!guessed_yr %in% c(2006, 2007)) {
       
@@ -275,7 +278,8 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
       guessed_yr %in% c(2020) ~ "cdid116_post",
       guessed_yr %in% c(2018) ~ "cdid115_post",
       guessed_yr %in% c(2016) ~ "cdid113_post",
-      guessed_yr %in% c(2012, 2014) ~ "cdid_post",
+      guessed_yr %in% 2012 ~ "cdid112_post_10", # or cdid112_post_12 or cdid113_post_12 (for "data/source/cces/2012_panel_h.dta")
+      guessed_yr %in% c(2014) ~ "cdid_post",
       guessed_yr %in% c(2010) ~ "V276_post",
       guessed_yr %in% 2008 ~ "V264"
     )
@@ -285,7 +289,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     if (guessed_yr == 2022) distupvar <- "cdid118_post"
     if (guessed_yr == 2018) distupvar <- "cdid116_post"
     if (guessed_yr == 2016) distupvar <- "cdid115_post"
-    if (guessed_yr == 2012) distupvar <- "cdid113_post"
+    if (guessed_yr == 2012) distupvar <- "cdid113_post_12" # for "data/source/cces/2012_panel_h.dta"
     
     # 2012-2014 panel is an exception; overwrite
     if (any(str_detect(colnames(tbl), "post_cdid"))) {
