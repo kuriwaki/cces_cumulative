@@ -471,92 +471,91 @@ cli_alert_success("Finished joining each variable. Now combining them")
 
 ## format state and CD, then zipcode and county ----
 # TODO: STOP HERE! There was a merge issue above, creating many dups...
+left_join2 <- function(x, y) left_join(x, y, by = c("year", "case_id"), relationship = "one-to-one")
 stcd <- left_join(state, st) %>%
-  left_join(cong) %>%
-  left_join(cong_up) %>%
-  left_join(state_post) %>%
-  left_join(st_post) %>%
-  left_join(dist) %>%
-  left_join(dist_up) %>%
-  left_join(cd) %>%
-  left_join(cd_up) %>%
-  left_join(dist_post) %>%
-  left_join(dist_up_post) %>%
-  left_join(cd_post) %>%
-  left_join(cd_up_post)
+  left_join2(cong) %>%
+  left_join2(cong_up) %>%
+  left_join2(state_post) %>%
+  left_join2(st_post) %>%
+  left_join2(dist) %>%
+  left_join2(dist_up) %>%
+  left_join2(cd) %>%
+  left_join2(cd_up) %>%
+  left_join2(dist_post) %>%
+  left_join2(dist_up_post) %>%
+  left_join2(cd_post) %>%
+  left_join2(cd_up_post)
 
 geo <- stcd %>%
-  left_join(zipcode) %>%
-  left_join(county_fips)
+  left_join2(zipcode) %>%
+  left_join2(county_fips)
 
 # Join all vars ----
 ccc <- geo %>%
-  left_join(tookpost) %>%
-  left_join(wgt) %>%
-  left_join(wgt_post) %>%
-  left_join(vwgt) %>%
-  left_join(vwgt_post) %>%
-  left_join(time) %>%
-  left_join(pid3) %>%
-  left_join(pid3_leaner) %>%
-  left_join(pid7) %>%
-  left_join(ideo5) %>%
-  left_join(gend) %>%
-  left_join(sex) %>%
-  left_join(gend4) %>%
-  left_join(sexor) %>%
-  left_join(bryr) %>%
-  left_join(age) %>%
-  left_join(race) %>%
-  left_join(hisp) %>%
-  left_join(race_anyh) %>%
-  left_join(hisp_origin) %>%
-  left_join(citizen) %>%
-  left_join(educ) %>%
-  left_join(marstat) %>%
-  left_join(faminc) %>%
-  left_join(union) %>%
-  left_join(union_hh) %>%
-  left_join(employ) %>%
-  left_join(healthins) %>%
-  left_join(invst) %>%
-  left_join(child18) %>%
-  left_join(ownhome) %>%
-  left_join(milstat) %>%
-  left_join(relig) %>%
-  left_join(religimp) %>%
-  left_join(bornagain) %>%
-  left_join(protestant) %>%
-  left_join(churatd) %>%
-  left_join(econ) %>%
-  left_join(newsint) %>%
-  left_join(apvpres) %>%
-  left_join(apvrep) %>%
-  left_join(apvsen1) %>%
-  left_join(apvsen2) %>%
-  left_join(apvgov) %>%
-  left_join(i_pres08) %>%
-  left_join(i_pres12) %>%
-  left_join(i_pres16) %>%
-  left_join(i_pres20) %>%
-  left_join(i_pres24) %>%
-  left_join(v_pres08) %>%
-  left_join(v_pres12) %>%
-  left_join(v_pres16) %>%
-  left_join(v_pres20) %>%
-  left_join(v_pres24) %>%
-  left_join(pres_party) %>%
-  left_join(reg_self) %>%
-  left_join(intent_trn) %>%
-  left_join(voted_trn) %>%
-  left_join(vv_regstatus) %>%
-  left_join(vv_party_gen) %>%
-  left_join(vv_party_prm) %>%
-  left_join(vv_turnout_gvm) %>%
-  left_join(vv_turnout_pvm) %>%
-  left_join(vv_state)
-
-stopifnot(nrow(ccc) == nrow(pid3))
+  left_join2(tookpost) %>%
+  left_join2(wgt) %>%
+  left_join2(wgt_post) %>%
+  left_join2(vwgt) %>%
+  left_join2(vwgt_post) %>%
+  left_join2(time) %>%
+  left_join2(pid3) %>%
+  left_join2(pid3_leaner) %>%
+  left_join2(pid7) %>%
+  left_join2(ideo5) %>%
+  left_join2(gend) %>%
+  left_join2(sex) %>%
+  left_join2(gend4) %>%
+  left_join2(sexor) %>%
+  left_join2(bryr) %>%
+  left_join2(age) %>%
+  left_join2(race) %>%
+  left_join2(hisp) %>%
+  left_join2(race_anyh) %>%
+  left_join2(hisp_origin) %>%
+  left_join2(citizen) %>%
+  left_join2(educ) %>%
+  left_join2(marstat) %>%
+  left_join2(faminc) %>%
+  left_join2(union) %>%
+  left_join2(union_hh) %>%
+  left_join2(employ) %>%
+  left_join2(healthins) %>%
+  left_join2(invst) %>%
+  left_join2(child18) %>%
+  left_join2(ownhome) %>%
+  left_join2(milstat) %>%
+  left_join2(relig) %>%
+  left_join2(religimp) %>%
+  left_join2(bornagain) %>%
+  left_join2(protestant) %>%
+  left_join2(churatd) %>%
+  left_join2(econ) %>%
+  left_join2(newsint) %>%
+  left_join2(apvpres) %>%
+  left_join2(apvrep) %>%
+  left_join2(apvsen1) %>%
+  left_join2(apvsen2) %>%
+  left_join2(apvgov) %>%
+  left_join2(i_pres08) %>%
+  left_join2(i_pres12) %>%
+  left_join2(i_pres16) %>%
+  left_join2(i_pres20) %>%
+  left_join2(i_pres24) %>%
+  left_join2(v_pres08) %>%
+  left_join2(v_pres12) %>%
+  left_join2(v_pres16) %>%
+  left_join2(v_pres20) %>%
+  left_join2(v_pres24) %>%
+  left_join2(pres_party) %>%
+  left_join2(reg_self) %>%
+  left_join2(intent_trn) %>%
+  left_join2(voted_trn) %>%
+  left_join2(vv_regstatus) %>%
+  left_join2(vv_party_gen) %>%
+  left_join2(vv_party_prm) %>%
+  left_join2(vv_turnout_gvm) %>%
+  left_join2(vv_turnout_pvm) %>%
+  left_join2(vv_state)
 
 # Checks ---
 # check no accidental duplicate id's within 2012 or 2009
