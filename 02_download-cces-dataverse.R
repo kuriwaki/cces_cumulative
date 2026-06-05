@@ -97,12 +97,11 @@ hum08 <- get_dataframe_by_name(
 )
 write_dta(hum08, "data/source/cces/2008_hum.dta")
 
-# TODO: This file is either not a DTA, SAV, etc. and even the manual download seems to be corrupt: https://dataverse.harvard.edu/file.xhtml?fileId=4101243&datasetVersionId=212352
 mit06 <- get_dataframe_by_name(
   filename = "mit_final_withcommon_validated_new.tab", 
   "10.7910/DVN/EK9MGR", 
   version = "2.0",
-  .f = haven::read_dta, 
+  .f = \(x) haven::read_dta(x, encoding = "latin1"), 
   original = TRUE
 )
 write_dta(mit06, "data/source/cces/2006_mit_final_withcommon_validated_new.dta")
