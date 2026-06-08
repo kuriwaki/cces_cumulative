@@ -105,7 +105,11 @@ panel12 <- panel12 |>
     -starts_with("CC10"),
     -contains(c("_10", "_12"))
   ) |> 
-  left_join(pivot_panel12, by = join_by(caseid))
+  left_join(pivot_panel12, by = join_by(caseid)) |> 
+  rename(
+    cdid = cdid112,
+    cdid_post = cdid112_post
+         )
 write_dta(panel12, "data/source/cces/2012_panel_h.dta")
 
 hum09 <- get_dataframe_by_name(
