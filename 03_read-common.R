@@ -193,8 +193,7 @@ std_dist <- function(tbl, guess_year, guessed_yr) {
       guessed_yr %in% c(2019, 2020) ~ "cdid116",
       guessed_yr %in% c(2017, 2018) ~ "cdid115",
       guessed_yr %in% c(2013, 2016) ~ "cdid113",
-      guessed_yr %in% 2012 ~ "cdid112", 
-      guessed_yr %in% c(2015, 2014) ~ "cdid",
+      guessed_yr %in% c(2012, 2015, 2014) ~ "cdid",
       guessed_yr %in% c(2010, 2011) ~ "V276",
       guessed_yr %in% 2009 ~ "v264",
       guessed_yr %in% 2008 ~ "V250",
@@ -276,8 +275,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
       guessed_yr %in% c(2020) ~ "cdid116_post",
       guessed_yr %in% c(2018) ~ "cdid115_post",
       guessed_yr %in% c(2016) ~ "cdid113_post",
-      guessed_yr %in% 2012 ~ "cdid112_post",
-      guessed_yr %in% c(2014) ~ "cdid_post",
+      guessed_yr %in% c(2012, 2014) ~ "cdid_post",
       guessed_yr %in% c(2010) ~ "V276_post",
       guessed_yr %in% 2008 ~ "V264"
     )
