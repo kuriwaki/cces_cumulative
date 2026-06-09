@@ -5,6 +5,7 @@ library(glue)
 library(fs)
 library(cli)
 library(dataverse)
+library(tidyverse)
 
 Sys.setenv("DATAVERSE_SERVER" = "dataverse.harvard.edu")
 # this will not recreate all the datasets on my local project, but it gives a start.
@@ -18,8 +19,6 @@ for (yr in 2006:2025) {
   filedir <- "data/source/cces"
   
   filename <- glue("{yr}_cc.dta")
-  if (yr == 2007)
-    filename <- glue("{yr}_cc.sav")
   
   if (file_exists(path(filedir, filename)))
     next
