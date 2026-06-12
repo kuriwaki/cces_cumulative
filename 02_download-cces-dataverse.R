@@ -20,8 +20,7 @@ for (yr in 2006:2025) {
   
   filename <- glue("{yr}_cc.dta")
   
-  if (file_exists(path(filedir, filename)))
-    next
+  if (file_exists(path(filedir, filename))) next
   
   cli_alert_info("Will download and write {.file {filename}}.")
   dataverse_dl <- get_cces_dataverse(name = yr)
@@ -65,19 +64,19 @@ panel12 <- get_dataframe_by_name(
 #   .f = haven::read_dta, 
 #   original = TRUE
 # )
-# extract only observations centered on 2012 (pre and post too)
-pivot_panel12 <- panel12 |> 
+# extract only columns for 2012 observations (pre and post too)
+panel12 <- panel12 |> 
   select(
-    caseid, 
-    contains(c("_10", "_12")),
+    contains(c("_12")),
     -starts_with("CC")
-         ) |> 
-  zap_labels() |> 
+  ) |> 
+  # _12 should come last, after _post/_pre
+  # avoids accidentially stripping _12_ from any CC12 fields
   rename_with(
     ~str_replace(.x, "_(?=1\\d_)", "_pre_") |> 
       str_remove("(?<=1\\d)_pre"), 
     ends_with(c("_pre"))
-              ) |> 
+  ) |> 
   rename_with(
     ~str_replace(.x, "_(?=1\\d_)", "_post_") |> 
       str_remove("(?<=1\\d)_post"), 
@@ -86,29 +85,21 @@ pivot_panel12 <- panel12 |>
   mutate(
     across(starts_with("cdid112"), as.numeric),
     across(starts_with("regzip"), as.character),
-    across(where(is.character), ~ na_if(.x, "__NA__"))
-         ) |> 
-  pivot_longer(
-    cols = ends_with(c("_10", "_12")),
-    cols_vary = "slowest",
-    names_to = c(".value", "year"),
-    names_pattern = "(.*)_(.*)"
-               ) |> 
-  mutate(
-    year = str_c("20", year, sep = ""),
-    year = as.integer(year)
-         ) |> 
-  filter(year == 2012)
-panel12 <- panel12 |> 
-  select(
-    -starts_with("CC10"),
-    -contains(c("_10", "_12"))
+    across(where(is.character), ~ na_if(.x, "__NA__")),
+    year = 2012
   ) |> 
-  left_join(pivot_panel12, by = join_by(caseid)) |> 
+  rename_with(~ str_remove(.x, "_12$"), contains("_12")) |> 
+  bind_cols(
+    panel12 |> 
+      select(
+        -starts_with("CC10"),
+        -contains(c("_10", "_12"))
+      ) 
+            ) |> 
   rename(
     cdid = cdid112,
     cdid_post = cdid112_post
-         )
+  ) 
 write_dta(panel12, "data/source/cces/2012_panel_h.dta")
 
 hum09 <- get_dataframe_by_name(
