@@ -137,7 +137,9 @@ hum08 <- get_dataframe_by_name(
   version = "2.0",
   .f = haven::read_dta, 
   original = TRUE
-)
+) |> 
+  rename_all(str_to_upper) |>
+  select(-HUM302, -HUM304) # decimal labelled
 write_dta(hum08, "data/source/cces/2008_hum.dta")
 
 mit06 <- get_dataframe_by_name(
