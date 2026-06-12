@@ -14,6 +14,8 @@ stopifnot(packageVersion("labelled") >= "2.4.0")
 source("05_functions-stack.R")
 cli_alert_success("Finished reading in functions")
 
+left_join2 <- function(x, y) left_join(x, y, by = join_by(year, case_id), relationship = "one-to-one")
+
 # Read data ------
 if (!exists("cc24") & !exists("cc18") & !exists("cc06")) {
   load("data/output/01_responses/common_all.RData")
@@ -354,15 +356,18 @@ v_pres24 <- v_pres24_orig %>%
 
 # coalesce
 pres_party <- i_pres08 %>% 
-  left_join(i_pres12, by = c("year", "case_id")) %>% 
-  left_join(i_pres16, by = c("year", "case_id")) %>% 
-  left_join(i_pres20, by = c("year", "case_id")) %>% 
-  left_join(i_pres24, by = c("year", "case_id")) %>% 
-  left_join(v_pres08, by = c("year", "case_id")) %>% 
-  left_join(v_pres12, by = c("year", "case_id")) %>% 
-  left_join(v_pres16, by = c("year", "case_id")) %>% 
-  left_join(v_pres20, by = c("year", "case_id")) %>% 
-  left_join(v_pres24, by = c("year", "case_id")) %>% 
+  left_join2(i_pres12) %>% 
+  left_join2(i_pres16) %>% 
+  left_join2(i_pres20) %>% 
+  left_join2(i_pres24) %>% 
+  # TODO: Error: Row 79279 of `x` matches multiple rows in `y`.
+  # The issue is that case_id 189 is duplicated in every df from 2009
+  # The problem is that that year-ID is ccs[[1]] AND ccs[[2]]
+  left_join2(v_pres08) %>% 
+  left_join2(v_pres12) %>% 
+  left_join2(v_pres16) %>% 
+  left_join2(v_pres20) %>% 
+  left_join2(v_pres24) %>% 
   mutate_if(is.factor, as.character) %>% 
   # NA to anticipate later coalesce.
   # We will coalesce (24, 20, 16). In year = 2024, if voted24=NA, then we
@@ -374,7 +379,7 @@ pres_party <- i_pres08 %>%
          voted_pres_16 = replace(voted_pres_16, year %in% c(2020:2024), NA),
          voted_pres_20 = replace(voted_pres_20, year == 2024, NA),
          ) %>%  
-  left_join(voted_trn, by = c("year", "case_id")) |> 
+  left_join2(voted_trn) |> 
   mutate(across(starts_with("voted_pres_"), 
                 ~ if_else(year %% 4 == 0 & voted_turnout_self == "No", NA, .x))) |> 
   transmute(
@@ -385,7 +390,7 @@ pres_party <- i_pres08 %>%
       coalesce(voted_pres_24, voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
   ) |> 
   ## NA if not in post
-  left_join(tookpost) |> 
+  left_join2(tookpost) |> 
   mutate(across(starts_with("voted_pres_"), 
                 ~ if_else(tookpost == 0 & year %% 2 == 0, NA, .x))) |> 
   select(-tookpost)
@@ -450,7 +455,7 @@ zipcode    <- find_stack(ccs, zipcode, "character") %>%
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 
 county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
-  left_join(cc17_county, by = c("year", "case_id")) %>% 
+  left_join2(cc17_county) %>% 
   mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) %>% 
   select(-countyfips) %>% 
   filter(year != 2007) %>% 
@@ -471,8 +476,7 @@ cli_alert_success("Finished joining each variable. Now combining them")
 
 ## format state and CD, then zipcode and county ----
 # TODO: STOP HERE! There was a merge issue above, creating many dups...
-left_join2 <- function(x, y) left_join(x, y, by = c("year", "case_id"), relationship = "one-to-one")
-stcd <- left_join(state, st) %>%
+stcd <- left_join2(state, st) %>%
   left_join2(cong) %>%
   left_join2(cong_up) %>%
   left_join2(state_post) %>%
@@ -584,7 +588,7 @@ size_year <- ccc %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
 
 ccc_sort <- ccc %>%
-  left_join(select(size_year, year, size_factor)) %>%
+  left_join2(select(size_year, year, size_factor)) %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
   relocate(year, case_id, weight, weight_cumulative)

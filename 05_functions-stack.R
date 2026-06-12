@@ -877,7 +877,7 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
   }
   
   
-  list_yr
+  distinct(list_yr)
 }
 
 
