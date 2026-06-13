@@ -33,7 +33,7 @@ ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
   # "2006mit" = std_name(mit06_add),
   # "2008hu" = std_name(hu08),
-  "2009hu" = std_name(hu09),
+  # "2009hu" = std_name(hu09), # caseid 189 duplicates with pettigrew data; maybe use _recontact
   "2012" = std_name(cc12),
   "2012panel" = std_name(panel12, is_panel = TRUE),
   "2013" = std_name(cc13),
@@ -574,9 +574,9 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+# hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 comp_id <- ccs[["2018comp"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(hu09_id, panel_id, comp_id) # hu08_id, 
+addon_id <- bind_rows(panel_id, comp_id) # hu08_id, hu09_id, 
 
 
 # Common manipulations ----
@@ -588,7 +588,7 @@ size_year <- ccc %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
 
 ccc_sort <- ccc %>%
-  left_join2(select(size_year, year, size_factor)) %>%
+  left_join(select(size_year, year, size_factor), by = c("year"), relationship ="many-to-one") %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
   relocate(year, case_id, weight, weight_cumulative)
