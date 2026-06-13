@@ -252,9 +252,9 @@ cclist <- list(`2006` = cc06,
                # `2006m` = mit06_add,
                `2007` = cc07, 
                `2008` = cc08, 
-               `2008h` = hu08, 
+               # `2008h` = hu08, # TODO: Not used in 05?
                `2009` = cc09, 
-               `2009hu` = hu09,
+               # `2009hu` = hu09, # TODO: Commented until dup issue in 05 is fixed
                `2010` = cc10, 
                `2011` = cc11, 
                `2012` = cc12, 
@@ -300,7 +300,9 @@ for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) {
     # if it should exist, rename
     if (!is.na(rename_from)) {
       cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] |> 
-        rename({{var}} := all_of(rename_from))
+        # panel12 (i.e. 2012p) has variables CC12_* whereas others are just *
+        rename({{var}} := all_of(ends_with(rename_from)))
+        # rename({{var}} := all_of(rename_from))
     }
   }
 }
