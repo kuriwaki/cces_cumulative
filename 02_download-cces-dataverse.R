@@ -7,10 +7,6 @@ library(cli)
 library(dataverse)
 library(tidyverse)
 
-Sys.setenv("DATAVERSE_SERVER" = "dataverse.harvard.edu")
-# this will not recreate all the datasets on my local project, but it gives a start.
-# Contact me if you need any data used in subsequent code but not available in Dataverse.
-
 dir_create("data/source/cces")
 dir_create("data/output")
 dir_create("data/release")
@@ -50,56 +46,49 @@ cc18_comp <- get_dataframe_by_name(
 write_dta(cc18_comp, "data/source/cces/2018_cc_competitive.dta")
 
 # TODO: This differs from the version on Dropbox
-panel12 <- get_dataframe_by_name(
+# Alt: "CCES_Panel_Full3waves_VV_V4.dta", "10.7910/DVN/TOE8I1", version = "11",
+panel12_orig <- get_dataframe_by_name(
   filename = "CCES12_Panel_OUTPUT_10Oct2013_with2010_vv_V2.tab", 
   "10.7910/DVN/24416", 
   version = "4.0",
   .f = haven::read_dta, 
   original = TRUE
 )
-# panel12 <- get_dataframe_by_name(
-#   filename = "CCES_Panel_Full3waves_VV_V4.dta", 
-#   "10.7910/DVN/TOE8I1", 
-#   version = "11",
-#   .f = haven::read_dta, 
-#   original = TRUE
-# )
-# extract only columns for 2012 observations (pre and post too)
-panel12 <- panel12 |> 
-  select(
-    contains(c("_12")),
-    -starts_with("CC")
-  ) |> 
-  # _12 should come last, after _post/_pre
-  # avoids accidentially stripping _12_ from any CC12 fields
-  rename_with(
-    ~str_replace(.x, "_(?=1\\d_)", "_pre_") |> 
-      str_remove("(?<=1\\d)_pre"), 
-    ends_with(c("_pre"))
-  ) |> 
-  rename_with(
-    ~str_replace(.x, "_(?=1\\d_)", "_post_") |> 
-      str_remove("(?<=1\\d)_post"), 
-    ends_with(c("_post"))
-  ) |> 
+# Relocate a _pre / _post tag ahead of the year suffix, so the year (_10/_12)
+# stays last. Pulled out of rename_with() so there's no pipe inside the pipe.
+move_tag_before_year <- function(x, tag) {
+  moved <- str_replace(x, "_(?=1\\d_)", str_c("_", tag, "_"))
+  str_remove(moved, str_c("(?<=1\\d)_", tag))
+}
+
+# 2012-specific columns — caseid added as the join key
+panel12_2012 <- panel12_orig |>
+  select(caseid, contains("_12") & !starts_with("CC")) |>
+  rename_with(\(x) move_tag_before_year(x, "pre"),  ends_with("_pre")) |>
+  rename_with(\(x) move_tag_before_year(x, "post"), ends_with("_post")) |>
   mutate(
     across(starts_with("cdid112"), as.numeric),
     across(starts_with("regzip"), as.character),
-    across(where(is.character), ~ na_if(.x, "__NA__")),
+    across(where(is.character), \(x) na_if(x, "__NA__")),
     year = 2012
-  ) |> 
-  rename_with(~ str_remove(.x, "_12$"), contains("_12")) |> 
-  bind_cols(
-    panel12 |> 
-      select(
-        -starts_with("CC10"),
-        -contains(c("_10", "_12"))
-      ) 
-            ) |> 
+  ) |>
+  rename_with(\(x) str_remove(x, "_12$"), contains("_12"))
+
+# Shared / time-invariant columns (unchanged)
+panel12_shared <- panel12_orig |>
+  select(!starts_with("CC10") & !contains("_10") & !contains("_12"))
+
+panel12 <- panel12_2012 |>
+  inner_join(
+    panel12_shared,
+    by = "caseid",
+    relationship = "one-to-one",
+    unmatched = "error"
+  ) |>
   rename(
-    cdid = cdid112,
+    cdid      = cdid112,
     cdid_post = cdid112_post
-  ) 
+  )
 write_dta(panel12, "data/source/cces/2012_panel_h.dta")
 
 hum09 <- get_dataframe_by_name(
