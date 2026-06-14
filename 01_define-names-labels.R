@@ -77,7 +77,6 @@ master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Nam
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
 
-saveRDS(master, "data/output/02_questions/variable_std_key.Rds")
 
 ccc_meta <- tribble(
   ~alias, ~type, ~name, ~description,
@@ -239,7 +238,8 @@ stopifnot(n_distinct(iss_meta$alias) == nrow(iss_meta) &&
             n_distinct(iss_meta$name) == nrow(iss_meta))
 
 
-
+# Save ----
+saveRDS(master, "data/output/02_questions/variable_std_key.Rds")
 saveRDS(ccc_meta, "data/output/02_questions/cumulative_vartable.Rds")
 saveRDS(iss_meta, "data/output/02_questions/issuevars_vartable.Rds")
 
