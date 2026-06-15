@@ -1469,6 +1469,11 @@ glimpse(select(cc, matches("(intent|voted)_.*chosen")))
 
 Routine edits add new rows, add new variables, and change the customization of existing variables. The version history is explained below and old versions can be downloaded from Dataverse. Dataverse assigns version numbers by incrementing by a full number if any of the datasets change, and by incrementing by a decimal when only the description/metadata changes.
 
+### Version 12.0 (released `2026-`)
+
+- Adds 2025 common content
+
+
 ### Version 11.0 (released `2025-10-08`)
 
 - Includes vote validation variables for 2024 (`vv_regstatus`, `vv_turnout_gvm`, etc..). Value label numbering has changed as a result.
