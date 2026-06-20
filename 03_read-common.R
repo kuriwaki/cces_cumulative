@@ -25,7 +25,6 @@ std_dv <- function(path, guess_year = TRUE) {
   
   ## guess ID
   cnames <- colnames(tbl) 
-  # Adam 2025 - possible solution for 2010 and 2011
   orig_key <- recode_values(
     cnames,
     "case_id" ~ "case_id",
@@ -37,12 +36,6 @@ std_dv <- function(path, guess_year = TRUE) {
   ) |> 
     keep(~ !is.na(.x)) |> 
     first()
-  # if ("case_id" %in% cnames) orig_key <- "case_id" 
-  # if ("caseid" %in% cnames) orig_key <- "caseid"
-  # if ("V101" %in% cnames) orig_key <- "V101"
-  # if ("V100" %in% cnames) orig_key <- "V100"
-  # if ("v100" %in% cnames) orig_key <- "v100"
-  # if ("v1000" %in% cnames) orig_key <- "v1000"
   
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
@@ -343,8 +336,8 @@ cc06 <- std_dv("data/source/cces/2006_cc.dta")
 cc07 <- std_dv("data/source/cces/2007_cc.dta")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
-cc10 <- std_dv("data/source/cces/2010_cc.dta") # Adam 2025 - has "case_id" and "V101" -> error for 'rename(case_id = !! orig_key)'
-cc11 <- std_dv("data/source/cces/2011_cc.dta") # Adam 2025 - has "case_id" and "V101" -> error for 'rename(case_id = !! orig_key)'
+cc10 <- std_dv("data/source/cces/2010_cc.dta")  
+cc11 <- std_dv("data/source/cces/2011_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
 panel12 <- std_dv("data/source/cces/2012_panel_h.dta")
 cc13 <- std_dv("data/source/cces/2013_cc.dta")

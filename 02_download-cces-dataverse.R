@@ -110,7 +110,6 @@ county17 <- get_dataframe_by_name(
 )
 readr::write_csv(county17, "data/source/cces/CCES17_Common_county.csv")
 
-# Possibly no longer used in pipeline
 hum08 <- get_dataframe_by_name(
   filename = "cces08_harvard_output.dta", 
   "10.7910/DVN/WXXXJO", 

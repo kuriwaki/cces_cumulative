@@ -360,9 +360,6 @@ pres_party <- i_pres08 %>%
   left_join2(i_pres16) %>% 
   left_join2(i_pres20) %>% 
   left_join2(i_pres24) %>% 
-  # TODO: Error: Row 79279 of `x` matches multiple rows in `y`.
-  # The issue is that case_id 189 is duplicated in every df from 2009
-  # The problem is that that year-ID is ccs[[1]] AND ccs[[2]]
   left_join2(v_pres08) %>% 
   left_join2(v_pres12) %>% 
   left_join2(v_pres16) %>% 
@@ -446,7 +443,7 @@ cong       <- find_stack(ccs, cong, "integer")
 cong_up    <- find_stack(ccs, cong_up, "integer")
 
 cli_h1("Joining geography")
-state      <- find_stack(ccs, state, "character") # TODO: case_id 4998 in 2009 is duping DC with diff spellings...
+state      <- find_stack(ccs, state, "character") 
 state_post      <- find_stack(ccs, state_post, "character")
 st      <- find_stack(ccs, st, "character")
 st_post      <- find_stack(ccs, st_post, "character")
@@ -475,7 +472,6 @@ cd_up_post    <- find_stack(ccs, cd_up_post, "character")
 cli_alert_success("Finished joining each variable. Now combining them")
 
 ## format state and CD, then zipcode and county ----
-# TODO: STOP HERE! There was a merge issue above, creating many dups...
 stcd <- left_join2(state, st) %>%
   left_join2(cong) %>%
   left_join2(cong_up) %>%
