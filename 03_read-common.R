@@ -19,7 +19,7 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year) guessed_yr <- NA
   
   ## then
-  tbl <- haven::read_dta(path, encoding = 'latin1')
+  tbl <- haven::read_dta(path)
   is_public_hum09 <- FALSE
   
   
