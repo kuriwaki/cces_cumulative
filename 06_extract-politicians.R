@@ -219,7 +219,7 @@ carry_vars <- c("year", "case_id", "state", "st", "dist", "dist_up", "cong", "co
 # Rename variables ----
 master <- readRDS("data/output/02_questions/variable_std_key.Rds")
 master$`2008h` <- master$`2008`
-master$`2009r` <- master$`2009`
+master$`2009hu` <- master$`2009`
 master$`2012p` <- master$`2012`
 master$`2018a` <- master$`2018`
 master$`2018b` <- master$`2018`
@@ -247,13 +247,14 @@ blend_post <- function(tbl) {
 }
 
 # list to store data with renamed variables
+cc07 <- zap_labels(cc07) # in order that `clean_out()` works
 cclist <- list(`2006` = cc06, 
                # `2006m` = mit06_add,
                `2007` = cc07, 
                `2008` = cc08, 
-               `2008h` = hu08, 
+               # `2008h` = hu08, # TODO: Not used in 05?
                `2009` = cc09, 
-               `2009r` = hu09,
+               # `2009hu` = hu09, # TODO: Commented until dup issue in 05 is fixed
                `2010` = cc10, 
                `2011` = cc11, 
                `2012` = cc12, 
@@ -271,6 +272,7 @@ cclist <- list(`2006` = cc06,
                `2022` = cc22,
                `2023` = cc23,
                `2024` = cc24,
+               `2025` = cc25,
                `2010_post` = blend_post(cc10),
                `2012_post` = blend_post(cc12),
                `2014_post` = blend_post(cc14),
@@ -283,7 +285,7 @@ cclist <- list(`2006` = cc06,
 # `2018a` = hua18,
 # `2018b` = hub18)
 
-for (yr in c(2006:2024, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009r","2012p"
+for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) { # "2006m", "2008h", "2009hu", "2012p"
   for (var in master$name) {
     
     # lookup this var
@@ -298,7 +300,9 @@ for (yr in c(2006:2024, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) {
     # if it should exist, rename
     if (!is.na(rename_from)) {
       cclist[[as.character(yr)]] <- cclist[[as.character(yr)]] |> 
-        rename({{var}} := all_of(rename_from))
+        # panel12 (i.e. 2012p) has variables CC12_* whereas others are just *
+        rename({{var}} := all_of(ends_with(rename_from)))
+        # rename({{var}} := all_of(rename_from))
     }
   }
 }
@@ -361,8 +365,8 @@ save(ri_mc_match, s1i_mc_match, s2i_mc_match, gov_inc_match,
 save(rc_key, sc_key, gc_key, 
      file = "data/output/01_responses/candidates_key.RData")
 
-ri_mc_match |> 
-  distinct(year, case_id, dataset) |> 
-  arrow::write_feather("~/Dropbox/CCES_representation/data/source/cces/cces_caseid_dataset_key.feather")
+# ri_mc_match |> 
+#   distinct(year, case_id, dataset) |> 
+#   arrow::write_feather("~/Dropbox/CCES_representation/data/source/cces/cces_caseid_dataset_key.feather")
 
 cli_alert_success("Finished matching candidate info to identifiers")

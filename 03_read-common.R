@@ -19,20 +19,32 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year) guessed_yr <- NA
   
   ## then
-  tbl <- haven::read_dta(path, encoding = 'latin1')
+  tbl <- haven::read_dta(path)
+  is_public_hum09 <- FALSE
   
   
   ## guess ID
   cnames <- colnames(tbl)
-  if ("case_id" %in% cnames) orig_key <- "case_id"
-  if ("caseid" %in% cnames) orig_key <- "caseid"
-  if ("V101" %in% cnames) orig_key <- "V101"
-  if ("V100" %in% cnames) orig_key <- "V100"
-  if ("v100" %in% cnames) orig_key <- "v100"
-  if ("v1000" %in% cnames) orig_key <- "v1000"
+  orig_key <- recode_values(
+    cnames,
+    "case_id" ~ "case_id",
+    "caseid" ~ "caseid",
+    "V101" ~ "V101",
+    "V100" ~ "V100",
+    "v100" ~ "v100",
+    "v1000" ~ "v1000"
+  ) |>
+    keep(~ !is.na(.x)) |>
+    first()
   
   # add year
   if (!"year" %in% colnames(tbl)) tbl <- mutate(tbl, year = guessed_yr)
+  if (guess_year && str_detect(path, "2009_hum\\.dta$")) {
+    tbl <- tbl |>
+      mutate(v259 = inputstate,
+             v264 = cdid)
+    is_public_hum09 <- TRUE
+  }
   
   # add congressional session
   tbl_cong <- tbl |> 
@@ -53,6 +65,11 @@ std_dv <- function(path, guess_year = TRUE) {
   if (!guess_year | guessed_yr %% 2 == 0)
     tbl_cd <- std_distpost(tbl_cd, guess_year, guessed_yr)
   
+  if (is_public_hum09) {
+    tbl_cd <- tbl_cd |>
+      select(-any_of(c("v259", "v264", "cdid")))
+  }
+
   # 2006 is special but just for CC
   if (!guess_year) {
     tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) |> 
@@ -81,9 +98,9 @@ std_dv <- function(path, guess_year = TRUE) {
 std_state <- function(tbl, guess_year, guessed_yr) {
   
   if (!guess_year & identical(as.integer(unique(tbl$year)), 2006L:2012L)) { # for cumulative, swap around names
-      tbl <- tbl |>
-        mutate(state = as.character(as_factor(state_pre))) |>
-        left_join(select(statecode, state, st), by = "state")
+    tbl <- tbl |>
+      mutate(state = as.character(as_factor(state_pre))) |>
+      left_join(select(statecode, state, st), by = "state")
     return(tbl)
   }
   
@@ -342,14 +359,14 @@ cc24 <- std_dv("data/source/cces/2024_cc.dta")
 cc25 <- std_dv("data/source/cces/2025_cc.dta")
 
 # modules
-hu08 <- std_dv("data/source/cces/2008_hum_allcapvars.dta")
-hu09 <- std_dv("data/source/cces/2009_hum_recontact.dta")
-hua18 <- std_dv("data/source/cces/2018_hua.dta")
-hub18 <- std_dv("data/source/cces/2018_hub.dta")
+hu08 <- std_dv("data/source/cces/2008_hum.dta")
+hu09 <- std_dv("data/source/cces/2009_hum.dta")
+# hua18 <- std_dv("data/source/cces/2018_hua.dta")
+# hub18 <- std_dv("data/source/cces/2018_hub.dta")
 
 cli_alert_success("Standardized all datasets.")
 
-# additional moduels ---------
+# additional modules ---------
 # 2006 module addition
 # need for accountability paper 
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
@@ -369,14 +386,7 @@ mit_fmt <- mit06_raw |>
   select(year, case_id, state, st, cong, dist, dist_up, everything())
 mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
-
-# 2008 addition
-# (used above in std_dv, because that only takes a path)
-read_dta("data/source/cces/2008_hum.dta") |> 
-  rename_all(str_to_upper) |> 
-  select(-HUM302, -HUM304) |> # decimal labelled
-  write_dta("data/source/cces/2008_hum_allcapvars.dta")
-
+# used later in 06_extract...
 hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
   mutate(V300 = as_datetime(V300))
 
@@ -400,9 +410,10 @@ save(
   cc20, cc21, cc22, cc23,
   cc24, cc25,
   panel12, 
-  mit06_add,
-  hu08,  hu09, 
-  hua18, hub18,
+  # mit06_add,
+  # hu08,
+  hu09,
+  # hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
 )
 

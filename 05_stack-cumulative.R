@@ -14,6 +14,8 @@ stopifnot(packageVersion("labelled") >= "2.4.0")
 source("05_functions-stack.R")
 cli_alert_success("Finished reading in functions")
 
+left_join2 <- function(x, y) left_join(x, y, by = join_by(year, case_id), relationship = "one-to-one")
+
 # Read data ------
 if (!exists("cc24") & !exists("cc18") & !exists("cc06")) {
   load("data/output/01_responses/common_all.RData")
@@ -31,7 +33,7 @@ ccs <- list(
   "pettigrew" = std_name(filter(ccp, year != 2012)),
   # "2006mit" = std_name(mit06_add),
   # "2008hu" = std_name(hu08),
-  "2009hu" = std_name(hu09),
+  # "2009hu" = std_name(hu09), # caseid 189 duplicates with pettigrew data; maybe use _recontact
   "2012" = std_name(cc12),
   "2012panel" = std_name(panel12, is_panel = TRUE),
   "2013" = std_name(cc13),
@@ -50,7 +52,8 @@ ccs <- list(
   "2021" = std_name(cc21),
   "2022" = std_name(cc22),
   "2023" = std_name(cc23),
-  "2024" = std_name(cc24)
+  "2024" = std_name(cc24),
+  "2025" = std_name(cc25)
 )
 
 cli_alert_success("Finished reading in data and standardizing names")
@@ -180,7 +183,7 @@ inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) %>%
     `98` = "Skipped",
     `99` = "Not Asked"))
 
-faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>% 
+faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) %>%
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
          faminc_num = coalesce(family_income_old, family_income)) %>% 
   transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
@@ -353,15 +356,15 @@ v_pres24 <- v_pres24_orig %>%
 
 # coalesce
 pres_party <- i_pres08 %>% 
-  left_join(i_pres12, by = c("year", "case_id")) %>% 
-  left_join(i_pres16, by = c("year", "case_id")) %>% 
-  left_join(i_pres20, by = c("year", "case_id")) %>% 
-  left_join(i_pres24, by = c("year", "case_id")) %>% 
-  left_join(v_pres08, by = c("year", "case_id")) %>% 
-  left_join(v_pres12, by = c("year", "case_id")) %>% 
-  left_join(v_pres16, by = c("year", "case_id")) %>% 
-  left_join(v_pres20, by = c("year", "case_id")) %>% 
-  left_join(v_pres24, by = c("year", "case_id")) %>% 
+  left_join2(i_pres12) %>% 
+  left_join2(i_pres16) %>% 
+  left_join2(i_pres20) %>% 
+  left_join2(i_pres24) %>% 
+  left_join2(v_pres08) %>% 
+  left_join2(v_pres12) %>% 
+  left_join2(v_pres16) %>% 
+  left_join2(v_pres20) %>% 
+  left_join2(v_pres24) %>% 
   mutate_if(is.factor, as.character) %>% 
   # NA to anticipate later coalesce.
   # We will coalesce (24, 20, 16). In year = 2024, if voted24=NA, then we
@@ -373,7 +376,7 @@ pres_party <- i_pres08 %>%
          voted_pres_16 = replace(voted_pres_16, year %in% c(2020:2024), NA),
          voted_pres_20 = replace(voted_pres_20, year == 2024, NA),
          ) %>%  
-  left_join(voted_trn, by = c("year", "case_id")) |> 
+  left_join2(voted_trn) |> 
   mutate(across(starts_with("voted_pres_"), 
                 ~ if_else(year %% 4 == 0 & voted_turnout_self == "No", NA, .x))) |> 
   transmute(
@@ -384,7 +387,7 @@ pres_party <- i_pres08 %>%
       coalesce(voted_pres_24, voted_pres_20, voted_pres_16, voted_pres_12, voted_pres_08))
   ) |> 
   ## NA if not in post
-  left_join(tookpost) |> 
+  left_join2(tookpost) |> 
   mutate(across(starts_with("voted_pres_"), 
                 ~ if_else(tookpost == 0 & year %% 2 == 0, NA, .x))) |> 
   select(-tookpost)
@@ -440,7 +443,7 @@ cong       <- find_stack(ccs, cong, "integer")
 cong_up    <- find_stack(ccs, cong_up, "integer")
 
 cli_h1("Joining geography")
-state      <- find_stack(ccs, state, "character")
+state      <- find_stack(ccs, state, "character") 
 state_post      <- find_stack(ccs, state_post, "character")
 st      <- find_stack(ccs, st, "character")
 st_post      <- find_stack(ccs, st_post, "character")
@@ -449,7 +452,7 @@ zipcode    <- find_stack(ccs, zipcode, "character") %>%
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 
 county_fips <- find_stack(ccs, county_fips, "numeric") %>% 
-  left_join(cc17_county, by = c("year", "case_id")) %>% 
+  left_join2(cc17_county) %>% 
   mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) %>% 
   select(-countyfips) %>% 
   filter(year != 2007) %>% 
@@ -469,92 +472,90 @@ cd_up_post    <- find_stack(ccs, cd_up_post, "character")
 cli_alert_success("Finished joining each variable. Now combining them")
 
 ## format state and CD, then zipcode and county ----
-stcd <- left_join(state, st) %>%
-  left_join(cong) %>%
-  left_join(cong_up) %>%
-  left_join(state_post) %>%
-  left_join(st_post) %>%
-  left_join(dist) %>%
-  left_join(dist_up) %>%
-  left_join(cd) %>%
-  left_join(cd_up) %>%
-  left_join(dist_post) %>%
-  left_join(dist_up_post) %>%
-  left_join(cd_post) %>%
-  left_join(cd_up_post)
+stcd <- left_join2(state, st) %>%
+  left_join2(cong) %>%
+  left_join2(cong_up) %>%
+  left_join2(state_post) %>%
+  left_join2(st_post) %>%
+  left_join2(dist) %>%
+  left_join2(dist_up) %>%
+  left_join2(cd) %>%
+  left_join2(cd_up) %>%
+  left_join2(dist_post) %>%
+  left_join2(dist_up_post) %>%
+  left_join2(cd_post) %>%
+  left_join2(cd_up_post)
 
 geo <- stcd %>%
-  left_join(zipcode) %>%
-  left_join(county_fips)
+  left_join2(zipcode) %>%
+  left_join2(county_fips)
 
 # Join all vars ----
 ccc <- geo %>%
-  left_join(tookpost) %>%
-  left_join(wgt) %>%
-  left_join(wgt_post) %>%
-  left_join(vwgt) %>%
-  left_join(vwgt_post) %>%
-  left_join(time) %>%
-  left_join(pid3) %>%
-  left_join(pid3_leaner) %>%
-  left_join(pid7) %>%
-  left_join(ideo5) %>%
-  left_join(gend) %>%
-  left_join(sex) %>%
-  left_join(gend4) %>%
-  left_join(sexor) %>%
-  left_join(bryr) %>%
-  left_join(age) %>%
-  left_join(race) %>%
-  left_join(hisp) %>%
-  left_join(race_anyh) %>%
-  left_join(hisp_origin) %>%
-  left_join(citizen) %>%
-  left_join(educ) %>%
-  left_join(marstat) %>%
-  left_join(faminc) %>%
-  left_join(union) %>%
-  left_join(union_hh) %>%
-  left_join(employ) %>%
-  left_join(healthins) %>%
-  left_join(invst) %>%
-  left_join(child18) %>%
-  left_join(ownhome) %>%
-  left_join(milstat) %>%
-  left_join(relig) %>%
-  left_join(religimp) %>%
-  left_join(bornagain) %>%
-  left_join(protestant) %>%
-  left_join(churatd) %>%
-  left_join(econ) %>%
-  left_join(newsint) %>%
-  left_join(apvpres) %>%
-  left_join(apvrep) %>%
-  left_join(apvsen1) %>%
-  left_join(apvsen2) %>%
-  left_join(apvgov) %>%
-  left_join(i_pres08) %>%
-  left_join(i_pres12) %>%
-  left_join(i_pres16) %>%
-  left_join(i_pres20) %>%
-  left_join(i_pres24) %>%
-  left_join(v_pres08) %>%
-  left_join(v_pres12) %>%
-  left_join(v_pres16) %>%
-  left_join(v_pres20) %>%
-  left_join(v_pres24) %>%
-  left_join(pres_party) %>%
-  left_join(reg_self) %>%
-  left_join(intent_trn) %>%
-  left_join(voted_trn) %>%
-  left_join(vv_regstatus) %>%
-  left_join(vv_party_gen) %>%
-  left_join(vv_party_prm) %>%
-  left_join(vv_turnout_gvm) %>%
-  left_join(vv_turnout_pvm) %>%
-  left_join(vv_state)
-
-stopifnot(nrow(ccc) == nrow(pid3))
+  left_join2(tookpost) %>%
+  left_join2(wgt) %>%
+  left_join2(wgt_post) %>%
+  left_join2(vwgt) %>%
+  left_join2(vwgt_post) %>%
+  left_join2(time) %>%
+  left_join2(pid3) %>%
+  left_join2(pid3_leaner) %>%
+  left_join2(pid7) %>%
+  left_join2(ideo5) %>%
+  left_join2(gend) %>%
+  left_join2(sex) %>%
+  left_join2(gend4) %>%
+  left_join2(sexor) %>%
+  left_join2(bryr) %>%
+  left_join2(age) %>%
+  left_join2(race) %>%
+  left_join2(hisp) %>%
+  left_join2(race_anyh) %>%
+  left_join2(hisp_origin) %>%
+  left_join2(citizen) %>%
+  left_join2(educ) %>%
+  left_join2(marstat) %>%
+  left_join2(faminc) %>%
+  left_join2(union) %>%
+  left_join2(union_hh) %>%
+  left_join2(employ) %>%
+  left_join2(healthins) %>%
+  left_join2(invst) %>%
+  left_join2(child18) %>%
+  left_join2(ownhome) %>%
+  left_join2(milstat) %>%
+  left_join2(relig) %>%
+  left_join2(religimp) %>%
+  left_join2(bornagain) %>%
+  left_join2(protestant) %>%
+  left_join2(churatd) %>%
+  left_join2(econ) %>%
+  left_join2(newsint) %>%
+  left_join2(apvpres) %>%
+  left_join2(apvrep) %>%
+  left_join2(apvsen1) %>%
+  left_join2(apvsen2) %>%
+  left_join2(apvgov) %>%
+  left_join2(i_pres08) %>%
+  left_join2(i_pres12) %>%
+  left_join2(i_pres16) %>%
+  left_join2(i_pres20) %>%
+  left_join2(i_pres24) %>%
+  left_join2(v_pres08) %>%
+  left_join2(v_pres12) %>%
+  left_join2(v_pres16) %>%
+  left_join2(v_pres20) %>%
+  left_join2(v_pres24) %>%
+  left_join2(pres_party) %>%
+  left_join2(reg_self) %>%
+  left_join2(intent_trn) %>%
+  left_join2(voted_trn) %>%
+  left_join2(vv_regstatus) %>%
+  left_join2(vv_party_gen) %>%
+  left_join2(vv_party_prm) %>%
+  left_join2(vv_turnout_gvm) %>%
+  left_join2(vv_turnout_pvm) %>%
+  left_join2(vv_state)
 
 # Checks ---
 # check no accidental duplicate id's within 2012 or 2009
@@ -569,9 +570,9 @@ stopifnot(nrow(foo_12) == nrow(distinct(foo_12, year, case_id)))
 panel_id <- ccs[["2012panel"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # mit06_id <- ccs[["2006mit"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 # hu08_id <- ccs[["2008hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
+# hu09_id <- ccs[["2009hu"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
 comp_id <- ccs[["2018comp"]] %>% select(year, case_id) %>% mutate(case_id = as.integer(case_id))
-addon_id <- bind_rows(hu09_id, panel_id, comp_id) # hu08_id, 
+addon_id <- bind_rows(panel_id, comp_id) # hu08_id, hu09_id, 
 
 
 # Common manipulations ----
@@ -583,7 +584,7 @@ size_year <- ccc %>%
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
 
 ccc_sort <- ccc %>%
-  left_join(select(size_year, year, size_factor)) %>%
+  left_join(select(size_year, year, size_factor), by = c("year"), relationship ="many-to-one") %>%
   mutate(weight_cumulative = weight / size_factor) %>%
   select(-size_factor) %>%
   relocate(year, case_id, weight, weight_cumulative)

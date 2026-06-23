@@ -123,22 +123,36 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_sen2 = cc09_43c,
         approval_gov = cc09_43f,
         economy_retro = cc09_20,
-        voted_pres_08 = cc09_31,
-        pid3 = cc423,
-        pid7 = cc424,
-        ideo5 = v261,
-        weight = v200,
-        educ = v213,
-        newsint = v244,
-        marstat = v214,
-        family_income_old = v246,
-        gender = v208,
-        age = v288,
-        birthyr = v207,
-        race = v211,
-      ) %>% 
-      mutate(zipcode = as.character(as_factor(v253)),
-             county_fips = as.character(as_factor(v269)))
+        voted_pres_08 = cc09_31
+      ) |> 
+      mutate(state = str_to_title(state))
+    
+    if ("v200" %in% colnames(tbl)) { # Old private 2009 Harvard recontact file
+      tbl <- tbl %>%
+        rename(
+          pid3 = cc423,
+          pid7 = cc424,
+          ideo5 = v261,
+          weight = v200,
+          educ = v213,
+          newsint = v244,
+          marstat = v214,
+          family_income_old = v246,
+          gender = v208,
+          age = v288,
+          birthyr = v207,
+          race = v211,
+        ) %>% 
+        mutate(zipcode = as.character(as_factor(v253)),
+               county_fips = as.character(as_factor(v269)))
+    } else { # Public 2009 Harvard module file
+      tbl <- tbl %>%
+        rename(
+          family_income_old = income
+        ) %>%
+        mutate(zipcode = as.character(as_factor(inputzip)),
+               county_fips = NA_character_)
+    }
   }
   
   # 2010 - 2011 ----
@@ -208,8 +222,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_sen2 = CC12_315c,
         approval_gov = CC12_308d,
         economy_retro = CC12_302,
-        intent_pres_12 = CC12_354c,
-        intent_pres_12x = CC12_354b,
+        intent_pres_12 = CC12_354,
+        # intent_pres_12 = CC12_354c,
+        # TODO: unclear what intent_pres_12x means in the new version
+        # intent_pres_12x = CC12_354b,
         voted_pres_12 = CC12_410a,
         voted_pres_08 = CC12_317,
         voted_rep = CC12_412,
@@ -541,7 +557,7 @@ std_name <- function(tbl, is_panel = FALSE) {
   if (identical(cces_year, 2024L)) {
     tbl <- tbl %>%
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) %>% 
       mutate(across(matches("TS_(g|p)2024$"), 
              \(x) 
              labelled(
@@ -604,15 +620,77 @@ std_name <- function(tbl, is_panel = FALSE) {
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
+  # 2025 ------
+  if (identical(cces_year, 2025L)) {
+    tbl <- tbl |> 
+      mutate(race = sjlabelled::replace_labels(
+        race, labels = c("Mixed" = 6))) |> 
+      mutate(across(matches("TS_p2024_party$"), 
+                    \(x) 
+                    labelled(
+                      x,
+                      labels = c(
+                        "dem" = 1,
+                        "ind" = 3,
+                        "libertarian" = 4,
+                        "other" = 5,
+                        "rep" = 6
+                      ))
+      ),
+      # time is given in milliseconds for some reason
+      # origin is 1960 (instead of 1970) because this is a DTA
+      starttime = as.POSIXct(starttime / 1000, origin = "1960-01-01")
+      ) |> 
+      rename(
+        weight = commonweight,
+        approval_pres = CC25_312a,
+        approval_rep  = CC25_312f,
+        approval_sen1 = CC25_312g,
+        approval_sen2 = CC25_312h,
+        approval_gov  = CC25_312d,
+        economy_retro = CC25_301,
+        faminc = faminc_new, # or CC25_302?
+        intent_trn = CC25_363,
+        # # intent_pres_24 = CC25_364b,
+        # # intent_pres_24x = CC25_364a, # double check if this is actually voted
+        # intent_rep = CC25_367,
+        # intent_repx = CC25_367_voted,
+        # intent_sen = CC25_365,
+        # intent_senx = CC25_365_voted,
+        # intent_gov = CC25_366,
+        intent_govx = CC25_366_voted,
+        # voted_trn = CC25_401,
+        # voted_rep = CC25_412,
+        # voted_sen = CC25_411,
+        # voted_gov = CC25_413,
+        # voted_pres_16 = presvote16post,
+        voted_pres_20 = presvote20post,
+        voted_pres_24 = presvote24post,
+        voted_gov = CC25_366_voted,
+        # vv_turnout_gvm = TS_g2024,
+        # vv_turnout_pvm = TS_p2024,
+        vv_regstatus = votereg_f, # this might be wrong
+        vv_party_gen = CC25_360,
+        # vv_party_prm = TS_p2024_party,
+        # vv_st = TS_state # inputstate or st?
+      ) %>%
+      mutate(across(matches("vv_"), to_str_empty)) |> 
+      labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
+  }
   
   # more standardization for post 2012 ------
-  if (cces_year[1] %in% c(2012:2024) | cces_year[1] == "2012_panel") {
+  if (cces_year[1] %in% c(2012:2025) | cces_year[1] == "2012_panel") {
     tbl <- tbl %>%
       rename(
-        reg_self = votereg,
-        family_income = faminc,
-        zipcode = lookupzip,
-        county_fips = countyfips
+        # reg_self = votereg,
+        reg_self = any_of(c("votereg_12", "votereg")),
+        # family_income = faminc,
+        family_income = any_of(c("faminc_12", "faminc")),
+        # zipcode = lookupzip,
+        zipcode = any_of(c("regzip_12_pre", "lookupzip")), # 2012 could also be regzip_12_post
+        # county_fips = countyfips
+        county_fips = any_of(c("countyfips_12", "countyfips")),
+        birthyr = any_of("birthyr_12")
       ) %>%
       mutate(
         age = year - birthyr
@@ -621,11 +699,12 @@ std_name <- function(tbl, is_panel = FALSE) {
   
   if (cces_year[1] != 2022) {
     tbl <- tbl %>% 
+      rename(marstat = any_of("marstat_12")) |> 
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
   
   # gender ----
-  if (cces_year[1] %in% c(2021:2024)) {
+  if (cces_year[1] %in% c(2021:2025)) {
     tbl <- tbl |> 
       mutate(
         gender = labelled(zap_labels(gender4), c("Male" = 1, "Female" = 2)),
@@ -633,6 +712,7 @@ std_name <- function(tbl, is_panel = FALSE) {
       )
   } else {
     tbl <- tbl |> 
+      rename(gender = any_of("gender_12")) |> 
       mutate(sex = gender)
   }
   
@@ -797,7 +877,7 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
   }
   
   
-  list_yr
+  distinct(list_yr)
 }
 
 
