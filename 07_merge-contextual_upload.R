@@ -28,7 +28,7 @@ num_cand_match <- function(numdf, canddf) {
   canddf <- rename(canddf, !!type := cand) |> 
     drop_post()
   
-  joined <- left_join(numdf, canddf, by = c("year", "case_id", type))
+  joined <- left_join(numdf, canddf, by = c("year", "case_id", type), relationship = "many-to-one")
   
   joined |> 
     mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) |>
@@ -199,23 +199,23 @@ v_gov_who <- num_cand_match(v_gov, gc_key)
 ids <- c("year", "case_id")
 
 chosen_with_party <-  slim(i_rep_who) |> 
-  left_join(slim(i_sen_who), ids) |> 
-  left_join(slim(i_gov_who), ids) |> 
-  left_join(slim(v_rep_who), ids) |> 
-  left_join(slim(v_sen_who), ids) |> 
-  left_join(slim(v_gov_who), ids)
+  left_join(slim(i_sen_who), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(i_gov_who), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(v_rep_who), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(v_sen_who), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(v_gov_who), by = ids, relationship = "one-to-one")
 
 # now we can wrap up the abstract labels 
 abstract_lbl <- bind_label(i_rep_who) |> 
-  left_join(bind_label(i_sen_who)) |>
-  left_join(bind_label(i_gov_who)) |>
-  left_join(bind_label(v_rep_who)) |>
-  left_join(bind_label(v_sen_who)) |>
-  left_join(bind_label(v_gov_who))
+  left_join(bind_label(i_sen_who), by = ids, relationship = "one-to-one") |>
+  left_join(bind_label(i_gov_who), by = ids, relationship = "one-to-one") |>
+  left_join(bind_label(v_rep_who), by = ids, relationship = "one-to-one") |>
+  left_join(bind_label(v_sen_who), by = ids, relationship = "one-to-one") |>
+  left_join(bind_label(v_gov_who), by = ids, relationship = "one-to-one")
 
 # pre-merge and order vars 
 lbl_party_name <- 
-  left_join(abstract_lbl, chosen_with_party, by = ids) |> 
+  left_join(abstract_lbl, chosen_with_party, by = ids, relationship = "one-to-one") |> 
   select(year, case_id, 
          matches("intent_rep(_party|$)"),
          matches("voted_rep(_party|$)"),
@@ -228,14 +228,14 @@ lbl_party_name <-
 # incumbents
 cli_h1("Add incumbent info")
 incumbents_with_ID <-  slim(drop_post(ri_mc_match), "_current", "icpsr") |> 
-  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), ids) |> 
-  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), ids) |> 
-  left_join(slim(drop_post(gov_inc_match), "_current"), ids)
+  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(drop_post(gov_inc_match), "_current"), by = ids, relationship = "one-to-one")
 
 # merge in the candidate vars ----
 ccc_cand <- ccc |> 
-  left_join(lbl_party_name, ids) |> 
-  left_join(incumbents_with_ID, ids)
+  left_join(lbl_party_name, by = ids, relationship = "many-to-one") |> 
+  left_join(incumbents_with_ID, by = ids, relationship = "many-to-one")
 
 stopifnot(nrow(ccc) == nrow(ccc_cand))
 
@@ -245,7 +245,7 @@ cli_h1("Format variable class")
 ccc_df <- ccc_cand |>
   mutate(zipcode = as.character(zipcode)) |>
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) |> 
-  mutate_at(vars(year, case_id), as.integer) |> 
+  mutate(year = as.integer(year)) |> 
   mutate_if(is.factor, fct_drop) # drop unused values
 
 # make char variables for IDs for Stata
@@ -264,11 +264,11 @@ fips_key <-  tigris::fips_codes |>
 fips_key_post <- rename(fips_key, st_post = st, state_post = state)
 
 ccc_factor <- ccc_fac |> 
-  left_join(fips_key) |>
+  left_join(fips_key, by = join_by(state, st), relationship = "many-to-one") |>
   mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
          st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) |> 
   select(-st_fips) |> 
-  left_join(fips_key_post) |>
+  left_join(fips_key_post, by = join_by(state_post, st_post), relationship = "many-to-one") |>
   mutate(state_post = labelled(st_fips, deframe(select(fips_key_post, state_post, st_fips))),
          st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) |> 
   select(-st_fips)
@@ -277,8 +277,10 @@ ccc_factor <- ccc_fac |>
 cli_h1("Save Final data")
 # needed for CCES_representation (2025-09-19)
 write_feather(ccc_df, "data/release/cumulative_2006-2025_addon.feather")
-write_feather(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2025.feather")
-write_rds(anti_join(ccc_df, panel_ids), "data/release/cumulative_2006-2025.rds", compress = "xz")
+panel_ids <- mutate(panel_ids, year = as.integer(year), case_id = as.numeric(case_id))
+
+write_feather(anti_join(ccc_df, panel_ids, by = ids), "data/release/cumulative_2006-2025.feather")
+write_rds(anti_join(ccc_df, panel_ids, by = ids), "data/release/cumulative_2006-2025.rds", compress = "xz")
 
 # anti-join things not to put on dataverse (panel, module)
 panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # for crunch
@@ -337,6 +339,4 @@ write_dta(ccc_common, "data/release/cumulative_2006-2025.dta", version = 14)
 # }
 
 cat("Finished merging candidate vars and the rest. Updated Rds and dta.\n")
-
-
 
