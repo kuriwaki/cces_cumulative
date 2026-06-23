@@ -6,5 +6,5 @@ Rscript 05_stack-cumulative.R || exit 1
 # Rscript 06_extract-politicians.R || exit 1
 Rscript 07_merge-contextual_upload.R || exit 1
 # Rscript 07_format-crunch.R || exit 1
-quarto render guide/guide_cumulative_2006-2024.qmd || exit 1
+quarto render guide/guide_cumulative_2006-2025.qmd || exit 1
 
