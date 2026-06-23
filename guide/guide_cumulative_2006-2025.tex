@@ -154,12 +154,12 @@ Website: \url{https://www.shirokuriwaki.com}. ORCID:
 Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen
 DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik,
 Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and
-Gerlad Wright for finding errors and providing suggestions. Thanks to
-Joe Williams at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell
-at Crunch for their help.}}
+Gerlad Wright for finding errors and providing suggestions. Adam Chapnik
+contributed significantly to V12. Thanks to Joe Williams at YouGov, and
+Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{2026-06-15}
+\date{2026-06-23}
 
 \begin{document}
 
@@ -174,9 +174,9 @@ at Crunch for their help.}}
 \noindent \emph{Cite this dataset as:}
 
 \begin{quote}
-Kuriwaki, Shiro, 2025, ``Cumulative CES Common Content'',
+Kuriwaki, Shiro, 2026, ``Cumulative CES Common Content'',
 \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6}{\url{doi:10.7910/DVN/II2DB6}},
-Harvard Dataverse, V11.
+Harvard Dataverse, V12.
 \end{quote}
 
 \medskip
@@ -421,9 +421,9 @@ makes it immediately obvious which value is associated with which label:
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 701,955 x 3
+# A tibble: 718,955 x 3
     year case_id pid3           
-   <int>   <int> <int+lbl>      
+   <int>   <dbl> <int+lbl>      
  1  2006  439219 1 [Democrat]   
  2  2006  439224 4 [Other]      
  3  2006  439228 1 [Democrat]   
@@ -434,7 +434,7 @@ makes it immediately obvious which value is associated with which label:
  8  2006  439254 1 [Democrat]   
  9  2006  439255 1 [Democrat]   
 10  2006  439263 1 [Democrat]   
-# i 701,945 more rows
+# i 718,945 more rows
 \end{verbatim}
 
 \noindent Labels can be made explicit by coercing the labelled vector
@@ -450,15 +450,15 @@ labelled class.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 701,955 x 4
+# A tibble: 718,955 x 4
    year case_id pid3         pid3_fct
-  <int>   <int> <int+lbl>    <fct>   
+  <int>   <dbl> <int+lbl>    <fct>   
 1  2006  439219 1 [Democrat] Democrat
 2  2006  439224 4 [Other]    Other   
 3  2006  439228 1 [Democrat] Democrat
 4  2006  439237 1 [Democrat] Democrat
 5  2006  439238 1 [Democrat] Democrat
-# i 701,950 more rows
+# i 718,950 more rows
 \end{verbatim}
 
 \noindent Unlike factors, labelled variables can be referenced by their
@@ -474,15 +474,15 @@ do that.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 257,527 x 3
+# A tibble: 263,151 x 3
    year case_id pid3        
-  <int>   <int> <int+lbl>   
+  <int>   <dbl> <int+lbl>   
 1  2006  439219 1 [Democrat]
 2  2006  439228 1 [Democrat]
 3  2006  439237 1 [Democrat]
 4  2006  439238 1 [Democrat]
 5  2006  439254 1 [Democrat]
-# i 257,522 more rows
+# i 263,146 more rows
 \end{verbatim}
 
 \indent In this cumulative R dataset, some variables are of class
@@ -526,9 +526,9 @@ individuals.
 \end{Shaded}
 
 \begin{verbatim}
-# A tibble: 701,955 x 6
+# A tibble: 718,955 x 6
     year case_id st    voted_sen                voted_sen_party voted_sen_chosen
-   <int>   <int> <chr> <fct>                    <fct>           <chr>           
+   <int>   <dbl> <chr> <fct>                    <fct>           <chr>           
  1  2006  439219 NC    <NA>                     <NA>            <NA>            
  2  2006  439224 OH    [Democrat / Candidate 1] Democratic      Sherrod C. Brow~
  3  2006  439228 NJ    [Democrat / Candidate 1] Democratic      Robert Menendez~
@@ -539,7 +539,7 @@ individuals.
  8  2006  439254 NV    [Democrat / Candidate 1] Democratic      Jack Carter (D) 
  9  2006  439255 TX    [Democrat / Candidate 1] Democratic      Barbara Ann Rad~
 10  2006  439263 MD    I Did Not Vote In This ~ <NA>            <NA>            
-# i 701,945 more rows
+# i 718,945 more rows
 \end{verbatim}
 
 \section{Variables}\label{variables}
@@ -608,6 +608,7 @@ year}{year: CCES year}}\label{year-cces-year}
 2022 & 60,000\\
 2023 & 24,500\\
 2024 & 60,000\\
+2025 & 17,000\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -642,6 +643,7 @@ time}{starttime: Start time}}\label{starttime-start-time}
 2022 & 2022-09-29 & 2022-11-08\\
 2023 & 2023-11-08 & 2023-12-11\\
 2024 & 2024-10-01 & 2024-11-04\\
+2025 & 2025-11-05 & 2025-12-12\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -649,7 +651,7 @@ time}{starttime: Start time}}\label{starttime-start-time}
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Times are recorded in UTC (Greenwich mean time) for all respondents
   regardless of the location of the interview, at least for 2021.
@@ -669,7 +671,7 @@ survey (in even years){]}
 \midrule
 Did Not Take Post-Election Survey & 88,135\\
 Took Post-Election Survey & 452,821\\
-(Missing) & 160,999\\
+(Missing) & 177,999\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -692,13 +694,13 @@ Took Post-Election Survey & 452,821\\
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.4340  0.7302  1.0000  1.1615 15.0614 
+ 0.0000  0.4337  0.7310  1.0000  1.1644 15.0614 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   In even years, they are re-computed after vote validation has been
   computed and those re-computed weights are taken here when available.
@@ -725,13 +727,13 @@ year to make years comparable{]}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.0000  0.2662  0.4821  0.7917  0.9196 21.4290 
+ 0.0000  0.2662  0.4918  0.8137  0.9494 24.3029 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: Only a simple transformation of \texttt{weight}.
   Specifically, \texttt{weight\_cumulative} is \texttt{weight} divided
@@ -789,8 +791,8 @@ wave}{weight\_post: Survey weight for post-election wave}}\label{weight_post-sur
 the even years.{]}
 
 \begin{verbatim}
-    Min.  1st Qu.   Median     Mean  3rd Qu.     Max.      NAs 
- 0.00001  0.44547  0.69480  1.00000  1.07476 15.50405   449839 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   0.00    0.45    0.69    1.00    1.07   15.50  466839 
 \end{verbatim}
 
 \begin{itemize}
@@ -813,8 +815,8 @@ voters}{vvweight: Survey weights to validated registered voters}}\label{vvweight
 {[}weights to validated registered voter population{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs 
- 0.0001  0.5324  0.7937  1.0000  1.1619 16.3113  537396 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   0.00    0.53    0.79    1.00    1.16   16.31  554396 
 \end{verbatim}
 
 \begin{itemize}
@@ -846,8 +848,8 @@ wave}{vvweight\_post: Survey weights to validated registered voters, post-electi
 wave{]}
 
 \begin{verbatim}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs 
- 0.0001  0.4988  0.7531  1.0000  1.1355 15.1776  551380 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   0.00    0.50    0.75    1.00    1.14   15.18  568380 
 \end{verbatim}
 
 \begin{itemize}
@@ -910,7 +912,7 @@ A series of variables for the respondent's location:
 \end{itemize}
 
 \begin{verbatim}
-Rows: 701,955
+Rows: 718,955
 Columns: 15
 $ state        <chr> "California", "Pennsylvania", "Texas", "Texas", "Texas", ~
 $ st           <chr> "CA", "PA", "TX", "TX", "TX", "NY", "NC", "NC", "MA", "CA~
@@ -932,7 +934,7 @@ $ vv_state     <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N~
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Note the distinction between \texttt{dist} and \texttt{dist\_up},
   especially in 2012. The former should generally be used for linking
@@ -973,9 +975,9 @@ Female {[}2018-2020{]} Are you male or female? {[}2006-2016{]}''
 \toprule
  & n\\
 \midrule
-Male & 320,535\\
-Female & 379,802\\
-(Missing) & 1,618\\
+Male & 328,401\\
+Female & 388,722\\
+(Missing) & 1,832\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -983,7 +985,7 @@ Female & 379,802\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Although named \texttt{gender} historically, this question's wording
   is such that it asks people's sex. Until 2020, only two choices were
@@ -1016,10 +1018,10 @@ Gender}{gender4: Gender}}\label{gender4-gender}
 \toprule
  & n\\
 \midrule
-Man & 76,795\\
-Woman & 91,787\\
-Non-Binary & 1,290\\
-Other & 328\\
+Man & 84,661\\
+Woman & 100,707\\
+Non-Binary & 1,464\\
+Other & 368\\
 (Missing) & 531,755\\
 \bottomrule
 \end{tabular}
@@ -1028,7 +1030,7 @@ Other & 328\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2021, 2022, 2023, 2024
+  Years: 2021, 2022, 2023, 2024, 2025
 \item
   See the explanation under \texttt{gender}
 \end{itemize}
@@ -1046,7 +1048,7 @@ Sex}{sex: Sex}}\label{sex-sex}
 \midrule
 Male & 243,740\\
 Female & 288,015\\
-(Missing) & 170,200\\
+(Missing) & 187,200\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1070,13 +1072,13 @@ Orientation}{sexuality: Sexual Orientation}}\label{sexuality-sexual-orientation}
 \toprule
  & n\\
 \midrule
-Heterosexual / Straight & 331,854\\
-Lesbian / Gay Woman & 5,417\\
-Gay Man & 11,113\\
-Bisexual & 18,348\\
-Other & 5,248\\
-Prefer not to Say & 8,797\\
-(Missing) & 321,178\\
+Heterosexual / Straight & 346,676\\
+Lesbian / Gay Woman & 5,641\\
+Gay Man & 11,507\\
+Bisexual & 19,187\\
+Other & 5,545\\
+Prefer not to Say & 9,203\\
+(Missing) & 321,196\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1084,7 +1086,7 @@ Prefer not to Say & 8,797\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+  Years: 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{birthyr}: Year of
@@ -1094,13 +1096,13 @@ birth}{birthyr: Year of birth}}\label{birthyr-year-of-birth}
 
 \begin{verbatim}
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1900    1953    1964    1966    1981    2006 
+   1900    1953    1964    1966    1981    2007 
 \end{verbatim}
 
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{age}:
@@ -1117,7 +1119,7 @@ Birth{]}
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{educ}:
@@ -1131,12 +1133,12 @@ Education}{educ: Education}}\label{educ-education}
 \toprule
  & n\\
 \midrule
-No HS & 23,795\\
-High School Graduate & 193,235\\
-Some College & 167,980\\
-2-Year & 71,036\\
-4-Year & 158,918\\
-Post-Grad & 86,924\\
+No HS & 24,510\\
+High School Graduate & 198,203\\
+Some College & 171,557\\
+2-Year & 72,815\\
+4-Year & 162,609\\
+Post-Grad & 89,194\\
 (Missing) & 67\\
 \bottomrule
 \end{tabular}
@@ -1145,7 +1147,7 @@ Post-Grad & 86,924\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{race}:
@@ -1159,14 +1161,14 @@ Race}{race: Race}}\label{race-race}
 \toprule
  & n\\
 \midrule
-White & 510,016\\
-Black & 80,423\\
-Hispanic & 60,390\\
-Asian & 17,029\\
-Native American & 5,791\\
-Mixed & 15,369\\
-Other & 11,710\\
-Middle Eastern & 1,227\\
+White & 520,531\\
+Black & 82,637\\
+Hispanic & 62,677\\
+Asian & 18,091\\
+Native American & 5,960\\
+Mixed & 15,823\\
+Other & 11,949\\
+Middle Eastern & 1,287\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1174,7 +1176,7 @@ Middle Eastern & 1,227\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: The ``Hispanic'' value may undercount self-identified
   Hispanics. See \texttt{hispanic} and \texttt{race\_h}.
@@ -1192,9 +1194,9 @@ response to race is not Hispanic{]}''
 \toprule
  & n\\
 \midrule
-Yes & 30,378\\
-No & 537,700\\
-(Missing) & 133,877\\
+Yes & 33,234\\
+No & 551,841\\
+(Missing) & 133,880\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1203,7 +1205,7 @@ No & 537,700\\
 \tightlist
 \item
   Years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-  2020, 2021, 2022, 2023, 2024
+  2020, 2021, 2022, 2023, 2024, 2025
 \item
   Different years have treated this question differently. Until 2017,
   this question was \emph{not} asked to those who responded ``Hispanic''
@@ -1228,14 +1230,14 @@ hispanic ethnicity{]}
 \toprule
  & n\\
 \midrule
-White & 498,544\\
-Black & 78,624\\
-Hispanic & 80,356\\
-Asian & 16,593\\
-Native American & 5,226\\
-Mixed & 10,777\\
-Other & 10,674\\
-Middle Eastern & 1,161\\
+White & 508,758\\
+Black & 80,791\\
+Hispanic & 83,212\\
+Asian & 17,641\\
+Native American & 5,378\\
+Mixed & 11,075\\
+Other & 10,881\\
+Middle Eastern & 1,219\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1243,7 +1245,7 @@ Middle Eastern & 1,161\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   This variable combines the \texttt{race} and \texttt{hispanic}
   variables in a single variable by coding ``any-part Hispanic'' as
@@ -1269,15 +1271,15 @@ origin}{hisp\_origin: Hispanic origin}}\label{hisp_origin-hispanic-origin}
 \toprule
  & n (choose all that apply)\\
 \midrule
-Mexico & 21,059\\
-United States & 20,039\\
-Spain & 9,338\\
-Puerto Rico & 8,151\\
-South America & 4,174\\
-Cuba & 3,088\\
-Central America & 2,669\\
-Dominican Republic & 1,511\\
-Caribbean & 805\\
+Mexico & 22,179\\
+United States & 21,296\\
+Spain & 9,767\\
+Puerto Rico & 8,589\\
+South America & 4,378\\
+Cuba & 3,238\\
+Central America & 2,806\\
+Dominican Republic & 1,576\\
+Caribbean & 852\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1285,7 +1287,8 @@ Caribbean & 805\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+  Years: 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+  2025
 \item
   This is a multichoice question that is then concatenated into a single
   character. The sequence \texttt{"!!"} is used as a delimiter. For
@@ -1321,9 +1324,9 @@ Citizenship}{citizen: Citizenship}}\label{citizen-citizenship}
 \toprule
  & n\\
 \midrule
-Citizen & 665,258\\
-Non-Citizen & 10,472\\
-(Missing) & 26,225\\
+Citizen & 681,876\\
+Non-Citizen & 10,844\\
+(Missing) & 26,235\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1332,7 +1335,7 @@ Non-Citizen & 10,472\\
 \tightlist
 \item
   Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023, 2024
+  2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
 \item
   These come from the immigration status questions (often called
   \texttt{immstat}), which ask respondents between first, second, and
@@ -1354,19 +1357,19 @@ Religion}{religion: Religion}}\label{religion-religion}
 \toprule
  & n\\
 \midrule
-Protestant & 240,966\\
-Roman Catholic & 134,146\\
-Mormon & 9,332\\
-Eastern or Greek Orthodox & 3,547\\
-Jewish & 16,614\\
-Muslim & 3,968\\
-Buddhist & 5,749\\
-Hindu & 2,023\\
-Atheist & 37,378\\
-Agnostic & 40,175\\
-Nothing in Particular & 125,279\\
-Something Else & 45,190\\
-(Missing) & 37,588\\
+Protestant & 246,102\\
+Roman Catholic & 137,629\\
+Mormon & 9,493\\
+Eastern or Greek Orthodox & 3,672\\
+Jewish & 17,018\\
+Muslim & 4,156\\
+Buddhist & 5,938\\
+Hindu & 2,112\\
+Atheist & 38,351\\
+Agnostic & 41,167\\
+Nothing in Particular & 128,941\\
+Something Else & 46,766\\
+(Missing) & 37,610\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1374,7 +1377,7 @@ Something Else & 45,190\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2007-2024
+  Years: All of 2007-2025
 \item
   The response options have stayed largely consistent and follow that of
   Pew.
@@ -1391,11 +1394,11 @@ religion}{relig\_imp: Importance of religion}}\label{relig_imp-importance-of-rel
 \toprule
  & n\\
 \midrule
-Very Important & 249,412\\
-Somewhat Important & 166,912\\
-Not Too Important & 96,553\\
-Not at All Important & 135,819\\
-(Missing) & 53,259\\
+Very Important & 255,435\\
+Somewhat Important & 171,379\\
+Not Too Important & 99,199\\
+Not at All Important & 139,671\\
+(Missing) & 53,271\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1403,7 +1406,7 @@ Not at All Important & 135,819\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2008-2024
+  Years: All of 2008-2025
 \item
   In common content, often named \texttt{pew\_religimp}
 \end{itemize}
@@ -1420,10 +1423,10 @@ or not?''
 \toprule
  & n\\
 \midrule
-Yes & 199,689\\
-No & 482,355\\
+Yes & 204,489\\
+No & 494,540\\
 8 & 39\\
-(Missing) & 19,872\\
+(Missing) & 19,887\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1431,7 +1434,7 @@ No & 482,355\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024 except 2007
+  Years: All of 2006-2025 except 2007
 \item
   In common content, often named \texttt{pew\_bornagain}
 \end{itemize}
@@ -1447,21 +1450,21 @@ Protestantism}{relig\_protestant: Branch of Protestantism}}\label{relig_protesta
 \toprule
  & n\\
 \midrule
-Baptist & 76,357\\
-Methodist & 33,706\\
-Nondenominational or Independent Church & 54,041\\
-Lutheran & 26,262\\
-Presbyterian & 16,348\\
-Pentecostal & 16,562\\
-Episcopalian & 11,437\\
-Church of Christ or Disciples of Christ & 9,725\\
-Congregational or United Church of Christ & 5,866\\
-Holiness & 2,413\\
-Reformed & 2,218\\
-Adventist & 2,438\\
-Jehovah's Witness & 2,843\\
-Something Else & 21,399\\
-(Missing) & 420,340\\
+Baptist & 78,254\\
+Methodist & 34,321\\
+Nondenominational or Independent Church & 55,431\\
+Lutheran & 26,734\\
+Presbyterian & 16,669\\
+Pentecostal & 17,043\\
+Episcopalian & 11,638\\
+Church of Christ or Disciples of Christ & 9,985\\
+Congregational or United Church of Christ & 5,992\\
+Holiness & 2,494\\
+Reformed & 2,263\\
+Adventist & 2,496\\
+Jehovah's Witness & 2,959\\
+Something Else & 22,444\\
+(Missing) & 430,232\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1469,7 +1472,7 @@ Something Else & 21,399\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2007-2024
+  Years: All of 2007-2025
 \item
   In common content, often named \texttt{religpew\_protestant}
 \end{itemize}
@@ -1486,15 +1489,15 @@ services?''
 \toprule
  & n\\
 \midrule
-More Than Once a Week & 54,292\\
-Once a Week & 115,467\\
-Once or Twice a Month & 50,451\\
-A Few Times a Year & 90,019\\
-Seldom & 149,846\\
-Never & 185,092\\
-Don't Know & 9,597\\
+More Than Once a Week & 55,428\\
+Once a Week & 118,281\\
+Once or Twice a Month & 51,561\\
+A Few Times a Year & 92,132\\
+Seldom & 153,673\\
+Never & 190,731\\
+Don't Know & 9,948\\
 8 & 28\\
-(Missing) & 47,163\\
+(Missing) & 47,173\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1502,7 +1505,7 @@ Don't Know & 9,597\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2008-2024
+  Years: All of 2008-2025
 \item
   In common content, often named \texttt{pew\_churatd}
 \end{itemize}
@@ -1520,13 +1523,13 @@ Status}{marstat: Marital Status}}\label{marstat-marital-status}
 \toprule
  & n\\
 \midrule
-Married & 365,667\\
-Separated & 12,326\\
-Divorced & 78,199\\
-Widowed & 35,573\\
-Single / Never Married & 173,290\\
-Domestic Partnership & 35,260\\
-(Missing) & 1,640\\
+Married & 372,936\\
+Separated & 12,647\\
+Divorced & 80,205\\
+Widowed & 36,593\\
+Single / Never Married & 178,683\\
+Domestic Partnership & 36,245\\
+(Missing) & 1,646\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1534,7 +1537,7 @@ Domestic Partnership & 35,260\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   The option ``Single'' was used till 2016, which was then replaced by
   ``Never Married'' in 2017 and 2018.
@@ -1554,10 +1557,10 @@ Ownership}{ownhome: Home Ownership}}\label{ownhome-home-ownership}
 \toprule
  & n\\
 \midrule
-Own & 416,264\\
-Rent & 209,586\\
-Other & 30,909\\
-(Missing) & 45,196\\
+Own & 426,126\\
+Rent & 215,838\\
+Other & 31,793\\
+(Missing) & 45,198\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1566,7 +1569,7 @@ Other & 30,909\\
 \tightlist
 \item
   Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2023, 2024
+  2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{has\_child}: Parent of Young
@@ -1580,8 +1583,8 @@ Children}{has\_child: Parent of Young Children}}\label{has_child-parent-of-young
 \toprule
  & n\\
 \midrule
-Yes & 159,067\\
-No & 495,387\\
+Yes & 162,808\\
+No & 508,646\\
 (Missing) & 47,501\\
 \bottomrule
 \end{tabular}
@@ -1590,7 +1593,7 @@ No & 495,387\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2008-2024
+  Years: All of 2008-2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{no\_milstat}: Military Status
@@ -1605,8 +1608,8 @@ immediate family has served{]}
 \toprule
  & n\\
 \midrule
-Yes & 304,431\\
-No & 387,430\\
+Yes & 314,061\\
+No & 394,800\\
 (Missing) & 10,094\\
 \bottomrule
 \end{tabular}
@@ -1615,7 +1618,7 @@ No & 387,430\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024 except 2007
+  Years: All of 2006-2025 except 2007
 \item
   The original question is of the form ``We'd like to know whether you
   or someone in your immediate family is currently serving or has ever
@@ -1661,7 +1664,7 @@ Unregistered & 18,070\\
 Dropped & 8,433\\
 Inactive & 4,086\\
 Multiple Appearances & 2,165\\
-(Missing) & 197,420\\
+(Missing) & 214,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1691,15 +1694,17 @@ party}{vv\_party\_gen: Validated registered party}}\label{vv_party_gen-validated
 \toprule
  & n\\
 \midrule
-No Record of Party Registration & 178,523\\
+No Record of Party Registration & 185,752\\
 Unknown & 87,810\\
-Democratic Party & 70,598\\
-Republican Party & 50,802\\
+Democratic Party & 74,083\\
+Republican Party & 53,494\\
 No Party Affiliation & 18,380\\
 Declined to State & 3,093\\
 Independent Party & 2,829\\
-Other & 2,531\\
+Other & 2,783\\
+No Party, Independent, Declined to State & 2,737\\
 Libertarian Party & 1,061\\
+Not Sure & 605\\
 Green Party & 479\\
 Conservative Party & 114\\
 Working Family Party & 48\\
@@ -1714,7 +1719,7 @@ Socialist Party & 7\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2025
 \item
   Limitations: Note that the response categories changed from 2022, when
   CES started using TargetSmart instead of Catalist for their voter
@@ -1746,7 +1751,7 @@ Other & 44\\
 No Party Affiliation & 27\\
 Green Party & 7\\
 Independent Party & 7\\
-(Missing) & 285,620\\
+(Missing) & 302,620\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1822,7 +1827,7 @@ DE & 958\\
 DC & 603\\
 ND & 566\\
 WY & 409\\
-(Missing) & 340,155\\
+(Missing) & 357,155\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1853,7 +1858,7 @@ etc..) are aggregated as a vote.{]}
 Voted & 312,185\\
 No Record of Voting & 227,038\\
 No Voter File & 1,733\\
-(Missing) & 160,999\\
+(Missing) & 177,999\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1888,7 +1893,7 @@ turnout Primary Election
 No Record of Voting & 340,690\\
 Voted & 162,482\\
 No Voter File & 1,363\\
-(Missing) & 197,420\\
+(Missing) & 214,420\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1914,14 +1919,18 @@ wave)}{intent\_turnout\_self: Self-reported turnout (pre-election wave)}}\label{
 \toprule
  & n\\
 \midrule
+I Do not Intend to Vote in the 2026 Election & 1,950\\
 Yes, definitely & 282,042\\
+I Will Likely Vote for the Democratic Candidate for Us House of Representatives & 6,844\\
 Probably & 32,331\\
 I already voted (early or absentee) & 36,668\\
+I Will Likely Vote for the Republican Candidate for Us House of Representatives & 5,081\\
 Plan to vote early & 8,209\\
 I Plan to Vote Before November 5th & 2,600\\
+Not Sure & 3,097\\
 No & 30,905\\
 Undecided & 22,407\\
-(Missing) & 286,793\\
+(Missing) & 286,821\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1929,7 +1938,7 @@ Undecided & 22,407\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2025
 \item
   Limitations: Collapses and simplifies response categories to
   standardize across years. See individual year's datasets for details.
@@ -1954,7 +1963,7 @@ wave)}{voted\_turnout\_self: Self-reported turnout (post-election wave)}}\label{
 \midrule
 Yes & 387,470\\
 No & 51,116\\
-(Missing) & 263,369\\
+(Missing) & 280,369\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1986,11 +1995,11 @@ point)}{pid3: Partisan identity (3 point)}}\label{pid3-partisan-identity-3-point
 \toprule
  & n\\
 \midrule
-Democrat & 257,527\\
-Republican & 184,380\\
-Independent & 197,155\\
-Other & 28,346\\
-Not Sure & 34,306\\
+Democrat & 263,151\\
+Republican & 188,913\\
+Independent & 202,151\\
+Other & 29,059\\
+Not Sure & 35,440\\
 (Missing) & 241\\
 \bottomrule
 \end{tabular}
@@ -1999,7 +2008,7 @@ Not Sure & 34,306\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: Response options offer slightly by year. For example, the
   \texttt{Not\ Sure} option is not a response option in years 2006 and
@@ -2019,14 +2028,14 @@ point)}{pid7: Partisan identity (7 point)}}\label{pid7-partisan-identity-7-point
 \toprule
  & n\\
 \midrule
-Strong Democrat & 173,790\\
-Not Very Strong Democrat & 83,093\\
-Lean Democrat & 70,754\\
-Independent & 97,588\\
-Lean Republican & 69,137\\
-Not Very Strong Republican & 65,183\\
-Strong Republican & 118,558\\
-Not Sure & 20,817\\
+Strong Democrat & 177,639\\
+Not Very Strong Democrat & 84,868\\
+Lean Democrat & 72,445\\
+Independent & 100,803\\
+Lean Republican & 70,497\\
+Not Very Strong Republican & 66,693\\
+Strong Republican & 121,581\\
+Not Sure & 21,394\\
 Don't Know & 3\\
 (Missing) & 3,032\\
 \bottomrule
@@ -2036,7 +2045,7 @@ Don't Know & 3\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -2054,10 +2063,10 @@ towards a party in pid7 (Lean Democrats / Republicans) as partisans.{]}
 \toprule
  & n\\
 \midrule
-Democrat (Including Leaners) & 327,637\\
-Republican (Including Leaners) & 252,878\\
-Independent (Excluding Leaners) & 97,588\\
-Not Sure & 20,817\\
+Democrat (Including Leaners) & 334,952\\
+Republican (Including Leaners) & 258,771\\
+Independent (Excluding Leaners) & 100,803\\
+Not Sure & 21,394\\
 (Missing) & 3,035\\
 \bottomrule
 \end{tabular}
@@ -2066,7 +2075,7 @@ Not Sure & 20,817\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: See \texttt{pid3}
 \end{itemize}
@@ -2082,13 +2091,13 @@ point)}{ideo5: Ideology (5 point)}}\label{ideo5-ideology-5-point}
 \toprule
  & n\\
 \midrule
-Very Liberal & 72,537\\
-Liberal & 125,017\\
-Moderate & 221,194\\
-Conservative & 150,837\\
-Very Conservative & 80,356\\
-Not Sure & 50,115\\
-(Missing) & 1,899\\
+Very Liberal & 74,541\\
+Liberal & 127,826\\
+Moderate & 226,665\\
+Conservative & 154,203\\
+Very Conservative & 82,120\\
+Not Sure & 51,698\\
+(Missing) & 1,902\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2096,7 +2105,7 @@ Not Sure & 50,115\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \end{itemize}
 
 \subsection{Economics and Income}\label{economics-and-income}
@@ -2113,21 +2122,21 @@ income? {[}Brackets coarsened{]}''
 \toprule
  & n\\
 \midrule
-Less than 10k & 33,744\\
-10k - 20k & 51,740\\
-20k - 30k & 70,700\\
-30k - 40k & 69,839\\
-40k - 50k & 62,076\\
-50k - 60k & 61,124\\
-60k - 70k & 45,417\\
-70k - 80k & 50,163\\
-80k - 100k & 57,837\\
-100k - 120k & 42,859\\
-120k - 150k & 37,330\\
-150k+ & 45,847\\
-Prefer not to say & 71,619\\
+Less than 10k & 34,886\\
+10k - 20k & 52,998\\
+20k - 30k & 72,441\\
+30k - 40k & 71,335\\
+40k - 50k & 63,333\\
+50k - 60k & 62,493\\
+60k - 70k & 46,438\\
+70k - 80k & 51,271\\
+80k - 100k & 59,169\\
+100k - 120k & 43,919\\
+120k - 150k & 38,438\\
+150k+ & 47,454\\
+Prefer not to say & 73,115\\
 Skipped & 12\\
-(Missing) & 1,648\\
+(Missing) & 1,653\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2135,7 +2144,7 @@ Skipped & 12\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: The income brackets provided changed slightly over time.
   The brackets in this cumulative dataset coarsen certain original
@@ -2159,16 +2168,16 @@ status?''
 \toprule
  & n\\
 \midrule
-Full-Time & 272,710\\
-Part-Time & 73,479\\
-Temporarily Laid Off & 5,931\\
-Unemployed & 46,845\\
-Retired & 155,290\\
-Permanently Disabled & 42,552\\
-Homemaker & 48,333\\
-Student & 29,962\\
-Other & 16,334\\
-(Missing) & 10,519\\
+Full-Time & 278,711\\
+Part-Time & 75,424\\
+Temporarily Laid Off & 6,046\\
+Unemployed & 48,341\\
+Retired & 159,521\\
+Permanently Disabled & 43,739\\
+Homemaker & 49,286\\
+Student & 30,556\\
+Other & 16,763\\
+(Missing) & 10,568\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2176,7 +2185,7 @@ Other & 16,334\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024 except 2007
+  Years: All of 2006-2025 except 2007
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{no\_healthins}:
@@ -2191,8 +2200,8 @@ insurance options given{]}
 \toprule
  & n\\
 \midrule
-Yes & 63,990\\
-No & 558,681\\
+Yes & 65,507\\
+No & 574,164\\
 (Missing) & 79,284\\
 \bottomrule
 \end{tabular}
@@ -2201,7 +2210,7 @@ No & 558,681\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2009-2024
+  Years: All of 2009-2025
 \item
   The original question is of the form ``Do you currently have health
   insurance? (check all that apply)'', where respondents can pick more
@@ -2225,10 +2234,10 @@ membership}{union: Union membership}}\label{union-union-membership}
 \toprule
  & n\\
 \midrule
-Yes, Currently & 43,432\\
-Yes, Formerly & 125,908\\
-No, Never & 463,978\\
-(Missing) & 68,637\\
+Yes, Currently & 44,405\\
+Yes, Formerly & 128,804\\
+No, Never & 477,108\\
+(Missing) & 68,638\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2237,7 +2246,7 @@ No, Never & 463,978\\
 \tightlist
 \item
   Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2024
+  2018, 2019, 2020, 2021, 2022, 2024, 2025
 \item
   Question wording and response options have been reworded to be
   harmonized across years. Please see each individual CCES for exact
@@ -2258,10 +2267,10 @@ household}{union\_hh: Union membership in household}}\label{union_hh-union-membe
 \toprule
  & n\\
 \midrule
-Yes, Currently & 54,524\\
-Yes, Formerly & 88,316\\
-No, Never & 474,290\\
-Not Sure & 13,357\\
+Yes, Currently & 55,563\\
+Yes, Formerly & 90,241\\
+No, Never & 486,652\\
+Not Sure & 15,031\\
 (Missing) & 71,468\\
 \bottomrule
 \end{tabular}
@@ -2271,7 +2280,7 @@ Not Sure & 13,357\\
 \tightlist
 \item
   Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2024
+  2018, 2019, 2020, 2021, 2022, 2024, 2025
 \item
   Question wording and response options have been reworded to be
   harmonized across years. Please see each individual CCES for exact
@@ -2296,7 +2305,7 @@ mutual fund?''
 \midrule
 Yes & 215,180\\
 No & 283,957\\
-(Missing) & 202,818\\
+(Missing) & 219,818\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2319,13 +2328,13 @@ economy}{economy\_retro: Retrospective economy}}\label{economy_retro-retrospecti
 \toprule
  & n\\
 \midrule
-Gotten much better & 47,711\\
-Gotten better / somewhat better & 139,913\\
-Stayed about the same & 155,691\\
-Gotten worse / somewhat worse & 175,135\\
-Gotten much worse & 163,615\\
-Not sure & 18,686\\
-(Missing) & 1,204\\
+Gotten much better & 48,690\\
+Gotten better / somewhat better & 142,663\\
+Stayed about the same & 157,934\\
+Gotten worse / somewhat worse & 179,494\\
+Gotten much worse & 169,714\\
+Not sure & 19,232\\
+(Missing) & 1,228\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2333,7 +2342,7 @@ Not sure & 18,686\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: Response options vary by year. Some are collapsed into
   one category (e.g., \texttt{Gotten\ Better}, presented in some years,
@@ -2358,12 +2367,12 @@ in government and public affairs ..''
 \toprule
  & n\\
 \midrule
-Most of the time & 348,558\\
-Some of the time & 172,164\\
-Only now and then & 82,530\\
-Hardly at all & 43,518\\
-Don't Know & 17,998\\
-(Missing) & 37,187\\
+Most of the time & 356,238\\
+Some of the time & 177,088\\
+Only now and then & 84,910\\
+Hardly at all & 45,032\\
+Don't Know & 18,497\\
+(Missing) & 37,190\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2371,7 +2380,7 @@ Don't Know & 17,998\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2007-2024
+  Years: All of 2007-2025
 \item
   Limitations: Not asked in 2006. Similar questions about watching TV
   news was asked in 2006, but not included in this cumulative file.
@@ -2391,11 +2400,11 @@ Incumbent President{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 144,567\\
-Approve / Somewhat Approve & 161,915\\
-Disapprove / Somewhat Disapprove & 72,140\\
-Strongly Disapprove & 301,941\\
-Never Heard / Not Sure & 20,071\\
+Strongly Approve & 148,046\\
+Approve / Somewhat Approve & 164,754\\
+Disapprove / Somewhat Disapprove & 73,716\\
+Strongly Disapprove & 310,395\\
+Never Heard / Not Sure & 20,723\\
 Neither Approve nor Disapprove & 443\\
 (Missing) & 878\\
 \bottomrule
@@ -2405,7 +2414,7 @@ Neither Approve nor Disapprove & 443\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -2427,13 +2436,13 @@ Incumbent Representative's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 105,671\\
-Approve / Somewhat Approve & 200,133\\
-Disapprove / Somewhat Disapprove & 107,892\\
-Strongly Disapprove & 119,160\\
-Never Heard / Not Sure & 158,161\\
+Strongly Approve & 107,889\\
+Approve / Somewhat Approve & 203,678\\
+Disapprove / Somewhat Disapprove & 109,700\\
+Strongly Disapprove & 122,353\\
+Never Heard / Not Sure & 164,311\\
 Neither Approve nor Disapprove & 1,798\\
-(Missing) & 9,140\\
+(Missing) & 9,226\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2441,7 +2450,7 @@ Neither Approve nor Disapprove & 1,798\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: \texttt{Neither\ approve\ nor\ disapprove} only included
   in 2007.
@@ -2465,13 +2474,13 @@ Incumbent Senator 1's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 97,968\\
-Approve / Somewhat Approve & 200,775\\
-Disapprove / Somewhat Disapprove & 124,447\\
-Strongly Disapprove & 153,297\\
-Never Heard / Not Sure & 118,693\\
+Strongly Approve & 100,198\\
+Approve / Somewhat Approve & 204,378\\
+Disapprove / Somewhat Disapprove & 126,694\\
+Strongly Disapprove & 157,591\\
+Never Heard / Not Sure & 123,274\\
 Neither Approve nor Disapprove & 1,413\\
-(Missing) & 5,362\\
+(Missing) & 5,407\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2479,7 +2488,7 @@ Neither Approve nor Disapprove & 1,413\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: Response options varies by year. Some are collapsed into
   one category (e.g., \texttt{Approve}, presented in some years, and
@@ -2503,13 +2512,13 @@ Incumbent Senator 2's Name{]}''
 \toprule
  & n\\
 \midrule
-Strongly Approve & 106,848\\
-Approve / Somewhat Approve & 192,103\\
-Disapprove / Somewhat Disapprove & 116,303\\
-Strongly Disapprove & 156,110\\
-Never Heard / Not Sure & 123,306\\
+Strongly Approve & 109,341\\
+Approve / Somewhat Approve & 195,444\\
+Disapprove / Somewhat Disapprove & 118,168\\
+Strongly Disapprove & 160,161\\
+Never Heard / Not Sure & 128,510\\
 Neither Approve nor Disapprove & 1,158\\
-(Missing) & 6,127\\
+(Missing) & 6,173\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2532,13 +2541,13 @@ approval}{approval\_gov: Governor approval}}\label{approval_gov-governor-approva
 \toprule
  & n\\
 \midrule
-Strongly Approve & 121,028\\
-Approve / Somewhat Approve & 212,358\\
-Disapprove / Somewhat Disapprove & 120,686\\
-Strongly Disapprove & 183,536\\
-Never Heard / Not Sure & 59,902\\
+Strongly Approve & 124,382\\
+Approve / Somewhat Approve & 217,257\\
+Disapprove / Somewhat Disapprove & 123,254\\
+Strongly Disapprove & 187,857\\
+Never Heard / Not Sure & 61,714\\
 Neither Approve nor Disapprove & 1,414\\
-(Missing) & 3,031\\
+(Missing) & 3,077\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2546,7 +2555,7 @@ Neither Approve nor Disapprove & 1,414\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: See \texttt{approval\_pres}
 \item
@@ -2609,7 +2618,7 @@ Democratic & 111,184\\
 Republican & 92,029\\
 Third Party & 5,621\\
 Other & 25,937\\
-(Missing) & 467,184\\
+(Missing) & 484,184\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2632,12 +2641,12 @@ election}{voted\_pres\_party: President vote in last election}}\label{voted_pres
 \toprule
  & n\\
 \midrule
-Democratic & 251,382\\
-Republican & 209,617\\
-Third Party & 6,658\\
-Other & 19,951\\
-Undervote & 1,545\\
-(Missing) & 212,802\\
+Democratic & 257,634\\
+Republican & 215,236\\
+Third Party & 6,926\\
+Other & 20,083\\
+Undervote & 6,201\\
+(Missing) & 212,875\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2645,7 +2654,7 @@ Undervote & 1,545\\
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2008-2024
+  Years: All of 2008-2025
 \item
   See the variables for separate years (e.g.~\texttt{voted\_pres\_16},
   \texttt{voted\_pres\_20}, etc..) for more detailed breakdowns between
@@ -2695,7 +2704,7 @@ Cynthia Mckinney & 74\\
 Other & 352\\
 I Won't Vote in this Election & 851\\
 Not Sure & 1,697\\
-(Missing) & 671,760\\
+(Missing) & 688,760\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2726,7 +2735,7 @@ Barack Obama (Democratic) & 24,401\\
 Other & 1,781\\
 I Will not Vote in this Election & 1,467\\
 Not Sure & 3,856\\
-(Missing) & 649,712\\
+(Missing) & 666,712\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2759,7 +2768,7 @@ Jill Stein (Green) & 1,400\\
 Other & 1,880\\
 I Won't Vote in this Election & 3,312\\
 Not Sure & 6,536\\
-(Missing) & 638,953\\
+(Missing) & 655,953\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2790,7 +2799,7 @@ Joe Biden (Democrat) & 22,400\\
 Other & 1,389\\
 I Won't Vote in this Election & 2,390\\
 Not Sure & 3,791\\
-(Missing) & 653,008\\
+(Missing) & 670,008\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2821,7 +2830,7 @@ Donald Trump (Republican) & 19,765\\
 Other & 1,656\\
 I Won't Vote in this Election & 1,992\\
 Not Sure & 2,999\\
-(Missing) & 651,559\\
+(Missing) & 668,559\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2852,7 +2861,7 @@ Barack Obama & 73,986\\
 John McCain & 68,398\\
 Other & 4,204\\
 Not Sure & 1,787\\
-(Missing) & 553,580\\
+(Missing) & 570,580\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2891,7 +2900,7 @@ Mitt Romney & 64,740\\
 Other & 5,872\\
 Undervote & 704\\
 Not Sure & 1,990\\
-(Missing) & 546,106\\
+(Missing) & 563,106\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2934,7 +2943,7 @@ Jill Stein & 4,589\\
 Other & 10,892\\
 Undervote & 617\\
 Not Sure & 516\\
-(Missing) & 432,919\\
+(Missing) & 449,919\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2965,14 +2974,14 @@ the United States? {[}Post-election{]}
 \toprule
  & n\\
 \midrule
-Joe Biden & 103,825\\
-Donald Trump & 73,790\\
-Jo Jorgensen & 2,182\\
-Howie Hawkins & 783\\
-Other & 3,068\\
+Joe Biden & 110,068\\
+Donald Trump & 78,974\\
+Jo Jorgensen & 2,314\\
+Howie Hawkins & 846\\
+Other & 3,223\\
 Undervote & 113\\
 Not Sure & 190\\
-(Missing) & 518,004\\
+(Missing) & 523,227\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2980,7 +2989,7 @@ Not Sure & 190\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2020, 2021, 2022, 2023, 2024
+  Years: 2020, 2021, 2022, 2023, 2024, 2025
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{voted\_pres\_24}: 2024 President
@@ -2996,15 +3005,15 @@ the United States? {[}Post-election{]}
 \toprule
  & n\\
 \midrule
-Kamala Harris & 23,527\\
-Donald Trump & 18,501\\
-Jill Stein & 376\\
-Robert F. Kennedy, Jr. & 194\\
-Cornel West & 92\\
-Chase Oliver & 288\\
-Other & 574\\
-Undervote & 260\\
-(Missing) & 658,143\\
+Kamala Harris & 29,766\\
+Donald Trump & 24,108\\
+Jill Stein & 480\\
+Robert F. Kennedy, Jr. & 277\\
+Cornel West & 129\\
+Chase Oliver & 332\\
+Other & 705\\
+Undervote & 4,916\\
+(Missing) & 658,242\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3012,7 +3021,7 @@ Undervote & 260\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2024
+  Years: 2024, 2025
 \item
   Note that \texttt{NA} values can be a result of not answering the
   post-election wave, OR self-reporting that they did not turn out in
@@ -3053,7 +3062,7 @@ I Won't Vote in this Election & 2,269\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
 No One & 30,443\\
 Not Sure & 97,076\\
-(Missing) & 206,430\\
+(Missing) & 223,430\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3102,7 +3111,7 @@ Other & 2,526\\
 Not Sure & 52,247\\
 No One & 18,837\\
 I Won't Vote in this Election & 1,145\\
-(Missing) & 361,987\\
+(Missing) & 378,987\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3140,7 +3149,7 @@ Other & 1,992\\
 Not Sure & 30,548\\
 No One & 11,287\\
 I Won't Vote in this Election & 466\\
-(Missing) & 467,604\\
+(Missing) & 484,604\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3186,7 +3195,7 @@ I Did not Vote & 345\\
 \$HouseCand9Name (\$HouseCand9Party) & 2\\
 \$HouseCand10Name (\$HouseCand10Party) & 2\\
 \$HouseCand11Name (\$HouseCand11Party) & 3\\
-(Missing) & 321,624\\
+(Missing) & 338,624\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3224,7 +3233,7 @@ Other & 2,316\\
 I Did not Vote & 28\\
 Not Sure & 2,733\\
 I Did Not Vote In This Race & 6,299\\
-(Missing) & 439,958\\
+(Missing) & 456,958\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3253,15 +3262,15 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 87,784\\
-{}{[Republican / Candidate 2]} & 77,106\\
+{}{[Democrat / Candidate 1]} & 88,172\\
+{}{[Republican / Candidate 2]} & 77,356\\
 {}{[Other / Candidate 3]} & 2,851\\
 I Did not Vote in this Race & 327\\
 I Did not Vote & 62\\
-Other & 2,373\\
-I Did Not Vote In This Race & 3,576\\
+Other & 2,375\\
+I Did Not Vote In This Race & 3,594\\
 Not Sure & 1,344\\
-(Missing) & 526,532\\
+(Missing) & 542,874\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3269,7 +3278,8 @@ Not Sure & 1,344\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024
+  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024,
+  2025
 \item
   See \texttt{voted\_gov\_party} for party affiliation.
 \end{itemize}
@@ -3319,7 +3329,7 @@ Alliance & 1\\
 Libertarian/Green & 1\\
 No Party Affiliation; (Democratic) & 1\\
 Wake Up USA & 1\\
-(Missing) & 351,146\\
+(Missing) & 368,146\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3358,7 +3368,7 @@ Tea & 12\\
 Independence & 11\\
 Reform & 7\\
 Independent American Party of Utah & 3\\
-(Missing) & 452,962\\
+(Missing) & 469,962\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3396,7 +3406,7 @@ Independence & 47\\
 Green & 39\\
 Independent Party of Oregon & 34\\
 Alaska Independence & 2\\
-(Missing) & 536,562\\
+(Missing) & 553,562\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3426,10 +3436,10 @@ YouGov panel respondent with different identifiers; for example the 2007
 CCES draws from the 2006 CCES respondents.
 
 \begin{verbatim}
-Rows: 701,955
+Rows: 718,955
 Columns: 2
 $ year    <int> 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 2006, 20~
-$ case_id <int> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439254~
+$ case_id <dbl> 439219, 439224, 439228, 439237, 439238, 439242, 439251, 439254~
 \end{verbatim}
 
 \subsection{Current Representatives' Name and
@@ -3450,7 +3460,7 @@ Because of the changes in naming by year, users should not assume that
 respondent should be named the same way.
 
 \begin{verbatim}
-Rows: 701,955
+Rows: 718,955
 Columns: 4
 $ rep_current  <chr> "Patrick T. McHenry (R)", "Michael R. Turner (R)", "Rober~
 $ sen1_current <chr> "Elizabeth Dole (R)", "Mike DeWine (R)", "Robert Menendez~
@@ -3485,7 +3495,7 @@ district, by district and last name, or both:
 \end{itemize}
 
 \begin{verbatim}
-Rows: 701,955
+Rows: 718,955
 Columns: 3
 $ rep_icpsr  <dbl> 20522, 20342, 29132, 29911, 29380, 20531, 29126, 29739, 205~
 $ sen1_icpsr <dbl> 40303, 15020, 29373, 15021, 14858, 49306, 40101, 15054, 493~
@@ -3495,7 +3505,7 @@ $ sen2_icpsr <dbl> 29548, 49903, 14914, 40502, 40105, 40305, 40302, 29537, 403~
 \begin{itemize}
 \tightlist
 \item
-  Years: All of 2006-2024
+  Years: All of 2006-2025
 \item
   Limitations: Please note there may be some incorrect merges,
   especially for nontraditional names and representatives who were
@@ -3551,7 +3561,7 @@ the form \texttt{HouseCand1Name}).
 \subsection{Name of Chosen Candidate}\label{name-of-chosen-candidate}
 
 \begin{verbatim}
-Rows: 701,955
+Rows: 718,955
 Columns: 6
 $ intent_rep_chosen <chr> "Richard C. Carsner (D)", "Stephanie Studebaker (D)"~
 $ intent_sen_chosen <chr> NA, "Sherrod C. Brown (D)", "Robert Menendez (D)", N~
@@ -3592,6 +3602,26 @@ description/metadata changes.
 \tightlist
 \item
   Adds 2025 common content
+\item
+  For 2014 data, now uses an updated
+  \href{https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0}{V6}
+  of the 2014 CCES cumulative file, which was updated in 2024 to fix
+  some congressional district variables. This changes 41 rows
+  (\textless{} 1 \% of 2014 data) in the following variables:
+  \texttt{tookpost}, \texttt{state\_post}, \texttt{st\_post},
+  \texttt{dist\_post}, \texttt{dist\_up\_post}, \texttt{cd\_post},
+  \texttt{cd\_up\_post}, \texttt{voted\_turnout\_self},
+  \texttt{voted\_pres\_party}, \texttt{voted\_rep},
+  \texttt{voted\_rep\_chosen}, \texttt{voted\_rep\_party},
+  \texttt{voted\_sen}, \texttt{voted\_sen\_chosen},
+  \texttt{voted\_sen\_party}, \texttt{voted\_gov},
+  \texttt{voted\_gov\_chosen}, and \texttt{voted\_gov\_party}
+\item
+  For 2022 data, now uses an updated
+  \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
+  of the 2022 CCES cumulative file, which was updated in April 2024 to
+  fill missing county FIPS codes.　This adds \texttt{county\_fips} for
+  131 rows (\textless{} 1 \% of 2022 data).
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 11.0 (released
