@@ -24,7 +24,7 @@ std_dv <- function(path, guess_year = TRUE) {
   
   
   ## guess ID
-  cnames <- colnames(tbl) 
+  cnames <- colnames(tbl)
   orig_key <- recode_values(
     cnames,
     "case_id" ~ "case_id",
@@ -33,8 +33,8 @@ std_dv <- function(path, guess_year = TRUE) {
     "V100" ~ "V100",
     "v100" ~ "v100",
     "v1000" ~ "v1000"
-  ) |> 
-    keep(~ !is.na(.x)) |> 
+  ) |>
+    keep(~ !is.na(.x)) |>
     first()
   
   # add year
@@ -69,7 +69,7 @@ std_dv <- function(path, guess_year = TRUE) {
     tbl_cd <- tbl_cd |>
       select(-any_of(c("v259", "v264", "cdid")))
   }
-  
+
   # 2006 is special but just for CC
   if (!guess_year) {
     tbl_cd_06 <- filter(tbl_cd, year == 2006, survey_complete == 1) |> 
@@ -278,7 +278,7 @@ std_distpost <- function(tbl, guess_year, guessed_yr) {
     if (guessed_yr == 2022) distupvar <- "cdid118_post"
     if (guessed_yr == 2018) distupvar <- "cdid116_post"
     if (guessed_yr == 2016) distupvar <- "cdid115_post"
-    if (guessed_yr == 2012) distupvar <- "cdid113_post" 
+    if (guessed_yr == 2012) distupvar <- "cdid113_post"
     
     # 2012-2014 panel is an exception; overwrite
     if (any(str_detect(colnames(tbl), "post_cdid"))) {
@@ -327,7 +327,7 @@ check_pre_post <- function(tbl) {
 
 # Data -----------
 # 2012 and before (compiled by Stephen Pettigrew and others)
-ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE) 
+ccp <- std_dv("data/source/cces/2006_2012_cumulative.dta", guess_year = FALSE)
 ccp <- filter(ccp, !(st == "MS" & dist == 8)) # drop one obs with a CD that does not existreturn(code
 
 
@@ -336,7 +336,7 @@ cc06 <- std_dv("data/source/cces/2006_cc.dta")
 cc07 <- std_dv("data/source/cces/2007_cc.dta")
 cc08 <- std_dv("data/source/cces/2008_cc.dta")
 cc09 <- std_dv("data/source/cces/2009_cc.dta")
-cc10 <- std_dv("data/source/cces/2010_cc.dta")  
+cc10 <- std_dv("data/source/cces/2010_cc.dta")
 cc11 <- std_dv("data/source/cces/2011_cc.dta")
 cc12 <- std_dv("data/source/cces/2012_cc.dta")
 panel12 <- std_dv("data/source/cces/2012_panel_h.dta")
@@ -368,7 +368,7 @@ cli_alert_success("Standardized all datasets.")
 
 # additional modules ---------
 # 2006 module addition
-# need for accountability paper
+# need for accountability paper 
 mit06_raw <- read_dta("data/source/cces/2006_mit_final_withcommon_validated_new.dta", encoding = 'latin1')
 mit_fmt <- mit06_raw |>
   mutate(year = 2006,
@@ -379,15 +379,15 @@ mit_fmt <- mit06_raw |>
          starttime = lubridate::as_datetime(as.POSIXct(starttime, format = "%a %B %d %X %Y", tz = "")),
          fips  = zap_labels(inputstate),
          state = NULL) |>
-  left_join(select(statecode, fips, state, st)) |>
+  left_join(select(statecode, fips, state, st)) |> 
   mutate(dist    = replace(dist, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1), # At large
-         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |>
-  rename(case_id = caseid) |>
+         dist_up = replace(dist_up, st %in% c("DE", "AK", "ND", "NY", "VT", "WY"), 1)) |> 
+  rename(case_id = caseid) |> 
   select(year, case_id, state, st, cong, dist, dist_up, everything())
-mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))
+mit06_add <- anti_join(mit_fmt, select(cc06, year, case_id))  
 
 # used later in 06_extract...
-hu08 <- anti_join(hu08, select(cc08, year, case_id)) |>
+hu08 <- anti_join(hu08, select(cc08, year, case_id)) |> 
   mutate(V300 = as_datetime(V300))
 
 
@@ -411,8 +411,8 @@ save(
   cc24, cc25,
   panel12, 
   # mit06_add,
-  # hu08,  
-  hu09, 
+  # hu08,
+  hu09,
   # hua18, hub18,
   file = "data/output/01_responses/common_all.RData"
 )

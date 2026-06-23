@@ -199,10 +199,10 @@ v_gov_who <- num_cand_match(v_gov, gc_key)
 ids <- c("year", "case_id")
 
 chosen_with_party <-  slim(i_rep_who) |> 
-  left_join(slim(i_sen_who), by = ids, relationship = "one-to-one") |> 
-  left_join(slim(i_gov_who), by = ids, relationship = "one-to-one") |> 
-  left_join(slim(v_rep_who), by = ids, relationship = "one-to-one") |> 
-  left_join(slim(v_sen_who), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(i_sen_who), by = ids, relationship = "one-to-one") |>
+  left_join(slim(i_gov_who), by = ids, relationship = "one-to-one") |>
+  left_join(slim(v_rep_who), by = ids, relationship = "one-to-one") |>
+  left_join(slim(v_sen_who), by = ids, relationship = "one-to-one") |>
   left_join(slim(v_gov_who), by = ids, relationship = "one-to-one")
 
 # now we can wrap up the abstract labels 
@@ -215,7 +215,7 @@ abstract_lbl <- bind_label(i_rep_who) |>
 
 # pre-merge and order vars 
 lbl_party_name <- 
-  left_join(abstract_lbl, chosen_with_party, by = ids, relationship = "one-to-one") |> 
+  left_join(abstract_lbl, chosen_with_party, by = ids, relationship = "one-to-one") |>
   select(year, case_id, 
          matches("intent_rep(_party|$)"),
          matches("voted_rep(_party|$)"),
@@ -228,13 +228,13 @@ lbl_party_name <-
 # incumbents
 cli_h1("Add incumbent info")
 incumbents_with_ID <-  slim(drop_post(ri_mc_match), "_current", "icpsr") |> 
-  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |> 
-  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |> 
+  left_join(slim(drop_post(s1i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |>
+  left_join(slim(drop_post(s2i_mc_match), "_current", "icpsr"), by = ids, relationship = "one-to-one") |>
   left_join(slim(drop_post(gov_inc_match), "_current"), by = ids, relationship = "one-to-one")
 
 # merge in the candidate vars ----
 ccc_cand <- ccc |> 
-  left_join(lbl_party_name, by = ids, relationship = "many-to-one") |> 
+  left_join(lbl_party_name, by = ids, relationship = "many-to-one") |>
   left_join(incumbents_with_ID, by = ids, relationship = "many-to-one")
 
 stopifnot(nrow(ccc) == nrow(ccc_cand))
@@ -245,7 +245,7 @@ cli_h1("Format variable class")
 ccc_df <- ccc_cand |>
   mutate(zipcode = as.character(zipcode)) |>
   mutate(county_fips = str_pad(as.character(county_fips), width = 5, pad = "0")) |> 
-  mutate(year = as.integer(year)) |> 
+  mutate(year = as.integer(year)) |>
   mutate_if(is.factor, fct_drop) # drop unused values
 
 # make char variables for IDs for Stata

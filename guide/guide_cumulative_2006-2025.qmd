@@ -31,7 +31,7 @@ library(rprojroot)
 
 ```{r, include = FALSE, cache = FALSE}
 tictoc::tic()
-cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2025.feather")) |> 
+cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2025.feather")) |>
   filter(year != 2025) # for test
 tictoc::toc()
 
