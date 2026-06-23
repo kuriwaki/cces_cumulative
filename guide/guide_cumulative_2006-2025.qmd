@@ -1473,7 +1473,9 @@ Routine edits add new rows, add new variables, and change the customization of e
 ### Version 12.0 (released `2026-`)
 
 - Adds 2025 common content
-
+- For 2014 data, now uses an updated [V6](https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0)  of the 2014 CCES cumulative file, which was updated in 2024 to fix some congressional district variables. This changes 41 rows (< 1 % of 2014 data) in the following variables: `tookpost`, `state_post`, `st_post`, `dist_post`, `dist_up_post`, `cd_post`, `cd_up_post`, `voted_turnout_self`, `voted_pres_party`, `voted_rep`, `voted_rep_chosen`, `voted_rep_party`, `voted_sen`, `voted_sen_chosen`, `voted_sen_party`, `voted_gov`, `voted_gov_chosen`, and `voted_gov_party`
+- For 2022 data, now uses an updated [V4](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0) of the 2022 CCES cumulative file,
+  which was updated in April 2024 to fill missing county FIPS codes.　This adds `county_fips` for 131 rows (< 1 % of 2022 data).
 
 ### Version 11.0 (released `2025-10-08`)
 
