@@ -7,17 +7,21 @@ library(cli)
 library(dataverse)
 library(tidyverse)
 
+if (!nzchar(Sys.getenv("DATAVERSE_SERVER"))) {
+  Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
+}
+
 dir_create("data/source/cces")
 dir_create("data/output")
 dir_create("data/release")
 
 for (yr in 2006:2025) {
   filedir <- "data/source/cces"
-  
+
   filename <- glue("{yr}_cc.dta")
-  
+
   if (file_exists(path(filedir, filename))) next
-  
+
   cli_alert_info("Will download and write {.file {filename}}.")
   dataverse_dl <- get_cces_dataverse(name = yr)
   write_dta(dataverse_dl, path(filedir, filename))
@@ -61,10 +65,10 @@ move_tag_before_year <- function(x, tag) {
   str_remove(moved, str_c("(?<=1\\d)_", tag))
 }
 
-# 2012-specific columns — caseid added as the join key
+# 2012-specific columns - caseid added as the join key
 panel12_2012 <- panel12_orig |>
   select(caseid, contains("_12") & !starts_with("CC")) |>
-  rename_with(\(x) move_tag_before_year(x, "pre"),  ends_with("_pre")) |>
+  rename_with(\(x) move_tag_before_year(x, "pre"), ends_with("_pre")) |>
   rename_with(\(x) move_tag_before_year(x, "post"), ends_with("_post")) |>
   mutate(
     across(starts_with("cdid112"), as.numeric),

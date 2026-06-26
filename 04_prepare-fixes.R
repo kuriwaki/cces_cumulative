@@ -26,16 +26,16 @@ pid3_cc10 <- cc10 |>
 
 # 2009 Economic retrospective recode
 
-econ_recoded <- cc09 |> 
-  select(year, case_id, cc09_20) |> 
+econ_recoded <- cc09 |>
+  select(year, case_id, cc09_20) |>
   mutate(economy_retro_num = recode(as.integer(haven::zap_labels(cc09_20)),
-                      `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L)) |> 
+                      `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L)) |>
   mutate(economy_retro_char = case_when(economy_retro_num == 5L ~ "Gotten Much Worse",
                                         economy_retro_num == 4L ~ "Gotten Worse / Somewhat Worse",
                                         economy_retro_num == 3L ~ "Stayed About The Same",
                                         economy_retro_num == 2L ~ "Gotten Better / Somewhat Better",
                                         economy_retro_num == 1L ~ "Gotten Much Better"
-                                        )) |> 
+                                        )) |>
   select(-cc09_20)
 
 # date time in 2006 and 2009 ----
@@ -45,7 +45,7 @@ fmt_date <- function(vec) {
 
 cc06_time <- cc06 |>
   mutate(starttime = fmt_date(starttime)) |>
-  select(year, case_id, starttime) |> 
+  select(year, case_id, starttime) |>
   bind_rows(select(mit06_add, year, case_id, starttime))
 
 cc09_time <- cc09 |>
@@ -54,9 +54,9 @@ cc09_time <- cc09 |>
 
 
 # recode newsinterest to fit with 2008 - 2018
-cc06_interest <- cc06 |> 
-  transmute(year, 
-            case_id, 
+cc06_interest <- cc06 |>
+  transmute(year,
+            case_id,
             interest = as.integer(v2042))
 
 # save ---------
@@ -71,9 +71,9 @@ write_rds(cc06_interest, "data/output/01_responses/cc06_newsintnum.Rds")
 
 # 2009 split sample distinction
 if (FALSE) {
-  p09_recontact <- read_dta("~/Dropbox/CCES_SDA/2009/Data/HUM/cces09_harvard_recontact_output.dta") %>% 
-    mutate(year = 2009, samp = "recontact", case_id = v100) %>% 
-    select(year, samp, everything()) %>% 
+  p09_recontact <- read_dta("~/Dropbox/CCES_SDA/2009/Data/HUM/cces09_harvard_recontact_output.dta") |>
+    mutate(year = 2009, samp = "recontact", case_id = v100) |>
+    select(year, samp, everything()) |>
     select(-case_id)
   write_dta(p09_recontact, "data/source/cces/2009_hum_recontact.dta")
 }

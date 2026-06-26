@@ -4,11 +4,11 @@
 std_name <- function(tbl, is_panel = FALSE) {
   cces_year <- as.integer(unique(tbl$year))
   if (is_panel) cces_year <- paste0(cces_year, "_", "panel")
-  
-  
+
+
   # pettigrew ------
   if (identical(cces_year, 2006:2011)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         tookpost = survey_complete,
         zipcode = zip_pre,
@@ -41,21 +41,21 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_regstatus = reg_validation, # check for vv_st as well, cc06 has matchState
         vv_turnout_gvm = gen_validated,
         vv_turnout_pvm = prim_validated
-      ) %>% 
+      ) |>
       mutate(
         voted_trn = coalesce(as_factor(turnout_10), as_factor(turnout_08), as_factor(turnout_06)),
         voted_trn = replace(voted_trn, !year %in% c(2006, 2008, 2010), NA),
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
-        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) %>% #  % NA for odd years
+        voted_sen = replace(voted_sen, year %% 2 == 1, NA)) |> #  % NA for odd years
       # fix county misalignment
-      mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) %>% 
+      mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) |>
       mutate(county_fips = as.character(county_fips))
   }
-  
+
   # 2006 ------
   if (identical(cces_year, 2006L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         approval_pres = gwbapp,
         approval_rep = congmanapp,
@@ -69,19 +69,19 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_trn = vote2006,
         voted_trn = v4004,
         intent_rep = profile_housevote_coded,
-        intent_sen  = profile_senvote_coded,
-        intent_gov  = profile_govvote_coded,
+        intent_sen = profile_senvote_coded,
+        intent_gov = profile_govvote_coded,
         vv_turnout_gvm = g2006
-      ) %>% 
-      mutate(marstat = coalesce(profile_marstat, marstat)) %>% 
-      labelled::add_value_labels(race = c("Other" = 7)) %>% 
+      ) |>
+      mutate(marstat = coalesce(profile_marstat, marstat)) |>
+      labelled::add_value_labels(race = c("Other" = 7)) |>
       labelled::add_value_labels(pid7 = c("Not Very Strong Democrat" = 2,
                                           "Not Very Strong Republican" = 6))
   }
-  
+
   # 2008 -------
   if (identical(cces_year, 2008L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         approval_pres = CC335bush,
         approval_rep = CC335rep,
@@ -95,8 +95,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         intent_trn = CC326,
         voted_trn = CC403,
         intent_rep = CC339,
-        intent_sen  = CC335,
-        intent_gov  = CC336,
+        intent_sen = CC335,
+        intent_gov = CC336,
         intent_pres_08 = CC327,
         voted_pres_08 = CC410,
         pid3 = CC307,
@@ -108,14 +108,14 @@ std_name <- function(tbl, is_panel = FALSE) {
         gender = V208,
         birthyr = V207,
         race = V211,
-        partyreg =  CC402
-      ) %>% 
+        partyreg = CC402
+      ) |>
       mutate(zipcode = as.character(as_factor(V202)))
   }
-  
+
   # 2009 --------
   if (identical(cces_year, 2009L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         approval_pres = cc09_43e,
         approval_rep = cc09_43a,
@@ -124,11 +124,11 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = cc09_43f,
         economy_retro = cc09_20,
         voted_pres_08 = cc09_31
-      ) |> 
+      ) |>
       mutate(state = str_to_title(state))
-    
+
     if ("v200" %in% colnames(tbl)) { # Old private 2009 Harvard recontact file
-      tbl <- tbl %>%
+      tbl <- tbl |>
         rename(
           pid3 = cc423,
           pid7 = cc424,
@@ -142,39 +142,39 @@ std_name <- function(tbl, is_panel = FALSE) {
           age = v288,
           birthyr = v207,
           race = v211,
-        ) %>% 
+        ) |>
         mutate(zipcode = as.character(as_factor(v253)),
                county_fips = as.character(as_factor(v269)))
     } else { # Public 2009 Harvard module file
-      tbl <- tbl %>%
+      tbl <- tbl |>
         rename(
           family_income_old = income
-        ) %>%
+        ) |>
         mutate(zipcode = as.character(as_factor(inputzip)),
                county_fips = NA_character_)
     }
   }
-  
+
   # 2010 - 2011 ----
   # only those necessary for custom fix
   if (identical(cces_year, 2010L)) {
-    tbl <- tbl |> 
+    tbl <- tbl |>
       rename(
         gender = V208,
         marstat = V214,
         voted_pres_08 = CC317
       )
   }
-  
+
   if (identical(cces_year, 2011L)) {
-    tbl <- tbl |> 
+    tbl <- tbl |>
       rename(
         gender = V208,
         marstat = V214,
         voted_pres_08 = CC331
       )
   }
-  
+
   # 2012 ----------
   if (identical(cces_year, 2012L)) {
     tbl <- rename(
@@ -211,10 +211,10 @@ std_name <- function(tbl, is_panel = FALSE) {
       vv_party_pprm = presprim_pty
     )
   }
-  
-  
+
+
   if (identical(cces_year, "2012_panel")) {
-    tbl <- tbl %>% 
+    tbl <- tbl |>
       rename(
         approval_pres = CC12_308a,
         approval_rep = CC12_315a,
@@ -240,10 +240,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         CC350 = CC12_350 # rename later
       )
   }
-  
+
   # 2013 ----------
   if (identical(cces_year, 2013L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         approval_pres = CC312a,
         approval_rep = CC13_313a,
@@ -254,10 +254,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_12 = CC13_315
       )
   }
-  
+
   # 2014 - 2015 -------
   if (identical(cces_year, 2014L)) {
-    tbl <- tbl %>% rename(
+    tbl <- tbl |> rename(
       approval_pres = CC14_308a,
       approval_rep = CC14_315a,
       approval_sen1 = CC14_315b,
@@ -282,14 +282,14 @@ std_name <- function(tbl, is_panel = FALSE) {
       vv_party_gen = partyaffiliation,
       vv_party_prm = e2014pep,
       vv_st = state_cl
-    ) %>%
+    ) |>
       mutate(
         tookpost = labelled(tookpost, labels = c(`1` = 1, `0` = 0)) # for consistency
       )
   }
-  
+
   if (identical(cces_year, 2015L)) {
-    tbl <- rename(tbl, CC350 = CC15_350) %>%
+    tbl <- rename(tbl, CC350 = CC15_350) |>
       rename(
         approval_pres = CC15_312a,
         approval_rep = CC15_313a,
@@ -300,10 +300,10 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_12 = CC15_315
       )
   }
-  
+
   # 2016 - 2017  ----
   if (identical(cces_year, 2016L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         weight = commonweight_vv,
         weight_post = commonweight_vv_post,
@@ -340,9 +340,9 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_st = CL_state
       )
   }
-  
+
   if (identical(cces_year, 2017L)) {
-    tbl <- rename(tbl, CC350 = CC17_325) %>%
+    tbl <- rename(tbl, CC350 = CC17_325) |>
       rename(
         weight = weights_common,
         approval_pres = CC17_322a,
@@ -352,17 +352,17 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC17_322e,
         economy_retro = CC17_301,
         faminc = faminc_new,
-        voted_pres_16 = CC17_327) %>%
+        voted_pres_16 = CC17_327) |>
       mutate(
         countyfips = NA
-      ) %>% 
+      ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # 2018 - 2019 ------
   if (identical(cces_year, 2018L)) {
-    
-    tbl <- tbl %>%
+
+    tbl <- tbl |>
       rename(
         weight = commonweight,
         vvweight = vvweight,
@@ -393,7 +393,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_gen = CL_party,
         vv_party_prm = CL_2018pep,
         vv_st = CL_state
-      ) %>% 
+      ) |>
       # party straight ticket
       mutate(voted_rep = replace(voted_rep, CC18_409 == 1, 1),
              voted_rep = replace(voted_rep, CC18_409 == 2, 2),
@@ -403,13 +403,13 @@ std_name <- function(tbl, is_panel = FALSE) {
              voted_sen = replace(voted_sen, CC18_409 == 2, 2),
              voted_gov = replace(voted_gov, CC18_409 == 1, 1),
              voted_gov = replace(voted_gov, CC18_409 == 2, 2),
-      ) %>%
-      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      ) |>
+      mutate_at(vars(matches("^vv_")), ~ replace_na(as.character(as_factor(.x)), "")) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   if (identical(cces_year, 2019L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         weight = commonweight,
         approval_pres = CC19_308a,
@@ -420,17 +420,17 @@ std_name <- function(tbl, is_panel = FALSE) {
         economy_retro = CC19_301,
         faminc = faminc_new,
         voted_pres_16 = presvote16post
-      ) %>%
+      ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # 2020 - 2021 ----
   if (identical(cces_year, 2020L)) {
-    
-    tbl <- tbl %>%
+
+    tbl <- tbl |>
       # called "Two or more races" in 2020
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) |>
       # rename
       rename(
         weight = commonweight,
@@ -465,16 +465,16 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_prm = CL_2020pep,
         vv_party_pprm = CL_2020ppep,
         vv_st = CL_state
-      ) %>% # combine early vote?
-      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      ) |> # combine early vote?
+      mutate_at(vars(matches("^vv_")), ~ replace_na(as.character(as_factor(.x)), "")) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   if (identical(cces_year, 2021L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       # called "Two or more races" in 2020-2021
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) |>
       rename(
         weight = commonweight,
         approval_pres = CC21_315a,
@@ -486,17 +486,17 @@ std_name <- function(tbl, is_panel = FALSE) {
         faminc = faminc_new,
         voted_pres_16 = presvote16post,
         voted_pres_20 = presvote20post
-      ) %>%
+      ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # 2022 - 2023 ----
   if (identical(cces_year, 2022L)) {
-    
-    tbl <- tbl %>%
+
+    tbl <- tbl |>
       # called "Two or more races" in 2020
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) |>
       # rename
       rename(
         weight = commonweight,
@@ -528,16 +528,16 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_gen = TS_partyreg,
         vv_party_prm = TS_p2022_party,
         vv_st = TS_state
-      ) %>%
-      mutate_at(vars(matches("^vv_")), ~replace_na(as.character(as_factor(.x)), "")) %>% 
+      ) |>
+      mutate_at(vars(matches("^vv_")), ~ replace_na(as.character(as_factor(.x)), "")) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   if (identical(cces_year, 2023L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       # called "Two or more races" in 2020-2021
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>%
+        race, labels = c("Mixed" = 6))) |>
       rename(
         weight = commonweight,
         approval_pres = CC23_312a,
@@ -548,18 +548,18 @@ std_name <- function(tbl, is_panel = FALSE) {
         economy_retro = CC23_301,
         faminc = faminc_new,
         voted_pres_20 = presvote20post
-      ) %>%
+      ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # 2024 ------
   to_str_empty <- \(x) replace_na(as.character(as_factor(x)), "missing_evenyear")
   if (identical(cces_year, 2024L)) {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) %>% 
-      mutate(across(matches("TS_(g|p)2024$"), 
-             \(x) 
+        race, labels = c("Mixed" = 6))) |>
+      mutate(across(matches("TS_(g|p)2024$"),
+             \(x)
              labelled(
                    x,
                    labels = c(
@@ -571,9 +571,9 @@ std_name <- function(tbl, is_panel = FALSE) {
                      "voted by unknown method" = 6,
                      "did not vote" = 7
                    ))
-      )) |> 
-      mutate(across(matches("TS_p2024_party$"), 
-             \(x) 
+      )) |>
+      mutate(across(matches("TS_p2024_party$"),
+             \(x)
                  labelled(
                    x,
                    labels = c(
@@ -583,14 +583,14 @@ std_name <- function(tbl, is_panel = FALSE) {
                      "other" = 5,
                      "rep" = 6
                    ))
-      )) |> 
+      )) |>
       rename(
         weight = commonweight,
         approval_pres = CC24_312a,
-        approval_rep  = CC24_312f,
+        approval_rep = CC24_312f,
         approval_sen1 = CC24_312g,
         approval_sen2 = CC24_312h,
-        approval_gov  = CC24_312d,
+        approval_gov = CC24_312d,
         economy_retro = CC24_301,
         faminc = faminc_new,
         intent_trn = CC24_363,
@@ -615,18 +615,18 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_gen = TS_partyreg,
         vv_party_prm = TS_p2024_party,
         vv_st = TS_state
-      ) %>%
-      mutate(across(matches("vv_"), to_str_empty)) |> 
+      ) |>
+      mutate(across(matches("vv_"), to_str_empty)) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # 2025 ------
   if (identical(cces_year, 2025L)) {
-    tbl <- tbl |> 
+    tbl <- tbl |>
       mutate(race = sjlabelled::replace_labels(
-        race, labels = c("Mixed" = 6))) |> 
-      mutate(across(matches("TS_p2024_party$"), 
-                    \(x) 
+        race, labels = c("Mixed" = 6))) |>
+      mutate(across(matches("TS_p2024_party$"),
+                    \(x)
                     labelled(
                       x,
                       labels = c(
@@ -640,14 +640,14 @@ std_name <- function(tbl, is_panel = FALSE) {
       # time is given in milliseconds for some reason
       # origin is 1960 (instead of 1970) because this is a DTA
       starttime = as.POSIXct(starttime / 1000, origin = "1960-01-01")
-      ) |> 
+      ) |>
       rename(
         weight = commonweight,
         approval_pres = CC25_312a,
-        approval_rep  = CC25_312f,
+        approval_rep = CC25_312f,
         approval_sen1 = CC25_312g,
         approval_sen2 = CC25_312h,
-        approval_gov  = CC25_312d,
+        approval_gov = CC25_312d,
         economy_retro = CC25_301,
         faminc = faminc_new, # or CC25_302?
         intent_trn = CC25_363,
@@ -673,14 +673,14 @@ std_name <- function(tbl, is_panel = FALSE) {
         vv_party_gen = CC25_360,
         # vv_party_prm = TS_p2024_party,
         # vv_st = TS_state # inputstate or st?
-      ) %>%
-      mutate(across(matches("vv_"), to_str_empty)) |> 
+      ) |>
+      mutate(across(matches("vv_"), to_str_empty)) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # more standardization for post 2012 ------
   if (cces_year[1] %in% c(2012:2025) | cces_year[1] == "2012_panel") {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       rename(
         # reg_self = votereg,
         reg_self = any_of(c("votereg_12", "votereg")),
@@ -691,31 +691,31 @@ std_name <- function(tbl, is_panel = FALSE) {
         # county_fips = countyfips
         county_fips = any_of(c("countyfips_12", "countyfips")),
         birthyr = any_of("birthyr_12")
-      ) %>%
+      ) |>
       mutate(
         age = year - birthyr
       )
   }
-  
+
   if (cces_year[1] != 2022) {
-    tbl <- tbl %>% 
-      rename(marstat = any_of("marstat_12")) |> 
+    tbl <- tbl |>
+      rename(marstat = any_of("marstat_12")) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
-  
+
   # gender ----
   if (cces_year[1] %in% c(2021:2025)) {
-    tbl <- tbl |> 
+    tbl <- tbl |>
       mutate(
         gender = labelled(zap_labels(gender4), c("Male" = 1, "Female" = 2)),
         gender = replace(gender, gender %in% 3:4, NA_real_)
       )
   } else {
-    tbl <- tbl |> 
-      rename(gender = any_of("gender_12")) |> 
+    tbl <- tbl |>
+      rename(gender = any_of("gender_12")) |>
       mutate(sex = gender)
   }
-  
+
   # hispanic origin ----
   ## 20-22: "_hisp_", CC20_asian_1
   ## 16: "Hispanic_origin", Asian_Origin
@@ -725,37 +725,37 @@ std_name <- function(tbl, is_panel = FALSE) {
     hisp_regex <- "(_hisp|Hispanic_origin|CC15_354ax|CC17_353a|CC18_354a|CC19_353a)_[0-9]|CC24_hisp_[1-9]+)"
     qlb_regex <- "(Country ancestry|Latin Heritage|Hispanic Origin|Hispanic_origin) - "
     hisp_key <-
-      tbl |> 
-      select(matches(hisp_regex)) |> 
-      map_chr(\(x) attr(x, "label")) |> enframe() |> 
+      tbl |>
+      select(matches(hisp_regex)) |>
+      map_chr(\(x) attr(x, "label")) |> enframe() |>
       transmute(
-        name, 
+        name,
         lab = str_squish(str_remove_all(value, regex(qlb_regex, ignore_case = TRUE))))
-    
+
     # do not concatenate these
-    rm_values <- c("No country in particular", 
+    rm_values <- c("No country in particular",
                    "No Country in Particular",
-                   "Not Latino, Hispanic", 
+                   "Not Latino, Hispanic",
                    "I am not of Latino, Hispanic or Spanish heritage",
                    "I am not of Latino, Hispanic or Spanish Heritage",
-                   "Other") 
-    
+                   "Other")
+
     # reshape, recode, and concatenate
-    hisp_origin <- tbl |> 
-      select(case_id, matches(hisp_regex)) |> 
-      pivot_longer(-case_id) |> 
-      left_join(hisp_key) |> 
-      mutate(lab = replace(lab, lab %in% rm_values, NA_character_)) |> 
-      filter(!is.na(value) & value != 9 & value == 1 & !is.na(lab)) |> 
-      arrange(name) |> 
+    hisp_origin <- tbl |>
+      select(case_id, matches(hisp_regex)) |>
+      pivot_longer(-case_id) |>
+      left_join(hisp_key) |>
+      mutate(lab = replace(lab, lab %in% rm_values, NA_character_)) |>
+      filter(!is.na(value) & value != 9 & value == 1 & !is.na(lab)) |>
+      arrange(name) |>
       summarize(hisp_origin = str_c(lab, collapse = "!!"), .by = case_id)
-    
-    tbl <- tbl |> 
+
+    tbl <- tbl |>
       left_join(hisp_origin, by = "case_id")
   }
-  
-  
-  
+
+
+
   return(tbl)
 }
 
@@ -766,39 +766,39 @@ std_name <- function(tbl, is_panel = FALSE) {
 #' @param var_name in characters
 #' @param chr_var_name name of the variablethat  will hold the labels (in chars)
 #' @param num_var_name name of the variable that will hold the levels (in integers)
-#' 
-#' @return 
+#'
+#' @return
 #' A dataset, for each year, with standardized names, separating labels and values (if factor).
 #' Sets Not Asked to NA
 extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor = TRUE) {
   if (is_factor) {
-    if (var_name %in% colnames(tbl)) { # factor 
-      select(tbl, year, case_id, !! var) %>%
+    if (var_name %in% colnames(tbl)) { # factor
+      select(tbl, year, case_id, !!var) |>
         mutate(
-          !! chr_var_name := as.character(as_factor(.data[[var_name]])),
-          !! num_var_name := as.integer(.data[[var_name]])
-        ) %>%
-        select(-!! var)
-    } else {# if var does not exist
-      select(tbl, year, case_id) %>%
+          !!chr_var_name := as.character(as_factor(.data[[var_name]])),
+          !!num_var_name := as.integer(.data[[var_name]])
+        ) |>
+        select(-!!var)
+    } else { # if var does not exist
+      select(tbl, year, case_id) |>
         mutate(
-          !! chr_var_name := NA,
-          !! num_var_name := NA
+          !!chr_var_name := NA,
+          !!num_var_name := NA
         )
     }
-  } else {# if not factor
+  } else { # if not factor
     if (var_name %in% colnames(tbl)) {
-      select(tbl, year, case_id, !! var) %>%
-        mutate(!! var_name := zap_labels(!! var))
+      select(tbl, year, case_id, !!var) |>
+        mutate(!!var_name := zap_labels(!!var))
     } else {
-      select(tbl, year, case_id) %>%
-        mutate(!! var_name := NA)
+      select(tbl, year, case_id) |>
+        mutate(!!var_name := NA)
     }
   }
 }
 
 # takes all datasets available, and given a var, pulls it out of each and stacks
-#' 
+#'
 #' @param dflist a list of cces datasets. column names need to be standardized.
 #' @param var a NSE variable to find and stack
 #' @param type a string, "factor", "character", "numeric", "integer", or "dattetime". If numeric or datetime
@@ -811,94 +811,94 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
   var_name <- quo_name(var)
   chr_var_name <- paste0(var_name, "_char")
   num_var_name <- paste0(var_name, "_num")
-  
+
   if (type == "factor") {
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
       extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
     }
-    
+
     if (str_detect(chr_var_name, "^vv_")) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
-      
-      list_yr <- mutate(list_yr, 
+
+      list_yr <- mutate(list_yr,
                         !!chr_var_name := std_vvv(.data[[chr_var_name]], varname = chr_var_name, yrvec = .data[["year"]]))
-      
-      list_yr_factor <- list_yr %>% 
-        clean_values(chr_var_name = chr_var_name, num_var_name = num_var_name) %>% 
-        mutate(!!var_name := fct_infreq(.data[[chr_var_name]])) %>% 
+
+      list_yr_factor <- list_yr |>
+        clean_values(chr_var_name = chr_var_name, num_var_name = num_var_name) |>
+        mutate(!!var_name := fct_infreq(.data[[chr_var_name]])) |>
         select(year, case_id, !!var_name)
-      
+
       return(list_yr_factor)
     }
-    
+
     # otherwise just clean up values as text
     list_yr <- clean_values(list_yr, chr_var_name = chr_var_name, num_var_name = num_var_name)
   }
-  
-  
+
+
   if (type != "factor") {
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
       extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name, is_factor = FALSE)
     }
-    
+
     # change to specified type
-    if (type == "numeric") list_yr <- mutate(list_yr, !! var_name := as.numeric(.data[[var_name]]))
-    
-    if (type == "integer") list_yr <- mutate(list_yr, !! var_name := as.integer(.data[[var_name]]))
-    
-    if (type == "character") list_yr <- mutate(list_yr, !! var_name := as.character(as_factor(!! var)))
-    
-    if (type == "datetime") list_yr <- mutate(list_yr, !! var_name := as.POSIXct(.data[[var_name]]))
-    
-    list_yr <- list_yr %>%
-      mutate(!! var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
+    if (type == "numeric") list_yr <- mutate(list_yr, !!var_name := as.numeric(.data[[var_name]]))
+
+    if (type == "integer") list_yr <- mutate(list_yr, !!var_name := as.integer(.data[[var_name]]))
+
+    if (type == "character") list_yr <- mutate(list_yr, !!var_name := as.character(as_factor(!!var)))
+
+    if (type == "datetime") list_yr <- mutate(list_yr, !!var_name := as.POSIXct(.data[[var_name]]))
+
+    list_yr <- list_yr |>
+      mutate(!!var_name := replace(.data[[var_name]], is.nan(.data[[var_name]]), NA))
   }
-  
+
   # specific recoding
   if (grepl("approval_(rep|sen|pres|gov)", chr_var_name)) {
     list_yr <- recode_apv(list_yr, chr_var_name)
   }
-  
-  
+
+
   # fit to labels or factors
   # coerce to labelled? do this if same across year
   if (type == "factor" & make_labelled) list_yr <- set_to_label(list_yr, num_var_name, var_name)
-  
+
   # if not labelled, consider reordering rather than keeping them separate
   if (type == "factor" & new_reorder & !make_labelled) {
-    
-    list_yr <- list_yr %>% 
+
+    list_yr <- list_yr |>
       mutate(!!var_name := fct_reorder2(.data[[chr_var_name]],
                                         .x = .data[[num_var_name]],
-                                        .y = .data[["year"]], 
+                                        .y = .data[["year"]],
                                         .fun = median2,
                                         .na_rm = FALSE,
-                                        .desc = FALSE)) %>% 
+                                        .desc = FALSE)) |>
       select(year, case_id, !!var_name)
   }
-  
-  
+
+
   distinct(list_yr)
 }
 
 
-#' Coerce-labelled 
-#' 
+#' Coerce-labelled
+#'
 #' @param df the slim table
 #' @param numvarname the name of the variable (number)
 
 set_to_label <- function(df, numvarname, varname) {
   # change consistent vars in to a labelled factor
   # make numbered vector
-  label_key <- select(df, -year, -case_id) %>%
-    distinct() %>%
-    select(matches("_char"), matches("_num")) %>%
-    arrange(!!sym(numvarname)) %>%
-    drop_na() |> 
+  label_key <- select(df, -year, -case_id) |>
+    distinct() |>
+    select(matches("_char"), matches("_num")) |>
+    arrange(!!sym(numvarname)) |>
+    drop_na() |>
     deframe()
-  
-  df %>%
-    mutate(!! varname := labelled(as.integer(.data[[numvarname]]), label_key)) %>%
-    select(year, case_id, !! varname)
+
+  df |>
+    mutate(!!varname := labelled(as.integer(.data[[numvarname]]), label_key)) |>
+    select(year, case_id, !!varname)
 }
 
 
@@ -909,82 +909,82 @@ median2 <- function(x, y) {
 
 
 #' recode approval
-#' 
-#' 
+#'
+#'
 recode_apv <- function(tbl, char_name) {
-  tbl %>% 
+  tbl |>
     mutate(!!char_name := recode(.data[[char_name]],
-                                 `Approve`              = "Approve / Somewhat Approve", 
-                                 `Somewhat Approve`     = "Approve / Somewhat Approve", 
-                                 `Disapprove`           = "Disapprove / Somewhat Disapprove", 
-                                 `Somewhat Disapprove`  = "Disapprove / Somewhat Disapprove", 
-                                 `Never Heard`          = "Never Heard / Not Sure",
-                                 `Never Heard Of`       = "Never Heard / Not Sure",
-                                 `Never Heard of`       = "Never Heard / Not Sure",
+                                 `Approve` = "Approve / Somewhat Approve",
+                                 `Somewhat Approve` = "Approve / Somewhat Approve",
+                                 `Disapprove` = "Disapprove / Somewhat Disapprove",
+                                 `Somewhat Disapprove` = "Disapprove / Somewhat Disapprove",
+                                 `Never Heard` = "Never Heard / Not Sure",
+                                 `Never Heard Of` = "Never Heard / Not Sure",
+                                 `Never Heard of` = "Never Heard / Not Sure",
                                  `Never Heard Of This Person` = "Never Heard / Not Sure",
                                  `Never Heard of this Person` = "Never Heard / Not Sure",
-                                 `Not Sure`             = "Never Heard / Not Sure"))
+                                 `Not Sure` = "Never Heard / Not Sure"))
 }
 
 
 #' clean up missing values, format to change NaN to NA
 clean_values <- function(tbl, chr_var_name, num_var_name) {
   if (grepl("approval|hispanic", chr_var_name)) {
-    skipped_num  <- 8
+    skipped_num <- 8
     notasked_num <- 9
   } else {
-    skipped_num  <- 98
+    skipped_num <- 98
     notasked_num <- 99
   }
-  
-  tbl %>%
+
+  tbl |>
     mutate( # replace NaN to NA
-      !! chr_var_name := na_if(.data[[chr_var_name]], "NaN"),
-      !! num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
-    ) %>%
+      !!chr_var_name := na_if(.data[[chr_var_name]], "NaN"),
+      !!num_var_name := replace(.data[[num_var_name]], is.nan(.data[[num_var_name]]), NA)
+    ) |>
     mutate( # change al lvalues to title case
-      !! chr_var_name := my_var_case(str_trim(.data[[chr_var_name]])),
-      !! chr_var_name := recode(.data[[chr_var_name]],
+      !!chr_var_name := my_var_case(str_trim(.data[[chr_var_name]])),
+      !!chr_var_name := recode(.data[[chr_var_name]],
                                 `Never Heard Of This Person` = "Never Heard",
                                 `No Hs` = "No HS")
-    ) %>% 
+    ) |>
     mutate( # change not asked and skipped to NAs
-      !! chr_var_name := na_if(.data[[chr_var_name]], "Not Asked"),
-      !! chr_var_name := na_if(.data[[chr_var_name]], "Skipped"),
-      !! num_var_name := na_if(.data[[num_var_name]], notasked_num),
-      !! num_var_name := na_if(.data[[num_var_name]], skipped_num))
+      !!chr_var_name := na_if(.data[[chr_var_name]], "Not Asked"),
+      !!chr_var_name := na_if(.data[[chr_var_name]], "Skipped"),
+      !!num_var_name := na_if(.data[[num_var_name]], notasked_num),
+      !!num_var_name := na_if(.data[[num_var_name]], skipped_num))
 }
 
 #' custom title case
 my_var_case <- function(chr) {
-  str_to_title(chr) %>% 
-    str_replace_all(" A ", " a ") %>% 
-    str_replace_all(" An ", " an ") %>% 
-    str_replace_all(" About ", " about ") %>% 
-    str_replace_all(" By ", " by ") %>% 
-    str_replace_all(" And ", " and ") %>% 
-    str_replace_all(" For ", " for ") %>% 
-    str_replace_all(" To ", " to ") %>% 
-    str_replace_all(" Or ", " or ") %>% 
-    str_replace_all(" Of ", " of ") %>% 
-    str_replace_all(" In ", " in ") %>% 
-    str_replace_all(" This ", " this ") %>% 
-    str_replace_all(" The ", " the ") %>% 
-    str_replace_all(" At ", " at ") %>% 
-    str_replace_all(" Nor ", " nor ") %>% 
-    str_replace_all(" Not ", " not ") %>% 
-    str_replace_all("I'm not Sure", "Not Sure") %>% 
-    str_replace_all("Most of the Time", "Most of the time") %>% 
-    str_replace_all("Some of the Time", "Some of the time") %>% 
-    str_replace_all("Only Now and Then", "Only now and then") %>% 
-    str_replace_all("Mccain", "McCain") %>% 
+  str_to_title(chr) |>
+    str_replace_all(" A ", " a ") |>
+    str_replace_all(" An ", " an ") |>
+    str_replace_all(" About ", " about ") |>
+    str_replace_all(" By ", " by ") |>
+    str_replace_all(" And ", " and ") |>
+    str_replace_all(" For ", " for ") |>
+    str_replace_all(" To ", " to ") |>
+    str_replace_all(" Or ", " or ") |>
+    str_replace_all(" Of ", " of ") |>
+    str_replace_all(" In ", " in ") |>
+    str_replace_all(" This ", " this ") |>
+    str_replace_all(" The ", " the ") |>
+    str_replace_all(" At ", " at ") |>
+    str_replace_all(" Nor ", " nor ") |>
+    str_replace_all(" Not ", " not ") |>
+    str_replace_all("I'm not Sure", "Not Sure") |>
+    str_replace_all("Most of the Time", "Most of the time") |>
+    str_replace_all("Some of the Time", "Some of the time") |>
+    str_replace_all("Only Now and Then", "Only now and then") |>
+    str_replace_all("Mccain", "McCain") |>
     str_replace_all("Hardly at All", "Hardly at all")
 }
 
 
-#' standardize validated vote values 
-std_vvv <- function (vec, varname, yrvec) {
-  
+#' standardize validated vote values
+std_vvv <- function(vec, varname, yrvec) {
+
   vtd <- "Voted"
   nov <- "No Record of Voting"
   # turnout
@@ -1009,11 +1009,11 @@ std_vvv <- function (vec, varname, yrvec) {
                       `Virginia doesn't maintain vote history files` = "No Voter File",
                       `MatchedNoVote` = nov,
                       missing_evenyear = nov,
-                      .default  = nov,
+                      .default = nov,
                       .missing = NA_character_
     )
   }
-  
+
   # regstatus
   if (str_detect(varname, "regstatus")) {
     recoded <- recode(vec,
@@ -1030,14 +1030,14 @@ std_vvv <- function (vec, varname, yrvec) {
     recoded <- replace(recoded, yrvec %in% c(2006, seq(2007, 2031, by = 2)), NA) # these should be missing
     recoded <- replace(recoded, recoded == "", "No Record of Registration")
   }
-  
-  
+
+
   # regparty
   if (str_detect(varname, "party")) {
     dem <- "Democratic Party"
     gop <- "Republican Party"
     npa <- "No Party Affiliation"
-    
+
     recoded <- recode(vec,
                       `DEM` = dem,
                       `dem` = dem,
@@ -1077,69 +1077,69 @@ std_vvv <- function (vec, varname, yrvec) {
                       `UNK` = "Unknown",
                       missing_evenyear = "No Record of Party Registration"
     )
-    recoded <- replace(recoded, recoded == "", "No Record of Party Registration") 
+    recoded <- replace(recoded, recoded == "", "No Record of Party Registration")
   }
-  
+
   recoded
-} 
+}
 
 #' Fix for voted08
 clps_pres08 <- function(vec) {
-  vec %>% 
-    na_if("Did not Vote") %>%  # means did not turnout until 2011 and 2012
-    as.character() %>% 
-    str_trim() %>% 
-    as_factor() %>% 
+  vec |>
+    na_if("Did not Vote") |> # means did not turnout until 2011 and 2012
+    as.character() |>
+    str_trim() |>
+    as_factor() |>
     fct_collapse(
-      `Barack Obama` = c("Barack Obama", 
+      `Barack Obama` = c("Barack Obama",
                          "Barack Obama (Democratic)"),
-      `John McCain` = c("John McCain (Republican)", 
+      `John McCain` = c("John McCain (Republican)",
                         "John McCain"),
-      `Other` = c("Someone Else"), 
+      `Other` = c("Someone Else"),
       `Not Sure` = c("Don't Recall")
-    ) %>% 
-    fct_relevel("Barack Obama", "John McCain", "Other") %>% 
+    ) |>
+    fct_relevel("Barack Obama", "John McCain", "Other") |>
     fct_drop()
 }
 
 #' Quick fix for 2012 voted, where labels are too mixed to fix automatically
 clps_pres12 <- function(vec) {
-  vec |> 
-    na_if("Not Vote") |>  # means did not turnout in 2015
+  vec |>
+    na_if("Not Vote") |> # means did not turnout in 2015
   fct_collapse(
-    vec, 
+    vec,
     `Barack Obama` = c(
-      "Barack Obama", 
-      "Barack Obama (Democratic)", 
+      "Barack Obama",
+      "Barack Obama (Democratic)",
       "Vote for Barack Obama"),
     `Mitt Romney` = c(
-      "Mitt Romney", 
-      "Mitt Romney (Republican)", 
+      "Mitt Romney",
+      "Mitt Romney (Republican)",
       "Vote for Mitt Romney"),
     `Other` = c(
-      "Someone Else", 
-      "Vote for Someone Else", 
+      "Someone Else",
+      "Vote for Someone Else",
       "Other"),
     `Undervote` = c(
-      "Did Not Vote", 
+      "Did Not Vote",
       "Did not Vote",
-      "I Did Not Vote", 
-      "I Did not Vote", 
-      "Not Vote for this Office", 
+      "I Did Not Vote",
+      "I Did not Vote",
+      "Not Vote for this Office",
       "I Did not Vote in this Race"),
     `Not Sure` = c("Not Sure", "Don't Recall")
-  ) |> 
+  ) |>
     fct_relevel("Barack Obama", "Mitt Romney", "Other", "Undervote")
 }
 clps_pres16 <- function(vec) {
-  vec |> 
-  na_if("Did not Vote for President") |>  # these only occur post-2016 and are "did not turn out"
+  vec |>
+  na_if("Did not Vote for President") |> # these only occur post-2016 and are "did not turn out"
   fct_collapse(
     `Hilary Clinton` = c(
-      "Hillary Clinton", 
+      "Hillary Clinton",
       "Hillary Clinton (Democrat)"),
     `Donald Trump` = c(
-      "Donald Trump", 
+      "Donald Trump",
       "Donald Trump (Republican)"),
     `Gary Johnson` = c("Gary Johnson (Libertarian)", "Gary Johnson"),
     `Evan McMullin` = c("Evan Mcmullin (Independent)", "Evan Mcmullin"),
@@ -1151,57 +1151,57 @@ clps_pres16 <- function(vec) {
       "I Did not Cast a Vote for President"),
     `Not Sure` = c(
       "I'm not Sure", "I Don't Recall")
-  ) %>% 
+  ) |>
     fct_relevel("Hilary Clinton", "Donald Trump", "Gary Johnson", "Evan McMullin",
                 "Jill Stein", "Other", "Undervote")
 }
 
 clps_pres20 <- function(vec) {
-  vec |> 
-    na_if("Did not Vote for President") |>  # these mean did not turnout
+  vec |>
+    na_if("Did not Vote for President") |> # these mean did not turnout
     fct_collapse(
       `Joe Biden` = c(
-      "Joe Biden", 
+      "Joe Biden",
       "Joe Biden (Democrat)"),
     `Donald Trump` = c(
-      "Donald Trump", 
-      "Donald Trump (Republican)", 
+      "Donald Trump",
+      "Donald Trump (Republican)",
       "Donald J. Trump (Republican)"),
     `Jo Jorgensen` = "Jo Jorgensen",
     `Howie Hawkins` = "Howie Hawkins",
     `Other` = c(
-      "Other", 
+      "Other",
       "Someone Else"),
     `Undervote` = c(
       "I Did not Vote in this Race",
       "I Did not Vote"),
     `Not Sure` = c("I'm not Sure")
-  ) %>% 
+  ) |>
     fct_relevel("Joe Biden", "Donald Trump", "Jo Jorgensen",
                 "Howie Hawkins", "Other", "Undervote")
 }
 
 clps_pres24 <- function(vec) {
   fct_collapse(
-    vec, 
+    vec,
     `Kamala Harris` = c(
-      "Kamala Harris", 
+      "Kamala Harris",
       "Kamala Harris (Democrat)"),
     `Donald Trump` = c(
-      "Donald Trump", 
+      "Donald Trump",
       "Donald Trump (Republican)"),
-    `Jill Stein` = "Jill Stein", 
-    `Cornel West` = "Cornel West", 
+    `Jill Stein` = "Jill Stein",
+    `Cornel West` = "Cornel West",
     `Chase Oliver` = "Chase Oliver",
     `Other` = c(
-      "Other", 
+      "Other",
       "Someone Else"),
     `Undervote` = c(
       "I Did not Vote in this Race",
       "I Did not Vote",
       "Did not Vote for President"), # in 2024 this seems to mean undervote
     `Not Sure / Don't Recall` = c("I'm not Sure")
-  ) %>% 
+  ) |>
     fct_relevel("Kamala Harris", "Donald Trump", "Jill Stein",
                 "Robert F. Kennedy, Jr.", "Cornel West", "Chase Oliver",
                 "Other", "Undervote")
@@ -1213,11 +1213,10 @@ pres_names <- function(vec) {
     str_detect(vec, regex("(Obama|Clinton|Biden|Harris)", ignore_case = TRUE)) ~ "Democratic",
     str_detect(vec, regex("(Mccain|Romney|Trump)", ignore_case = TRUE)) ~ "Republican",
     str_detect(vec, regex("(Mckinney|Paul|Barr|Stein|Jorgensen|Johnson|Hawkins|West|Oliver|Kennedy|McMullin|Nader)", ignore_case = TRUE)) ~ "Third Party",
-    str_detect(vec, regex("Other|Sure|Recall", ignore_case = TRUE)) ~ "Other", 
+    str_detect(vec, regex("Other|Sure|Recall", ignore_case = TRUE)) ~ "Other",
     str_detect(vec, regex("Undervote", ignore_case = TRUE)) ~ "Undervote",
-    TRUE ~ NA_character_) %>% 
-    factor(levels = c("Democratic", "Republican", 
-                      "Third Party", "Other", 
+    TRUE ~ NA_character_) |>
+    factor(levels = c("Democratic", "Republican",
+                      "Third Party", "Other",
                       "Undervote", "Did not Vote"))
 }
-
