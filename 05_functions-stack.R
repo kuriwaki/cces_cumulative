@@ -48,6 +48,18 @@ std_name <- function(tbl, is_panel = FALSE) {
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
         voted_sen = replace(voted_sen, year %% 2 == 1, NA)) |> #  % NA for odd years
+      # decode 2008 combined union variable: union_08 values 2/4 = personal member, 1/3 = not;
+      # values 3/4 = household member, 1/2 = not
+      mutate(
+        union          = coalesce(union, case_when(
+          year == 2008 & union_08 %in% c(2, 4) ~ 1,
+          year == 2008 & union_08 %in% c(1, 3) ~ 3
+        )),
+        unionhh = coalesce(unionhh, case_when(
+          year == 2008 & union_08 %in% c(3, 4) ~ 1,
+          year == 2008 & union_08 %in% c(1, 2) ~ 3
+        ))
+      ) |>
       # fix county misalignment
       mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) |>
       mutate(county_fips = as.character(county_fips))
@@ -108,7 +120,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         gender = V208,
         birthyr = V207,
         race = V211,
-        partyreg = CC402
+        partyreg = CC402,
+        union = CC329
       ) |>
       mutate(zipcode = as.character(as_factor(V202)))
   }

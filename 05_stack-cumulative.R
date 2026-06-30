@@ -268,7 +268,7 @@ cli_h1("Joining turnout")
 reg_self <- find_stack(ccs, reg_self)
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") |>
   mutate(intent_turnout_self = replace_values(
-    intent_trn,
+    as.character(intent_trn),
     "Yes, Definitely"                      ~ "Yes, definitely",
     "I Already Voted (Early or Absentee)"  ~ "I already voted (early or absentee)",
     c("I Plan to Vote Before November 3rd",
