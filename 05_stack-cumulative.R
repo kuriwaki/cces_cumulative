@@ -138,50 +138,42 @@ bryr <- find_stack(ccs, birthyr, "integer")
 age <- find_stack(ccs, age, "integer")
 
 ## income wrangling -----
-cli_h1("Joining income and employmnet")
+cli_h1("Joining income and employment")
 inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) |>
-  mutate(faminc = recode(
+  mutate(faminc = recode_values(
     family_income_old,
-    `1` = "Less than 10k",
-    `2` = "10k - 20k",
-    `3` = "10k - 20k",
-    `4` = "20k - 30k",
-    `5` = "20k - 30k",
-    `6` = "30k - 40k",
-    `7` = "40k - 50k",
-    `8` = "50k - 60k",
-    `9` = "60k - 70k",
-    `10` = "70k - 80k",
-    `11` = "80k - 100k",
-    `12` = "100k - 120k",
-    `13` = "120k - 150k",
-    `14` = "150k+",
-    `15` = "Prefer not to say"))
+    1               ~ "Less than 10k",
+    c(2, 3)         ~ "10k - 20k",
+    c(4, 5)         ~ "20k - 30k",
+    6               ~ "30k - 40k",
+    7               ~ "40k - 50k",
+    8               ~ "50k - 60k",
+    9               ~ "60k - 70k",
+    10              ~ "70k - 80k",
+    11              ~ "80k - 100k",
+    12              ~ "100k - 120k",
+    13              ~ "120k - 150k",
+    14              ~ "150k+",
+    15              ~ "Prefer not to say"))
 
 inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) |>
-  mutate(faminc = recode(
+  mutate(faminc = recode_values(
     family_income,
-    `1` = "Less than 10k",
-    `2` = "10k - 20k",
-    `3` = "20k - 30k",
-    `4` = "30k - 40k",
-    `5` = "40k - 50k",
-    `6` = "50k - 60k",
-    `7` = "60k - 70k",
-    `8` = "70k - 80k",
-    `9` = "80k - 100k",
-    `10` = "100k - 120k",
-    `11` = "120k - 150k",
-    `12` = "150k+",
-    `13` = "150k+",
-    `14` = "150k+",
-    `15` = "150k+",
-    `16` = "150k+",
-    `31` = "150k+",
-    `32` = "150k+",
-    `97` = "Prefer not to say",
-    `98` = "Skipped",
-    `99` = "Not Asked"))
+    1                        ~ "Less than 10k",
+    2                        ~ "10k - 20k",
+    3                        ~ "20k - 30k",
+    4                        ~ "30k - 40k",
+    5                        ~ "40k - 50k",
+    6                        ~ "50k - 60k",
+    7                        ~ "60k - 70k",
+    8                        ~ "70k - 80k",
+    9                        ~ "80k - 100k",
+    10                       ~ "100k - 120k",
+    11                       ~ "120k - 150k",
+    c(12:16, 31, 32)         ~ "150k+",
+    97                       ~ "Prefer not to say",
+    98                       ~ "Skipped",
+    99                       ~ "Not Asked"))
 
 faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) |>
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
@@ -275,14 +267,14 @@ churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |>
 cli_h1("Joining turnout")
 reg_self <- find_stack(ccs, reg_self)
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") |>
-  mutate(intent_turnout_self = recode(
+  mutate(intent_turnout_self = replace_values(
     intent_trn,
-    `Yes, Definitely` = "Yes, definitely",
-    `I Already Voted (Early or Absentee)` = "I already voted (early or absentee)",
-    `I Plan to Vote Before November 3rd` = "Plan to vote early",
-    `I Plan to Vote Before November 4th` = "Plan to vote early",
-    `I Plan to Vote Before November 6th` = "Plan to vote early",
-    `I Plan to Vote Before November 8th` = "Plan to vote early"))
+    "Yes, Definitely"                      ~ "Yes, definitely",
+    "I Already Voted (Early or Absentee)"  ~ "I already voted (early or absentee)",
+    c("I Plan to Vote Before November 3rd",
+      "I Plan to Vote Before November 4th",
+      "I Plan to Vote Before November 6th",
+      "I Plan to Vote Before November 8th") ~ "Plan to vote early"))
 
 voted_trn <- find_stack(ccs, voted_trn, type = "factor") |>
   mutate(voted_turnout_self = case_when(
@@ -410,11 +402,10 @@ apvgov <- find_stack(ccs, approval_gov, make_labelled = TRUE)
 
 ## economy -----
 econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder = FALSE) |>
-  mutate(economy_retro_char = recode(economy_retro_char,
-                                     `Gotten Worse`           = "Gotten Worse / Somewhat Worse",
-                                     `Gotten Somewhat Worse`  = "Gotten Worse / Somewhat Worse",
-                                     `Gotten Better`          = "Gotten Better / Somewhat Better",
-                                     `Gotten Somewhat Better` = "Gotten Better / Somewhat Better")) |>
+  mutate(economy_retro_char = replace_values(
+    economy_retro_char,
+    c("Gotten Worse", "Gotten Somewhat Worse")   ~ "Gotten Worse / Somewhat Worse",
+    c("Gotten Better", "Gotten Somewhat Better") ~ "Gotten Better / Somewhat Better")) |>
   filter(year != 2009) |>
   bind_rows(cc09_econ) |>
   mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
