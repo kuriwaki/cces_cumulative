@@ -6,6 +6,7 @@ library(glue)
 library(lubridate)
 library(cli)
 library(arrow)
+library(sjlabelled)
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
