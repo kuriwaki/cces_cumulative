@@ -7,6 +7,10 @@ library(lubridate)
 library(cli)
 library(arrow)
 library(sjlabelled)
+conflicted::conflict_prefer("labelled", "haven")
+conflicted::conflict_prefer("as_factor", "haven")
+conflicted::conflict_prefer("zap_labels", "haven")
+conflicted::conflict_prefer("filter", "dplyr")
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
