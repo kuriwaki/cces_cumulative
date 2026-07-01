@@ -307,6 +307,31 @@ for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) {
   }
 }
 
+# Synthetic gov candidate columns for odd years 2013, 2015, 2017 (no GovCandX columns).
+# voted_gov was recoded to 1=D, 2=R, 3=Other, 8=DNV in 05_functions-stack.R.
+cclist[["2013"]] <- cclist[["2013"]] |>
+  mutate(
+    gov_can1 = if_else(st == "NJ", "Democratic Candidate", NA_character_),
+    gov_pty1 = if_else(st == "NJ", "D",                   NA_character_),
+    gov_can2 = if_else(st == "NJ", "Republican Candidate", NA_character_),
+    gov_pty2 = if_else(st == "NJ", "R",                   NA_character_)
+  )
+
+cclist[["2015"]] <- cclist[["2015"]] |>
+  mutate(
+    gov_can1 = if_else(st %in% c("KY", "LA", "MS"), "Democratic Candidate", NA_character_),
+    gov_pty1 = if_else(st %in% c("KY", "LA", "MS"), "D",                   NA_character_),
+    gov_can2 = if_else(st %in% c("KY", "LA", "MS"), "Republican Candidate", NA_character_),
+    gov_pty2 = if_else(st %in% c("KY", "LA", "MS"), "R",                   NA_character_)
+  )
+
+cclist[["2017"]] <- cclist[["2017"]] |>
+  mutate(
+    gov_can1 = if_else(st %in% c("VA", "NJ"), "Democratic Candidate", NA_character_),
+    gov_pty1 = if_else(st %in% c("VA", "NJ"), "D",                   NA_character_),
+    gov_can2 = if_else(st %in% c("VA", "NJ"), "Republican Candidate", NA_character_),
+    gov_pty2 = if_else(st %in% c("VA", "NJ"), "R",                   NA_character_)
+  )
 
 # bind ------
 dfcc <- map_dfr(cclist, .f = clean_out, cvars = carry_vars, m = master, .id = "dataset")
