@@ -48,6 +48,11 @@ std_name <- function(tbl, is_panel = FALSE) {
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
         voted_sen = replace(voted_sen, year %% 2 == 1, NA)) |> #  % NA for odd years
+      # decode 2008 combined union variable: union_08 values 2/4 = personal member, 1/3 = not
+      mutate(union = coalesce(union, case_when(
+        year == 2008 & union_08 %in% c(2, 4) ~ 1,
+        year == 2008 & union_08 %in% c(1, 3) ~ 3
+      ))) |>
       # fix county misalignment
       mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) |>
       mutate(county_fips = as.character(county_fips))
@@ -108,7 +113,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         gender = V208,
         birthyr = V207,
         race = V211,
-        partyreg = CC402
+        partyreg = CC402,
+        union = CC329
       ) |>
       mutate(zipcode = as.character(as_factor(V202)))
   }
@@ -252,6 +258,15 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC312d,
         economy_retro = CC13_302,
         voted_pres_12 = CC13_315
+      ) |>
+      mutate(
+        # CC13_316a (NJ): 1=DNV, 2=Christie(R), 3=Buono(D), 4=Other → standardize to 1=D, 2=R
+        voted_gov = case_when(
+          CC13_316a == 3L ~ 1L,
+          CC13_316a == 2L ~ 2L,
+          CC13_316a == 4L ~ 3L,
+          CC13_316a == 1L ~ 8L
+        )
       )
   }
 
@@ -298,6 +313,30 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC15_312f,
         economy_retro = CC15_302,
         voted_pres_12 = CC15_315
+      ) |>
+      mutate(
+        # Recode each state's question to 1=D, 2=R, 3=Other, 8=DNV
+        # KY (CC15_316a): 1=Bevin(R), 2=Conway(D), 3=Curtis(I), 4=DNV
+        # LA (CC15_316b): 1=Edwards(D), 2=Vitter(R), 3=DNV
+        # MS (CC15_316c): 1=Bryant(R), 2=Gray(D), 3=DNV
+        voted_gov = coalesce(
+          case_when(
+            CC15_316a == 2L ~ 1L,
+            CC15_316a == 1L ~ 2L,
+            CC15_316a == 3L ~ 3L,
+            CC15_316a == 4L ~ 8L
+          ),
+          case_when(
+            CC15_316b == 1L ~ 1L,
+            CC15_316b == 2L ~ 2L,
+            CC15_316b == 3L ~ 8L
+          ),
+          case_when(
+            CC15_316c == 2L ~ 1L,
+            CC15_316c == 1L ~ 2L,
+            CC15_316c == 3L ~ 8L
+          )
+        )
       )
   }
 
@@ -354,7 +393,13 @@ std_name <- function(tbl, is_panel = FALSE) {
         faminc = faminc_new,
         voted_pres_16 = CC17_327) |>
       mutate(
-        countyfips = NA
+        countyfips = NA,
+        # CC17_328a (VA) and CC17_328b (NJ): 1=D, 2=R, 3=Other, 7=DNV, 8=Skipped
+        # standardize DNV 7 → 8 to match even-year coding
+        voted_gov = coalesce(
+          case_when(CC17_328a %in% 1:3 ~ as.integer(CC17_328a), CC17_328a == 7L ~ 8L),
+          case_when(CC17_328b %in% 1:3 ~ as.integer(CC17_328b), CC17_328b == 7L ~ 8L)
+        )
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -419,7 +464,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC19_308e,
         economy_retro = CC19_301,
         faminc = faminc_new,
-        voted_pres_16 = presvote16post
+        voted_pres_16 = presvote16post,
+        voted_gov = CC19_350
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -485,7 +531,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         economy_retro = CC21_301,
         faminc = faminc_new,
         voted_pres_16 = presvote16post,
-        voted_pres_20 = presvote20post
+        voted_pres_20 = presvote20post,
+        voted_gov = CC21_363b
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -547,7 +594,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC23_312d,
         economy_retro = CC23_301,
         faminc = faminc_new,
-        voted_pres_20 = presvote20post
+        voted_pres_20 = presvote20post,
+        voted_gov = CC23_362b
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }

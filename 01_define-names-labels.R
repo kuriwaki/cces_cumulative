@@ -74,6 +74,14 @@ master$`2024` <- master$`2022` <- master$`2020` <- master$`2018`
 master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Name", "GovCand3Party"
 )] <- NA
 
+# Odd years 2019+ have GovCand columns matching even-year structure
+gov_cand_rows <- master$name %in% c("gov_can1", "gov_pty1", "gov_can2", "gov_pty2", "gov_can3", "gov_pty3")
+for (yr in c("2019", "2021", "2023", "2025")) {
+  master[gov_cand_rows, yr] <- master[gov_cand_rows, "2018"]
+}
+# 2021 and 2025 governor races have only two candidates
+master[master$name %in% c("gov_can3", "gov_pty3"), c("2021", "2025")] <- NA
+
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
 
