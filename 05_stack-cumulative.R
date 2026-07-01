@@ -6,6 +6,11 @@ library(glue)
 library(lubridate)
 library(cli)
 library(arrow)
+library(sjlabelled)
+conflicted::conflict_prefer("labelled", "haven")
+conflicted::conflict_prefer("as_factor", "haven")
+conflicted::conflict_prefer("zap_labels", "haven")
+conflicted::conflict_prefer("filter", "dplyr")
 
 stopifnot(packageVersion("labelled") >= "2.4.0")
 
@@ -142,38 +147,38 @@ cli_h1("Joining income and employment")
 inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) |>
   mutate(faminc = recode_values(
     family_income_old,
-    1               ~ "Less than 10k",
-    c(2, 3)         ~ "10k - 20k",
-    c(4, 5)         ~ "20k - 30k",
-    6               ~ "30k - 40k",
-    7               ~ "40k - 50k",
-    8               ~ "50k - 60k",
-    9               ~ "60k - 70k",
-    10              ~ "70k - 80k",
-    11              ~ "80k - 100k",
-    12              ~ "100k - 120k",
-    13              ~ "120k - 150k",
-    14              ~ "150k+",
-    15              ~ "Prefer not to say"))
+    1 ~ "Less than 10k",
+    c(2, 3) ~ "10k - 20k",
+    c(4, 5) ~ "20k - 30k",
+    6 ~ "30k - 40k",
+    7 ~ "40k - 50k",
+    8 ~ "50k - 60k",
+    9 ~ "60k - 70k",
+    10 ~ "70k - 80k",
+    11 ~ "80k - 100k",
+    12 ~ "100k - 120k",
+    13 ~ "120k - 150k",
+    14 ~ "150k+",
+    15 ~ "Prefer not to say"))
 
 inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) |>
   mutate(faminc = recode_values(
     family_income,
-    1                        ~ "Less than 10k",
-    2                        ~ "10k - 20k",
-    3                        ~ "20k - 30k",
-    4                        ~ "30k - 40k",
-    5                        ~ "40k - 50k",
-    6                        ~ "50k - 60k",
-    7                        ~ "60k - 70k",
-    8                        ~ "70k - 80k",
-    9                        ~ "80k - 100k",
-    10                       ~ "100k - 120k",
-    11                       ~ "120k - 150k",
-    c(12:16, 31, 32)         ~ "150k+",
-    97                       ~ "Prefer not to say",
-    98                       ~ "Skipped",
-    99                       ~ "Not Asked"))
+    1  ~ "Less than 10k",
+    2  ~ "10k - 20k",
+    3  ~ "20k - 30k",
+    4  ~ "30k - 40k",
+    5  ~ "40k - 50k",
+    6  ~ "50k - 60k",
+    7  ~ "60k - 70k",
+    8  ~ "70k - 80k",
+    9  ~ "80k - 100k",
+    10 ~ "100k - 120k",
+    11 ~ "120k - 150k",
+    c(12:16, 31, 32) ~ "150k+",
+    97 ~ "Prefer not to say",
+    98 ~ "Skipped",
+    99 ~ "Not Asked"))
 
 faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) |>
   mutate(faminc_char = coalesce(faminc.x, faminc.y),
@@ -182,30 +187,33 @@ faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) |>
 
 ## union, employment, health ----
 union <- find_stack(ccs, union, make_labelled = TRUE) |>
-  mutate(union = labelled(zap_label(union),
-                          c("Yes, Currently" = 1,
-                            "Yes, Formerly" = 2,
-                            "No, Never" = 3)),
-         union = na_if(union, 8))
+  mutate(union = labelled(
+    zap_label(union),
+    c("Yes, Currently" = 1,
+      "Yes, Formerly" = 2,
+      "No, Never" = 3)),
+    union = na_if(union, 8))
 
 union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) |>
-  mutate(union_hh = fct_collapse(unionhh,
-                                 `1` = c(
-                                   "Current Member in Household",
-                                   "Yes, a Member of My Household Is Currently a Union Member"),
-                                 `2` = c(
-                                   "A Member of My Household Was Formerly a Member of a Labor Union, But Is not Now",
-                                   "Former Member in Household"),
-                                 `3` = c(
-                                   "No Union Members in Household",
-                                   "No, No One in My Household Has Ever Been a Member of a Labor Union"),
-                                 `4` = c("Not Sure")
+  mutate(union_hh = fct_collapse(
+    unionhh,
+    `1` = c(
+      "Current Member in Household",
+      "Yes, a Member of My Household Is Currently a Union Member"),
+    `2` = c(
+      "A Member of My Household Was Formerly a Member of a Labor Union, But Is not Now",
+      "Former Member in Household"),
+    `3` = c(
+      "No Union Members in Household",
+      "No, No One in My Household Has Ever Been a Member of a Labor Union"),
+    `4` = c("Not Sure")
   )) |>
-  mutate(union_hh = labelled(as.integer(union_hh),
-                             c("Yes, Currently" = 1,
-                               "Yes, Formerly" = 2,
-                               "No, Never" = 3,
-                               "Not Sure" = 4))) |>
+  mutate(union_hh = labelled(
+    as.integer(union_hh),
+    c("Yes, Currently" = 1,
+      "Yes, Formerly" = 2,
+      "No, Never" = 3,
+      "Not Sure" = 4))) |>
   select(-unionhh)
 
 
