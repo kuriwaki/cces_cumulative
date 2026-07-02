@@ -792,14 +792,14 @@ std_name <- function(tbl, is_panel = FALSE) {
     hisp_origin <- tbl |>
       select(case_id, matches(hisp_regex)) |>
       pivot_longer(-case_id) |>
-      left_join(hisp_key) |>
+      left_join(hisp_key, by = join_by(name), relationship = "many-to-one") |>
       mutate(lab = replace(lab, lab %in% rm_values, NA_character_)) |>
       filter(!is.na(value) & value != 9 & value == 1 & !is.na(lab)) |>
       arrange(name) |>
       summarize(hisp_origin = str_c(lab, collapse = "!!"), .by = case_id)
 
     tbl <- tbl |>
-      left_join(hisp_origin, by = "case_id")
+      left_join(hisp_origin, by = join_by(case_id), relationship = "one-to-one")
   }
 
 
