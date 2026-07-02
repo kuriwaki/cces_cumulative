@@ -311,10 +311,10 @@ for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) {
 # voted_gov was recoded to 1=D, 2=R, 3=Other, 8=DNV in 05_functions-stack.R.
 cclist[["2013"]] <- cclist[["2013"]] |>
   mutate(
-    gov_can1 = if_else(st == "NJ", "Democratic Candidate", NA_character_),
-    gov_pty1 = if_else(st == "NJ", "D",                   NA_character_),
-    gov_can2 = if_else(st == "NJ", "Republican Candidate", NA_character_),
-    gov_pty2 = if_else(st == "NJ", "R",                   NA_character_)
+    gov_can1 = if_else(st %in% c("NJ", "VA"), "Democratic Candidate", NA_character_),
+    gov_pty1 = if_else(st %in% c("NJ", "VA"), "D",                   NA_character_),
+    gov_can2 = if_else(st %in% c("NJ", "VA"), "Republican Candidate", NA_character_),
+    gov_pty2 = if_else(st %in% c("NJ", "VA"), "R",                   NA_character_)
   )
 
 cclist[["2015"]] <- cclist[["2015"]] |>

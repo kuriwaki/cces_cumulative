@@ -260,12 +260,21 @@ std_name <- function(tbl, is_panel = FALSE) {
         voted_pres_12 = CC13_315
       ) |>
       mutate(
-        # CC13_316a (NJ): 1=DNV, 2=Christie(R), 3=Buono(D), 4=Other → standardize to 1=D, 2=R
-        voted_gov = case_when(
-          CC13_316a == 3L ~ 1L,
-          CC13_316a == 2L ~ 2L,
-          CC13_316a == 4L ~ 3L,
-          CC13_316a == 1L ~ 8L
+        # CC13_316a (NJ): 1=DNV, 2=Christie(R), 3=Buono(D), 4=Other → standardize to 1=D, 2=R, 3=Other, 8=DNV
+        # CC13_316b (VA): 1=DNV, 2=Cuccinelli(R), 3=McAuliffe(D), 4=Sarvis(L), 5=Someone else → standardize to 1=D, 2=R, 3=Other, 8=DNV
+        voted_gov = coalesce(
+          case_when(
+            CC13_316a == 3L ~ 1L,
+            CC13_316a == 2L ~ 2L,
+            CC13_316a == 4L ~ 3L,
+            CC13_316a == 1L ~ 8L
+          ),
+          case_when(
+            CC13_316b == 3L ~ 1L,
+            CC13_316b == 2L ~ 2L,
+            CC13_316b %in% c(4L, 5L) ~ 3L,
+            CC13_316b == 1L ~ 8L
+          )
         )
       )
   }
