@@ -159,7 +159,7 @@ contributed significantly to V12. Thanks to Joe Williams at YouGov, and
 Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
 
 
-\date{2026-06-23}
+\date{2026-07-03}
 
 \begin{document}
 
@@ -1919,18 +1919,13 @@ wave)}{intent\_turnout\_self: Self-reported turnout (pre-election wave)}}\label{
 \toprule
  & n\\
 \midrule
-I Do not Intend to Vote in the 2026 Election & 1,950\\
 Yes, definitely & 282,042\\
-I Will Likely Vote for the Democratic Candidate for Us House of Representatives & 6,844\\
 Probably & 32,331\\
 I already voted (early or absentee) & 36,668\\
-I Will Likely Vote for the Republican Candidate for Us House of Representatives & 5,081\\
-Plan to vote early & 8,209\\
-I Plan to Vote Before November 5th & 2,600\\
-Not Sure & 3,097\\
+I plan to vote before Election Day & 10,809\\
 No & 30,905\\
 Undecided & 22,407\\
-(Missing) & 286,821\\
+(Missing) & 303,793\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1938,15 +1933,15 @@ Undecided & 22,407\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2025
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Collapses and simplifies response categories to
   standardize across years. See individual year's datasets for details.
-  Some response categories are still not standardized. For example,
-  ``Plan to vote early'' was not an option only in 2016. Additionally,
-  the question is available in years 2010 and earlier but not included
-  in this version of the cumulative dataset because those years rely on
-  a 2006--2012 cumulative release.
+  Some response categories are still not standardized. For example, ``I
+  plan to vote before Election Day'' is unavailable in 2016.
+  Additionally, the question is available in years 2010 and earlier but
+  not included in this version of the cumulative dataset because those
+  years rely on a 2006--2012 cumulative release.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{voted\_turnout\_self}:
@@ -2234,10 +2229,10 @@ membership}{union: Union membership}}\label{union-union-membership}
 \toprule
  & n\\
 \midrule
-Yes, Currently & 44,405\\
+Yes, Currently & 48,930\\
 Yes, Formerly & 128,804\\
-No, Never & 477,108\\
-(Missing) & 68,638\\
+No, Never & 505,197\\
+(Missing) & 36,024\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2245,8 +2240,8 @@ No, Never & 477,108\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-  2018, 2019, 2020, 2021, 2022, 2024, 2025
+  Years: 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+  2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025
 \item
   Question wording and response options have been reworded to be
   harmonized across years. Please see each individual CCES for exact
@@ -3262,15 +3257,17 @@ voting)}{voted\_gov: Governor vote choice (after voting)}}\label{voted_gov-gover
 \toprule
  & n\\
 \midrule
-{}{[Democrat / Candidate 1]} & 88,172\\
-{}{[Republican / Candidate 2]} & 77,356\\
-{}{[Other / Candidate 3]} & 2,851\\
+{}{[Democrat / Candidate 1]} & 90,215\\
+{}{[Republican / Candidate 2]} & 79,031\\
+{}{[Other / Candidate 3]} & 2,893\\
+\$GovCand4Name (\$GovCand4Party) & 8\\
+\$GovCand5Name (\$GovCand5Party) & 10\\
 I Did not Vote in this Race & 327\\
 I Did not Vote & 62\\
-Other & 2,375\\
-I Did Not Vote In This Race & 3,594\\
+Other & 2,479\\
+I Did Not Vote In This Race & 4,328\\
 Not Sure & 1,344\\
-(Missing) & 542,874\\
+(Missing) & 538,258\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3278,8 +3275,9 @@ Not Sure & 1,344\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024,
-  2025
+  Years: 2006, 2008, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+  2019, 2020, 2021, 2022, 2023, 2024, 2025. Odd-year Governor elections
+  in NJ, VA, KY, MS, and LA start to appear in 2013.
 \item
   See \texttt{voted\_gov\_party} for party affiliation.
 \end{itemize}
@@ -3396,17 +3394,18 @@ party}{voted\_gov\_party: Governor vote choice party}}\label{voted_gov_party-gov
 \toprule
  & n\\
 \midrule
-Democratic & 87,327\\
-Republican & 76,581\\
-Independent & 438\\
-Libertarian & 411\\
+Democratic & 89,758\\
+Republican & 78,510\\
+Libertarian & 440\\
+Independent & 447\\
 American Constitution & 351\\
 Conservative & 163\\
+Other & 76\\
 Independence & 47\\
 Green & 39\\
 Independent Party of Oregon & 34\\
 Alaska Independence & 2\\
-(Missing) & 553,562\\
+(Missing) & 549,088\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -3414,7 +3413,8 @@ Alaska Independence & 2\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024
+  Years: 2006, 2008, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+  2019, 2020, 2021, 2022, 2023, 2024, 2025
 \item
   Similar to \texttt{voted\_pres\_party}. See
   \texttt{voted\_gov\_chosen} for the name of the candidate, and
@@ -3619,9 +3619,18 @@ description/metadata changes.
 \item
   For 2022 data, now uses an updated
   \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
-  of the 2022 CCES cumulative file, which was updated in April 2024 to
-  fill missing county FIPS codes.　This adds \texttt{county\_fips} for
-  131 rows (\textless{} 1 \% of 2022 data).
+  of the 2022 CCES cumulative file,
+\item
+  Add Governor vote choice even for odd years, starting from 2013.
+  (\#61)
+\item
+  Add 2008 values for individual uninon membership (\#73, Brian
+  Schaffner)
+\item
+  Lower/upper case standardization for values in
+  \texttt{intent\_turnout\_self} (\#79) which was updated in April 2024
+  to fill missing county FIPS codes.　This adds \texttt{county\_fips}
+  for 131 rows (\textless{} 1 \% of 2022 data).
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 11.0 (released

@@ -48,6 +48,11 @@ std_name <- function(tbl, is_panel = FALSE) {
         tookpost  = replace(tookpost, year %% 2 == 1, NA), #  % NA for odd years
         voted_rep = replace(voted_rep, year %% 2 == 1, NA), #  % NA for odd years
         voted_sen = replace(voted_sen, year %% 2 == 1, NA)) |> #  % NA for odd years
+      # decode 2008 combined union variable: union_08 values 2/4 = personal member, 1/3 = not
+      mutate(union = coalesce(union, case_when(
+        year == 2008 & union_08 %in% c(2, 4) ~ 1,
+        year == 2008 & union_08 %in% c(1, 3) ~ 3
+      ))) |>
       # fix county misalignment
       mutate(county_fips = (county_fips < 1000) * as.numeric(state_pre) * 1000 + county_fips) |>
       mutate(county_fips = as.character(county_fips))
@@ -108,7 +113,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         gender = V208,
         birthyr = V207,
         race = V211,
-        partyreg = CC402
+        partyreg = CC402,
+        union = CC329
       ) |>
       mutate(zipcode = as.character(as_factor(V202)))
   }
@@ -252,6 +258,30 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC312d,
         economy_retro = CC13_302,
         voted_pres_12 = CC13_315
+      ) |>
+      mutate(
+        # Preserve named third-party candidates separately from generic "Someone else".
+        voted_gov = labelled(coalesce(
+          case_when(
+            CC13_316a == 3L ~ 1L,
+            CC13_316a == 2L ~ 2L,
+            CC13_316a == 4L ~ 7L,
+            CC13_316a == 1L ~ 8L
+          ),
+          case_when(
+            CC13_316b == 3L ~ 1L,
+            CC13_316b == 2L ~ 2L,
+            CC13_316b == 4L ~ 3L,
+            CC13_316b == 5L ~ 7L,
+            CC13_316b == 1L ~ 8L
+          )
+        ), labels = c(
+          `[Democrat / Candidate 1]` = 1L,
+          `[Republican / Candidate 2]` = 2L,
+          `[Other / Candidate 3]` = 3L,
+          Other = 7L,
+          `Did not Vote` = 8L
+        ))
       )
   }
 
@@ -298,6 +328,32 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC15_312f,
         economy_retro = CC15_302,
         voted_pres_12 = CC15_315
+      ) |>
+      mutate(
+        voted_gov = labelled(coalesce(
+          case_when(
+            CC15_316a == 2L ~ 1L,
+            CC15_316a == 1L ~ 2L,
+            CC15_316a == 3L ~ 3L,
+            CC15_316a == 4L ~ 8L
+          ),
+          case_when(
+            CC15_316b == 1L ~ 1L,
+            CC15_316b == 2L ~ 2L,
+            CC15_316b == 3L ~ 8L
+          ),
+          case_when(
+            CC15_316c == 2L ~ 1L,
+            CC15_316c == 1L ~ 2L,
+            CC15_316c == 3L ~ 8L
+          )
+        ), labels = c(
+          `[Democrat / Candidate 1]` = 1L,
+          `[Republican / Candidate 2]` = 2L,
+          `[Other / Candidate 3]` = 3L,
+          Other = 7L,
+          `Did not Vote` = 8L
+        ))
       )
   }
 
@@ -354,7 +410,21 @@ std_name <- function(tbl, is_panel = FALSE) {
         faminc = faminc_new,
         voted_pres_16 = CC17_327) |>
       mutate(
-        countyfips = NA
+        countyfips = NA,
+        voted_gov = labelled(coalesce(
+          case_when(CC17_328a %in% 1:2 ~ as.integer(CC17_328a),
+                    CC17_328a == 3L ~ 7L,
+                    CC17_328a == 7L ~ 8L),
+          case_when(CC17_328b %in% 1:2 ~ as.integer(CC17_328b),
+                    CC17_328b == 3L ~ 7L,
+                    CC17_328b == 7L ~ 8L)
+        ), labels = c(
+          `[Democrat / Candidate 1]` = 1L,
+          `[Republican / Candidate 2]` = 2L,
+          `[Other / Candidate 3]` = 3L,
+          Other = 7L,
+          `Did not Vote` = 8L
+        ))
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -419,7 +489,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC19_308e,
         economy_retro = CC19_301,
         faminc = faminc_new,
-        voted_pres_16 = presvote16post
+        voted_pres_16 = presvote16post,
+        voted_gov = CC19_350
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -485,7 +556,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         economy_retro = CC21_301,
         faminc = faminc_new,
         voted_pres_16 = presvote16post,
-        voted_pres_20 = presvote20post
+        voted_pres_20 = presvote20post,
+        voted_gov = CC21_363b
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -547,7 +619,8 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC23_312d,
         economy_retro = CC23_301,
         faminc = faminc_new,
-        voted_pres_20 = presvote20post
+        voted_pres_20 = presvote20post,
+        voted_gov = CC23_362b
       ) |>
       labelled::add_value_labels(marstat = c("Domestic Partnership" = 6, "Single" = 5))
   }
@@ -650,7 +723,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC25_312d,
         economy_retro = CC25_301,
         faminc = faminc_new, # or CC25_302?
-        intent_trn = CC25_363,
+        # CC25_363 asks about the 2026 House vote, not turnout intent.
         # # intent_pres_24 = CC25_364b,
         # # intent_pres_24x = CC25_364a, # double check if this is actually voted
         # intent_rep = CC25_367,
@@ -744,14 +817,14 @@ std_name <- function(tbl, is_panel = FALSE) {
     hisp_origin <- tbl |>
       select(case_id, matches(hisp_regex)) |>
       pivot_longer(-case_id) |>
-      left_join(hisp_key) |>
+      left_join(hisp_key, by = join_by(name), relationship = "many-to-one") |>
       mutate(lab = replace(lab, lab %in% rm_values, NA_character_)) |>
       filter(!is.na(value) & value != 9 & value == 1 & !is.na(lab)) |>
       arrange(name) |>
       summarize(hisp_origin = str_c(lab, collapse = "!!"), .by = case_id)
 
     tbl <- tbl |>
-      left_join(hisp_origin, by = "case_id")
+      left_join(hisp_origin, by = join_by(case_id), relationship = "one-to-one")
   }
 
 
