@@ -2,6 +2,7 @@
 ####################
 data/source/*
 !data/source/statecode.csv
+!data/source/odd_year_governor_candidates.csv
 data/source/anes/*
 data/source/cces/*
 data/source/census_demog
