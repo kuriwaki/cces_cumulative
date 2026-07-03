@@ -1919,18 +1919,13 @@ wave)}{intent\_turnout\_self: Self-reported turnout (pre-election wave)}}\label{
 \toprule
  & n\\
 \midrule
-I Do not Intend to Vote in the 2026 Election & 1,950\\
-I Plan to Vote Before November 5th & 2,600\\
-I Will Likely Vote for the Democratic Candidate for Us House of Representatives & 6,844\\
-I Will Likely Vote for the Republican Candidate for Us House of Representatives & 5,081\\
-I already voted (early or absentee) & 36,668\\
-No & 30,905\\
-Not Sure & 3,097\\
-Plan to vote early & 8,209\\
-Probably & 32,331\\
-Undecided & 22,407\\
 Yes, definitely & 282,042\\
-NA & 286,821\\
+Probably & 32,331\\
+I already voted (early or absentee) & 36,668\\
+I plan to vote before Election Day & 10,809\\
+No & 30,905\\
+Undecided & 22,407\\
+(Missing) & 303,793\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1938,15 +1933,15 @@ NA & 286,821\\
 \begin{itemize}
 \tightlist
 \item
-  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2025
+  Years: 2012, 2014, 2016, 2018, 2020, 2022, 2024
 \item
   Limitations: Collapses and simplifies response categories to
   standardize across years. See individual year's datasets for details.
-  Some response categories are still not standardized. For example,
-  ``Plan to vote early'' was not an option only in 2016. Additionally,
-  the question is available in years 2010 and earlier but not included
-  in this version of the cumulative dataset because those years rely on
-  a 2006--2012 cumulative release.
+  Some response categories are still not standardized. For example, ``I
+  plan to vote before Election Day'' is unavailable in 2016.
+  Additionally, the question is available in years 2010 and earlier but
+  not included in this version of the cumulative dataset because those
+  years rely on a 2006--2012 cumulative release.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{\texttt{voted\_turnout\_self}:
@@ -3622,13 +3617,20 @@ description/metadata changes.
   \texttt{voted\_sen\_party}, \texttt{voted\_gov},
   \texttt{voted\_gov\_chosen}, and \texttt{voted\_gov\_party}
 \item
-  Add Governor vote choice even for odd years, starting from 2013.
-\item
   For 2022 data, now uses an updated
   \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
-  of the 2022 CCES cumulative file, which was updated in April 2024 to
-  fill missing county FIPS codes.　This adds \texttt{county\_fips} for
-  131 rows (\textless{} 1 \% of 2022 data).
+  of the 2022 CCES cumulative file,
+\item
+  Add Governor vote choice even for odd years, starting from 2013.
+  (\#61)
+\item
+  Add 2008 values for individual uninon membership (\#73, Brian
+  Schaffner)
+\item
+  Lower/upper case standardization for values in
+  \texttt{intent\_turnout\_self} (\#79) which was updated in April 2024
+  to fill missing county FIPS codes.　This adds \texttt{county\_fips}
+  for 131 rows (\textless{} 1 \% of 2022 data).
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 11.0 (released

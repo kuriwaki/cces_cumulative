@@ -274,6 +274,14 @@ churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |>
 ## turnout ----
 cli_h1("Joining turnout")
 reg_self <- find_stack(ccs, reg_self)
+intent_turnout_levels <- c(
+  "Yes, definitely",
+  "Probably",
+  "I already voted (early or absentee)",
+  "I plan to vote before Election Day",
+  "No",
+  "Undecided"
+)
 intent_trn <- find_stack(ccs, intent_trn, type = "factor") |>
   mutate(intent_turnout_self = replace_values(
     as.character(intent_trn),
@@ -281,8 +289,10 @@ intent_trn <- find_stack(ccs, intent_trn, type = "factor") |>
     "I Already Voted (Early or Absentee)"  ~ "I already voted (early or absentee)",
     c("I Plan to Vote Before November 3rd",
       "I Plan to Vote Before November 4th",
+      "I Plan to Vote Before November 5th",
       "I Plan to Vote Before November 6th",
-      "I Plan to Vote Before November 8th") ~ "Plan to vote early"))
+      "I Plan to Vote Before November 8th") ~ "I plan to vote before Election Day"),
+    intent_turnout_self = factor(intent_turnout_self, levels = intent_turnout_levels))
 
 voted_trn <- find_stack(ccs, voted_trn, type = "factor") |>
   mutate(voted_turnout_self = case_when(

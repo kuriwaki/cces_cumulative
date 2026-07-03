@@ -883,7 +883,7 @@ print_tab(intent_turnout_self)
 ```
 
 * Years: `r in_years(intent_turnout_self)`
-* Limitations: Collapses and simplifies response categories to standardize across years. See individual year's datasets for details. Some response categories are still not standardized. For example, "Plan to vote early" was not an option only in 2016. Additionally, the question is available in years 2010 and earlier but not included in this version of the cumulative dataset because those years rely on a 2006--2012 cumulative release.
+* Limitations: Collapses and simplifies response categories to standardize across years. See individual year's datasets for details. Some response categories are still not standardized. For example, "I plan to vote before Election Day" is unavailable in 2016. Additionally, the question is available in years 2010 and earlier but not included in this version of the cumulative dataset because those years rely on a 2006--2012 cumulative release.
 
 
 ### `r nam(voted_turnout_self)`
@@ -1472,10 +1472,11 @@ Routine edits add new rows, add new variables, and change the customization of e
 ### Version 12.0 (released `2026-`)
 
 - Adds 2025 common content
-- For 2014 data, now uses an updated [V6](https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0)  of the 2014 CCES cumulative file, which was updated in 2024 to fix some congressional district variables. This changes 41 rows (< 1 % of 2014 data) in the following variables: `tookpost`, `state_post`, `st_post`, `dist_post`, `dist_up_post`, `cd_post`, `cd_up_post`, `voted_turnout_self`, `voted_pres_party`, `voted_rep`, `voted_rep_chosen`, `voted_rep_party`, `voted_sen`, `voted_sen_chosen`, `voted_sen_party`, `voted_gov`, `voted_gov_chosen`, and `voted_gov_party`
-- Add Governor vote choice even for odd years, starting from 2013.
-- For 2022 data, now uses an updated [V4](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0) of the 2022 CCES cumulative file,
-  which was updated in April 2024 to fill missing county FIPS codes.　This adds `county_fips` for 131 rows (< 1 % of 2022 data).
+- For 2014 data, now uses an updated [V6](https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0) of the 2014 CCES cumulative file, which was updated in 2024 to fix some congressional district variables. This changes 41 rows (< 1 % of 2014 data) in the following variables: `tookpost`, `state_post`, `st_post`, `dist_post`, `dist_up_post`, `cd_post`, `cd_up_post`, `voted_turnout_self`, `voted_pres_party`, `voted_rep`, `voted_rep_chosen`, `voted_rep_party`, `voted_sen`, `voted_sen_chosen`, `voted_sen_party`, `voted_gov`, `voted_gov_chosen`, and `voted_gov_party`
+- For 2022 data, now uses an updated [V4](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0) of the 2022 CCES cumulative file, which was updated in April 2024 to fill missing county FIPS codes. This adds `county_fips` for 131 rows (< 1 % of 2022 data).
+- Adds odd-year governor vote choice, starting in 2013. (#61)
+- Adds 2008 values for individual union membership (#73, Brian Schaffner)
+- Standardizes the early-vote label in `intent_turnout_self` and excludes 2025 `CC25_363` because it asks about 2026 House intent rather than turnout intent. (#79)
   
 
 ### Version 11.0 (released `2025-10-08`)

@@ -723,7 +723,7 @@ std_name <- function(tbl, is_panel = FALSE) {
         approval_gov = CC25_312d,
         economy_retro = CC25_301,
         faminc = faminc_new, # or CC25_302?
-        intent_trn = CC25_363,
+        # CC25_363 asks about the 2026 House vote, not turnout intent.
         # # intent_pres_24 = CC25_364b,
         # # intent_pres_24x = CC25_364a, # double check if this is actually voted
         # intent_rep = CC25_367,
