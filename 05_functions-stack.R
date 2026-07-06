@@ -1261,8 +1261,11 @@ clean_values <- function(tbl, chr_var_name, num_var_name) {
 }
 
 #' custom title case
+#' regexes run on the unique values only, then map back to the full vector,
+#' since survey labels have few distinct values relative to rows
 my_var_case <- function(chr) {
-  str_to_title(chr) |>
+  u <- unique(chr)
+  u_cased <- str_to_title(u) |>
     str_replace_all(" A ", " a ") |>
     str_replace_all(" An ", " an ") |>
     str_replace_all(" About ", " about ") |>
@@ -1284,6 +1287,7 @@ my_var_case <- function(chr) {
     str_replace_all("Only Now and Then", "Only now and then") |>
     str_replace_all("Mccain", "McCain") |>
     str_replace_all("Hardly at All", "Hardly at all")
+  u_cased[match(chr, u)]
 }
 
 

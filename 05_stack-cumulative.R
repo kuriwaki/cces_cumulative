@@ -61,6 +61,14 @@ ccs <- list(
   "2025" = std_name(cc25)
 )
 
+# free the raw per-year objects (~3 GB); everything downstream uses `ccs`.
+# cc08-cc11 are kept until the voted_pres_08 consolidation below.
+# NOTE: this defeats the exists() guard above for interactive re-runs -- the
+# RData reloads each run.
+rm(list = intersect(ls(), c("ccp", "panel12", "cc18_cnew", "hu09",
+                            "cc06", "cc07", paste0("cc", 12:25))))
+invisible(gc())
+
 cli_alert_success("Finished reading in data and standardizing names")
 
 
