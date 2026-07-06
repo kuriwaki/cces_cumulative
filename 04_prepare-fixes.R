@@ -8,7 +8,13 @@ load("data/output/01_responses/common_all.RData")
 
 
 # Retrieve 2007 County -----
+cc07_county <- cc07 |>
+  select(year, case_id, county_fips = CC06_V1004) |>
+  mutate_all(zap_labels)
 
+# Retrieve 2017 County -----
+cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
+  transmute(year = 2017, case_id = V101, countyfips)
 
 # Retrieve 2010 PID  -------
 pid3_cc10 <- cc10 |>
@@ -59,6 +65,8 @@ cc06_interest <- cc06 |>
             interest = as.integer(v2042))
 
 # save ---------
+write_rds(cc07_county, "data/output/01_responses/cc07_county.Rds")
+write_rds(cc17_county, "data/output/01_responses/cc17_county.Rds")
 write_rds(pid3_cc10, "data/output/01_responses/cc10_pid3.Rds")
 write_rds(econ_recoded, "data/output/01_responses/cc09_econ_retro.Rds")
 write_rds(cc06_time, "data/output/01_responses/cc06_datetime.Rds")

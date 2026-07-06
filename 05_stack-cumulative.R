@@ -29,8 +29,8 @@ cc06_time <- readRDS("data/output/01_responses/cc06_datetime.Rds")
 cc09_time <- readRDS("data/output/01_responses/cc09_datetime.Rds")
 cc10_pid3 <- readRDS("data/output/01_responses/cc10_pid3.Rds")
 cc09_econ <- readRDS("data/output/01_responses/cc09_econ_retro.Rds")
-cc17_county <- read_csv("data/source/cces/CCES17_Common_county.csv", show_col_types = FALSE) |>
-  transmute(year = 2017, case_id = V101, countyfips)
+cc07_county <- readRDS("data/output/01_responses/cc07_county.Rds")
+cc17_county <- readRDS("data/output/01_responses/cc17_county.Rds")
 
 # Create ccs object -----
 # in list form
@@ -91,19 +91,7 @@ pid3 <- finalize_pid3(pid3_fixed)
 pid7 <- find_stack(ccs, pid7, make_labelled = TRUE)
 
 # put leaners into partisans
-leaner_lbl_code <- c(`Democrat (Including Leaners)` = 1L,
-                     `Republican (Including Leaners)` = 2L,
-                     `Independent (Excluding Leaners)` = 3L,
-                     `Not Sure` = 8L)
-pid3_leaner <- pid7 |>
-  mutate(pid3_leaner = as_factor(pid7)) |>
-  mutate(pid3_leaner = fct_collapse(pid3_leaner,
-                                    "Republican (Including Leaners)" = c("Strong Republican", "Not Very Strong Republican", "Lean Republican"),
-                                    "Democrat (Including Leaners)" = c("Strong Democrat", "Not Very Strong Democrat", "Lean Democrat"),
-                                    "Independent (Excluding Leaners)" = "Independent")) |>
-  mutate(pid3_leaner_num = recode(pid3_leaner, !!!leaner_lbl_code)) |>
-  mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) |>
-  select(-pid3_leaner_num, -pid7)
+pid3_leaner <- finalize_pid3_leaner(pid7)
 
 ideo5 <- find_stack(ccs, ideo5)
 
@@ -131,77 +119,16 @@ age <- find_stack(ccs, age, "integer")
 
 ## income wrangling -----
 cli_h1("Joining income and employment")
-inc_old <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE) |>
-  mutate(faminc = recode_values(
-    family_income_old,
-    1 ~ "Less than 10k",
-    c(2, 3) ~ "10k - 20k",
-    c(4, 5) ~ "20k - 30k",
-    6 ~ "30k - 40k",
-    7 ~ "40k - 50k",
-    8 ~ "50k - 60k",
-    9 ~ "60k - 70k",
-    10 ~ "70k - 80k",
-    11 ~ "80k - 100k",
-    12 ~ "100k - 120k",
-    13 ~ "120k - 150k",
-    14 ~ "150k+",
-    15 ~ "Prefer not to say"))
-
-inc_new <- find_stack(ccs, family_income, "integer", make_labelled = FALSE) |>
-  mutate(faminc = recode_values(
-    family_income,
-    1  ~ "Less than 10k",
-    2  ~ "10k - 20k",
-    3  ~ "20k - 30k",
-    4  ~ "30k - 40k",
-    5  ~ "40k - 50k",
-    6  ~ "50k - 60k",
-    7  ~ "60k - 70k",
-    8  ~ "70k - 80k",
-    9  ~ "80k - 100k",
-    10 ~ "100k - 120k",
-    11 ~ "120k - 150k",
-    c(12:16, 31, 32) ~ "150k+",
-    97 ~ "Prefer not to say",
-    98 ~ "Skipped",
-    99 ~ "Not Asked"))
-
-faminc <- inner_join(inc_old, inc_new, by = c("year", "case_id")) |>
-  mutate(faminc_char = coalesce(faminc.x, faminc.y),
-         faminc_num = coalesce(family_income_old, family_income)) |>
-  transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
+inc_old_raw <- find_stack(ccs, family_income_old, "integer", make_labelled = FALSE)
+inc_new_raw <- find_stack(ccs, family_income, "integer", make_labelled = FALSE)
+faminc <- finalize_faminc(inc_old_raw, inc_new_raw)
 
 ## union, employment, health ----
-union <- find_stack(ccs, union, make_labelled = TRUE) |>
-  mutate(union = labelled(
-    zap_label(union),
-    c("Yes, Currently" = 1,
-      "Yes, Formerly" = 2,
-      "No, Never" = 3)),
-    union = na_if(union, 8))
+union_raw <- find_stack(ccs, union, make_labelled = TRUE)
+union <- finalize_union(union_raw)
 
-union_hh <- find_stack(ccs, unionhh, make_labelled = FALSE) |>
-  mutate(union_hh = fct_collapse(
-    unionhh,
-    `1` = c(
-      "Current Member in Household",
-      "Yes, a Member of My Household Is Currently a Union Member"),
-    `2` = c(
-      "A Member of My Household Was Formerly a Member of a Labor Union, But Is not Now",
-      "Former Member in Household"),
-    `3` = c(
-      "No Union Members in Household",
-      "No, No One in My Household Has Ever Been a Member of a Labor Union"),
-    `4` = c("Not Sure")
-  )) |>
-  mutate(union_hh = labelled(
-    as.integer(union_hh),
-    c("Yes, Currently" = 1,
-      "Yes, Formerly" = 2,
-      "No, Never" = 3,
-      "Not Sure" = 4))) |>
-  select(-unionhh)
+union_hh_raw <- find_stack(ccs, unionhh, make_labelled = FALSE)
+union_hh <- finalize_union_hh(union_hh_raw)
 
 
 employ <- find_stack(ccs, employ)
@@ -210,37 +137,20 @@ invst <- find_stack(ccs, investor)
 
 child18 <- find_stack(ccs, child18) |>
   rename(has_child = child18)
-milstat <- find_stack(ccs, milstat_5) |>
-  rename(no_milstat = milstat_5) |>
-  mutate(no_milstat = recode_factor(no_milstat,
-                                    Yes = "Yes",
-                                    Selected = "Yes",
-                                    No = "No",
-                                    `Not Selected` = "No"))
+milstat_raw <- find_stack(ccs, milstat_5)
+milstat <- finalize_milstat(milstat_raw)
 
-hi_most <- find_stack(ccs, healthins_6) |>
-  filter(year != "2018") |>
-  rename(no_healthins = healthins_6)
-hi_18 <- find_stack(ccs[c("2018", "2018comp")], healthins_7) |>
-  rename(no_healthins = healthins_7)
-healthins <- bind_rows(hi_most, hi_18) |>
-  mutate(no_healthins = recode_factor(no_healthins,
-                                      Yes = "Yes",
-                                      Selected = "Yes",
-                                      No = "No",
-                                      `Not Selected` = "No"))
+hi_most_raw <- find_stack(ccs, healthins_6)
+hi_18_raw <- find_stack(ccs[c("2018", "2018comp")], healthins_7)
+healthins <- finalize_healthins(hi_most_raw, hi_18_raw)
 
 ## marriage status
-marstat <- find_stack(ccs, marstat, make_labelled = TRUE) |>
-  remove_value_labels(marstat = 8) |>
-  mutate(marstat = na_if(marstat, 8)) |>
-  labelled::add_value_labels(marstat = c(`Single / Never Married` = 5))
+marstat_raw <- find_stack(ccs, marstat, make_labelled = TRUE)
+marstat <- finalize_marstat(marstat_raw)
 
 # citizen - define by immstat
-citizen <- find_stack(ccs, immstat) |>
-  mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) |>
-  mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) |>
-  select(-immstat)
+citizen_raw <- find_stack(ccs, immstat)
+citizen <- finalize_citizen(citizen_raw)
 
 
 ## religion -----
@@ -266,14 +176,6 @@ intent_trn <- finalize_intent_turnout(intent_trn_raw)
 
 voted_trn_raw <- find_stack(ccs, voted_trn, type = "factor")
 voted_trn <- finalize_voted_turnout(voted_trn_raw)
-
-# checks before deleting
-intent_trn_raw |>
-  left_join(intent_trn, by = join_by(year, case_id), relationship = "one-to-one") |>
-  count(intent_turnout_self, intent_trn)
-voted_trn_raw |>
-  left_join(voted_trn, by = join_by(year, case_id), relationship = "one-to-one") |>
-  count(voted_turnout_self, voted_trn)
 
 ## validated vote turnout -----
 vv_regstatus <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -406,16 +308,11 @@ zipcode <- find_stack(ccs, zipcode, "character") |>
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 
 county_fips_raw <- find_stack(ccs, county_fips, "numeric")
-county_fips_fixed <- county_fips_raw |>
+county_fips <- county_fips_raw |>
   left_join2(cc17_county) |>
   mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) |>
-  select(-countyfips)
-county_fips <- replace_year(
-  county_fips_fixed,
-  2007,
-  select(cc07, year, case_id, county_fips = CC06_V1004) |>
-    mutate_all(zap_labels)
-)
+  select(-countyfips) |>
+  replace_year(2007, cc07_county)
 
 dist <- find_stack(ccs, dist, "integer")
 dist_up <- find_stack(ccs, dist_up, "integer")
@@ -537,24 +434,20 @@ addon_id <- bind_rows(panel_id, comp_id) # hu08_id, hu09_id,
 # Weight --
 size_year <- ccc |>
   anti_join(addon_id, by = c("year", "case_id")) |> # don't count panel to get weights
-  group_by(year) |>
-  summarize(size = n()) |>
+  summarize(size = n(), .by = year) |>
   mutate(size_factor = size / median(size)) # manageable constant -- divide by median
 
 ccc_sort <- ccc |>
   left_join(select(size_year, year, size_factor), by = c("year"), relationship = "many-to-one") |>
-  mutate(weight_cumulative = weight / size_factor) |>
-  select(-size_factor) |>
+  mutate(weight_cumulative = weight / size_factor, size_factor = NULL) |>
   relocate(year, case_id, weight, weight_cumulative)
 
 
 # Write -----
 cli_alert_success("Finished combining, now saving")
-# write_rds(ccs, "data/temp_cc-name-cleaned-list.rds")
 save(i_rep, i_sen, i_gov, v_rep, v_sen, v_gov, file = "data/output/01_responses/vote_responses.RData")
 save(vv_party_gen, vv_party_prm, vv_regstatus, vv_turnout_gvm, vv_turnout_pvm, file = "data/output/01_responses/vv_responses.RData")
 write_feather(ccc_sort, "data/output/01_responses/cumulative_stacked.feather")
-# write_dta(ccc_sort, "~/Downloads/temp.dta")
 saveRDS(addon_id, "data/output/01_responses/addon_ids.Rds")
 write_csv(size_year, "data/output/03_contextual/weight_rescale_by-year.csv")
 

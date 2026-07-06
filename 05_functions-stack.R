@@ -98,6 +98,140 @@ finalize_economy_retro <- function(tbl) {
     select(year, case_id, economy_retro)
 }
 
+finalize_faminc <- function(inc_old_raw, inc_new_raw) {
+  inc_old <- inc_old_raw |>
+    mutate(faminc = recode_values(
+      family_income_old,
+      1 ~ "Less than 10k",
+      c(2, 3) ~ "10k - 20k",
+      c(4, 5) ~ "20k - 30k",
+      6 ~ "30k - 40k",
+      7 ~ "40k - 50k",
+      8 ~ "50k - 60k",
+      9 ~ "60k - 70k",
+      10 ~ "70k - 80k",
+      11 ~ "80k - 100k",
+      12 ~ "100k - 120k",
+      13 ~ "120k - 150k",
+      14 ~ "150k+",
+      15 ~ "Prefer not to say"))
+
+  inc_new <- inc_new_raw |>
+    mutate(faminc = recode_values(
+      family_income,
+      1  ~ "Less than 10k",
+      2  ~ "10k - 20k",
+      3  ~ "20k - 30k",
+      4  ~ "30k - 40k",
+      5  ~ "40k - 50k",
+      6  ~ "50k - 60k",
+      7  ~ "60k - 70k",
+      8  ~ "70k - 80k",
+      9  ~ "80k - 100k",
+      10 ~ "100k - 120k",
+      11 ~ "120k - 150k",
+      c(12:16, 31, 32) ~ "150k+",
+      97 ~ "Prefer not to say",
+      98 ~ "Skipped",
+      99 ~ "Not Asked"))
+
+  inner_join(inc_old, inc_new, by = c("year", "case_id"),
+             relationship = "one-to-one") |>
+    mutate(faminc_char = coalesce(faminc.x, faminc.y),
+           faminc_num = coalesce(family_income_old, family_income)) |>
+    transmute(year, case_id, faminc = fct_reorder(faminc_char, faminc_num, .na_rm = FALSE))
+}
+
+finalize_union <- function(tbl) {
+  tbl |>
+    mutate(union = labelled(
+      zap_label(union),
+      c("Yes, Currently" = 1,
+        "Yes, Formerly" = 2,
+        "No, Never" = 3)),
+      union = na_if(union, 8))
+}
+
+finalize_union_hh <- function(tbl) {
+  tbl |>
+    mutate(union_hh = fct_collapse(
+      unionhh,
+      `1` = c(
+        "Current Member in Household",
+        "Yes, a Member of My Household Is Currently a Union Member"),
+      `2` = c(
+        "A Member of My Household Was Formerly a Member of a Labor Union, But Is not Now",
+        "Former Member in Household"),
+      `3` = c(
+        "No Union Members in Household",
+        "No, No One in My Household Has Ever Been a Member of a Labor Union"),
+      `4` = c("Not Sure")
+    )) |>
+    mutate(union_hh = labelled(
+      as.integer(union_hh),
+      c("Yes, Currently" = 1,
+        "Yes, Formerly" = 2,
+        "No, Never" = 3,
+        "Not Sure" = 4))) |>
+    select(-unionhh)
+}
+
+finalize_pid3_leaner <- function(tbl) {
+  leaner_lbl_code <- c(`Democrat (Including Leaners)` = 1L,
+                       `Republican (Including Leaners)` = 2L,
+                       `Independent (Excluding Leaners)` = 3L,
+                       `Not Sure` = 8L)
+  tbl |>
+    mutate(pid3_leaner = as_factor(pid7)) |>
+    mutate(pid3_leaner = fct_collapse(pid3_leaner,
+                                      "Republican (Including Leaners)" = c("Strong Republican", "Not Very Strong Republican", "Lean Republican"),
+                                      "Democrat (Including Leaners)" = c("Strong Democrat", "Not Very Strong Democrat", "Lean Democrat"),
+                                      "Independent (Excluding Leaners)" = "Independent")) |>
+    mutate(pid3_leaner_num = recode(pid3_leaner, !!!leaner_lbl_code)) |>
+    mutate(pid3_leaner = labelled(pid3_leaner_num, leaner_lbl_code)) |>
+    select(-pid3_leaner_num, -pid7)
+}
+
+# shared Yes/Selected/No/Not Selected collapse used by milstat and healthins
+recode_selected <- function(vec) {
+  recode_factor(vec,
+                Yes = "Yes",
+                Selected = "Yes",
+                No = "No",
+                `Not Selected` = "No")
+}
+
+finalize_milstat <- function(tbl) {
+  tbl |>
+    rename(no_milstat = milstat_5) |>
+    mutate(no_milstat = recode_selected(no_milstat))
+}
+
+finalize_healthins <- function(hi_most_raw, hi_18_raw) {
+  hi_most <- hi_most_raw |>
+    filter(year != "2018") |>
+    rename(no_healthins = healthins_6)
+  hi_18 <- hi_18_raw |>
+    rename(no_healthins = healthins_7)
+
+  bind_rows(hi_most, hi_18) |>
+    mutate(no_healthins = recode_selected(no_healthins))
+}
+
+finalize_marstat <- function(tbl) {
+  tbl |>
+    remove_value_labels(marstat = 8) |>
+    mutate(marstat = na_if(marstat, 8)) |>
+    labelled::add_value_labels(marstat = c(`Single / Never Married` = 5))
+}
+
+finalize_citizen <- function(tbl) {
+  tbl |>
+    mutate(citizen = str_detect(immstat, regex("(Non-Citizen|Not A Citizen)", ignore_case = TRUE))) |>
+    mutate(citizen = labelled(citizen + 1, labels = c(`Citizen` = 1, `Non-Citizen` = 2))) |>
+    select(-immstat)
+}
+
 #' name standardization
 std_name <- function(tbl, is_panel = FALSE) {
   cces_year <- as.integer(unique(tbl$year))
