@@ -3,8 +3,8 @@
 # Rscript 02_download-cces-dataverse.R || exit 1
 # Rscript 03_read-common.R || exit 1
 # Rscript 04_prepare-fixes.R || exit 1
-Rscript 05_stack-cumulative.R || exit 1
-# Rscript 06_extract-politicians.R || exit 1
+# Rscript 05_stack-cumulative.R || exit 1
+Rscript 06_extract-politicians.R || exit 1
 
 # TEST-GUIDE mode: writes only the guide feather (~7x faster). Drop CCES_TEST_GUIDE=1 for a full release build (all .rds/.dta outputs).
 CCES_TEST_GUIDE=1 Rscript 07_merge-contextual_upload.R || exit 1

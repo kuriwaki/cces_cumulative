@@ -8,7 +8,7 @@ title: |
     | Guide to the Cumulative Common Content
     | of the Cooperative (Congressional) Election Study
 author: "Shiro Kuriwaki"
-thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and Gerlad Wright for finding errors and providing suggestions. Adam Chapnik contributed significantly to V12. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
+thanks: "Department of Political Science, Yale University. Website: \\url{https://www.shirokuriwaki.com}. ORCID: \\url{https://orcid.org/0000-0002-5687-2647}. My thanks to Alexander Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik, Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and Gerlad Wright for finding errors and providing suggestions. Adam Chapnik and Zoya Ahmer contributed significantly to V12. Thanks to Joe Williams at YouGov, and Jon Keane,  Mike Malecki, and Gordon Shotwell at Crunch for their help."
 date: "Guide last updated: `r Sys.Date()`"
 ---
 
@@ -31,7 +31,9 @@ library(rprojroot)
 
 ```{r, include = FALSE, cache = FALSE}
 tictoc::tic()
-cc <- arrow::read_feather(find_rstudio_root_file("data/release/cumulative_2006-2025.feather"))
+guide_data_path <- find_rstudio_root_file("data/release/cumulative_2006-2025.feather")
+guide_cache_path <- find_rstudio_root_file("data/output/02_questions/guide_summary_cache.rds")
+cc <- arrow::read_feather(guide_data_path)
 tictoc::toc()
 
 meta <- readRDS(find_rstudio_root_file("data/output/02_questions/cumulative_vartable.Rds"))
@@ -39,16 +41,91 @@ rsc <- read_csv(find_rstudio_root_file("data/output/03_contextual/weight_rescale
 ```
 
 ```{r}
-print_tab <- function(var, do_sort = FALSE, tbl = cc) {
+guide_fingerprint <- function(path) {
+  info <- file.info(path)
+  c(
+    path = normalizePath(path, mustWork = TRUE),
+    size = as.character(info$size),
+    mtime = as.character(as.numeric(info$mtime))
+  )
+}
+
+year_label <- function(yrs_vec) {
+  known <- list(
+    "All of 2006-2020" = 2006:2020,
+    "All of 2006-2025" = 2006:2025,
+    "All of 2006-2025 except 2007" = setdiff(c(2006:2025), 2007),
+    "All of 2007-2025" = 2007:2025,
+    "All of 2008-2025" = 2008:2025,
+    "All of 2009-2025" = 2009:2025
+  )
+  label <- names(keep(known, \(x) identical(x, yrs_vec)))
+  if (length(label) > 0) {
+    label[[1]]
+  } else {
+    str_c(yrs_vec, collapse = ", ")
+  }
+}
+
+guide_tab <- function(x) {
+  if (is.labelled(x)) x <- as_factor(x)
+  if (is.factor(x)) x <- fct_na_value_to_level(x, level = "(Missing)")
+
+  tibble(value = x) |>
+    count(value, name = "n") |>
+    mutate(value = as.character(value))
+}
+
+build_guide_cache <- function(tbl, source_path) {
+  list(
+    source = guide_fingerprint(source_path),
+    tabs = map(set_names(names(tbl)), \(v) guide_tab(tbl[[v]])),
+    years = map(set_names(names(tbl)), \(v) {
+      tbl |>
+        filter(!is.na(.data[[v]])) |>
+        distinct(year) |>
+        arrange(year) |>
+        pull(year) |>
+        zap_label() |>
+        year_label()
+    })
+  )
+}
+
+read_guide_cache <- function(tbl, source_path, cache_path) {
+  # Set CCES_FORCE_GUIDE_SUMMARY=1 to rebuild even when the feather fingerprint matches.
+  force_rebuild <- Sys.getenv("CCES_FORCE_GUIDE_SUMMARY", "") != ""
+  source <- guide_fingerprint(source_path)
+
+  if (!force_rebuild && file.exists(cache_path)) {
+    cache <- read_rds(cache_path)
+    if (identical(cache$source, source)) return(cache)
+  }
+
+  cache <- build_guide_cache(tbl, source_path)
+  write_rds(cache, cache_path)
+  cache
+}
+
+guide_summary <- read_guide_cache(cc, guide_data_path, guide_cache_path)
+
+print_tab <- function(var, do_sort = FALSE, tbl = NULL) {
   var <- enquo(var)
+  varchar <- quo_name(var)
   
-  tal <- tbl |> 
-    select(!!var) |> 
-    mutate_if(is.labelled, as_factor) |> 
-    mutate_if(is.factor, ~fct_na_value_to_level(.x, level = "(Missing)")) |> 
-    group_by(!!var) |> 
-    tally(sort = do_sort) |> 
-    mutate_at(vars(1), as.character)
+  if (is.null(tbl) && varchar %in% names(guide_summary$tabs)) {
+    tal <- guide_summary$tabs[[varchar]]
+    if (do_sort) tal <- arrange(tal, desc(n))
+  } else {
+    if (is.null(tbl)) tbl <- cc
+    tal <- tbl |> 
+      select(!!var) |> 
+      mutate_if(is.labelled, as_factor) |> 
+      mutate_if(is.factor, ~fct_na_value_to_level(.x, level = "(Missing)")) |> 
+      group_by(!!var) |> 
+      tally(sort = do_sort) |> 
+      mutate_at(vars(1), as.character)
+  }
   
   dframe <- as.data.frame(tal)
   
@@ -68,18 +145,25 @@ print_tab <- function(var, do_sort = FALSE, tbl = cc) {
 ```
 
 ```{r}
-print_numeric <- function(var, tbl = cc) {
+print_numeric <- function(var, tbl = NULL) {
   var <- enquo(var)
   
-  summary(pull(cc, !!var))
+  if (is.null(tbl)) tbl <- cc
+  summary(pull(tbl, !!var))
 }
 ```
 
 
 ```{r}
-in_years <- function(var, tbl = cc) {
+in_years <- function(var, tbl = NULL) {
   var <- enquo(var)
+  varchar <- quo_name(var)
+
+  if (is.null(tbl) && varchar %in% names(guide_summary$years)) {
+    return(guide_summary$years[[varchar]])
+  }
   
+  if (is.null(tbl)) tbl <- cc
   yrs_vec <- tbl |> 
     filter(!is.na(!!var)) |> 
     distinct(year) |> 
@@ -87,23 +171,7 @@ in_years <- function(var, tbl = cc) {
     pull() |> 
     zap_label()
   
-  if (identical(yrs_vec, 2006:2016)) return("All of 2006-2016")  
-  if (identical(yrs_vec, 2006:2017)) return("All of 2006-2017")  
-  if (identical(yrs_vec, 2006:2018)) return("All of 2006-2018")  
-  if (identical(yrs_vec, 2006:2019)) return("All of 2006-2019")  
-  if (identical(yrs_vec, 2006:2020)) return("All of 2006-2020")  
-  if (identical(yrs_vec, 2006:2022)) return("All of 2006-2022")  
-  if (identical(yrs_vec, 2008:2022)) return("All of 2008-2022")  
-  if (identical(yrs_vec, 2007:2025)) return("All of 2007-2025")  
-  if (identical(yrs_vec, 2006:2025)) return("All of 2006-2025")  
-  if (identical(yrs_vec, 2008:2025)) return("All of 2008-2025")  
-  if (identical(yrs_vec, 2009:2025)) return("All of 2009-2025")  
-  if (identical(yrs_vec, setdiff(c(2006:2025), 2007))) return("All of 2006-2025 except 2007")  
-  if (!(identical(yrs_vec, 2006:2019) | 
-        identical(yrs_vec, 2006:2018) | 
-        identical(yrs_vec, 2006:2017))) {
-    return(str_c(yrs_vec, collapse = ", "))
-  }
+  year_label(yrs_vec)
 }
 ```
 
