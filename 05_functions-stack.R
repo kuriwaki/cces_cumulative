@@ -1,5 +1,103 @@
 # functions for 05_stack-cumulative.R
 
+# post-extraction helpers ----
+replace_year <- function(tbl, years, replacement) {
+  stopifnot(all(replacement$year %in% years))
+  tbl |>
+    filter(!.data$year %in% years) |>
+    bind_rows(replacement)
+}
+
+finalize_tookpost <- function(tbl) {
+  tbl |>
+    mutate(tookpost = labelled(
+      as.integer(tookpost_num == 1 & year < 2018 |
+                   tookpost_num == 2 & year %in% c(2018, 2020, 2022, 2024)), # diff number in 2018
+      labels = c("Took Post-Election Survey" = 1,
+                 "Did Not Take Post-Election Survey" = 0))) |>
+    mutate(tookpost = replace(tookpost, year %% 2 == 1, NA)) |>
+    select(year, case_id, tookpost)
+}
+
+finalize_pid3 <- function(tbl) {
+  pid3_labels <- c("Democrat" = 1, "Republican" = 2, "Independent" = 3,
+                   "Other" = 4, "Not Sure" = 5)
+
+  tbl |>
+    mutate(pid3_num = na_if(pid3_num, 8)) |>
+    mutate(pid3_num = na_if(pid3_num, 9)) |>
+    mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) |>
+    select(year, case_id, pid3)
+}
+
+finalize_intent_turnout <- function(tbl) {
+  intent_turnout_levels <- c(
+    "Yes, definitely",
+    "Probably",
+    "I already voted (early or absentee)",
+    "I plan to vote before Election Day",
+    "No",
+    "Undecided"
+  )
+
+  tbl |>
+    mutate(intent_turnout_self = replace_values(
+      as.character(intent_trn),
+      "Yes, Definitely"                      ~ "Yes, definitely",
+      "I Already Voted (Early or Absentee)"  ~ "I already voted (early or absentee)",
+      c("I Plan to Vote Before November 3rd",
+        "I Plan to Vote Before November 4th",
+        "I Plan to Vote Before November 5th",
+        "I Plan to Vote Before November 6th",
+        "I Plan to Vote Before November 8th") ~ "I plan to vote before Election Day"),
+      intent_turnout_self = factor(intent_turnout_self, levels = intent_turnout_levels)) |>
+    select(-intent_trn)
+}
+
+finalize_voted_turnout <- function(tbl) {
+  tbl |>
+    mutate(voted_turnout_self = case_when(
+      str_detect(voted_trn, regex("Definitely Voted", ignore_case = TRUE)) ~ "Yes",
+      str_detect(voted_trn, regex("yes", ignore_case = TRUE)) ~ "Yes",
+      str_detect(voted_trn, regex("no", ignore_case = TRUE)) ~ "No",
+      str_detect(voted_trn, regex("not sure", ignore_case = TRUE)) ~ "Not Sure",
+      str_detect(voted_trn, regex("Did Not Vote", ignore_case = TRUE)) ~ "No",
+      str_detect(voted_trn, regex("didn't Vote", ignore_case = TRUE)) ~ "No",
+      str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
+      str_detect(voted_trn, regex("But couldn't", ignore_case = TRUE)) ~ "No",
+      str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
+      TRUE ~ NA_character_)
+    ) |>
+    mutate(voted_turnout_self = fct_relevel(voted_turnout_self, "Yes", "No")) |>
+    select(-voted_trn)
+}
+
+collapse_economy_retro <- function(tbl) {
+  tbl |>
+    mutate(economy_retro_char = replace_values(
+      economy_retro_char,
+      c("Gotten Worse", "Gotten Somewhat Worse")   ~ "Gotten Worse / Somewhat Worse",
+      c("Gotten Better", "Gotten Somewhat Better") ~ "Gotten Better / Somewhat Better"))
+}
+
+finalize_economy_retro <- function(tbl) {
+  tbl_clean <- tbl |>
+    mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
+           economy_retro_num  = na_if(economy_retro_num, 8),
+           economy_retro_char = str_to_lower(economy_retro_char),
+           economy_retro_char = str_replace(economy_retro_char, "^g", "G"),
+           economy_retro_char = str_replace(economy_retro_char, "^s", "S"),
+           economy_retro_char = str_replace(economy_retro_char, "^n", "N"))
+
+  econ_key <- tbl_clean |>
+    distinct(economy_retro_char, economy_retro_num) |>
+    deframe()
+
+  tbl_clean |>
+    mutate(economy_retro = labelled(economy_retro_num, labels = econ_key)) |>
+    select(year, case_id, economy_retro)
+}
+
 #' name standardization
 std_name <- function(tbl, is_panel = FALSE) {
   cces_year <- as.integer(unique(tbl$year))

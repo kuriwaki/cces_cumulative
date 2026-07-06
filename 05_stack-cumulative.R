@@ -75,31 +75,18 @@ wgt_post <- find_stack(ccs, weight_post, "numeric")
 vwgt <- find_stack(ccs, vvweight, "numeric")
 vwgt_post <- find_stack(ccs, vvweight_post, "numeric")
 
-tookpost <- find_stack(ccs, tookpost, make_labelled = FALSE, new_reorder = FALSE) |>
-  mutate(tookpost = labelled(
-    as.integer(tookpost_num == 1 & year < 2018 |
-                 tookpost_num == 2 & year %in% c(2018, 2020, 2022, 2024)), # diff number in 2018
-    labels = c("Took Post-Election Survey" = 1,
-               "Did Not Take Post-Election Survey" = 0))) |>
-  mutate(tookpost = replace(tookpost, year %% 2 == 1, NA)) |>
-  select(year, case_id, tookpost)
+tookpost_raw <- find_stack(ccs, tookpost, make_labelled = FALSE, new_reorder = FALSE)
+tookpost <- finalize_tookpost(tookpost_raw)
 
-time <- find_stack(ccs, starttime, type = "datetime") |>
-  filter(year != 2006, year != 2009) |>
-  bind_rows(cc06_time, cc09_time)
+time_raw <- find_stack(ccs, starttime, type = "datetime")
+time_fixed <- replace_year(time_raw, c(2006, 2009), bind_rows(cc06_time, cc09_time))
+time <- time_fixed
 
 ## pid -------
 cli_h1("Joining partisanship and demographics")
-pid3_labels <- c("Democrat" = 1, "Republican" = 2, "Independent" = 3,
-                 "Other" = 4, "Not Sure" = 5)
-
-pid3 <- find_stack(ccs, pid3, make_labelled = FALSE, new_reorder = FALSE) |>
-  filter(year != 2010) |> # fix the missing 2010
-  bind_rows(cc10_pid3) |>
-  mutate(pid3_num = na_if(pid3_num, 8)) |>
-  mutate(pid3_num = na_if(pid3_num, 9)) |>
-  mutate(pid3 = labelled(as.integer(pid3_num), pid3_labels)) |>
-  select(year, case_id, pid3) # manually do only this one
+pid3_raw <- find_stack(ccs, pid3, make_labelled = FALSE, new_reorder = FALSE)
+pid3_fixed <- replace_year(pid3_raw, 2010, cc10_pid3)
+pid3 <- finalize_pid3(pid3_fixed)
 
 pid7 <- find_stack(ccs, pid7, make_labelled = TRUE)
 
@@ -274,46 +261,19 @@ churatd <- find_stack(ccs, pew_churatd, make_labelled = TRUE) |>
 ## turnout ----
 cli_h1("Joining turnout")
 reg_self <- find_stack(ccs, reg_self)
-intent_turnout_levels <- c(
-  "Yes, definitely",
-  "Probably",
-  "I already voted (early or absentee)",
-  "I plan to vote before Election Day",
-  "No",
-  "Undecided"
-)
-intent_trn <- find_stack(ccs, intent_trn, type = "factor") |>
-  mutate(intent_turnout_self = replace_values(
-    as.character(intent_trn),
-    "Yes, Definitely"                      ~ "Yes, definitely",
-    "I Already Voted (Early or Absentee)"  ~ "I already voted (early or absentee)",
-    c("I Plan to Vote Before November 3rd",
-      "I Plan to Vote Before November 4th",
-      "I Plan to Vote Before November 5th",
-      "I Plan to Vote Before November 6th",
-      "I Plan to Vote Before November 8th") ~ "I plan to vote before Election Day"),
-    intent_turnout_self = factor(intent_turnout_self, levels = intent_turnout_levels))
+intent_trn_raw <- find_stack(ccs, intent_trn, type = "factor")
+intent_trn <- finalize_intent_turnout(intent_trn_raw)
 
-voted_trn <- find_stack(ccs, voted_trn, type = "factor") |>
-  mutate(voted_turnout_self = case_when(
-    str_detect(voted_trn, regex("Definitely Voted", ignore_case = TRUE)) ~ "Yes",
-    str_detect(voted_trn, regex("yes", ignore_case = TRUE)) ~ "Yes",
-    str_detect(voted_trn, regex("no", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("not sure", ignore_case = TRUE)) ~ "Not Sure",
-    str_detect(voted_trn, regex("Did Not Vote", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("didn't Vote", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But Didn't", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But couldn't", ignore_case = TRUE)) ~ "No",
-    str_detect(voted_trn, regex("But Did Not or Could Not", ignore_case = TRUE)) ~ "No",
-    TRUE ~ NA_character_)
-  ) |>
-  mutate(voted_turnout_self = fct_relevel(voted_turnout_self, "Yes", "No"))
+voted_trn_raw <- find_stack(ccs, voted_trn, type = "factor")
+voted_trn <- finalize_voted_turnout(voted_trn_raw)
 
 # checks before deleting
-count(intent_trn, intent_turnout_self, intent_trn)
-count(voted_trn, voted_turnout_self, voted_trn)
-voted_trn$voted_trn <- NULL
-intent_trn$intent_trn <- NULL
+intent_trn_raw |>
+  left_join(intent_trn, by = join_by(year, case_id), relationship = "one-to-one") |>
+  count(intent_turnout_self, intent_trn)
+voted_trn_raw |>
+  left_join(voted_trn, by = join_by(year, case_id), relationship = "one-to-one") |>
+  count(voted_turnout_self, voted_trn)
 
 ## validated vote turnout -----
 vv_regstatus <- find_stack(ccs, vv_regstatus, new_reorder = FALSE) # will reorder by frequency later
@@ -419,26 +379,11 @@ apvsen2 <- find_stack(ccs, approval_sen2, make_labelled = FALSE)
 apvgov <- find_stack(ccs, approval_gov, make_labelled = TRUE)
 
 ## economy -----
-econ_char <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder = FALSE) |>
-  mutate(economy_retro_char = replace_values(
-    economy_retro_char,
-    c("Gotten Worse", "Gotten Somewhat Worse")   ~ "Gotten Worse / Somewhat Worse",
-    c("Gotten Better", "Gotten Somewhat Better") ~ "Gotten Better / Somewhat Better")) |>
-  filter(year != 2009) |>
-  bind_rows(cc09_econ) |>
-  mutate(economy_retro_char = replace(economy_retro_char, economy_retro_num == 8, NA),
-         economy_retro_num  = na_if(economy_retro_num, 8),
-         economy_retro_char = str_to_lower(economy_retro_char),
-         economy_retro_char = str_replace(economy_retro_char, "^g", "G"),
-         economy_retro_char = str_replace(economy_retro_char, "^s", "S"),
-         economy_retro_char = str_replace(economy_retro_char, "^n", "N"),
-  )
-
-# correct to labelled
-econ_key <- deframe(distinct(select(econ_char, economy_retro_char, economy_retro_num)))
-econ <- econ_char |>
-  mutate(economy_retro = labelled(economy_retro_num, labels = econ_key)) |>
-  select(year, case_id, economy_retro)
+econ_raw <- find_stack(ccs, economy_retro, make_labelled = FALSE, new_reorder = FALSE)
+econ_fixed <- econ_raw |>
+  collapse_economy_retro() |>
+  replace_year(2009, cc09_econ)
+econ <- finalize_economy_retro(econ_fixed)
 
 
 ## news interest
@@ -460,13 +405,17 @@ st_post <- find_stack(ccs, st_post, "character")
 zipcode <- find_stack(ccs, zipcode, "character") |>
   mutate(zipcode = str_pad(zipcode, width = 5, pad = "0"))
 
-county_fips <- find_stack(ccs, county_fips, "numeric") |>
+county_fips_raw <- find_stack(ccs, county_fips, "numeric")
+county_fips_fixed <- county_fips_raw |>
   left_join2(cc17_county) |>
   mutate(county_fips = coalesce(county_fips, as.numeric(countyfips))) |>
-  select(-countyfips) |>
-  filter(year != 2007) |>
-  bind_rows(select(cc07, year, case_id, county_fips = CC06_V1004) |>
-              mutate_all(zap_labels))
+  select(-countyfips)
+county_fips <- replace_year(
+  county_fips_fixed,
+  2007,
+  select(cc07, year, case_id, county_fips = CC06_V1004) |>
+    mutate_all(zap_labels)
+)
 
 dist <- find_stack(ccs, dist, "integer")
 dist_up <- find_stack(ccs, dist_up, "integer")
