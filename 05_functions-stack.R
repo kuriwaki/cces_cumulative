@@ -1392,128 +1392,103 @@ std_vvv <- function(vec, varname, yrvec) {
   recoded
 }
 
+collapse_pres_values <- function(vec, ..., levels, na_values = character()) {
+  if (is.factor(vec)) {
+    source_values <- levels(vec)
+    key <- str_trim(source_values)
+    if (length(na_values) > 0) key <- replace(key, key %in% na_values, NA_character_)
+    key <- recode_values(key, ..., default = key)
+    out <- key[as.integer(vec)]
+    observed <- unique(key[!is.na(key)])
+  } else {
+    x <- as.character(vec)
+    source_values <- unique(x)
+    key <- str_trim(source_values)
+    if (length(na_values) > 0) key <- replace(key, key %in% na_values, NA_character_)
+    key <- recode_values(key, ..., default = key)
+    out <- key[match(x, source_values)]
+    observed <- unique(out[!is.na(out)])
+  }
+
+  factor(out, levels = c(intersect(levels, observed), setdiff(observed, levels)))
+}
+
 #' Fix for voted08
 clps_pres08 <- function(vec) {
-  vec |>
-    na_if("Did not Vote") |> # means did not turnout until 2011 and 2012
-    as.character() |>
-    str_trim() |>
-    as_factor() |>
-    fct_collapse(
-      `Barack Obama` = c("Barack Obama",
-                         "Barack Obama (Democratic)"),
-      `John McCain` = c("John McCain (Republican)",
-                        "John McCain"),
-      `Other` = c("Someone Else"),
-      `Not Sure` = c("Don't Recall")
-    ) |>
-    fct_relevel("Barack Obama", "John McCain", "Other") |>
-    fct_drop()
+  collapse_pres_values(
+    vec,
+    c("Barack Obama", "Barack Obama (Democratic)") ~ "Barack Obama",
+    c("John McCain", "John McCain (Republican)") ~ "John McCain",
+    "Someone Else" ~ "Other",
+    "Don't Recall" ~ "Not Sure",
+    levels = c("Barack Obama", "John McCain", "Other", "Not Sure"),
+    na_values = "Did not Vote" # means did not turnout until 2011 and 2012
+  )
 }
 
 #' Quick fix for 2012 voted, where labels are too mixed to fix automatically
 clps_pres12 <- function(vec) {
-  vec |>
-    na_if("Not Vote") |> # means did not turnout in 2015
-  fct_collapse(
+  collapse_pres_values(
     vec,
-    `Barack Obama` = c(
-      "Barack Obama",
-      "Barack Obama (Democratic)",
-      "Vote for Barack Obama"),
-    `Mitt Romney` = c(
-      "Mitt Romney",
-      "Mitt Romney (Republican)",
-      "Vote for Mitt Romney"),
-    `Other` = c(
-      "Someone Else",
-      "Vote for Someone Else",
-      "Other"),
-    `Undervote` = c(
-      "Did Not Vote",
-      "Did not Vote",
-      "I Did Not Vote",
-      "I Did not Vote",
-      "Not Vote for this Office",
-      "I Did not Vote in this Race"),
-    `Not Sure` = c("Not Sure", "Don't Recall")
-  ) |>
-    fct_relevel("Barack Obama", "Mitt Romney", "Other", "Undervote")
+    c("Barack Obama", "Barack Obama (Democratic)", "Vote for Barack Obama") ~ "Barack Obama",
+    c("Mitt Romney", "Mitt Romney (Republican)", "Vote for Mitt Romney") ~ "Mitt Romney",
+    c("Someone Else", "Vote for Someone Else", "Other") ~ "Other",
+    c("Did Not Vote", "Did not Vote", "I Did Not Vote",
+      "I Did not Vote", "Not Vote for this Office",
+      "I Did not Vote in this Race") ~ "Undervote",
+    c("Not Sure", "Don't Recall") ~ "Not Sure",
+    levels = c("Barack Obama", "Mitt Romney", "Other", "Undervote", "Not Sure"),
+    na_values = "Not Vote" # means did not turnout in 2015
+  )
 }
 clps_pres16 <- function(vec) {
-  vec |>
-  na_if("Did not Vote for President") |> # these only occur post-2016 and are "did not turn out"
-  fct_collapse(
-    `Hilary Clinton` = c(
-      "Hillary Clinton",
-      "Hillary Clinton (Democrat)"),
-    `Donald Trump` = c(
-      "Donald Trump",
-      "Donald Trump (Republican)"),
-    `Gary Johnson` = c("Gary Johnson (Libertarian)", "Gary Johnson"),
-    `Evan McMullin` = c("Evan Mcmullin (Independent)", "Evan Mcmullin"),
-    `Jill Stein` = c("Jill Stein (Green)", "Jill Stein"),
-    `Other` = c(
-      "Other", "Someone Else"),
-    `Undervote` = c(
-      "I Didn't Vote in this Election",
-      "I Did not Cast a Vote for President"),
-    `Not Sure` = c(
-      "I'm not Sure", "I Don't Recall")
-  ) |>
-    fct_relevel("Hilary Clinton", "Donald Trump", "Gary Johnson", "Evan McMullin",
-                "Jill Stein", "Other", "Undervote")
+  collapse_pres_values(
+    vec,
+    c("Hillary Clinton", "Hillary Clinton (Democrat)") ~ "Hilary Clinton",
+    c("Donald Trump", "Donald Trump (Republican)") ~ "Donald Trump",
+    c("Gary Johnson", "Gary Johnson (Libertarian)") ~ "Gary Johnson",
+    c("Evan Mcmullin", "Evan Mcmullin (Independent)") ~ "Evan McMullin",
+    c("Jill Stein", "Jill Stein (Green)") ~ "Jill Stein",
+    c("Other", "Someone Else") ~ "Other",
+    c("I Didn't Vote in this Election", "I Did not Cast a Vote for President") ~ "Undervote",
+    c("I'm not Sure", "I Don't Recall") ~ "Not Sure",
+    levels = c("Hilary Clinton", "Donald Trump", "Gary Johnson", "Evan McMullin",
+               "Jill Stein", "Other", "Undervote", "Not Sure"),
+    na_values = "Did not Vote for President" # post-2016 and means did not turn out
+  )
 }
 
 clps_pres20 <- function(vec) {
-  vec |>
-    na_if("Did not Vote for President") |> # these mean did not turnout
-    fct_collapse(
-      `Joe Biden` = c(
-      "Joe Biden",
-      "Joe Biden (Democrat)"),
-    `Donald Trump` = c(
-      "Donald Trump",
-      "Donald Trump (Republican)",
-      "Donald J. Trump (Republican)"),
-    `Jo Jorgensen` = "Jo Jorgensen",
-    `Howie Hawkins` = "Howie Hawkins",
-    `Other` = c(
-      "Other",
-      "Someone Else"),
-    `Undervote` = c(
-      "I Did not Vote in this Race",
-      "I Did not Vote"),
-    `Not Sure` = c("I'm not Sure")
-  ) |>
-    fct_relevel("Joe Biden", "Donald Trump", "Jo Jorgensen",
-                "Howie Hawkins", "Other", "Undervote")
+  collapse_pres_values(
+    vec,
+    c("Joe Biden", "Joe Biden (Democrat)") ~ "Joe Biden",
+    c("Donald Trump", "Donald Trump (Republican)", "Donald J. Trump (Republican)") ~ "Donald Trump",
+    "Jo Jorgensen" ~ "Jo Jorgensen",
+    "Howie Hawkins" ~ "Howie Hawkins",
+    c("Other", "Someone Else") ~ "Other",
+    c("I Did not Vote in this Race", "I Did not Vote") ~ "Undervote",
+    "I'm not Sure" ~ "Not Sure",
+    levels = c("Joe Biden", "Donald Trump", "Jo Jorgensen",
+               "Howie Hawkins", "Other", "Undervote", "Not Sure"),
+    na_values = "Did not Vote for President" # means did not turnout
+  )
 }
 
 clps_pres24 <- function(vec) {
-  fct_collapse(
+  collapse_pres_values(
     vec,
-    `Kamala Harris` = c(
-      "Kamala Harris",
-      "Kamala Harris (Democrat)"),
-    `Donald Trump` = c(
-      "Donald Trump",
-      "Donald Trump (Republican)"),
-    `Jill Stein` = "Jill Stein",
-    `Cornel West` = "Cornel West",
-    `Chase Oliver` = "Chase Oliver",
-    `Other` = c(
-      "Other",
-      "Someone Else"),
-    `Undervote` = c(
-      "I Did not Vote in this Race",
-      "I Did not Vote",
-      "Did not Vote for President"), # in 2024 this seems to mean undervote
-    `Not Sure / Don't Recall` = c("I'm not Sure")
-  ) |>
-    fct_relevel("Kamala Harris", "Donald Trump", "Jill Stein",
-                "Robert F. Kennedy, Jr.", "Cornel West", "Chase Oliver",
-                "Other", "Undervote")
+    c("Kamala Harris", "Kamala Harris (Democrat)") ~ "Kamala Harris",
+    c("Donald Trump", "Donald Trump (Republican)") ~ "Donald Trump",
+    "Jill Stein" ~ "Jill Stein",
+    "Cornel West" ~ "Cornel West",
+    "Chase Oliver" ~ "Chase Oliver",
+    c("Other", "Someone Else") ~ "Other",
+    c("I Did not Vote in this Race", "I Did not Vote", "Did not Vote for President") ~ "Undervote",
+    "I'm not Sure" ~ "Not Sure / Don't Recall",
+    levels = c("Kamala Harris", "Donald Trump", "Jill Stein",
+               "Robert F. Kennedy, Jr.", "Cornel West", "Chase Oliver",
+               "Other", "Undervote", "Not Sure / Don't Recall")
+  )
 }
 
 #' give pres party from chars of pres names
