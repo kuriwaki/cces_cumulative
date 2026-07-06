@@ -1477,6 +1477,7 @@ Routine edits add new rows, add new variables, and change the customization of e
 - Adds odd-year governor vote choice, starting in 2013. (#61)
 - Adds 2008 values for individual union membership (#73, Brian Schaffner)
 - Standardizes the early-vote label in `intent_turnout_self` and excludes 2025 `CC25_363` because it asks about 2026 House intent rather than turnout intent. (#79)
+- Adds 2025 `vv_party_gen` values, including the new categories `No Party, Independent, Declined to State` and `Not Sure`. Because validated-vote party variables are ordered by frequency, these new categories shift the order of rarer `vv_party_gen` levels after `Other`.
   
 
 ### Version 11.0 (released `2025-10-08`)

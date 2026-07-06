@@ -1102,6 +1102,23 @@ extract_yr <- function(tbl, var, var_name, chr_var_name, num_var_name, is_factor
   }
 }
 
+extract_yr_label_only <- function(tbl, var, var_name, chr_var_name, num_var_name) {
+  if (var_name %in% colnames(tbl)) {
+    select(tbl, year, case_id, !!var) |>
+      mutate(
+        !!chr_var_name := labelled::to_character(.data[[var_name]], levels = "labels"),
+        !!num_var_name := NA_integer_
+      ) |>
+      select(-!!var)
+  } else {
+    select(tbl, year, case_id) |>
+      mutate(
+        !!chr_var_name := NA_character_,
+        !!num_var_name := NA_integer_
+      )
+  }
+}
+
 # takes all datasets available, and given a var, pulls it out of each and stacks
 #'
 #' @param dflist a list of cces datasets. column names need to be standardized.
@@ -1118,11 +1135,17 @@ find_stack <- function(dflist = list(), var, type = "factor", make_labelled = FA
   num_var_name <- paste0(var_name, "_num")
 
   if (type == "factor") {
+    is_vv <- str_detect(var_name, "^vv_")
+
     list_yr <- foreach(yr = 1:length(dflist), .combine = "bind_rows") %do% {
-      extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
+      if (is_vv) {
+        extract_yr_label_only(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
+      } else {
+        extract_yr(dflist[[yr]], enquo(var), var_name, chr_var_name, num_var_name)
+      }
     }
 
-    if (str_detect(chr_var_name, "^vv_")) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
+    if (is_vv) { # vv were not displayed questions so can be sorted by frequency, and no numeric left
 
       list_yr <- mutate(list_yr,
                         !!chr_var_name := std_vvv(.data[[chr_var_name]], varname = chr_var_name, yrvec = .data[["year"]]))
