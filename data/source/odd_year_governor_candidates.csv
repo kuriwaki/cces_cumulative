@@ -1,0 +1,21 @@
+year,st,voted_gov_num,name,party,source_var,source_value
+2013,NJ,1,Barbara Buono,D,CC13_316a,3
+2013,NJ,2,Chris Christie,R,CC13_316a,2
+2013,NJ,7,Someone else,Other,CC13_316a,4
+2013,VA,1,Terry McAuliffe,D,CC13_316b,3
+2013,VA,2,Ken Cuccinelli,R,CC13_316b,2
+2013,VA,3,Robert Sarvis,L,CC13_316b,4
+2013,VA,7,Someone else,Other,CC13_316b,5
+2015,KY,1,Jack Conway,D,CC15_316a,2
+2015,KY,2,Matt Bevin,R,CC15_316a,1
+2015,KY,3,Drew Curtis,I,CC15_316a,3
+2015,LA,1,John Bel Edwards,D,CC15_316b,1
+2015,LA,2,David Vitter,R,CC15_316b,2
+2015,MS,1,Robert Gray,D,CC15_316c,2
+2015,MS,2,Phil Bryant,R,CC15_316c,1
+2017,NJ,1,Phil Murphy,D,CC17_328b,1
+2017,NJ,2,Kim Guadagno,R,CC17_328b,2
+2017,NJ,7,Someone else,Other,CC17_328b,3
+2017,VA,1,Ralph Northam,D,CC17_328a,1
+2017,VA,2,Ed Gillespie,R,CC17_328a,2
+2017,VA,7,Someone else,Other,CC17_328a,3

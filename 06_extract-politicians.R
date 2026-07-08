@@ -197,6 +197,46 @@ std_ptylabel <- function(vec) {
                 `Conservative Party` = "Conservative")
 }
 
+add_odd_gov_candidates <- function(tbl, key) {
+  key_wide <- key |>
+    transmute(year, st,
+              can_var = glue("gov_can{voted_gov_num}"),
+              pty_var = glue("gov_pty{voted_gov_num}"),
+              name,
+              party) |>
+    pivot_wider(
+      id_cols = c(year, st),
+      names_from = can_var,
+      values_from = name
+    ) |>
+    left_join(
+      key |>
+        transmute(year, st,
+                  pty_var = glue("gov_pty{voted_gov_num}"),
+                  party) |>
+        pivot_wider(
+          id_cols = c(year, st),
+          names_from = pty_var,
+          values_from = party
+        ),
+      by = join_by(year, st),
+      relationship = "one-to-one"
+    )
+
+  key_cols <- setdiff(names(key_wide), c("year", "st"))
+  key_wide <- rename_with(key_wide, \(x) glue("{x}_oddgov"), all_of(key_cols))
+
+  out <- left_join(tbl, key_wide, by = join_by(year, st), relationship = "many-to-one")
+
+  for (col in key_cols) {
+    odd_col <- glue("{col}_oddgov")
+    if (!col %in% names(out)) out[[col]] <- NA_character_
+    out[[col]] <- coalesce(out[[odd_col]], out[[col]])
+  }
+
+  select(out, -ends_with("_oddgov"))
+}
+
 # Variable Key ------
 # 2008, 2009, 2010, 2011 takes D and R so no party column. but note there is an
 # "other party candidate for 2008, 2010
@@ -208,6 +248,7 @@ inc_H <- read_csv("data/output/03_contextual/voteview_H_key.csv", show_col_types
 inc_S <- read_csv("data/output/03_contextual/voteview_S_key.csv", show_col_types = FALSE) |>
   mutate(dist = NA)
 statecode <- read_csv("data/source/statecode.csv", show_col_types = FALSE)
+odd_gov_candidates <- read_csv("data/source/odd_year_governor_candidates.csv", show_col_types = FALSE)
 
 # parameters
 # remove generations, MDs, Jr/Srs.
@@ -307,32 +348,6 @@ for (yr in c(2006:2025, str_c(seq(2010, 2024, 2), "_post"), "2012p", "2018c")) {
   }
 }
 
-# Synthetic gov candidate columns for odd years 2013, 2015, 2017 (no GovCandX columns).
-# voted_gov was recoded to 1=D, 2=R, 3=Other, 8=DNV in 05_functions-stack.R.
-cclist[["2013"]] <- cclist[["2013"]] |>
-  mutate(
-    gov_can1 = if_else(st %in% c("NJ", "VA"), "Democratic Candidate", NA_character_),
-    gov_pty1 = if_else(st %in% c("NJ", "VA"), "D",                   NA_character_),
-    gov_can2 = if_else(st %in% c("NJ", "VA"), "Republican Candidate", NA_character_),
-    gov_pty2 = if_else(st %in% c("NJ", "VA"), "R",                   NA_character_)
-  )
-
-cclist[["2015"]] <- cclist[["2015"]] |>
-  mutate(
-    gov_can1 = if_else(st %in% c("KY", "LA", "MS"), "Democratic Candidate", NA_character_),
-    gov_pty1 = if_else(st %in% c("KY", "LA", "MS"), "D",                   NA_character_),
-    gov_can2 = if_else(st %in% c("KY", "LA", "MS"), "Republican Candidate", NA_character_),
-    gov_pty2 = if_else(st %in% c("KY", "LA", "MS"), "R",                   NA_character_)
-  )
-
-cclist[["2017"]] <- cclist[["2017"]] |>
-  mutate(
-    gov_can1 = if_else(st %in% c("VA", "NJ"), "Democratic Candidate", NA_character_),
-    gov_pty1 = if_else(st %in% c("VA", "NJ"), "D",                   NA_character_),
-    gov_can2 = if_else(st %in% c("VA", "NJ"), "Republican Candidate", NA_character_),
-    gov_pty2 = if_else(st %in% c("VA", "NJ"), "R",                   NA_character_)
-  )
-
 # bind ------
 dfcc <- map_dfr(cclist, .f = clean_out, cvars = carry_vars, m = master, .id = "dataset")
 
@@ -345,6 +360,7 @@ assign_08_10_pty <- function(vec, yrvec, candvec, pty) {
 }
 
 df_current <- dfcc |>
+  add_odd_gov_candidates(odd_gov_candidates) |>
   mutate(gov_pty1 = assign_08_10_pty(gov_pty1, year, gov_can1, "D"),
          rep_pty1 = assign_08_10_pty(rep_pty1, year, rep_can1, "D"),
          sen_pty1 = assign_08_10_pty(sen_pty1, year, sen_can1, "D"),
