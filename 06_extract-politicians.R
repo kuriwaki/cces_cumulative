@@ -27,7 +27,7 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
     pivot_longer(
       cols = -all_of(ids),
       names_to = c(".value", "cand"),
-      names_pattern = glue("{office}_(pty|can)([1-9])"),
+      names_pattern = glue("{office}_(pty|can)(\\d+)"),
       values_drop_na = TRUE
     ) |>
     rename(name = can, party = pty) |>

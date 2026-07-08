@@ -61,10 +61,28 @@ master_17 <- tribble(
   "gov_can2", "GovCand2Name",     NA,                 "GovCand2Name",     NA,                 "GovCand2Name",      NA,
   "gov_pty2", "GovCand2Party",    NA,                 "GovCand2Party",    NA,                 "GovCand2Party",     NA,
   "gov_can3", NA,                 NA,                 NA,                 NA,                 "GovCand3Name",      NA,
-  "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",    NA
+  "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",     NA,
+  "rep_can4", NA,                 NA,                 NA,                 NA,                 "HouseCand4Name",    NA,
+  "rep_pty4", NA,                 NA,                 NA,                 NA,                 "HouseCand4Party",   NA,
+  "rep_can5", NA,                 NA,                 NA,                 NA,                 "HouseCand5Name",    NA,
+  "rep_pty5", NA,                 NA,                 NA,                 NA,                 "HouseCand5Party",   NA,
+  "rep_can6", NA,                 NA,                 NA,                 NA,                 "HouseCand6Name",    NA,
+  "rep_pty6", NA,                 NA,                 NA,                 NA,                 "HouseCand6Party",   NA,
+  "rep_can7", NA,                 NA,                 NA,                 NA,                 "HouseCand7Name",    NA,
+  "rep_pty7", NA,                 NA,                 NA,                 NA,                 "HouseCand7Party",   NA,
+  "rep_can8", NA,                 NA,                 NA,                 NA,                 "HouseCand8Name",    NA,
+  "rep_pty8", NA,                 NA,                 NA,                 NA,                 "HouseCand8Party",   NA,
+  "rep_can9", NA,                 NA,                 NA,                 NA,                 "HouseCand9Name",    NA,
+  "rep_pty9", NA,                 NA,                 NA,                 NA,                 "HouseCand9Party",   NA,
+  "sen_can4",  NA,                 NA,                 NA,                 NA,                 "SenCand4Name",      NA,
+  "sen_pty4",  NA,                 NA,                 NA,                 NA,                 "SenCand4Party",     NA,
+  "rep_can10", NA,                 NA,                 NA,                 NA,                 "HouseCand10Name",   NA,
+  "rep_pty10", NA,                 NA,                 NA,                 NA,                 "HouseCand10Party",  NA,
+  "rep_can11", NA,                 NA,                 NA,                 NA,                 "HouseCand11Name",   NA,
+  "rep_pty11", NA,                 NA,                 NA,                 NA,                 "HouseCand11Party",  NA
 )
 
-master <- left_join(master_11, master_17, by = "name")
+master <- full_join(master_11, master_17, by = "name")
 
 # same as previous years
 master$`2018` <- master$`2016`
@@ -81,6 +99,29 @@ for (yr in c("2019", "2021", "2023", "2025")) {
 }
 # 2021 and 2025 governor races have only two candidates
 master[master$name %in% c("gov_can3", "gov_pty3"), c("2021", "2025")] <- NA
+
+# House slots 4-9 and Senate slot 4: year-specific corrections.
+# 2016 has all of HouseCand4-9 and SenCand4; propagation above copies these to
+# 2018/2020/2022/2024. Clear slots that don't exist in each year's raw file.
+
+# 2018: HouseCand4-7 only (not 8-9, not 10-11); no SenCand4
+master[master$name %in% c("rep_can8",  "rep_pty8",  "rep_can9",  "rep_pty9",
+                           "rep_can10", "rep_pty10", "rep_can11", "rep_pty11"), "2018"] <- NA
+master[master$name %in% c("sen_can4", "sen_pty4"), "2018"] <- NA
+
+# 2020: HouseCand4-9 present; no SenCand4, no 10-11
+master[master$name %in% c("rep_can10", "rep_pty10", "rep_can11", "rep_pty11"), "2020"] <- NA
+master[master$name %in% c("sen_can4", "sen_pty4"), "2020"] <- NA
+
+# 2022: HouseCand4-8 (not 9, not 10-11); SenCand4 present (keep inherited value)
+master[master$name %in% c("rep_can9",  "rep_pty9",
+                           "rep_can10", "rep_pty10", "rep_can11", "rep_pty11"), "2022"] <- NA
+
+# 2024: HouseCand4-5 only (not 6-9, not 10-11); no SenCand4
+master[master$name %in% c("rep_can6",  "rep_pty6",  "rep_can7",  "rep_pty7",
+                           "rep_can8",  "rep_pty8",  "rep_can9",  "rep_pty9",
+                           "rep_can10", "rep_pty10", "rep_can11", "rep_pty11"), "2024"] <- NA
+master[master$name %in% c("sen_can4", "sen_pty4"), "2024"] <- NA
 
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)

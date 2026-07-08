@@ -23,14 +23,26 @@ num_cand_match <- function(numdf, canddf) {
   party_varname <- glue("{no_num}_party") # e.g. intent_rep_party = Democrat
   abstract_varname <- as.character(glue("{str_replace(type, '_num', '')}_char")) # e.g. intent_rep_char = Democract /Cand 1
 
-  canddf <- rename(canddf, !!type := cand) |>
+  # Raw survey codes don't always equal candidate slot numbers (e.g. 2016 assigns
+  # code 10 to HouseCand5; 2016 Senate assigns code 8 to SenCand4). rc_key uses
+  # sequential slot numbers, so extract the slot from the char label for the join.
+  # Use a temp column to avoid corrupting the original _num, which int_vot_manual
+  # later uses to recode "no vote" survey codes (e.g. code 8/9 for rep/gov).
+  slot_from_char <- as.integer(
+    str_match(numdf[[abstract_varname]], regex("cand([0-9]+)name", ignore_case = TRUE))[, 2]
+  )
+  join_key <- ".cand_slot"
+  numdf_for_join <- mutate(numdf, !!join_key := coalesce(slot_from_char, .data[[type]]))
+
+  canddf <- rename(canddf, !!join_key := cand) |>
     drop_post()
 
-  joined <- left_join(numdf, canddf, by = c("year", "case_id", type), relationship = "many-to-one")
+  joined <- left_join(numdf_for_join, canddf, by = c("year", "case_id", join_key), relationship = "many-to-one") |>
+    select(-all_of(join_key))
 
   joined |>
     mutate(!!abstract_varname := std_voteopts(.data[[abstract_varname]])) |>
-    mutate(!!chosen_varname := str_c(name, " (", party, ")", sep = ""),
+    mutate(!!chosen_varname := if_else(!is.na(name), str_c(name, " (", party, ")", sep = ""), NA_character_),
            !!party_varname := spell_out_party_abbrv(party)) |>
     select(!!c(colnames(numdf), chosen_varname, party_varname), everything())
 }
@@ -66,7 +78,11 @@ std_voteopts <- function(vec,
          `Other, Third-Party Candidate` = chr3) |>
     str_replace_all("cand", "Cand") |>
     str_replace_all("name", "Name") |>
-    str_replace_all("party", "Party")
+    str_replace_all("party", "Party") |>
+    str_replace_all(
+      "^\\$(House|Sen|Gov)Cand([3-9]|[1-9][0-9]+)Name \\(\\$\\1Cand\\2Party\\)$",
+      "[Other / Candidate \\2]"
+    )
 }
 
 
