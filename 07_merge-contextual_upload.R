@@ -5,6 +5,13 @@ library(tigris)
 library(arrow)
 library(cli)
 
+# TEST-GUIDE mode: set CCES_TEST_GUIDE=1 (e.g. `CCES_TEST_GUIDE=1 Rscript 07_merge-contextual_upload.R`)
+# to write only data/release/cumulative_2006-2025.feather -- the single file the
+# guide (guide/guide_cumulative_2006-2025.qmd) reads -- and skip the slow xz .rds,
+# .dta, factor, and addon outputs. See the Save section below.
+test_guide <- Sys.getenv("CCES_TEST_GUIDE", "") != ""
+if (test_guide) cli_alert_info("Running 07 in TEST-GUIDE mode (guide feather only)")
+
 drop_post <- function(x) filter(x, !str_detect(dataset, "_post"))
 
 # apppend the candidatename-candidate party variables to the vote choice qs
@@ -261,62 +268,68 @@ ccc_df <- ccc_cand |>
   mutate(year = as.integer(year)) |>
   mutate_if(is.factor, fct_drop) # drop unused values
 
-# make char variables for IDs for Stata
-# coerce a few columns to factor so they export as categorical
-ccc_fac <- ccc_df |>
-  mutate(case_id = as.character(case_id)) |> # keep case_id as a string, not numeric
-  mutate_at(vars(matches("(_icpsr$|hisp_origin)")), as.character) |>
-  mutate_at(vars(matches("(^cong)")), as.factor)
-
-# FIPS-state key
-fips_key <- tigris::fips_codes |>
-  as_tibble() |>
-  transmute(st = state, state = state_name, st_fips = as.integer(state_code)) |>
-  distinct()
-
-fips_key_post <- rename(fips_key, st_post = st, state_post = state)
-
-ccc_factor <- ccc_fac |>
-  left_join(fips_key, by = join_by(state, st), relationship = "many-to-one") |>
-  mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
-         st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) |>
-  select(-st_fips) |>
-  left_join(fips_key_post, by = join_by(state_post, st_post), relationship = "many-to-one") |>
-  mutate(state_post = labelled(st_fips, deframe(select(fips_key_post, state_post, st_fips))),
-         st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) |>
-  select(-st_fips)
-
 # Save ---------
 cli_h1("Save Final data")
-# needed for CCES_representation (2025-09-19)
-write_feather(ccc_df, "data/release/cumulative_2006-2025_addon.feather")
 panel_ids <- mutate(panel_ids, year = as.integer(year), case_id = as.numeric(case_id))
 
+# The guide reads only this file, so it is always written first. TEST-GUIDE mode
+# stops here and skips the slow xz .rds, .dta, factor, and addon outputs.
 write_feather(anti_join(ccc_df, panel_ids, by = ids), "data/release/cumulative_2006-2025.feather")
-write_rds(anti_join(ccc_df, panel_ids, by = ids), "data/release/cumulative_2006-2025.rds", compress = "xz")
 
-# anti-join things not to put on dataverse (panel, module)
-panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # char id to match ccc_factor
+if (test_guide) {
+  cli_alert_success("TEST-GUIDE mode: wrote cumulative_2006-2025.feather only; skipped addon/rds/dta/factor outputs")
+} else {
+  # needed for CCES_representation (2025-09-19)
+  write_feather(ccc_df, "data/release/cumulative_2006-2025_addon.feather")
+  write_rds(anti_join(ccc_df, panel_ids, by = ids), "data/release/cumulative_2006-2025.rds", compress = "xz")
+
+  # make char variables for IDs for Stata
+  # coerce a few columns to factor so they export as categorical
+  ccc_fac <- ccc_df |>
+    mutate(case_id = as.character(case_id)) |> # keep case_id as a string, not numeric
+    mutate_at(vars(matches("(_icpsr$|hisp_origin)")), as.character) |>
+    mutate_at(vars(matches("(^cong)")), as.factor)
+
+  # FIPS-state key
+  fips_key <- tigris::fips_codes |>
+    as_tibble() |>
+    transmute(st = state, state = state_name, st_fips = as.integer(state_code)) |>
+    distinct()
+
+  fips_key_post <- rename(fips_key, st_post = st, state_post = state)
+
+  ccc_factor <- ccc_fac |>
+    left_join(fips_key, by = join_by(state, st), relationship = "many-to-one") |>
+    mutate(state = labelled(st_fips, deframe(select(fips_key, state, st_fips))),
+           st = labelled(st_fips, deframe(select(fips_key, st, st_fips)))) |>
+    select(-st_fips) |>
+    left_join(fips_key_post, by = join_by(state_post, st_post), relationship = "many-to-one") |>
+    mutate(state_post = labelled(st_fips, deframe(select(fips_key_post, state_post, st_fips))),
+           st_post = labelled(st_fips, deframe(select(fips_key_post, st_post, st_fips)))) |>
+    select(-st_fips)
+
+  # anti-join things not to put on dataverse (panel, module)
+  panel_charid <- mutate(panel_ids, case_id = as.character(case_id)) # char id to match ccc_factor
+
+  # write to dta after applying variable labels in 05
+  # remove panel cases
+  ccc_common <- anti_join(ccc_factor, panel_charid, by = c("year", "case_id"))
+
+  # Write to dta with var labels
+  for (v in colnames(ccc_common)) {
+    attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+    attributes(ccc_df[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+  }
 
 
-# write to dta after applying variable labels in 05
-# remove panel cases
-ccc_common <- anti_join(ccc_factor, panel_charid, by = c("year", "case_id"))
+  if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
+    cli::cli_abort("Found Duplicate case IDs")
 
-# Write to dta with var labels
-for (v in colnames(ccc_common)) {
-  attributes(ccc_common[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
-  attributes(ccc_df[[v]])$label <- ccc_meta$name[which(ccc_meta$alias == v)]
+  write_rds(ccc_common, "data/output/cumulative_2006-2025_factor.rds")
+  write_dta(ccc_common, "data/release/cumulative_2006-2025.dta", version = 14)
+
+  # NOTE: the Crunch.io upload step (disabled, not needed for the Dataverse release)
+  # was moved to older/07_crunch-upload.R (2026-06-26).
+
+  cat("Finished merging candidate vars and the rest. Updated Rds and dta.\n")
 }
-
-
-if (nrow(ccc_common) > nrow(distinct(ccc_common, year, case_id)))
-  cli::cli_abort("Found Duplicate case IDs")
-
-write_rds(ccc_common, "data/output/cumulative_2006-2025_factor.rds")
-write_dta(ccc_common, "data/release/cumulative_2006-2025.dta", version = 14)
-
-# NOTE: the Crunch.io upload step (disabled, not needed for the Dataverse release)
-# was moved to older/07_crunch-upload.R (2026-06-26).
-
-cat("Finished merging candidate vars and the rest. Updated Rds and dta.\n")

@@ -155,11 +155,12 @@ Agadjanian, Jeremiah Cha, Steve Ansolabehere, Valerie Bradley, Stephen
 DiMauro, Bernard Fraga, Nathan Kaplan, Silvia Kim, Mayya Komisarchik,
 Stephen Pettigrew, Boris Shor, Brian Schaffner, Caroline Soler, and
 Gerlad Wright for finding errors and providing suggestions. Adam Chapnik
-contributed significantly to V12. Thanks to Joe Williams at YouGov, and
-Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch for their help.}}
+and Zoya Ahmer contributed significantly to V12. Thanks to Joe Williams
+at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch
+for their help.}}
 
 
-\date{2026-07-03}
+\date{2026-07-06}
 
 \begin{document}
 
@@ -3619,18 +3620,24 @@ description/metadata changes.
 \item
   For 2022 data, now uses an updated
   \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
-  of the 2022 CCES cumulative file,
+  of the 2022 CCES cumulative file, which was updated in April 2024 to
+  fill missing county FIPS codes. This adds \texttt{county\_fips} for
+  131 rows (\textless{} 1 \% of 2022 data).
 \item
-  Add Governor vote choice even for odd years, starting from 2013.
-  (\#61)
+  Adds odd-year governor vote choice, starting in 2013. (\#61)
 \item
-  Add 2008 values for individual uninon membership (\#73, Brian
+  Adds 2008 values for individual union membership (\#73, Brian
   Schaffner)
 \item
-  Lower/upper case standardization for values in
-  \texttt{intent\_turnout\_self} (\#79) which was updated in April 2024
-  to fill missing county FIPS codes.　This adds \texttt{county\_fips}
-  for 131 rows (\textless{} 1 \% of 2022 data).
+  Standardizes the early-vote label in \texttt{intent\_turnout\_self}
+  and excludes 2025 \texttt{CC25\_363} because it asks about 2026 House
+  intent rather than turnout intent. (\#79)
+\item
+  Adds 2025 \texttt{vv\_party\_gen} values, including the new categories
+  \texttt{No\ Party,\ Independent,\ Declined\ to\ State} and
+  \texttt{Not\ Sure}. Because validated-vote party variables are ordered
+  by frequency, these new categories shift the order of rarer
+  \texttt{vv\_party\_gen} levels after \texttt{Other}.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 11.0 (released
