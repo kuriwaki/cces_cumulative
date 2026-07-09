@@ -139,7 +139,7 @@ print_tab <- function(var, do_sort = FALSE, tbl = NULL) {
       booktabs = TRUE) |> 
     kable_styling(full_width = FALSE, latex_options = "HOLD_position") |> 
     str_replace_all("\\[(?=(D|R|O))", "{[") |> 
-    str_replace_all("(?<=[1-4])\\]", "]}") |> 
+    str_replace_all("(?<=\\d)\\]", "]}") |> 
     cat()
 }
 ```
@@ -719,7 +719,7 @@ kbl(dframe,
     booktabs = TRUE) |> 
   kable_styling(full_width = FALSE, latex_options = "HOLD_position") |> 
   str_replace_all("\\[(?=(D|R|O))", "{[") |> 
-  str_replace_all("(?<=[1-4])\\]", "]}") |> 
+  str_replace_all("(?<=\\d)\\]", "]}") |> 
   cat()
 ```
 
