@@ -61,26 +61,94 @@ master_17 <- tribble(
   "gov_can2", "GovCand2Name",     NA,                 "GovCand2Name",     NA,                 "GovCand2Name",      NA,
   "gov_pty2", "GovCand2Party",    NA,                 "GovCand2Party",    NA,                 "GovCand2Party",     NA,
   "gov_can3", NA,                 NA,                 NA,                 NA,                 "GovCand3Name",      NA,
-  "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",    NA
+  "gov_pty3", NA,                 NA,                 NA,                 NA,                 "GovCand3Party",     NA,
+  "rep_can4", NA,                 NA,                 NA,                 NA,                 "HouseCand4Name",    NA,
+  "rep_pty4", NA,                 NA,                 NA,                 NA,                 "HouseCand4Party",   NA,
+  "rep_can5", NA,                 NA,                 NA,                 NA,                 "HouseCand5Name",    NA,
+  "rep_pty5", NA,                 NA,                 NA,                 NA,                 "HouseCand5Party",   NA,
+  "rep_can6", NA,                 NA,                 NA,                 NA,                 "HouseCand6Name",    NA,
+  "rep_pty6", NA,                 NA,                 NA,                 NA,                 "HouseCand6Party",   NA,
+  "rep_can7", NA,                 NA,                 NA,                 NA,                 "HouseCand7Name",    NA,
+  "rep_pty7", NA,                 NA,                 NA,                 NA,                 "HouseCand7Party",   NA,
+  "rep_can8", NA,                 NA,                 NA,                 NA,                 "HouseCand8Name",    NA,
+  "rep_pty8", NA,                 NA,                 NA,                 NA,                 "HouseCand8Party",   NA,
+  "rep_can9", NA,                 NA,                 NA,                 NA,                 "HouseCand9Name",    NA,
+  "rep_pty9", NA,                 NA,                 NA,                 NA,                 "HouseCand9Party",   NA,
+  "sen_can4",  NA,                 NA,                 NA,                 NA,                 "SenCand4Name",      NA,
+  "sen_pty4",  NA,                 NA,                 NA,                 NA,                 "SenCand4Party",     NA,
+  "rep_can10", NA,                 NA,                 NA,                 NA,                 "HouseCand10Name",   NA,
+  "rep_pty10", NA,                 NA,                 NA,                 NA,                 "HouseCand10Party",  NA,
+  "rep_can11", NA,                 NA,                 NA,                 NA,                 "HouseCand11Name",   NA,
+  "rep_pty11", NA,                 NA,                 NA,                 NA,                 "HouseCand11Party",  NA
 )
 
-master <- left_join(master_11, master_17, by = "name")
+master_names <- bind_rows(select(master_11, name), select(master_17, name)) |>
+  distinct()
+
+master <- master_names |>
+  left_join(master_11, by = "name", relationship = "one-to-one") |>
+  left_join(master_17, by = "name", relationship = "one-to-one")
 
 # same as previous years
-master$`2018` <- master$`2016`
-master$`2025` <- master$`2023` <- master$`2021` <- master$`2019` <- master$`2017`
-master$`2024` <- master$`2022` <- master$`2020` <- master$`2018`
-# don't exist in 2020
-master$`2020`[master$`2020` %in% c("SenCand3Name", "SenCand3Party", "GovCand3Name", "GovCand3Party"
-)] <- NA
+master <- master |>
+  mutate(
+    `2018` = `2016`,
+    `2019` = `2017`,
+    `2020` = `2018`,
+    `2021` = `2017`,
+    `2022` = `2018`,
+    `2023` = `2017`,
+    `2024` = `2018`,
+    `2025` = `2017`
+  )
 
 # Odd years 2019+ have GovCand columns matching even-year structure
-gov_cand_rows <- master$name %in% c("gov_can1", "gov_pty1", "gov_can2", "gov_pty2", "gov_can3", "gov_pty3")
-for (yr in c("2019", "2021", "2023", "2025")) {
-  master[gov_cand_rows, yr] <- master[gov_cand_rows, "2018"]
+gov_cand_rows <- c("gov_can1", "gov_pty1", "gov_can2", "gov_pty2", "gov_can3", "gov_pty3")
+master <- master |>
+  mutate(across(all_of(c("2019", "2021", "2023", "2025")),
+                ~ if_else(name %in% gov_cand_rows, `2018`, .x)))
+
+candidate_rows <- function(office, slots) {
+  expand_grid(kind = c("can", "pty"), slot = slots) |>
+    transmute(name = str_c(office, "_", kind, slot)) |>
+    pull(name)
 }
-# 2021 and 2025 governor races have only two candidates
-master[master$name %in% c("gov_can3", "gov_pty3"), c("2021", "2025")] <- NA
+
+candidate_slots_to_clear <- bind_rows(
+  crossing(
+    year = "2020",
+    name = c(candidate_rows("sen", 3), candidate_rows("gov", 3))
+  ),
+  crossing(
+    year = c("2021", "2025"),
+    name = candidate_rows("gov", 3)
+  ),
+  crossing(
+    year = "2018",
+    name = c(candidate_rows("rep", 8:11), candidate_rows("sen", 4))
+  ),
+  crossing(
+    year = "2020",
+    name = c(candidate_rows("rep", 10:11), candidate_rows("sen", 4))
+  ),
+  crossing(
+    year = "2022",
+    name = candidate_rows("rep", 9:11)
+  ),
+  crossing(
+    year = "2024",
+    name = c(candidate_rows("rep", 6:11), candidate_rows("sen", 4))
+  )
+)
+
+master <- master |>
+  pivot_longer(-name, names_to = "year", values_to = "cces_name") |>
+  left_join(mutate(candidate_slots_to_clear, clear_slot = TRUE),
+            by = join_by(name, year),
+            relationship = "one-to-one") |>
+  mutate(cces_name = if_else(coalesce(clear_slot, FALSE), NA_character_, cces_name)) |>
+  select(-clear_slot) |>
+  pivot_wider(names_from = year, values_from = cces_name)
 
 check_no_dupes <- function(c) if (n_distinct(master[[c]], na.rm = TRUE) != sum(!is.na(master[[c]]))) stop(glue("check column {c}"))
 for (c in 2:ncol(master)) check_no_dupes(c)
