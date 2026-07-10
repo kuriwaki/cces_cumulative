@@ -13,13 +13,13 @@ library(haven)
 library(rprojroot)
 ```
 
-This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2024).
+This repository is R code to build the Cooperative Congressional Election Study (CCES) cumulative file (2006 - 2025).
 
 
 
 * [*Current Dataverse Version*](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6)
 * [*Current Guide*](
-https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2024.pdf)
+https://github.com/kuriwaki/cces_cumulative/blob/main/guide/guide_cumulative_2006-2025.pdf)
 
 Please feel free to file any questions or requests about the cumulative file as [Github issues](https://github.com/kuriwaki/cces_cumulative/issues). 
 
@@ -30,12 +30,12 @@ Please feel free to file any questions or requests about the cumulative file as 
 Start by downloading either the `.dta`, `.Rds`, or `.feather` file on the [dataverse page](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/II2DB6) to your computer. This repository does not track the data due to size constraints, but feel free to contact me if you need the newest version not on Dataverse. The `.Rds` format can be read into R. 
 
 ```{r, echo = FALSE, include = FALSE}
-# dat <- readRDS(here("data/release/cumulative_2006-2024.rds"))
-dat <- arrow::read_feather(here::here("data/release/cumulative_2006-2024.feather"))
+# dat <- readRDS(here("data/release/cumulative_2006-2025.rds"))
+dat <- arrow::read_feather(here::here("data/release/cumulative_2006-2025.feather"))
 ```
 
 ```{r, eval = FALSE, echo = TRUE}
-dat <- readRDS("cumulative_2006-2024.rds")
+dat <- readRDS("cumulative_2006-2025.rds")
 ```
 
 Make sure to load the `tidyverse` package first. The Rds file can be dealt with as a base-R data.frame, but it was built completely in the `tidyverse` environment so using it as a `tibble` gives full features. 
