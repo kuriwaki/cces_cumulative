@@ -160,7 +160,7 @@ at YouGov, and Jon Keane, Mike Malecki, and Gordon Shotwell at Crunch
 for their help.}}
 
 
-\date{2026-07-09}
+\date{2026-07-10}
 
 \begin{document}
 
@@ -182,7 +182,7 @@ Harvard Dataverse, V12.
 
 \medskip
 
-This dataset combines 19 years (2006 -- 2024) of the Cooperative
+This dataset combines 20 years (2006 -- 2025) of the Cooperative
 Congressional Election Study (CCES), renamed the Cooperative
 Congressional Election Study (CES) from 2020. The CCES/CES is an online
 survey conducted around November of each year, asking a range of
@@ -252,7 +252,7 @@ time, and using the \texttt{.feather} file when speed is a priority.
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(tidyverse)}
 \FunctionTok{library}\NormalTok{(haven)}
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2024.dta"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_dta}\NormalTok{(}\StringTok{"cumulative\_2006{-}2025.dta"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -264,7 +264,7 @@ We also provide a \texttt{.rds} format that is specific to R:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_rds}\NormalTok{(}\StringTok{"cumulative\_2006{-}2024.rds"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_rds}\NormalTok{(}\StringTok{"cumulative\_2006{-}2025.rds"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -283,7 +283,7 @@ writes faster than the others. Its content is identical to the
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(arrow)}
-\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_feather}\NormalTok{(}\StringTok{"cumulative\_2006{-}2024.feather"}\NormalTok{)}
+\NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{read\_feather}\NormalTok{(}\StringTok{"cumulative\_2006{-}2025.feather"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -304,7 +304,7 @@ the function:
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
-  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2024.dta"}\NormalTok{,}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2025.dta"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ haven}\SpecialCharTok{::}\NormalTok{read\_dta,}
@@ -314,7 +314,7 @@ the function:
 \end{Shaded}
 
 To download the \texttt{arrow} dataset, replace the \texttt{filename}
-argument with \texttt{cumulative\_2006-2024.feather} and the \texttt{.f}
+argument with \texttt{cumulative\_2006-2025.feather} and the \texttt{.f}
 argument with \texttt{arrow::read\_feather}.
 
 Downloading datasets that are hundreds of megabytes large can take
@@ -345,8 +345,8 @@ dataset, the R code is the following:
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(dataverse)}
 \NormalTok{cc }\OtherTok{\textless{}{-}} \FunctionTok{get\_dataframe\_by\_name}\NormalTok{(}
-  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2024.feather"}\NormalTok{,}
-  \AttributeTok{version =} \StringTok{"11"}\NormalTok{,}
+  \AttributeTok{filename =} \StringTok{"cumulative\_2006{-}2025.feather"}\NormalTok{,}
+  \AttributeTok{version =} \StringTok{"12"}\NormalTok{,}
   \AttributeTok{dataset =} \StringTok{"10.7910/DVN/II2DB6"}\NormalTok{,}
   \AttributeTok{original =} \ConstantTok{TRUE}\NormalTok{,}
   \AttributeTok{.f =}\NormalTok{ arrow}\SpecialCharTok{::}\NormalTok{read\_feather,}
@@ -3604,40 +3604,47 @@ description/metadata changes.
 \item
   Adds 2025 common content
 \item
-  For 2014 data, now uses an updated
-  \href{https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0}{V6}
-  of the 2014 CCES cumulative file, which was updated in 2024 to fix
-  some congressional district variables. This changes 41 rows
-  (\textless{} 1 \% of 2014 data) in the following variables:
-  \texttt{tookpost}, \texttt{state\_post}, \texttt{st\_post},
-  \texttt{dist\_post}, \texttt{dist\_up\_post}, \texttt{cd\_post},
-  \texttt{cd\_up\_post}, \texttt{voted\_turnout\_self},
-  \texttt{voted\_pres\_party}, \texttt{voted\_rep},
-  \texttt{voted\_rep\_chosen}, \texttt{voted\_rep\_party},
-  \texttt{voted\_sen}, \texttt{voted\_sen\_chosen},
-  \texttt{voted\_sen\_party}, \texttt{voted\_gov},
-  \texttt{voted\_gov\_chosen}, and \texttt{voted\_gov\_party}
-\item
-  For 2022 data, now uses an updated
-  \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
-  of the 2022 CCES cumulative file, which was updated in April 2024 to
-  fill missing county FIPS codes. This adds \texttt{county\_fips} for
-  131 rows (\textless{} 1 \% of 2022 data).
-\item
-  Adds odd-year governor vote choice, starting in 2013. (\#61)
+  Adds odd-year governor vote choice for the states that have them (NJ,
+  VA, KY, MS, LA), starting in 2013. (\#61)
 \item
   Adds 2008 values for individual union membership (\#73, Brian
   Schaffner)
 \item
+  For 2014 data, now uses an updated
+  \href{https://dataverse.harvard.edu/file.xhtml?fileId=10703502&version=6.0}{V6}
+  of the 2014 CCES file, which was updated in 2024 to fix some CD
+  variables. This changes 41 rows (\textless{} 1 \% of 2014 data) in the
+  following variables: \texttt{tookpost}, \texttt{state\_post},
+  \texttt{st\_post},
+  \texttt{(dist\textbar{}cd\textbar{}dist\_up\textbar{}cd\_post)\_post},
+  \texttt{voted\_turnout\_self}, and
+  \texttt{voted\_(pres\textbar{}rep\textbar{}sen\textbar{}gov)\_(party\textbar{}chosen\textbar{})}.
+\item
+  For 2022 data, now uses an updated
+  \href{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PR4L8P&version=4.0}{V4}
+  of the 2022 CCES file, which was updated in April 2024 to fill missing
+  county FIPS codes. This adds \texttt{county\_fips} for 131 rows
+  (\textless{} 1 \% of 2022 data).
+\item
   Standardizes the early-vote label in \texttt{intent\_turnout\_self}
-  and excludes 2025 \texttt{CC25\_363} because it asks about 2026 House
-  intent rather than turnout intent. (\#79)
+  (\#79)
+\item
+  Fixes candidate-slot matching for down-ballot vote-choice variables
+  when raw CCES labels refer to Candidate 4 or higher. Among non-missing
+  values, this changes less than 0.1\% of rows in
+  \texttt{(intent\textbar{}vote)\_rep(\textbar{}chosen\textbar{}party)}
+  variables, less than 0.05\% of rows in
+  \texttt{(intent\textbar{}vote)\_sen(\textbar{}chosen\textbar{}party)}
+  and 0.01\% of rows in \texttt{voted\_gov} (\#70)
 \item
   Adds 2025 \texttt{vv\_party\_gen} values, including the new categories
   \texttt{No\ Party,\ Independent,\ Declined\ to\ State} and
   \texttt{Not\ Sure}. Because validated-vote party variables are ordered
   by frequency, these new categories shift the order of rarer
   \texttt{vv\_party\_gen} levels after \texttt{Other}.
+\item
+  Media, Knowledge, and attention variables are starting to built off in
+  a new repo, https://github.com/kuriwaki/cces\_cumulative\_knowledge. 7
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Version 11.0 (released
