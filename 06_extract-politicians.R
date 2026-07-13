@@ -31,6 +31,12 @@ melt_cand <- function(tbl, measure_regex, ids = carry_vars,
       values_drop_na = TRUE
     ) |>
     rename(name = can, party = pty) |>
+    mutate(name = name |>
+             str_replace_all("\u00e2\u20ac\u0153", '"')|>  # Win-1252 left curly quote mojibake
+             str_replace_all("\u00e2\u20ac_",      '"')|>  # Win-1252 right curly quote mojibake
+             str_replace_all("\u00e2\u0080\u009c", '"')|>  # Latin-1 left curly quote mojibake
+             str_replace_all("\u00e2\u0080\u009d", '"')|>  # Latin-1 right curly quote mojibake
+             identity()) |>
     filter(cand != "") |>
     mutate(cand = as.integer(cand)) |>
     mutate(name_caps = str_to_upper(gsub(remove_regex, "", name)),
